@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
+final class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
     static let identifier = "EventLargeCollectionViewCell"
     
     
@@ -23,8 +23,5 @@ class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
         likeButton.frame = CGRect(x: shareButton.left-buttonSize, y: height-buttonSize-5, width: buttonSize, height: buttonSize)
     }
     
-    override func configure(with viewModel: EventCollectionViewCellViewModel) {
-        super.configure(with: viewModel)
-    }
     
 }

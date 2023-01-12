@@ -28,6 +28,7 @@
 		47FD6EFE296F5637001AF255 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EFD296F5637001AF255 /* MockData.swift */; };
 		47FD6F00296F60B9001AF255 /* EventLargeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EFF296F60B9001AF255 /* EventLargeCollectionViewCell.swift */; };
 		47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6F01296F623A001AF255 /* BasicEventCollectionViewCell.swift */; };
+		47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6F03296F7951001AF255 /* EventMainViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		47FD6EFD296F5637001AF255 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		47FD6EFF296F60B9001AF255 /* EventLargeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLargeCollectionViewCell.swift; sourceTree = "<group>"; };
 		47FD6F01296F623A001AF255 /* BasicEventCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicEventCollectionViewCell.swift; sourceTree = "<group>"; };
+		47FD6F03296F7951001AF255 /* EventMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMainViewController.swift; sourceTree = "<group>"; };
 		526E63EF0AD758A2505653F2 /* Pods-gathering.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gathering.debug.xcconfig"; path = "Target Support Files/Pods-gathering/Pods-gathering.debug.xcconfig"; sourceTree = "<group>"; };
 		E031C6C76BA2A9938E90B0D4 /* Pods-gathering.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-gathering.release.xcconfig"; path = "Target Support Files/Pods-gathering/Pods-gathering.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				47595194296DF24300C40741 /* WelcomeViewController.swift */,
+				47FD6F03296F7951001AF255 /* EventMainViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -231,6 +234,8 @@
 			dependencies = (
 			);
 			name = gathering;
+			packageProductDependencies = (
+			);
 			productName = gathering;
 			productReference = 4759518D296DF24300C40741 /* gathering.app */;
 			productType = "com.apple.product-type.application";
@@ -259,6 +264,8 @@
 				Base,
 			);
 			mainGroup = 47595184296DF24300C40741;
+			packageReferences = (
+			);
 			productRefGroup = 4759518E296DF24300C40741 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -342,6 +349,7 @@
 				47595193296DF24300C40741 /* SceneDelegate.swift in Sources */,
 				47FD6EE6296F2EC7001AF255 /* ProfileViewController.swift in Sources */,
 				47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */,
+				47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */,
 				47FD6EF1296F2FF6001AF255 /* User.swift in Sources */,
 				47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */,
 				47FD6EF9296F4F04001AF255 /* EventSmallCollectionViewCell.swift in Sources */,

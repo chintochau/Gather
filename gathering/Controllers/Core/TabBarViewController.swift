@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 
 class TabBarViewController: UITabBarController {
     
@@ -59,7 +60,7 @@ class TabBarViewController: UITabBarController {
         
         
         nav1.navigationBar.tintColor = .label
-        nav1.navigationBar.prefersLargeTitles = true
+//        nav1.navigationBar.prefersLargeTitles = true
         nav2.navigationBar.tintColor = .label
         nav3.navigationBar.tintColor = .label
         nav4.navigationBar.tintColor = .label

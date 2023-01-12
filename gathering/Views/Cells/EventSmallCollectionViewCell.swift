@@ -8,7 +8,7 @@
 import UIKit
 import SDWebImage
 
-class EventSmallCollectionViewCell: BasicEventCollectionViewCell{
+final class EventSmallCollectionViewCell: BasicEventCollectionViewCell{
     static let identifier = "EventSmallCollectionViewCell"
     
     override func layoutSubviews() {
@@ -21,11 +21,6 @@ class EventSmallCollectionViewCell: BasicEventCollectionViewCell{
         let buttonSize:CGFloat = 30
         shareButton.frame = CGRect(x: width-buttonSize-5, y: (height-buttonSize)/2, width: buttonSize, height: buttonSize)
         likeButton.frame = CGRect(x: shareButton.left-buttonSize, y: (height-buttonSize)/2, width: buttonSize, height: buttonSize)
-    }
-    
-    
-    override func configure(with viewModel: EventCollectionViewCellViewModel) {
-        super.configure(with: viewModel)
     }
     
 }

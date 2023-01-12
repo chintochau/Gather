@@ -25,6 +25,21 @@ class HomeViewController: UIViewController{
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        guard let collectionView else {return}
+        collectionView.frame = view.safeAreaLayoutGuide.layoutFrame
+        
+        
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard var statusBarStyle = navigationController?.navigationBar.barStyle else {return}
+        statusBarStyle = .`default`
+        navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
+
+        navigationController?.navigationBar.barStyle = statusBarStyle
     }
     
     // MARK: - Fetch Data
@@ -85,7 +100,6 @@ extension HomeViewController{
             )
             
             // section
-            print(index)
             return NSCollectionLayoutSection(group: index == 0 ? group0 : group1)
         }))
         
@@ -94,7 +108,6 @@ extension HomeViewController{
         collectionView.register(EventLargeCollectionViewCell.self, forCellWithReuseIdentifier: EventLargeCollectionViewCell.identifier)
         
         view.addSubview(collectionView)
-        collectionView.frame = view.safeAreaLayoutGuide.layoutFrame
         collectionView.delegate = self
         collectionView.dataSource = self
         self.collectionView = collectionView
@@ -121,4 +134,21 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
             return cell
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
+        guard let image = cell.eventImage.image else {return}
+        
+        
+        let vc = EventMainViewController(event: self.events[indexPath.row], image: image)
+//        let navVc = UINavigationController(rootViewController: vc)
+//        navVc.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
+//        navVc.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(vc, animated: true)
+        
+        
+        
+    }
+    
 }
+
