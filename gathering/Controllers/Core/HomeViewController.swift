@@ -13,6 +13,8 @@ class HomeViewController: UIViewController{
     
     private var viewModels = [EventCollectionViewCellViewModel]()
     private var events = [Event]()
+    
+    var currentCell:BasicEventCollectionViewCell?
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -63,7 +65,7 @@ class HomeViewController: UIViewController{
 }
 
 // MARK: - CollectionView
-extension HomeViewController{
+extension HomeViewController: UINavigationControllerDelegate{
     
     private func configureCollectionView(){
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
@@ -137,17 +139,22 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
-        guard let image = cell.eventImage.image else {return}
-        
-        
+        currentCell = cell
+        guard let image = cell.eventImageView.image else {return}
         let vc = EventMainViewController(event: self.events[indexPath.row], image: image)
 //        let navVc = UINavigationController(rootViewController: vc)
 //        navVc.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
 //        navVc.modalPresentationStyle = .fullScreen
+        
+        navigationController?.delegate = self
         navigationController?.pushViewController(vc, animated: true)
+        navigationController?.delegate = nil
         
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         
-        
+        return TransitionManager(duration: 0.2)
     }
     
 }

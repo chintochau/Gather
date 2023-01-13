@@ -14,8 +14,8 @@ final class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         backgroundColor = .secondarySystemBackground
-        eventImage.frame = CGRect(x: 0, y: 0, width: width, height: (height)/1.7)
-        dateLabel.frame = CGRect(x: 7, y: eventImage.bottom+10, width: dateLabel.width, height: dateLabel.height)
+        eventImageView.frame = CGRect(x: 0, y: 0, width: width, height: (height)/1.7)
+        dateLabel.frame = CGRect(x: 7, y: eventImageView.bottom+10, width: dateLabel.width, height: dateLabel.height)
         titleLabel.frame = CGRect(x: 7, y: dateLabel.bottom+5, width: titleLabel.width, height: titleLabel.height)
         locationLabel.frame = CGRect(x: 7, y: titleLabel.bottom+10, width: locationLabel.width, height: locationLabel.height)
         let buttonSize:CGFloat = 30

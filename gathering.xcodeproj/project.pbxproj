@@ -14,6 +14,11 @@
 		47595198296DF24300C40741 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47595196296DF24300C40741 /* Main.storyboard */; };
 		4759519A296DF24400C40741 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47595199296DF24400C40741 /* Assets.xcassets */; };
 		4759519D296DF24400C40741 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4759519B296DF24400C40741 /* LaunchScreen.storyboard */; };
+		477FC1992970786400D7C45A /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1982970786400D7C45A /* ChatViewController.swift */; };
+		477FC1A3297085F200D7C45A /* SectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A2297085F200D7C45A /* SectionController.swift */; };
+		477FC1A5297099FD00D7C45A /* TransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A4297099FD00D7C45A /* TransitionManager.swift */; };
+		477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A62970C21B00D7C45A /* EventInfoCard.swift */; };
+		477FC1AB2970C51F00D7C45A /* InfoCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */; };
 		47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EDE296F2B12001AF255 /* HomeViewController.swift */; };
 		47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */; };
 		47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */; };
@@ -41,6 +46,11 @@
 		47595199296DF24400C40741 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4759519C296DF24400C40741 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4759519E296DF24400C40741 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		477FC1982970786400D7C45A /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		477FC1A2297085F200D7C45A /* SectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionController.swift; sourceTree = "<group>"; };
+		477FC1A4297099FD00D7C45A /* TransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionManager.swift; sourceTree = "<group>"; };
+		477FC1A62970C21B00D7C45A /* EventInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoCard.swift; sourceTree = "<group>"; };
+		477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCardViewModel.swift; sourceTree = "<group>"; };
 		47FD6EDE296F2B12001AF255 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -105,12 +115,21 @@
 				47FD6EE7296F2F1C001AF255 /* Models */,
 				47FD6EE9296F2F43001AF255 /* Views */,
 				47FD6EE8296F2F39001AF255 /* ViewModels */,
+				477FC1A1297085DE00D7C45A /* SectionControllers */,
 				47FD6EE0296F2BFA001AF255 /* Controllers */,
 				47FD6EFC296F5619001AF255 /* Managers */,
 				47FD6EEA296F2F59001AF255 /* Resources */,
 				4759519E296DF24400C40741 /* Info.plist */,
 			);
 			path = gathering;
+			sourceTree = "<group>";
+		};
+		477FC1A1297085DE00D7C45A /* SectionControllers */ = {
+			isa = PBXGroup;
+			children = (
+				477FC1A2297085F200D7C45A /* SectionController.swift */,
+			);
+			path = SectionControllers;
 			sourceTree = "<group>";
 		};
 		47FD6EDD296F2B05001AF255 /* Core */ = {
@@ -148,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				47FD6EFA296F4F4E001AF255 /* EventCollectionViewCellViewModel.swift */,
+				477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -155,6 +175,7 @@
 		47FD6EE9296F2F43001AF255 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				477FC1A62970C21B00D7C45A /* EventInfoCard.swift */,
 				47FD6EF6296F4EA5001AF255 /* Cells */,
 				47FD6EF7296F4EC0001AF255 /* Storyboards */,
 			);
@@ -177,6 +198,7 @@
 			children = (
 				47595194296DF24300C40741 /* WelcomeViewController.swift */,
 				47FD6F03296F7951001AF255 /* EventMainViewController.swift */,
+				477FC1982970786400D7C45A /* ChatViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -204,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				47FD6EFD296F5637001AF255 /* MockData.swift */,
+				477FC1A4297099FD00D7C45A /* TransitionManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -339,16 +362,21 @@
 				47595195296DF24300C40741 /* WelcomeViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
+				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,
+				477FC1992970786400D7C45A /* ChatViewController.swift in Sources */,
 				47FD6F00296F60B9001AF255 /* EventLargeCollectionViewCell.swift in Sources */,
 				47FD6EF5296F36F8001AF255 /* Event.swift in Sources */,
 				47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */,
+				477FC1A5297099FD00D7C45A /* TransitionManager.swift in Sources */,
+				477FC1AB2970C51F00D7C45A /* InfoCardViewModel.swift in Sources */,
 				47FD6EF3296F34F5001AF255 /* Extension.swift in Sources */,
 				47FD6EFB296F4F4E001AF255 /* EventCollectionViewCellViewModel.swift in Sources */,
 				47FD6EEF296F2FEA001AF255 /* NewEventViewController.swift in Sources */,
 				47595193296DF24300C40741 /* SceneDelegate.swift in Sources */,
 				47FD6EE6296F2EC7001AF255 /* ProfileViewController.swift in Sources */,
 				47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */,
+				477FC1A3297085F200D7C45A /* SectionController.swift in Sources */,
 				47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */,
 				47FD6EF1296F2FF6001AF255 /* User.swift in Sources */,
 				47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */,

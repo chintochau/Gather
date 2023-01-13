@@ -11,11 +11,12 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     
     private let event:Event
     private let eventImage:UIImage
-    private var statusBarFrame:CGRect = {
-        let frame = CGRect.zero
-        return frame
-    }()
+    
+    private var statusBarFrame = CGRect.zero
     private var statusBarView = UIView()
+    
+    var LikeButton:UIBarButtonItem?
+    var shareButton:UIBarButtonItem?
     
     private let scrollView:UIScrollView = {
         let scroll = UIScrollView()
@@ -23,16 +24,35 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         return scroll
     }()
     
-    private let contentView:UIView = {
+    let contentView:UIView = {
         let view = UIView()
         return view
     }()
     
-    private let imageView:UIImageView = {
+    let imageView:UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
+    let titleLabel:UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 30, weight: .bold)
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    let dateCard = EventInfoCard()
+    let locationCard = EventInfoCard()
+    let refundPolicyCard = EventInfoCard()
+    
+    private let bottomBar:UIToolbar = {
+        let view = UIToolbar()
+        view.backgroundColor = .mainColor
+        view.tintColor = .mainColor
+        view.barTintColor = .mainColor
+        return view
+    }()
     
     
     // MARK: - Init
@@ -40,6 +60,10 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         self.event = event
         self.eventImage = image
         imageView.image = eventImage
+        titleLabel.text = event.title
+        dateCard.configure(with: InfoCardViewModel(title: event.dateString, subTitle: "3pm - 10pm", infoType: .time))
+        locationCard.configure(with: InfoCardViewModel(title: event.location, subTitle: "Kwun Tong", infoType: .location))
+        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: "NO refund!!", infoType: .refundPolicy))
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,9 +78,49 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(imageView)
+        contentView.addSubview(dateCard)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(locationCard)
+        contentView.addSubview(refundPolicyCard)
+        view.addSubview(bottomBar)
         
+        LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
+        shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: nil)
+        navigationItem.rightBarButtonItems =  [
+            shareButton!,LikeButton!
+        ]
+        
+        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
         
         configureNavBar()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        tabBarController?.tabBar.isHidden = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
+        scrollView.frame = CGRect(x: 0, y: 0, width: view.width, height: view.height)
+        titleLabel.sizeToFit()
+        titleLabel.frame = CGRect(x: 15, y: imageView.bottom+20, width: titleLabel.width, height: titleLabel.height)
+        bottomBar.frame = CGRect(x: 0, y: view.height-80, width: view.width, height: 80)
+        dateCard.frame = CGRect(x: 5, y: titleLabel.bottom+20, width: view.width, height: 100)
+        locationCard.frame = CGRect(x: 5, y: dateCard.bottom+5, width: view.width, height: 100)
+        refundPolicyCard.frame = CGRect(x: 5, y: locationCard.bottom+5, width: view.width, height: 100)
+        contentView.frame = CGRect(x: 0, y: 0, width: view.width, height: imageView.height+titleLabel.height+bottomBar.height+dateCard.height+locationCard.height+refundPolicyCard.height+30+300)
+        scrollView.contentSize = contentView.frame.size
+        
+        
+        let gradient = CAGradientLayer()
+        gradient.frame = imageView.bounds
+        gradient.colors = [
+            UIColor.black.withAlphaComponent(0.2).cgColor,
+            UIColor.white.withAlphaComponent(0).cgColor]
+        imageView.layer.insertSublayer(gradient, at: 0)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -65,15 +129,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         statusBarStyle = .`default`
         navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
         navigationController?.navigationBar.barStyle = statusBarStyle
-        //        let appearance = UINavigationBarAppearance()
-        //        let navBar = self.navigationController?.navigationBar
-        //        //        appearance.configureWithDefaultBackground()
-        //        //        appearance.backgroundColor = .black
-        //        //        appearance.shadowColor = .black
-        //        navBar?.standardAppearance = appearance
-        //        navBar?.scrollEdgeAppearance = appearance
-        //        navBar?.compactAppearance = appearance
-        
+        tabBarController?.tabBar.isHidden = false
     }
     
     
@@ -123,23 +179,6 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     
     
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
-        scrollView.frame = CGRect(x: 0, y: 0, width: view.width, height: view.height)
-        
-        // scrollView.frame = view.safeAreaLayoutGuide.layoutFrame
-        contentView.frame = CGRect(x: 0, y: 0, width: view.width, height: 3000)
-        scrollView.contentSize = contentView.frame.size
-        
-        let gradient = CAGradientLayer()
-        gradient.frame = imageView.bounds
-        gradient.colors = [
-            UIColor.black.withAlphaComponent(0.4).cgColor,
-            UIColor.white.withAlphaComponent(0).cgColor]
-        imageView.layer.insertSublayer(gradient, at: 0)
-    }
-    
     
     
     //function that is called everytime the scrollView scrolls
@@ -188,7 +227,6 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         //Change the status bar to match the navigation bar background color
         statusBarView.backgroundColor = clearToWhite
     }
-    
     
 }
 

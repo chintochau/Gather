@@ -10,7 +10,7 @@ import SDWebImage
 
 class BasicEventCollectionViewCell: UICollectionViewCell {
     
-    let eventImage:UIImageView = {
+    let eventImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
@@ -54,7 +54,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(eventImage)
+        addSubview(eventImageView)
         addSubview(dateLabel)
         addSubview(titleLabel)
         addSubview(locationLabel)
@@ -78,7 +78,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        eventImage.image = nil
+        eventImageView.image = nil
         dateLabel.text = nil
         titleLabel.text = nil
         locationLabel.text = nil
@@ -87,7 +87,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with viewModel:EventCollectionViewCellViewModel) {
-        eventImage.sd_setImage(with: URL(string: viewModel.imageUrlString))
+        eventImageView.sd_setImage(with: URL(string: viewModel.imageUrlString))
         dateLabel.text = viewModel.date
         titleLabel.text = viewModel.title
         locationLabel.text = viewModel.location
