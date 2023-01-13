@@ -47,14 +47,11 @@ class EventInfoCard:UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        let iconSize:CGFloat = 20
-        icon.frame = CGRect(x: 20, y: 5, width: iconSize, height: iconSize)
-        titleLabel.sizeToFit()
-        titleLabel.frame = CGRect(x: icon.right+10, y: 2, width: titleLabel.width, height: titleLabel.height)
-        subTitleLabel.sizeToFit()
-        subTitleLabel.frame = CGRect(x: titleLabel.left, y: titleLabel.bottom+5, width: subTitleLabel.width, height: subTitleLabel.height)
-        button.sizeToFit()
-        button.frame = CGRect(x: titleLabel.left, y: subTitleLabel.bottom+3, width: button.width, height: button.height)
+        backgroundColor = .red
+        icon.anchor(top: self.topAnchor, leading: self.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        titleLabel.anchor(top: icon.topAnchor, leading: icon.trailingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
+        subTitleLabel.anchor(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil)
+        button.anchor(top: subTitleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: self.bottomAnchor, trailing: nil)
         
     }
     

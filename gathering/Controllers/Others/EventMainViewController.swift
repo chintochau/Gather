@@ -32,6 +32,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     let imageView:UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
@@ -77,11 +78,8 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubview(imageView)
-        contentView.addSubview(dateCard)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(locationCard)
-        contentView.addSubview(refundPolicyCard)
+        [imageView,dateCard,titleLabel,locationCard,refundPolicyCard].forEach{ contentView.addSubview($0)}
+        
         view.addSubview(bottomBar)
         
         LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
@@ -90,7 +88,6 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
             shareButton!,LikeButton!
         ]
         
-        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
         
         configureNavBar()
     }
@@ -101,18 +98,41 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         tabBarController?.tabBar.isHidden = true
     }
     
+    // MARK: - Layout Subviews
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
-        scrollView.frame = CGRect(x: 0, y: 0, width: view.width, height: view.height)
-        titleLabel.sizeToFit()
-        titleLabel.frame = CGRect(x: 15, y: imageView.bottom+20, width: titleLabel.width, height: titleLabel.height)
-        bottomBar.frame = CGRect(x: 0, y: view.height-80, width: view.width, height: 80)
-        dateCard.frame = CGRect(x: 5, y: titleLabel.bottom+20, width: view.width, height: 100)
-        locationCard.frame = CGRect(x: 5, y: dateCard.bottom+5, width: view.width, height: 100)
-        refundPolicyCard.frame = CGRect(x: 5, y: locationCard.bottom+5, width: view.width, height: 100)
-        contentView.frame = CGRect(x: 0, y: 0, width: view.width, height: imageView.height+titleLabel.height+bottomBar.height+dateCard.height+locationCard.height+refundPolicyCard.height+30+300)
-        scrollView.contentSize = contentView.frame.size
+        
+        scrollView.fillSuperview()
+        
+        contentView.anchor(
+            top: scrollView.contentLayoutGuide.topAnchor,
+            leading: scrollView.contentLayoutGuide.leadingAnchor,
+            bottom: scrollView.contentLayoutGuide.bottomAnchor,
+            trailing: scrollView.contentLayoutGuide.trailingAnchor)
+        
+        contentView.anchor(
+            top: nil,
+            leading: scrollView.frameLayoutGuide.leadingAnchor,
+            bottom: nil,
+            trailing: scrollView.frameLayoutGuide.trailingAnchor)
+        
+        imageView.anchor(
+            top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
+            bottom: nil,
+            trailing: nil)
+        imageView.heightAnchor.constraint(equalToConstant: 300).isActive = true
+        imageView.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
+        
+        
+        titleLabel.anchor(top: imageView.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 10, bottom: 0, right: 0))
+        
+        
+        dateCard.anchor(top: titleLabel.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil)
+        
+        locationCard.anchor(top: dateCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        
+        refundPolicyCard.anchor(top: locationCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
         
         let gradient = CAGradientLayer()
@@ -132,6 +152,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         tabBarController?.tabBar.isHidden = false
     }
     
+    // MARK: - Navigation Bar
     
     private func configureNavBar(){
         let appearance = UINavigationBarAppearance()
@@ -177,9 +198,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    
-    
-    
+    // MARK: - Scroll Effect
     
     //function that is called everytime the scrollView scrolls
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
