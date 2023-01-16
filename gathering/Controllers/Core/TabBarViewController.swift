@@ -15,24 +15,19 @@ class TabBarViewController: UITabBarController {
         
         
         
-        guard let email = UserDefaults.standard.string(forKey: "email"),
-              let username = UserDefaults.standard.string(forKey: "username") else {
-            return
-        }
         
 //        self.tabBar.isTranslucent = false
         self.tabBar.tintColor = .white
         self.tabBar.backgroundColor = .mainColor
         self.tabBar.barTintColor = .mainColor
         
-        let currentUser = User(username: username, email: email)
         
         //Define VC
         let home = HomeViewController()
         let explore = ExploreViewController()
         let newevent = NewEventViewController()
         let tickets = TicketViewController()
-        let profile = ProfileViewController(user: currentUser)
+        let profile = ProfileViewController()
         
         let nav1 = UINavigationController(rootViewController: home)
         let nav2 = UINavigationController(rootViewController: explore)

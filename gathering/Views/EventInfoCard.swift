@@ -43,15 +43,18 @@ class EventInfoCard:UIView {
         addSubview(subTitleLabel)
         addSubview(icon)
         addSubview(button)
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        backgroundColor = .red
-        icon.anchor(top: self.topAnchor, leading: self.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        icon.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        
         titleLabel.anchor(top: icon.topAnchor, leading: icon.trailingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
-        subTitleLabel.anchor(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil)
-        button.anchor(top: subTitleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: self.bottomAnchor, trailing: nil)
+        
+        subTitleLabel.anchor(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor)
+        
+        button.anchor(top: subTitleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: bottomAnchor, trailing: nil)
         
     }
     
@@ -74,6 +77,10 @@ class EventInfoCard:UIView {
         titleLabel.text = viewModel.title
         subTitleLabel.text = viewModel.subTitle
         
+    }
+    
+    @objc private func didTapButton(){
+        print("tapped")
     }
     
 }

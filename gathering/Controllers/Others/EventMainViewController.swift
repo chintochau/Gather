@@ -46,6 +46,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     let dateCard = EventInfoCard()
     let locationCard = EventInfoCard()
     let refundPolicyCard = EventInfoCard()
+    let aboutInfo = EventExtraInfoCard()
     
     private let bottomBar:UIToolbar = {
         let view = UIToolbar()
@@ -65,6 +66,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         dateCard.configure(with: InfoCardViewModel(title: event.dateString, subTitle: "3pm - 10pm", infoType: .time))
         locationCard.configure(with: InfoCardViewModel(title: event.location, subTitle: "Kwun Tong", infoType: .location))
         refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: "NO refund!!", infoType: .refundPolicy))
+        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: "1\n2/\n3/\n4/\n5/\n6/\n7/\n8/\n9/\n10"))
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -78,8 +80,16 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        [imageView,dateCard,titleLabel,locationCard,refundPolicyCard].forEach{ contentView.addSubview($0)}
+        [// add subviews
+            imageView,
+            dateCard,
+            titleLabel,
+            locationCard,
+            refundPolicyCard,
+            aboutInfo
+        ].forEach{ contentView.addSubview($0)}
         
+        imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
         view.addSubview(bottomBar)
         
         LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
@@ -89,6 +99,13 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         ]
         
         
+        
+        let gradient = CAGradientLayer()
+        gradient.frame = imageView.bounds
+        gradient.colors = [
+            UIColor.black.withAlphaComponent(0.2).cgColor,
+            UIColor.white.withAlphaComponent(0).cgColor]
+        imageView.layer.insertSublayer(gradient, at: 0)
         configureNavBar()
     }
     
@@ -116,6 +133,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
             bottom: nil,
             trailing: scrollView.frameLayoutGuide.trailingAnchor)
         
+        
         imageView.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
@@ -128,19 +146,15 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         titleLabel.anchor(top: imageView.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 10, bottom: 0, right: 0))
         
         
-        dateCard.anchor(top: titleLabel.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil)
+        dateCard.anchor(top: titleLabel.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 15, left: 10, bottom: 0, right: 0))
         
-        locationCard.anchor(top: dateCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        locationCard.anchor(top: dateCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
-        refundPolicyCard.anchor(top: locationCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        refundPolicyCard.anchor(top: locationCard.bottomAnchor, leading: dateCard.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        
+        aboutInfo.anchor(top: refundPolicyCard.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 100, right: 10))
         
         
-        let gradient = CAGradientLayer()
-        gradient.frame = imageView.bounds
-        gradient.colors = [
-            UIColor.black.withAlphaComponent(0.2).cgColor,
-            UIColor.white.withAlphaComponent(0).cgColor]
-        imageView.layer.insertSublayer(gradient, at: 0)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -232,7 +246,7 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
             navigationItem.title = event.title
         }
         //Define colors that change based off the offset
-        let clearToWhite = UIColor(red: 1, green: 1, blue: 1, alpha: offset)
+        let clearToWhite = UIColor.systemBackground.withAlphaComponent(offset)
 //        let whiteToBlack = UIColor(hue: 1, saturation: 0, brightness: 1-offset, alpha: 1 )
         
         //Dynamically change the color of the barbuttonitems and title (OLD CODE: does not work, need to rework for newer ios version

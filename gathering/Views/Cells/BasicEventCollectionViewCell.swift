@@ -60,6 +60,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         addSubview(locationLabel)
         addSubview(likeButton)
         addSubview(shareButton)
+        likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -92,6 +93,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         titleLabel.text = viewModel.title
         locationLabel.text = viewModel.location
         
+    }
+    
+    @objc private func didTapLike (){
+        print("LIKE")
     }
     
 }

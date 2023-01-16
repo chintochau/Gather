@@ -14,11 +14,22 @@
 		47595198296DF24300C40741 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 47595196296DF24300C40741 /* Main.storyboard */; };
 		4759519A296DF24400C40741 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 47595199296DF24400C40741 /* Assets.xcassets */; };
 		4759519D296DF24400C40741 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4759519B296DF24400C40741 /* LaunchScreen.storyboard */; };
+		4762966E29742416001BF5B7 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762966D29742416001BF5B7 /* LoginView.swift */; };
+		47629670297424FE001BF5B7 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4762966F297424FE001BF5B7 /* RegisterViewController.swift */; };
 		477FC1992970786400D7C45A /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1982970786400D7C45A /* ChatViewController.swift */; };
 		477FC1A3297085F200D7C45A /* SectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A2297085F200D7C45A /* SectionController.swift */; };
 		477FC1A5297099FD00D7C45A /* TransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A4297099FD00D7C45A /* TransitionManager.swift */; };
 		477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A62970C21B00D7C45A /* EventInfoCard.swift */; };
 		477FC1AB2970C51F00D7C45A /* InfoCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */; };
+		477FE39C297255830074B7AA /* GATextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FE39B297255830074B7AA /* GATextField.swift */; };
+		478B0C322971C36F000CECAB /* EventExtraInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */; };
+		478B0C342971C4C2000CECAB /* EventExtraInfoCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */; };
+		47BC0576297491F700242E45 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC0575297491F700242E45 /* TextFieldTableViewCell.swift */; };
+		47BC0578297491FF00242E45 /* TextViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC0577297491FF00242E45 /* TextViewTableViewCell.swift */; };
+		47BE57842972134B00EDA791 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57832972134B00EDA791 /* DatabaseManager.swift */; };
+		47BE57862972135100EDA791 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57852972135100EDA791 /* StorageManager.swift */; };
+		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
+		47BE578A2972157100EDA791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47BE57892972157100EDA791 /* GoogleService-Info.plist */; };
 		47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EDE296F2B12001AF255 /* HomeViewController.swift */; };
 		47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */; };
 		47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */; };
@@ -46,11 +57,22 @@
 		47595199296DF24400C40741 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4759519C296DF24400C40741 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4759519E296DF24400C40741 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4762966D29742416001BF5B7 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		4762966F297424FE001BF5B7 /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		477FC1982970786400D7C45A /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		477FC1A2297085F200D7C45A /* SectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionController.swift; sourceTree = "<group>"; };
 		477FC1A4297099FD00D7C45A /* TransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionManager.swift; sourceTree = "<group>"; };
 		477FC1A62970C21B00D7C45A /* EventInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoCard.swift; sourceTree = "<group>"; };
 		477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCardViewModel.swift; sourceTree = "<group>"; };
+		477FE39B297255830074B7AA /* GATextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GATextField.swift; sourceTree = "<group>"; };
+		478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExtraInfoCard.swift; sourceTree = "<group>"; };
+		478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExtraInfoCardViewModel.swift; sourceTree = "<group>"; };
+		47BC0575297491F700242E45 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		47BC0577297491FF00242E45 /* TextViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewTableViewCell.swift; sourceTree = "<group>"; };
+		47BE57832972134B00EDA791 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		47BE57852972135100EDA791 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		47BE57892972157100EDA791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		47FD6EDE296F2B12001AF255 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -112,12 +134,12 @@
 		4759518F296DF24300C40741 /* gathering */ = {
 			isa = PBXGroup;
 			children = (
+				47FD6EFC296F5619001AF255 /* Managers */,
 				47FD6EE7296F2F1C001AF255 /* Models */,
 				47FD6EE9296F2F43001AF255 /* Views */,
 				47FD6EE8296F2F39001AF255 /* ViewModels */,
 				477FC1A1297085DE00D7C45A /* SectionControllers */,
 				47FD6EE0296F2BFA001AF255 /* Controllers */,
-				47FD6EFC296F5619001AF255 /* Managers */,
 				47FD6EEA296F2F59001AF255 /* Resources */,
 				4759519E296DF24400C40741 /* Info.plist */,
 			);
@@ -168,6 +190,7 @@
 			children = (
 				47FD6EFA296F4F4E001AF255 /* EventCollectionViewCellViewModel.swift */,
 				477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */,
+				478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -176,8 +199,11 @@
 			isa = PBXGroup;
 			children = (
 				477FC1A62970C21B00D7C45A /* EventInfoCard.swift */,
+				478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */,
 				47FD6EF6296F4EA5001AF255 /* Cells */,
 				47FD6EF7296F4EC0001AF255 /* Storyboards */,
+				4762966D29742416001BF5B7 /* LoginView.swift */,
+				477FE39B297255830074B7AA /* GATextField.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -185,6 +211,7 @@
 		47FD6EEA296F2F59001AF255 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				47BE57892972157100EDA791 /* GoogleService-Info.plist */,
 				47FD6EF2296F34F5001AF255 /* Extension.swift */,
 				47595190296DF24300C40741 /* AppDelegate.swift */,
 				47595192296DF24300C40741 /* SceneDelegate.swift */,
@@ -199,6 +226,7 @@
 				47595194296DF24300C40741 /* WelcomeViewController.swift */,
 				47FD6F03296F7951001AF255 /* EventMainViewController.swift */,
 				477FC1982970786400D7C45A /* ChatViewController.swift */,
+				4762966F297424FE001BF5B7 /* RegisterViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -209,6 +237,8 @@
 				47FD6F01296F623A001AF255 /* BasicEventCollectionViewCell.swift */,
 				47FD6EF8296F4F04001AF255 /* EventSmallCollectionViewCell.swift */,
 				47FD6EFF296F60B9001AF255 /* EventLargeCollectionViewCell.swift */,
+				47BC0575297491F700242E45 /* TextFieldTableViewCell.swift */,
+				47BC0577297491FF00242E45 /* TextViewTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -227,6 +257,9 @@
 			children = (
 				47FD6EFD296F5637001AF255 /* MockData.swift */,
 				477FC1A4297099FD00D7C45A /* TransitionManager.swift */,
+				47BE57832972134B00EDA791 /* DatabaseManager.swift */,
+				47BE57852972135100EDA791 /* StorageManager.swift */,
+				47BE57872972135500EDA791 /* AuthManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -304,6 +337,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4759519D296DF24400C40741 /* LaunchScreen.storyboard in Resources */,
+				47BE578A2972157100EDA791 /* GoogleService-Info.plist in Resources */,
 				4759519A296DF24400C40741 /* Assets.xcassets in Resources */,
 				47595198296DF24300C40741 /* Main.storyboard in Resources */,
 			);
@@ -359,7 +393,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				47FD6EED296F2FD0001AF255 /* TicketViewController.swift in Sources */,
+				47BE57882972135500EDA791 /* AuthManager.swift in Sources */,
 				47595195296DF24300C40741 /* WelcomeViewController.swift in Sources */,
+				47BE57842972134B00EDA791 /* DatabaseManager.swift in Sources */,
+				47BC0576297491F700242E45 /* TextFieldTableViewCell.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
@@ -370,17 +407,24 @@
 				47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */,
 				477FC1A5297099FD00D7C45A /* TransitionManager.swift in Sources */,
 				477FC1AB2970C51F00D7C45A /* InfoCardViewModel.swift in Sources */,
+				477FE39C297255830074B7AA /* GATextField.swift in Sources */,
 				47FD6EF3296F34F5001AF255 /* Extension.swift in Sources */,
 				47FD6EFB296F4F4E001AF255 /* EventCollectionViewCellViewModel.swift in Sources */,
 				47FD6EEF296F2FEA001AF255 /* NewEventViewController.swift in Sources */,
 				47595193296DF24300C40741 /* SceneDelegate.swift in Sources */,
 				47FD6EE6296F2EC7001AF255 /* ProfileViewController.swift in Sources */,
+				478B0C342971C4C2000CECAB /* EventExtraInfoCardViewModel.swift in Sources */,
+				4762966E29742416001BF5B7 /* LoginView.swift in Sources */,
 				47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */,
 				477FC1A3297085F200D7C45A /* SectionController.swift in Sources */,
+				47BE57862972135100EDA791 /* StorageManager.swift in Sources */,
 				47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */,
+				47629670297424FE001BF5B7 /* RegisterViewController.swift in Sources */,
 				47FD6EF1296F2FF6001AF255 /* User.swift in Sources */,
 				47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */,
 				47FD6EF9296F4F04001AF255 /* EventSmallCollectionViewCell.swift in Sources */,
+				47BC0578297491FF00242E45 /* TextViewTableViewCell.swift in Sources */,
+				478B0C322971C36F000CECAB /* EventExtraInfoCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
