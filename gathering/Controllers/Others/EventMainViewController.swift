@@ -63,10 +63,28 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         self.eventImage = image
         imageView.image = eventImage
         titleLabel.text = event.title
-        dateCard.configure(with: InfoCardViewModel(title: event.dateString, subTitle: "3pm - 10pm", infoType: .time))
+        if let startDate = DateFormatter.formatter.date(from: event.startDateString),
+           let endDate = DateFormatter.formatter.date(from: event.endDateString){
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hh:mm a" // output format
+            let startTime = dateFormatter.string(from: startDate)
+            let endTime = dateFormatter.string(from: endDate)
+            
+            var timeInterval = "\(startTime)-\(endTime)"
+            if startTime == endTime {
+               timeInterval = "\(startTime)"
+            }
+            
+            dateFormatter.dateFormat = "dd MMM yyyy"
+            let date = dateFormatter.string(from: startDate)
+            
+            dateCard.configure(with: InfoCardViewModel(title: date, subTitle: timeInterval, infoType: .time))
+        }
+        
         locationCard.configure(with: InfoCardViewModel(title: event.location, subTitle: "Kwun Tong", infoType: .location))
-        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: "NO refund!!", infoType: .refundPolicy))
-        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: "1\n2/\n3/\n4/\n5/\n6/\n7/\n8/\n9/\n10"))
+        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: event.refundPolicy, infoType: .refundPolicy))
+        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: event.description))
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -92,11 +110,16 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         imageView.frame = CGRect(x: 0, y: 0, width: view.width, height: 300)
         view.addSubview(bottomBar)
         
-        LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
-        shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: nil)
-        navigationItem.rightBarButtonItems =  [
-            shareButton!,LikeButton!
-        ]
+         
+        if navigationItem.rightBarButtonItem == nil {
+            
+            LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
+            shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: nil)
+            navigationItem.rightBarButtonItems =  [
+                shareButton!,LikeButton!
+            ]
+            
+        }
         
         
         
@@ -109,11 +132,26 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         configureNavBar()
     }
     
+    func configureExit(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Publish", style: .done, target: self, action: #selector(didTapPublish))
+    }
+    @objc func didTapClose(){
+        self.dismiss(animated: true)
+    }
+    @objc func didTapPublish(){
+        navigationItem.rightBarButtonItem = nil
+        navigationItem.leftBarButtonItem = nil
+        self.dismiss(animated: true)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         tabBarController?.tabBar.isHidden = true
     }
+    
+    
     
     // MARK: - Layout Subviews
     override func viewDidLayoutSubviews() {

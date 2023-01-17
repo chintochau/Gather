@@ -36,10 +36,10 @@ class WelcomeViewController: UIViewController {
         UIView.animate(withDuration: 0.4, delay: 0) {
             self.logo.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.logo.alpha = 0
-        }completion: { _ in
+        }completion: { [weak self] _ in
             let vc = TabBarViewController()
             vc.modalPresentationStyle = .fullScreen
-            self.present(vc, animated: false)
+            self?.present(vc, animated: false)
         }
     }
 

@@ -56,7 +56,7 @@ class HomeViewController: UIViewController{
         events.forEach { event in
             viewModels.append(EventCollectionViewCellViewModel(imageUrlString: event.imageUrlString,
                                                                title: event.title,
-                                                               date: event.dateString,
+                                                               date: event.startDateString,
                                                                location: event.location,
                                                                tag: nil,
                                                                isLiked: false))

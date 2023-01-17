@@ -20,12 +20,14 @@ struct Event:Codable {
     let organisers:[String]?
     let eventType:Int // 1 normal
     let price: Double
-    let dateString:String
+    let startDateString:String
+    let endDateString:String
     let location:String
     let tag:[String]?
-    let detail:String?
+    let description:String
+    let refundPolicy:String
     
     var date:Date {
-        return DateFormatter.formatter.date(from: dateString) ?? Date()
+        return DateFormatter.formatter.date(from: startDateString) ?? Date()
     }
 }
