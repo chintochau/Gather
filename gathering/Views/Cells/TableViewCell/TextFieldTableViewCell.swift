@@ -44,7 +44,12 @@ class TextFieldTableViewCell: UITableViewCell {
     func configure(with placeholder:String,type:newEventPageType){
         textField.placeholder = placeholder
         textField.layer.name = type.rawValue
+        if type == .priceField{
+            textField.keyboardType = .numberPad
+        }
     }
+    
+    
 }
 
 #if DEBUG

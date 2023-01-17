@@ -12,6 +12,8 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     private let event:Event
     private let eventImage:UIImage
     
+    public var completion: (() -> Void)?
+    
     private var statusBarFrame = CGRect.zero
     private var statusBarView = UIView()
     
@@ -136,12 +138,16 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Publish", style: .done, target: self, action: #selector(didTapPublish))
     }
+    
+    // MARK: - Publish/ Preview
     @objc func didTapClose(){
         self.dismiss(animated: true)
     }
     @objc func didTapPublish(){
+        guard let completion = completion else {return}
         navigationItem.rightBarButtonItem = nil
         navigationItem.leftBarButtonItem = nil
+        completion()
         self.dismiss(animated: true)
     }
     

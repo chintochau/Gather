@@ -51,9 +51,20 @@ final class DatabaseManager {
                 return}
             
             completion(user)
-            
-            
+        }
+    }
+    
+    // MARK: - create Event
+    public func createEvent (with event:Event, completion: @escaping (Bool) -> Void) {
+        let ref = database.collection("Events").document(event.id)
+        
+        guard let data = event.asDictionary() else {return}
+        
+        ref.setData(data) { error in
+            guard error == nil else {return}
+            completion(true)
         }
         
     }
+    
 }

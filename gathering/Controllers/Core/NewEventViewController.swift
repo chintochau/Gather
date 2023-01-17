@@ -172,6 +172,11 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         }
     }
     
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     // MARK: - Row Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch viewModels[indexPath.section][indexPath.row] {
@@ -223,6 +228,11 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
     }
     
  
+}
+
+// MARK: - Pick Image
+extension NewEventViewController {
+    
 }
 
 
@@ -283,6 +293,18 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if let name = textField.layer.name, name == "price" {
+            if let _ = string.rangeOfCharacter(from: NSCharacterSet.decimalDigits) {
+                return true
+            }
+            
+            return string.isEmpty || string == "."
+        }
+        
+        return true
+    }
     
 }
 
@@ -290,32 +312,31 @@ extension NewEventViewController {
     // MARK: - Preview/Submit
     
     @objc private func didTapSubmit (){
-        
-        print(123)
+        view.endEditing(true)
+        guard let previewEvent = configurePreviewEvent() else {return}
+        publishPost(with: previewEvent) {[weak self] success in
+            if success {DispatchQueue.main.async{
+                self?.tabBarController?.selectedIndex = 0}
+            }
+        }
     }
     
     @objc private func didTapPreview(){
-        
         view.endEditing(true)
-        
-        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
-        
-        let previewEvent = Event(
-            id: IdManager.shared.createEventId(),
-            title: event.title,
-            host: username,
-            imageUrlString: "",
-            organisers: [username],
-            eventType: 1,
-            price: event.price, startDateString: event.startDate,
-            endDateString: event.endDate,
-            location: event.location,
-            tag: [],
-            description: event.description,
-            refundPolicy: event.refund)
+        guard let previewEvent = configurePreviewEvent() else {return}
         
         let vc = EventMainViewController(event: previewEvent, image: UIImage(named: "test")!)
         vc.configureExit()
+        vc.completion = { [weak self] in
+            self?.publishPost(with: previewEvent,completion: { [weak self] success in
+                if success {
+                    print(23)
+                    DispatchQueue.main.async{
+                        self?.tabBarController!.selectedIndex = 0}
+                }
+            })
+        }
+        
         let navVc = UINavigationController(rootViewController: vc)
         
         navVc.modalPresentationStyle = .fullScreen
@@ -326,6 +347,35 @@ extension NewEventViewController {
     
     @objc func didDismiss(){
         dismiss(animated: true)
+    }
+    
+    private func configurePreviewEvent () -> Event?{
+        
+        guard let username = UserDefaults.standard.string(forKey: "username") else { return nil }
+        
+        print(IdManager.shared.createEventId())
+        
+        return Event(
+            id: IdManager.shared.createEventId(),
+            title: event.title,
+            host: username,
+            imageUrlString: "",
+            organisers: [username],
+            eventType: 1,
+            price: event.price,
+            startDateString: event.startDate,
+            endDateString: event.endDate,
+            location: event.location,
+            tag: [],
+            description: event.description,
+            refundPolicy: event.refund)
+    }
+    
+    func publishPost(with previeEvent:Event, completion: @escaping (Bool) -> Void){
+        DatabaseManager.shared.createEvent(with: previeEvent) { done in
+            print(done)
+            completion(done)
+        }
     }
     
 }
