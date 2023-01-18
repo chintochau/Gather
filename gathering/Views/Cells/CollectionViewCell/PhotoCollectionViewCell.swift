@@ -11,7 +11,7 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PhotoCollectionViewCell"
     
-    private let imageView:UIImageView = {
+    let imageView:UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
         view.image = UIImage(systemName: "photo.on.rectangle.angled")

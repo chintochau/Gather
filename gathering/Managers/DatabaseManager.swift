@@ -56,7 +56,7 @@ final class DatabaseManager {
     
     // MARK: - create Event
     public func createEvent (with event:Event, completion: @escaping (Bool) -> Void) {
-        let ref = database.collection("Events").document(event.id)
+        let ref = database.collection("events").document(event.id)
         
         guard let data = event.asDictionary() else {return}
         
@@ -64,6 +64,24 @@ final class DatabaseManager {
             guard error == nil else {return}
             completion(true)
         }
+        
+    }
+    
+    // MARK: - Fetch Event
+    public func fetchEvents(completion: @escaping ([Event]?) -> Void) {
+        let ref = database.collection("events")
+        
+        ref.getDocuments { snapshot, error in
+            
+            guard let events = snapshot?.documents.compactMap({ Event(with: $0.data()) }) else {
+                completion(nil)
+                return
+            }
+            completion(events)
+        }
+    }
+    
+    public func fetchEvent(with eventID:String) {
         
     }
     

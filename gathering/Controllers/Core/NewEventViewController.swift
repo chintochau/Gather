@@ -18,7 +18,7 @@ enum newEventPageType:String {
     case priceField = "price"
 }
 
-class NewEventViewController: UIViewController {
+class NewEventViewController: UIViewController{
     
     
     private var event = (
@@ -30,7 +30,9 @@ class NewEventViewController: UIViewController {
         endDate:DateFormatter.formatter.string(from: Date()),
         startDate:DateFormatter.formatter.string(from: Date())
     )
-    
+    private var images = [UIImage?](repeating: nil, count: 3)
+    private var imageCells = [PhotoCollectionViewCell](repeating: PhotoCollectionViewCell(), count: 3)
+    private var currentIndex:Int = 0
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
     
@@ -134,6 +136,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         case .photoField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoGridTableViewCell.identifier, for: indexPath) as! PhotoGridTableViewCell
+            cell.delegate = self
             return cell
             
         case .locationField:
@@ -230,8 +233,29 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
  
 }
 
-// MARK: - Pick Image
-extension NewEventViewController {
+// MARK: - Get Image
+extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    func PhotoGridTableViewCellSelectImage(_ view: PhotoGridTableViewCell, cell: PhotoCollectionViewCell, index:Int) {
+        let picker = UIImagePickerController()
+        
+        picker.delegate = self
+        picker.allowsEditing = true
+        imageCells[index] = cell
+        currentIndex = index
+        
+        present(picker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let tempImage:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+        
+        imageCells[currentIndex].imageView.image = tempImage
+        imageCells[currentIndex].imageView.contentMode = .scaleAspectFill
+        images[currentIndex] = tempImage
+        
+        picker.dismiss(animated: true)
+        
+    }
     
 }
 
@@ -325,12 +349,11 @@ extension NewEventViewController {
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent() else {return}
         
-        let vc = EventMainViewController(event: previewEvent, image: UIImage(named: "test")!)
+        let vc = EventMainViewController(event: previewEvent, image: images[0] ?? UIImage(named: "test")!)
         vc.configureExit()
         vc.completion = { [weak self] in
             self?.publishPost(with: previewEvent,completion: { [weak self] success in
                 if success {
-                    print(23)
                     DispatchQueue.main.async{
                         self?.tabBarController!.selectedIndex = 0}
                 }
@@ -338,9 +361,7 @@ extension NewEventViewController {
         }
         
         let navVc = UINavigationController(rootViewController: vc)
-        
         navVc.modalPresentationStyle = .fullScreen
-        
         present(navVc, animated: true)
         
     }
@@ -349,7 +370,7 @@ extension NewEventViewController {
         dismiss(animated: true)
     }
     
-    private func configurePreviewEvent () -> Event?{
+    private func configurePreviewEvent (urlString:String = "") -> Event?{
         
         guard let username = UserDefaults.standard.string(forKey: "username") else { return nil }
         
@@ -359,7 +380,7 @@ extension NewEventViewController {
             id: IdManager.shared.createEventId(),
             title: event.title,
             host: username,
-            imageUrlString: "",
+            imageUrlString: urlString,
             organisers: [username],
             eventType: 1,
             price: event.price,
@@ -371,13 +392,18 @@ extension NewEventViewController {
             refundPolicy: event.refund)
     }
     
-    func publishPost(with previeEvent:Event, completion: @escaping (Bool) -> Void){
-        DatabaseManager.shared.createEvent(with: previeEvent) { done in
-            print(done)
-            completion(done)
+    func publishPost(with previewEvent:Event, completion: @escaping (Bool) -> Void){
+        guard let image = images[0],
+              let data = image.jpegData(compressionQuality: 0.5)
+        else {return}
+        StorageManager.shared.uploadImage(id: previewEvent.id, data: data) {[weak self] url in
+            guard let urlString = url?.absoluteString, let event = self?.configurePreviewEvent(urlString: urlString) else {return}
+            DatabaseManager.shared.createEvent(with: event) { done in
+                print(done)
+                completion(done)
+            }
         }
     }
-    
 }
 
 

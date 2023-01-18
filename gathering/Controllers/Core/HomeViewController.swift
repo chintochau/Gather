@@ -15,6 +15,9 @@ class HomeViewController: UIViewController{
     private var events = [Event]()
     
     var currentCell:BasicEventCollectionViewCell?
+    
+    
+    private let refreshControl = UIRefreshControl()
 
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -46,13 +49,16 @@ class HomeViewController: UIViewController{
     
     // MARK: - Fetch Data
     private func fetchDate(){
-        // create mock data for now
-        let event = MockData.event
-        events.append(contentsOf: repeatElement(event, count: 10))
-        createViewModels()
+        DatabaseManager.shared.fetchEvents(){events in
+            guard let events = events else {return}
+            self.events = events
+            self.createViewModels()
+        }
+        
     }
     // MARK: - Create VMs
     private func createViewModels(){
+        viewModels = []
         events.forEach { event in
             viewModels.append(EventCollectionViewCellViewModel(imageUrlString: event.imageUrlString,
                                                                title: event.title,
@@ -61,6 +67,8 @@ class HomeViewController: UIViewController{
                                                                tag: nil,
                                                                isLiked: false))
         }
+        print(events)
+        collectionView?.reloadData()
     }
 }
 
@@ -112,7 +120,17 @@ extension HomeViewController: UINavigationControllerDelegate{
         view.addSubview(collectionView)
         collectionView.delegate = self
         collectionView.dataSource = self
+        
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        collectionView.alwaysBounceVertical = true
+        collectionView.refreshControl = refreshControl
+        
         self.collectionView = collectionView
+    }
+    
+    @objc private func didPullToRefresh(){
+        fetchDate()
+        refreshControl.endRefreshing()
     }
 }
 

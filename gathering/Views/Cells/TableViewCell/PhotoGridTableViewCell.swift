@@ -7,9 +7,16 @@
 
 import UIKit
 
+protocol PhotoGridTableViewCellDelegate:AnyObject {
+    func PhotoGridTableViewCellSelectImage(_ view:PhotoGridTableViewCell, cell:PhotoCollectionViewCell, index:Int)
+}
 class PhotoGridTableViewCell: UITableViewCell {
 
     static let identifier = "PhotoGridTableViewCell"
+    
+    weak var delegate: PhotoGridTableViewCellDelegate?
+    
+    var cells = [UICollectionViewCell]()
     
     var collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -52,7 +59,8 @@ extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.identifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.identifier, for: indexPath) as! PhotoCollectionViewCell
+        cells.append(cell)
         return cell
     }
     
@@ -61,6 +69,12 @@ extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSo
         return CGSize(width: size, height: size)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! PhotoCollectionViewCell
+        
+        delegate?.PhotoGridTableViewCellSelectImage(self, cell: cell, index: indexPath.row)
+        
+    }
 }
 
 
