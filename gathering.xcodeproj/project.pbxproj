@@ -31,6 +31,7 @@
 		47BE57862972135100EDA791 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57852972135100EDA791 /* StorageManager.swift */; };
 		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
 		47BE578A2972157100EDA791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47BE57892972157100EDA791 /* GoogleService-Info.plist */; };
+		47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */; };
 		47F0CCFB2975B2A1003B22EB /* PhotoGridTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CCFA2975B2A1003B22EB /* PhotoGridTableViewCell.swift */; };
 		47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CCFE2975BA60003B22EB /* PhotoCollectionViewCell.swift */; };
 		47F0CD012975DDAB003B22EB /* GAButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CD002975DDAB003B22EB /* GAButton.swift */; };
@@ -79,6 +80,7 @@
 		47BE57852972135100EDA791 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		47BE57892972157100EDA791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMainViewModel.swift; sourceTree = "<group>"; };
 		47F0CCFA2975B2A1003B22EB /* PhotoGridTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridTableViewCell.swift; sourceTree = "<group>"; };
 		47F0CCFE2975BA60003B22EB /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		47F0CD002975DDAB003B22EB /* GAButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAButton.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				47FD6EFA296F4F4E001AF255 /* EventCollectionViewCellViewModel.swift */,
 				477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */,
 				478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */,
+				47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -432,6 +435,7 @@
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,
+				47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */,
 				477FC1992970786400D7C45A /* ChatViewController.swift in Sources */,
 				47FD6F00296F60B9001AF255 /* EventLargeCollectionViewCell.swift in Sources */,
 				47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */,

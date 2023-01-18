@@ -159,7 +159,11 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
         currentCell = cell
         guard let image = cell.eventImageView.image else {return}
-        let vc = EventMainViewController(event: self.events[indexPath.row], image: image)
+        
+        guard let eventVM = EventMainViewModel.configure(with: self.events[indexPath.row], image: image) else {return}
+        
+        let vc = EventMainViewController(viewModel: eventVM)
+        
 //        let navVc = UINavigationController(rootViewController: vc)
 //        navVc.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
 //        navVc.modalPresentationStyle = .fullScreen

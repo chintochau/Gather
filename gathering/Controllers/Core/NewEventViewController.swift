@@ -347,9 +347,10 @@ extension NewEventViewController {
     
     @objc private func didTapPreview(){
         view.endEditing(true)
-        guard let previewEvent = configurePreviewEvent() else {return}
+        guard let previewEvent = configurePreviewEvent(),
+        let eventVM = EventMainViewModel.configure(with: previewEvent, image:  images[0] ?? UIImage(named: "test")!) else {return}
         
-        let vc = EventMainViewController(event: previewEvent, image: images[0] ?? UIImage(named: "test")!)
+        let vc = EventMainViewController(viewModel: eventVM)
         vc.configureExit()
         vc.completion = { [weak self] in
             self?.publishPost(with: previewEvent,completion: { [weak self] success in

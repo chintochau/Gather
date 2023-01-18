@@ -60,13 +60,57 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     
     
     // MARK: - Init
-    init(event:Event,image:UIImage) {
-        self.event = event
-        self.eventImage = image
-        imageView.image = eventImage
-        titleLabel.text = event.title
-        if let startDate = DateFormatter.formatter.date(from: event.startDateString),
-           let endDate = DateFormatter.formatter.date(from: event.endDateString){
+    init(viewModel vm:EventMainViewModel) {
+        event = vm.event
+        eventImage = vm.image
+        imageView.image = vm.image
+        titleLabel.text = vm.title
+        
+        
+        dateCard.configure(with: InfoCardViewModel(title: vm.date.title, subTitle: vm.date.subTitle, infoType: .time))
+        locationCard.configure(with: InfoCardViewModel(title: vm.location.area, subTitle: vm.location.address, infoType: .location))
+        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: vm.refundPolicy, infoType: .refundPolicy))
+        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: vm.about))
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+//    init(event:Event,image:UIImage) {
+//
+//        self.event = event
+//        self.eventImage = image
+//        imageView.image = eventImage
+//        titleLabel.text = event.title
+//
+//
+//        if let startDate = DateFormatter.formatter.date(from: event.startDateString),
+//           let endDate = DateFormatter.formatter.date(from: event.endDateString){
+//
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateFormat = "hh:mm a" // output format
+//            let startTime = dateFormatter.string(from: startDate)
+//            let endTime = dateFormatter.string(from: endDate)
+//
+//            var timeInterval = "\(startTime)-\(endTime)"
+//            if startTime == endTime {
+//               timeInterval = "\(startTime)"
+//            }
+//
+//            dateFormatter.dateFormat = "dd MMM yyyy"
+//            let date = dateFormatter.string(from: startDate)
+//
+//            dateCard.configure(with: InfoCardViewModel(title: date, subTitle: timeInterval, infoType: .time))
+//        }
+//
+//        locationCard.configure(with: InfoCardViewModel(title: event.location, subTitle: "Kwun Tong", infoType: .location))
+//        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: event.refundPolicy, infoType: .refundPolicy))
+//        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: event.description))
+//        super.init(nibName: nil, bundle: nil)
+//    }
+    
+    private func configureDateString(startString:String, endString:String, completion:@escaping (_ title:String, _ interval:String) -> Void) {
+        
+        if let startDate = DateFormatter.formatter.date(from: startString),
+           let endDate = DateFormatter.formatter.date(from: endString){
             
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "hh:mm a" // output format
@@ -84,15 +128,13 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
             dateCard.configure(with: InfoCardViewModel(title: date, subTitle: timeInterval, infoType: .time))
         }
         
-        locationCard.configure(with: InfoCardViewModel(title: event.location, subTitle: "Kwun Tong", infoType: .location))
-        refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: event.refundPolicy, infoType: .refundPolicy))
-        aboutInfo.configure(with: EventExtraInfoCardViewModel(title: "About", info: event.description))
-        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     
     // MARK: - LifeCycle
     override func viewDidLoad() {
@@ -316,7 +358,7 @@ struct Preview: PreviewProvider {
     
     static var previews: some View {
         // view controller using programmatic UI
-        EventMainViewController(event: MockData.event, image: UIImage(named: "test")!).toPreview()
+        EventMainViewController(viewModel: EventMainViewModel.configure(with: MockData.event, image: UIImage(named: "test")!)!).toPreview()
     }
 }
 #endif
