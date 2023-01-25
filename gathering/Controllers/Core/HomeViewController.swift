@@ -67,7 +67,6 @@ class HomeViewController: UIViewController{
                                                                tag: nil,
                                                                isLiked: false))
         }
-        print(events)
         collectionView?.reloadData()
     }
 }
@@ -95,7 +94,7 @@ extension HomeViewController: UINavigationControllerDelegate{
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .absolute(250)),
+                        heightDimension: .estimated(220)),
                 subitem: item,
                 count: 1
             )
@@ -104,7 +103,7 @@ extension HomeViewController: UINavigationControllerDelegate{
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(100)),
+                        heightDimension: .estimated(150)),
                 subitem: item,
                 count: 1
             )
@@ -157,16 +156,13 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
+        
         currentCell = cell
         guard let image = cell.eventImageView.image else {return}
         
-        guard let eventVM = EventMainViewModel.configure(with: self.events[indexPath.row], image: image) else {return}
+        guard let eventVM = EventMainViewModel(with: self.events[indexPath.section], image: image) else {return}
         
-        let vc = EventMainViewController(viewModel: eventVM)
-        
-//        let navVc = UINavigationController(rootViewController: vc)
-//        navVc.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
-//        navVc.modalPresentationStyle = .fullScreen
+        let vc = EventViewController(viewModel: eventVM)
         
         navigationController?.delegate = self
         navigationController?.pushViewController(vc, animated: true)
@@ -175,9 +171,11 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     }
     
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
+
         return TransitionManager(duration: 0.2)
     }
+    
+    
     
 }
 

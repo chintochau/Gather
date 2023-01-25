@@ -19,6 +19,7 @@ class LoginView: UIView {
         let view = UILabel()
         view.text = "Welcome back"
         view.font = .systemFont(ofSize: 30, weight: .bold)
+        view.numberOfLines = 2
         return view
     }()
     
@@ -41,9 +42,9 @@ class LoginView: UIView {
     }()
     
     
-    let SigninButton:UIButton = {
+    let loginButton:UIButton = {
         let view = UIButton(type: .system)
-        view.setTitle("Signin", for: .normal)
+        view.setTitle("Login", for: .normal)
         view.backgroundColor = .mainColor
         view.layer.cornerRadius = 15
         view.tintColor = .white
@@ -85,14 +86,14 @@ class LoginView: UIView {
         [title,
          emailField,
          passwordField,
-         SigninButton,
+         loginButton,
          termsButton,
          privacyButton,
          registerButton,
          indicator
         ].forEach{(addSubview($0))}
         
-        SigninButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
         
     }
     
@@ -100,12 +101,16 @@ class LoginView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureTitle(text:String){
+        title.text = text
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         let padding:CGFloat = 20
         let space:CGFloat = 35
         let fieldWidth:CGFloat = width-2*padding
-        title.frame = CGRect(x: padding, y: 10, width: width - 2*space, height: 30)
+        title.frame = CGRect(x: padding, y: 10, width: width - 2*space, height: 80)
         
         emailField.frame = CGRect(x: padding, y: title.bottom+100, width: width-2*padding, height: 50)
         passwordField.frame = CGRect(x: padding, y: emailField.bottom+space, width: width-2*padding, height: 50)
@@ -115,31 +120,18 @@ class LoginView: UIView {
         privacyButton.frame = CGRect(x: padding, y: termsButton.bottom, width: fieldWidth, height: registerButton.height)
         
         let buttonHeight:CGFloat = 50
-        SigninButton.frame = CGRect(x: padding, y: height-buttonHeight-30, width: width-2*padding, height: buttonHeight)
-        indicator.frame = SigninButton.frame
+        loginButton.frame = CGRect(x: padding, y: height-buttonHeight-30, width: width-2*padding, height: buttonHeight)
+        indicator.frame = loginButton.frame
         
     }
     
     @objc private func didTapSignIn(){
         guard let email = emailField.text, let password = passwordField.text else {return}
         indicator.startAnimating()
-        SigninButton.isHidden = true
+        loginButton.isHidden = true
         delegate?.didTapLogin(self, email: email, password: password)
     }
     
 
 }
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewin: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ProfileViewController().toPreview()
-    }
-}
-#endif

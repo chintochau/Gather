@@ -77,17 +77,3 @@ extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSo
     }
 }
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previepg: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
-

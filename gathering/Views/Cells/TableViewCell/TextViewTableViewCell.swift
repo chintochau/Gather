@@ -11,6 +11,12 @@ import UIKit
 class TextViewTableViewCell: UITableViewCell {
     static let identifier = "TextViewCollectionViewCell"
     
+    
+    let titleLabel:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    
     let textView:UITextView = {
         let view = UITextView()
         view.backgroundColor = .systemBackground
@@ -25,7 +31,11 @@ class TextViewTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textView)
-        textView.fillSuperview()
+        contentView.addSubview(titleLabel)
+        selectionStyle = .none
+        
+        titleLabel.frame = CGRect(x: contentView.left+30, y: 0, width: contentView.width, height: 30)
+        textView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 20, left: 10, bottom: 0, right: 0))
     }
     
     override func layoutSubviews() {
@@ -44,23 +54,10 @@ class TextViewTableViewCell: UITableViewCell {
     func configure(with placeholder:String, type:newEventPageType){
         textView.text = placeholder
         textView.layer.name = type.rawValue
+        titleLabel.text = "\(type.rawValue):"
     }
 }
 
 
 extension TextViewTableViewCell:UITextViewDelegate {
 }
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewnew11: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
-

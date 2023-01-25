@@ -20,10 +20,10 @@ final class AuthManager {
     }
     
     
-    // MARK: - Singin/Signup
+    // MARK: - Login/Signup
     public func signUp(username:String,email:String, password:String, completion: @escaping (User?) -> Void) {
         
-        let newUser = User(username: username, email: email, profileUrlString: nil)
+        let newUser = User(username: username, email: email, profileUrlString: nil, hobbies: [nil])
         
         
         DatabaseManager.shared.findUserWithUsername(with: username) { user in
@@ -49,7 +49,7 @@ final class AuthManager {
         }
     }
     
-    public func signIn(email:String, password:String, completion: @escaping (User?) -> Void){
+    public func logIn(email:String, password:String, completion: @escaping (User?) -> Void){
         
         auth.signIn(withEmail: email, password: password) { result, error in
             guard error == nil, result != nil else {

@@ -19,6 +19,7 @@ class PhotoCollectionViewCell: UICollectionViewCell {
         view.layer.borderColor = UIColor.secondaryLabel.cgColor
         view.tintColor = .lightGray.withAlphaComponent(0.5)
         view.clipsToBounds = true
+        view.layer.masksToBounds = true
         return view
     }()
     
@@ -46,18 +47,4 @@ class PhotoCollectionViewCell: UICollectionViewCell {
      
     
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previepgpt: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
 

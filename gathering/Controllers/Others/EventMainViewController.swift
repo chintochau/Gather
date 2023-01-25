@@ -257,6 +257,8 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     private func configureNavBar(){
         let appearance = UINavigationBarAppearance()
         let navBar = self.navigationController?.navigationBar
+        
+        
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .clear
         appearance.shadowColor = .clear
@@ -348,18 +350,4 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
     }
     
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Preview: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        EventMainViewController(viewModel: EventMainViewModel.configure(with: MockData.event, image: UIImage(named: "test")!)!).toPreview()
-    }
-}
-#endif
 

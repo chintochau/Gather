@@ -88,7 +88,9 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with viewModel:EventCollectionViewCellViewModel) {
+        
         eventImageView.sd_setImage(with: URL(string: viewModel.imageUrlString))
+//        eventImageView.image = UIImage(named: "test")!
         dateLabel.text = viewModel.date
         titleLabel.text = viewModel.title
         locationLabel.text = viewModel.location

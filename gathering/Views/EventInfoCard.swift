@@ -63,7 +63,7 @@ class EventInfoCard:UIView {
     }
     
     public func configure(with viewModel: InfoCardViewModel) {
-        switch viewModel.infoType{
+        switch viewModel.infoType {
         case .location:
             icon.image = UIImage(systemName: "mappin.and.ellipse")
             button.setTitle("View on maps", for: .normal)
@@ -84,3 +84,4 @@ class EventInfoCard:UIView {
     }
     
 }
+

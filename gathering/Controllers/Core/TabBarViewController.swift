@@ -17,15 +17,16 @@ class TabBarViewController: UITabBarController {
         
         
 //        self.tabBar.isTranslucent = false
-        self.tabBar.tintColor = .white
-        self.tabBar.backgroundColor = .mainColor
-        self.tabBar.barTintColor = .mainColor
+        self.tabBar.tintColor = .mainColor
+        self.tabBar.unselectedItemTintColor = .gray.withAlphaComponent(0.5)
+        self.tabBar.backgroundColor = .tertiarySystemBackground
+        self.tabBar.barTintColor = .tertiarySystemBackground
         
         
         //Define VC
         let home = HomeViewController()
         let explore = ExploreViewController()
-        let newevent = NewEventViewController()
+        let newevent = NewCategoryViewController()
         let tickets = TicketViewController()
         let profile = ProfileViewController()
         
@@ -39,7 +40,7 @@ class TabBarViewController: UITabBarController {
         // Define tab items
         nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "house"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "magnifyingglass"), tag: 2)
-        nav3.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "camera"), tag: 3)
+        nav3.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "plus.app"), tag: 3)
         nav4.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "heart"), tag: 4)
         nav5.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "person"), tag: 5)
         
@@ -53,13 +54,12 @@ class TabBarViewController: UITabBarController {
             // Fallback on earlier versions
         }
         
+        [nav1,nav2,nav4,nav5].forEach({
+            $0.navigationBar.tintColor = .label
+            $0.navigationBar.prefersLargeTitles = true
+        })
+        nav3.navigationBar.prefersLargeTitles = false
         
-        nav1.navigationBar.tintColor = .label
-//        nav1.navigationBar.prefersLargeTitles = true
-        nav2.navigationBar.tintColor = .label
-        nav3.navigationBar.tintColor = .label
-        nav4.navigationBar.tintColor = .label
-        nav5.navigationBar.tintColor = .label
         
         
         if #available(iOS 14.0, *) {

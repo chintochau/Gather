@@ -25,7 +25,7 @@ final class TransitionManager: NSObject, UIViewControllerAnimatedTransitioning {
         // MARK: - home to event
         guard
             let fromViewController = transitionContext.viewController(forKey: .from) as? HomeViewController, // 1
-            let toViewController = transitionContext.viewController(forKey: .to) as? EventMainViewController, // 2
+            let toViewController = transitionContext.viewController(forKey: .to) as? EventViewController, // 2
             let eventCell = fromViewController.currentCell, // 3
             let eventCellImageView = fromViewController.currentCell?.eventImageView //4
         else {return}
@@ -54,7 +54,7 @@ final class TransitionManager: NSObject, UIViewControllerAnimatedTransitioning {
         
         let animator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut) {
             snapshotContentView.frame = containerView.convert(toViewController.view.frame, from: toViewController.view)
-            snapshotEventImageView.frame = containerView.convert(toViewController.imageView.frame, from: toViewController.imageView)
+            snapshotEventImageView.frame = containerView.convert(CGRect(x: 0, y: 0, width: toViewController.view.width, height: 340), from: toViewController.headerView)
             snapshotEventImageView.layer.cornerRadius = 0
         }
         

@@ -52,17 +52,3 @@ class GATextField: UITextField {
 
 }
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct PreviewL: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ProfileViewController().toPreview()
-    }
-}
-#endif
-

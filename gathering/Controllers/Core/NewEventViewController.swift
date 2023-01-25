@@ -9,13 +9,13 @@ import UIKit
 import IGListKit
 
 enum newEventPageType:String {
-    case photoField = "photo"
-    case titleField = "title"
-    case desctiptionField = "description"
-    case locationField = "location"
-    case refundField = "refund"
-    case dateField = "date"
-    case priceField = "price"
+    case photoField = "Photo"
+    case titleField = "Title"
+    case desctiptionField = "Description"
+    case locationField = "Location"
+    case refundField = "Refund Policy"
+    case dateField = "Date"
+    case priceField = "Price"
 }
 
 class NewEventViewController: UIViewController{
@@ -67,7 +67,7 @@ class NewEventViewController: UIViewController{
     private func configureTableView(){
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .secondarySystemBackground
+        tableView.backgroundColor = .systemBackground
         tableView.keyboardDismissMode = .interactive
         
         view.addSubview(tableView)
@@ -129,7 +129,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         case .desctiptionField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "Event Detail...",type: .desctiptionField)
+            cell.configure(with: "",type: .desctiptionField)
             cell.textView.delegate = self
             return cell
             
@@ -151,7 +151,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "RefundPolicy",type: .refundField)
+            cell.configure(with: "",type: .refundField)
             cell.textView.delegate = self
             return cell
             
@@ -179,6 +179,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    
     
     // MARK: - Row Height
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -230,6 +232,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         }
     }
     
+    
+    
  
 }
 
@@ -279,10 +283,10 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         tableView.endUpdates()
         if let name = textView.layer.name,let text = textView.text {
             switch name {
-            case "description":
+            case "Description":
                 event.description = text
                 print(event)
-            case "refund":
+            case "Refund Policy":
                 event.refund = text
             default:
                 print("please check type")
@@ -295,11 +299,11 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         
         if let name = textField.layer.name,let text = textField.text, !text.isEmpty {
             switch name {
-            case "title":
+            case "Title":
                 event.title = text
-            case "location":
+            case "Location":
                 event.location = text
-            case "price":
+            case "Price":
                 guard let price = Double(text) else {
                     fatalError("cannot change price to type double")}
                 event.price = price
@@ -319,7 +323,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        if let name = textField.layer.name, name == "price" {
+        if let name = textField.layer.name, name == "Price" {
             if let _ = string.rangeOfCharacter(from: NSCharacterSet.decimalDigits) {
                 return true
             }
@@ -348,9 +352,9 @@ extension NewEventViewController {
     @objc private func didTapPreview(){
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent(),
-        let eventVM = EventMainViewModel.configure(with: previewEvent, image:  images[0] ?? UIImage(named: "test")!) else {return}
+        let eventVM = EventMainViewModel(with: previewEvent, image:  images[0] ?? UIImage(named: "test")!) else {return}
         
-        let vc = EventMainViewController(viewModel: eventVM)
+        let vc = EventViewController(viewModel: eventVM)
         vc.configureExit()
         vc.completion = { [weak self] in
             self?.publishPost(with: previewEvent,completion: { [weak self] success in
@@ -394,7 +398,7 @@ extension NewEventViewController {
     }
     
     func publishPost(with previewEvent:Event, completion: @escaping (Bool) -> Void){
-        guard let image = images[0],
+        guard let image = images[0]?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
               let data = image.jpegData(compressionQuality: 0.5)
         else {return}
         StorageManager.shared.uploadImage(id: previewEvent.id, data: data) {[weak self] url in
@@ -406,18 +410,4 @@ extension NewEventViewController {
         }
     }
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewne: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
 

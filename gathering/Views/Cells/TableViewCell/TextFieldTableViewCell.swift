@@ -10,13 +10,17 @@ import UIKit
 class TextFieldTableViewCell: UITableViewCell {
     static let identifier = "TextFieldCollectionViewCell"
     
+    let titleLabel:UILabel = {
+        let view = UILabel()
+        return view
+    }()
     
     let textField:UITextField = {
         let view = UITextField()
         view.backgroundColor = .systemBackground
         view.textColor = .label
-        view.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        view.leftViewMode = .always
+//        view.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+//        view.leftViewMode = .always
         return view
     }()
     
@@ -24,11 +28,14 @@ class TextFieldTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textField)
+        contentView.addSubview(titleLabel)
+        selectionStyle = .none
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        textField.frame = bounds
+        titleLabel.frame = CGRect(x: contentView.left+30, y: 0, width: contentView.width/5, height: contentView.height)
+        textField.frame = CGRect(x: titleLabel.right+5, y: 0, width: contentView.width-titleLabel.width, height: contentView.height)
     }
     
     override func prepareForReuse() {
@@ -44,6 +51,7 @@ class TextFieldTableViewCell: UITableViewCell {
     func configure(with placeholder:String,type:newEventPageType){
         textField.placeholder = placeholder
         textField.layer.name = type.rawValue
+        titleLabel.text = "\(type.rawValue):"
         if type == .priceField{
             textField.keyboardType = .numberPad
         }
@@ -51,17 +59,4 @@ class TextFieldTableViewCell: UITableViewCell {
     
     
 }
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewnew: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
 

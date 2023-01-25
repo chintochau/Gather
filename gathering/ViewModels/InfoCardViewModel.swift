@@ -7,11 +7,7 @@
 
 import Foundation
 
-enum InfoCardType {
-    case time
-    case location
-    case refundPolicy
-}
+
 
 struct InfoCardViewModel {
     let title:String
