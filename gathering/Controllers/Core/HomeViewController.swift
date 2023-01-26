@@ -60,12 +60,15 @@ class HomeViewController: UIViewController{
     private func createViewModels(){
         viewModels = []
         events.forEach { event in
-            viewModels.append(EventCollectionViewCellViewModel(imageUrlString: event.imageUrlString,
+            viewModels.append(EventCollectionViewCellViewModel(imageUrlString: event.imageUrlString[0],
                                                                title: event.title,
                                                                date: event.startDateString,
                                                                location: event.location,
                                                                tag: nil,
-                                                               isLiked: false))
+                                                               isLiked: false,
+                                                               capacity: event.capacity,
+                                                               participants:event.participants
+                                                              ))
         }
         collectionView?.reloadData()
     }
@@ -94,7 +97,8 @@ extension HomeViewController: UINavigationControllerDelegate{
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(220)),
+                        heightDimension: .fractionalHeight(0.8)
+                    ),
                 subitem: item,
                 count: 1
             )
@@ -103,7 +107,7 @@ extension HomeViewController: UINavigationControllerDelegate{
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(150)),
+                        heightDimension: .estimated(200)),
                 subitem: item,
                 count: 1
             )
@@ -154,6 +158,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         }
     }
     
+    // MARK: - select cell
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
         
@@ -162,11 +167,17 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         
         guard let eventVM = EventMainViewModel(with: self.events[indexPath.section], image: image) else {return}
         
+        DatabaseManager.shared.joinEvent(eventID: eventVM.event.id) { success in
+            print(success)
+        }
+        
+        
         let vc = EventViewController(viewModel: eventVM)
         
         navigationController?.delegate = self
         navigationController?.pushViewController(vc, animated: true)
         navigationController?.delegate = nil
+        
         
     }
     

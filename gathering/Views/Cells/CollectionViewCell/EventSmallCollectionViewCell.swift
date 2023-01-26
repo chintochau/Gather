@@ -23,6 +23,11 @@ final class EventSmallCollectionViewCell: BasicEventCollectionViewCell{
         let buttonSize:CGFloat = 30
         shareButton.frame = CGRect(x: width-buttonSize-5, y: (height-buttonSize)/2, width: buttonSize, height: buttonSize)
         likeButton.frame = CGRect(x: shareButton.left-buttonSize, y: (height-buttonSize)/2, width: buttonSize, height: buttonSize)
+        
+        
+        let imageSize:CGFloat = 20
+        maleIconImageView.frame = CGRect(x: eventImageView.right+5, y: height-2*buttonSize, width: imageSize, height: imageSize)
+        femaleIconImageView.frame = CGRect(x: eventImageView.right+5, y: height-buttonSize-5, width: imageSize, height: imageSize)
     }
     
 }

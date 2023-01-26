@@ -12,6 +12,7 @@ struct User :Codable{
     let email:String
     let profileUrlString:String?
     let hobbies:[String?]
+    let gender:String
 }
 
 enum hobbyType:String,CaseIterable {
@@ -26,4 +27,12 @@ enum hobbyType:String,CaseIterable {
     case spiritual = "Spiritual & Self Improve"
     case videoGames = "Video Games"
     case animals = "Pets"
+}
+
+enum personalityType:String {
+    case openness = "Openness"
+    case conscientiousness = "Conscientiousness"
+    case extraversion = "Extraversion"
+    case agreeableness = "Agreeableness"
+    case neuroticism = "Neuroticism"
 }

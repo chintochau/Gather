@@ -52,14 +52,51 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    let maleIconImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "male")?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.tintColor = .blue
+        return view
+    }()
+    
+    let femaleIconImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "female")?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.tintColor = .red
+        return view
+    }()
+    
+    let maleNumber:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    
+    let femaleNumber:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(eventImageView)
-        addSubview(dateLabel)
-        addSubview(titleLabel)
-        addSubview(locationLabel)
-        addSubview(likeButton)
-        addSubview(shareButton)
+        
+        [
+            eventImageView,
+            dateLabel,
+            titleLabel,
+            locationLabel,
+            likeButton,
+            shareButton,
+            maleIconImageView,
+            femaleIconImageView,
+            maleNumber,
+            femaleNumber
+        ].forEach({addSubview($0)})
+        
+        
+        
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
     }
     
@@ -89,11 +126,26 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     func configure(with viewModel:EventCollectionViewCellViewModel) {
         
+        
+        var maleCount = 0, femaleCount = 0
+        
+        print(viewModel.participants)
+        
+//        for user in viewModel.participants {
+//            if user.value == "male" {
+//                maleCount += 1
+//            }
+//            if user.value == "female" {
+//                femaleCount += 1
+//            }
+//        }
+        
         eventImageView.sd_setImage(with: URL(string: viewModel.imageUrlString))
-//        eventImageView.image = UIImage(named: "test")!
         dateLabel.text = viewModel.date
         titleLabel.text = viewModel.title
         locationLabel.text = viewModel.location
+        maleNumber.text = "\(maleCount) / \(String(viewModel.capacity[0]))"
+        femaleNumber.text = "\(femaleCount) / \(String(viewModel.capacity[1]))"
         
     }
     

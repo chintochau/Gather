@@ -23,7 +23,19 @@ final class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
         let buttonSize:CGFloat = 30
         shareButton.frame = CGRect(x: width-buttonSize-5, y: height-buttonSize-5, width: buttonSize, height: buttonSize)
         likeButton.frame = CGRect(x: shareButton.left-buttonSize, y: height-buttonSize-5, width: buttonSize, height: buttonSize)
+        
+        
+        
+        let imageSize:CGFloat = 20
+        maleIconImageView.frame = CGRect(x: 7, y: height-2*buttonSize, width: imageSize, height: imageSize)
+        femaleIconImageView.frame = CGRect(x: 7, y: height-buttonSize-5, width: imageSize, height: imageSize)
+        maleNumber.sizeToFit()
+        maleNumber.frame = CGRect(x: maleIconImageView.right+5, y: maleIconImageView.top, width: maleNumber.width, height: maleNumber.height)
+        femaleNumber.sizeToFit()
+        femaleNumber.frame = CGRect(x: femaleIconImageView.right+5, y: femaleIconImageView.top, width: femaleNumber.width, height: femaleNumber.height)
+        
     }
     
     
 }
+

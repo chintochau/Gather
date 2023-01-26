@@ -45,6 +45,7 @@ class TextViewTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         textView.text = nil
+        titleLabel.text = nil
     }
     
     required init?(coder: NSCoder) {
@@ -55,6 +56,12 @@ class TextViewTableViewCell: UITableViewCell {
         textView.text = placeholder
         textView.layer.name = type.rawValue
         titleLabel.text = "\(type.rawValue):"
+    }
+    
+    
+    func configure(withTitle title: String, placeholder:String) {
+        titleLabel.text = title
+        textView.text = placeholder
     }
 }
 

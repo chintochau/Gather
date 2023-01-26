@@ -85,4 +85,22 @@ final class DatabaseManager {
         
     }
     
+    // MARK: - JoinEvent
+    
+    public func joinEvent(eventID:String,completion:@escaping (Bool) -> Void){
+        guard let currentUser = UserDefaults.standard.string(forKey: "username"),
+              let email = UserDefaults.standard.string(forKey: "email"),
+              let participent = Participant(username: currentUser, imageUrlString: "www.google.com", gender: "male", email: email).asDictionary()
+        else {return}
+        
+        
+        
+        let ref = database.collection("events").document(eventID)
+        
+        ref.updateData([
+            "participants" : FieldValue.arrayUnion([participent])
+        ])
+        
+    }
+    
 }

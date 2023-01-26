@@ -42,6 +42,7 @@ class TextFieldTableViewCell: UITableViewCell {
         super.prepareForReuse()
         textField.text = nil
         textField.placeholder = nil
+        titleLabel.text = nil
     }
     
     required init?(coder: NSCoder) {
@@ -55,6 +56,11 @@ class TextFieldTableViewCell: UITableViewCell {
         if type == .priceField{
             textField.keyboardType = .numberPad
         }
+    }
+    
+    func configure(withTitle title: String, placeholder:String) {
+        titleLabel.text = title
+        textField.placeholder = placeholder
     }
     
     

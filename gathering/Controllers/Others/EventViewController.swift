@@ -314,21 +314,3 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
 }
 
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Preview: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        
-        UINavigationController(rootViewController: EventViewController(viewModel: EventMainViewModel(with: MockData.event, image: UIImage(named: "test")!)!)
-        )
-            .toPreview()
-        
-    }
-}
-#endif
-

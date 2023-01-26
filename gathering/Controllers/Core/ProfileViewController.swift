@@ -8,19 +8,29 @@
 import UIKit
 import FirebaseAuth
 
+enum ProfileFieldType {
+    case textField(title:String, placeholder:String)
+    case textView(title:String, placeholder:String)
+    case value(title:String, value:String)
+    case labelField(title:String, text:String)
+}
+
 class ProfileViewController: UIViewController {
     
-    private let logoutButton:UIButton = {
-        let view = UIButton(type: .system)
-        view.setTitle("Logout", for: .normal)
-        view.tintColor = .label
-        view.backgroundColor = .mainColor
-        view.layer.cornerRadius = 15
-        view.tintColor = .white
-        view.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+    private let logoutButton = GAButton()
+    
+    private let tableView:UITableView = {
+        let view = UITableView(frame: .zero, style: .grouped)
+        view.backgroundColor = .systemBackground
+        
+        view.register(ValueTableViewCell.self, forCellReuseIdentifier: ValueTableViewCell.identifier)
+        
+        
         return view
     }()
     
+    private var viewModels = [[ProfileFieldType]]()
+    private var headerViewModel:ProfileHeaderViewViewModel?
     
     private let loginView = LoginView()
     
@@ -28,26 +38,56 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if AuthManager.shared.isSignedIn {
+            configureViewModels()
             configureProfileView()
         }else {
             configureLoginView()
         }
     }
     
+    private func configureViewModels(){
+        
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let email = UserDefaults.standard.string(forKey: "email")
+        else {return}
+        
+        headerViewModel = .init(
+            profileUrlString: nil,
+            username: username,
+            email: email)
+        
+        viewModels = [
+            // events
+            [],
+            // setting
+            [.value(title: "Location", value: "Toronto"),
+             .value(title: "Language", value: "English")],
+            // support
+            [.value(title: "Suggestions", value: "")],
+            // about
+            [.value(title: "Privacy", value: ""),
+             .value(title: "Terms of service", value: ""),
+             .value(title: "Cookie Policy", value: "")]
+        ]
+        
+    }
+    
     private func configureProfileView() {
-        view.addSubview(logoutButton)
-        logoutButton.addTarget(self, action: #selector(didTapLogOut), for: .touchUpInside)
+        view.addSubview(tableView)
+        tableView.fillSuperview()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.reloadData()
     }
     private func configureLoginView() {
         navigationItem.title = "Login"
+        navigationItem.rightBarButtonItem = nil
         view.addSubview(loginView)
         loginView.delegate = self
         loginView.registerButton.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
@@ -65,9 +105,13 @@ class ProfileViewController: UIViewController {
     private func layoutProfileView(){
         navigationItem.title = "Profile"
         self.loginView.removeFromSuperview()
-        logoutButton.frame = CGRect(x: 10, y: view.safeAreaInsets.top+10, width: view.width-20, height: 50)
     }
     
+    @objc private func didTapEditProfile(){
+        let vc = EditProfileViewController()
+        
+        present(vc, animated: true)
+    }
     
     @objc private func didTapLogOut(){
         AuthManager.shared.signOut { bool in
@@ -80,6 +124,91 @@ class ProfileViewController: UIViewController {
         let vc = RegisterViewController()
         present(UINavigationController(rootViewController: vc),animated: true)
     }
+    
+}
+
+extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
+    // MARK: - Section
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return viewModels.count
+    }
+    
+    // MARK: - Cell
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModels[section].count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch viewModels[indexPath.section][indexPath.row] {
+        case .value(title: let title, value: let value) :
+            let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
+            cell.configure(withTitle: title, placeholder: value)
+            return cell
+        default: return UITableViewCell()
+        }
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    // MARK: - Header
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        switch section {
+        case 0:
+            guard let headerViewModel = headerViewModel else {return nil}
+            let headerView = ProfileHeaderView()
+            headerView.configure(with: headerViewModel)
+            return headerView
+        case 1:
+            let view = SectionHeaderView()
+            view.configure(with: "Setting")
+            return view
+        case 2:
+            let view = SectionHeaderView()
+            view.configure(with: "Support")
+            return view
+        case 3:
+            let view = SectionHeaderView()
+            view.configure(with: "About")
+            return view
+        default: return nil
+        }
+        
+        
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 200
+        }
+        return 40
+        
+    }
+    
+    
+    // MARK: - Footer
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        guard section == viewModels.count - 1 else { return nil }
+        let footerView = UIView()
+        footerView.addSubview(logoutButton)
+        logoutButton.anchor(
+            top: footerView.topAnchor,
+            leading: footerView.leadingAnchor,
+            bottom: footerView.bottomAnchor,
+            trailing: footerView.trailingAnchor,
+            padding: .init(top: 20, left: 20, bottom: 20, right: 20))
+        logoutButton.setTitle("Logout", for: .normal)
+        logoutButton.addTarget(self, action: #selector(didTapLogOut), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditProfile) )
+        return footerView
+    }
+    
     
 }
 
@@ -107,4 +236,18 @@ extension ProfileViewController:LoginViewDelegate {
     
     
 }
+
+
+#if DEBUG
+import SwiftUI
+
+@available(iOS 13, *)
+struct Previewprofileview: PreviewProvider {
+    
+    static var previews: some View {
+        // view controller using programmatic UI
+        ProfileViewController().toPreview()
+    }
+}
+#endif
 

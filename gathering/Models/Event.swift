@@ -7,27 +7,31 @@
 
 import Foundation
 
-enum EventType:Int {
-    case normal = 1
-    case homeParty = 2
-}
-
 struct Event:Codable {
     let id: String
     let title:String
-    let host:String
-    let imageUrlString:String
-    let organisers:[String]?
-    let eventType:Int // 1 normal
+    let organisers:[String]
+    let imageUrlString:[String]
     let price: Double
     let startDateString:String
     let endDateString:String
     let location:String
-    let tag:[String]?
+    let tag:[String]
     let description:String
     let refundPolicy:String
+    let participants:[Participant]
+    let separateGender:Bool
+    let capacity:[Int]
+    
     
     var date:Date {
         return DateFormatter.formatter.date(from: startDateString) ?? Date()
     }
+}
+
+struct Participant:Codable {
+    let username:String
+    let imageUrlString:String
+    let gender:String
+    let email:String
 }

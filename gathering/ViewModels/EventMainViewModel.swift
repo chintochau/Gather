@@ -51,7 +51,7 @@ extension EventMainViewModel {
         self.location = (area: event.location, address: event.location)
         self.refundPolicy = event.refundPolicy
         self.about = event.description
-        self.owner = event.host
+        self.owner = event.organisers[0]
         self.price = String(event.price)
     }
     

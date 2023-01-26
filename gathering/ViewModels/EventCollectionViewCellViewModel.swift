@@ -19,4 +19,6 @@ struct EventCollectionViewCellViewModel {
     let location:String
     let tag: [EventTagType]?
     let isLiked: Bool
+    let capacity:[Int]
+    let participants:[Participant]
 }

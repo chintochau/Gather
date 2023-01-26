@@ -54,11 +54,14 @@ class TabBarViewController: UITabBarController {
             // Fallback on earlier versions
         }
         
-        [nav1,nav2,nav4,nav5].forEach({
+//        [nav1,nav2,nav4].forEach({
+//            $0.navigationBar.tintColor = .label
+//            $0.navigationBar.prefersLargeTitles = true
+//        })
+        [nav1,nav2,nav3,nav4,nav5].forEach({
             $0.navigationBar.tintColor = .label
-            $0.navigationBar.prefersLargeTitles = true
+            $0.navigationBar.prefersLargeTitles = false
         })
-        nav3.navigationBar.prefersLargeTitles = false
         
         
         

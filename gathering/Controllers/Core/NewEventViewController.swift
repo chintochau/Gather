@@ -30,6 +30,7 @@ class NewEventViewController: UIViewController{
         endDate:DateFormatter.formatter.string(from: Date()),
         startDate:DateFormatter.formatter.string(from: Date())
     )
+    
     private var images = [UIImage?](repeating: nil, count: 3)
     private var imageCells = [PhotoCollectionViewCell](repeating: PhotoCollectionViewCell(), count: 3)
     private var currentIndex:Int = 0
@@ -129,7 +130,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         case .desctiptionField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "",type: .desctiptionField)
+            cell.configure(with: "...",type: .desctiptionField)
             cell.textView.delegate = self
             return cell
             
@@ -151,7 +152,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "",type: .refundField)
+            cell.configure(with: "...",type: .refundField)
             cell.textView.delegate = self
             return cell
             
@@ -211,8 +212,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
                 padding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
             )
             previewButton.addTarget(self, action: #selector(didTapPreview), for: .touchUpInside)
-            
             previewButton.setTitle("Preview", for: .normal)
+            previewButton.backgroundColor = .lightGray
             
             publishButton.anchor(
                 top: buttonView.topAnchor,
@@ -278,20 +279,23 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
      case priceField = "price"
      */
     
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        textView.text = nil
+    }
+    
     func textViewDidChange(_ textView: UITextView) {
         tableView.beginUpdates()
         tableView.endUpdates()
         if let name = textView.layer.name,let text = textView.text {
             switch name {
-            case "Description":
+            case newEventPageType.desctiptionField.rawValue:
                 event.description = text
                 print(event)
-            case "Refund Policy":
+            case newEventPageType.refundField.rawValue:
                 event.refund = text
             default:
                 print("please check type")
             }
-            print(text)
         }
     }
     
@@ -299,11 +303,11 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         
         if let name = textField.layer.name,let text = textField.text, !text.isEmpty {
             switch name {
-            case "Title":
+            case newEventPageType.titleField.rawValue:
                 event.title = text
-            case "Location":
+            case newEventPageType.locationField.rawValue:
                 event.location = text
-            case "Price":
+            case newEventPageType.priceField.rawValue:
                 guard let price = Double(text) else {
                     fatalError("cannot change price to type double")}
                 event.price = price
@@ -323,7 +327,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        if let name = textField.layer.name, name == "Price" {
+        if let name = textField.layer.name, name == newEventPageType.priceField.rawValue {
             if let _ = string.rangeOfCharacter(from: NSCharacterSet.decimalDigits) {
                 return true
             }
@@ -333,6 +337,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         
         return true
     }
+    
     
 }
 
@@ -384,17 +389,18 @@ extension NewEventViewController {
         return Event(
             id: IdManager.shared.createEventId(),
             title: event.title,
-            host: username,
-            imageUrlString: urlString,
             organisers: [username],
-            eventType: 1,
+            imageUrlString: [urlString],
             price: event.price,
             startDateString: event.startDate,
             endDateString: event.endDate,
             location: event.location,
             tag: [],
             description: event.description,
-            refundPolicy: event.refund)
+            refundPolicy: event.refund, participants: [],
+            separateGender: true,
+            capacity: [10,10]
+        )
     }
     
     func publishPost(with previewEvent:Event, completion: @escaping (Bool) -> Void){
