@@ -143,7 +143,7 @@ class RegisterViewController: UIViewController {
         signUpButton.isHidden = true
         
         AuthManager.shared.signUp(username: username, email: email, password: password) {[weak self] user in
-            guard user != nil else {
+            guard let user  = user else {
                 
                 let alert = UIAlertController(title: "Oops~", message: "Account already exist, please try login", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
@@ -153,8 +153,9 @@ class RegisterViewController: UIViewController {
                 self?.signUpButton.isHidden = false
                 return
             }
-            UserDefaults.standard.set(username, forKey: "username")
-            UserDefaults.standard.set(email, forKey: "email")
+            
+            UserDefaultsManager.shared.updateUserProfile(with: user)
+            
             self?.dismiss(animated: true)
         }
     }

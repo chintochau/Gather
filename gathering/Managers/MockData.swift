@@ -22,7 +22,7 @@ struct MockData {
         location: "Hong Kong", tag: ["Jason","Marco"],
         description: "Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!",
         refundPolicy: "No Refund",
-        participants: [
+        participants: [:
         ],
         separateGender: true,
         capacity: [10,10]

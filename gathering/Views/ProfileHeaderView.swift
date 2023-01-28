@@ -20,14 +20,15 @@ class ProfileHeaderView: UIView {
         view.layer.masksToBounds = true
         view.clipsToBounds = true
         view.contentMode = .scaleAspectFill
-        view.image = UIImage(named: "test")!
+        view.image = UIImage(systemName: "person.crop.circle")
+        view.tintColor = .lightGray
+        view.backgroundColor = .secondarySystemBackground
         return view
         
     }()
     
     private let usernameLabel:UILabel = {
         let view = UILabel()
-        view.text = "JJchauu"
         view.textAlignment = .center
         view.font = .systemFont(ofSize: 30,weight: .bold)
         return view
@@ -35,7 +36,6 @@ class ProfileHeaderView: UIView {
     }()
     private let emailLabel:UILabel = {
         let view = UILabel()
-        view.text = "example@example.com"
         view.textAlignment = .center
         return view
         
@@ -74,16 +74,3 @@ class ProfileHeaderView: UIView {
     }
     
 }
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct previewHeader: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        EditProfileViewController().toPreview()
-    }
-}
-#endif
-

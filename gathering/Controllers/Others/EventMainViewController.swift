@@ -66,7 +66,6 @@ class EventMainViewController: UIViewController, UIScrollViewDelegate {
         imageView.image = vm.image
         titleLabel.text = vm.title
         
-        
         dateCard.configure(with: InfoCardViewModel(title: vm.date.title, subTitle: vm.date.subTitle, infoType: .time))
         locationCard.configure(with: InfoCardViewModel(title: vm.location.area, subTitle: vm.location.address, infoType: .location))
         refundPolicyCard.configure(with: InfoCardViewModel(title: "Refund Policy", subTitle: vm.refundPolicy, infoType: .refundPolicy))

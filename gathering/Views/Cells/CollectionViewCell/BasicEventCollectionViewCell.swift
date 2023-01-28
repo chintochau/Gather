@@ -68,6 +68,15 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    
+    let totalIconImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(systemName:  "person.crop.circle")
+        view.contentMode = .scaleAspectFit
+        view.tintColor = .mainColor
+        return view
+    }()
+    
     let maleNumber:UILabel = {
         let view = UILabel()
         return view
@@ -75,6 +84,17 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let femaleNumber:UILabel = {
         let view = UILabel()
+        return view
+    }()
+    
+    let totalNumber:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    
+    let priceLabel:UILabel = {
+        let view = UILabel()
+        
         return view
     }()
     
@@ -92,7 +112,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             maleIconImageView,
             femaleIconImageView,
             maleNumber,
-            femaleNumber
+            femaleNumber,
+            totalIconImageView,
+            totalNumber,
+            priceLabel
         ].forEach({addSubview($0)})
         
         
@@ -122,30 +145,35 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         locationLabel.text = nil
         likeButton.setImage(UIImage(systemName:  "heart"), for: .normal)
         likeButton.tintColor = .label
+        [
+            totalNumber,totalIconImageView,maleIconImageView,maleNumber,femaleNumber,femaleIconImageView
+        ].forEach({$0.isHidden = false})
     }
     
-    func configure(with viewModel:EventCollectionViewCellViewModel) {
+    func configure(with vm:EventCollectionViewCellViewModel) {
         
+        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString))
+        dateLabel.text = vm.date
+        titleLabel.text = vm.title
+        locationLabel.text = vm.location
         
-        var maleCount = 0, femaleCount = 0
+        if vm.isSeparated {
+            [totalNumber,totalIconImageView
+            ].forEach({$0.isHidden = true})
+            
+            maleNumber.text = "\(vm.peopleCount.male) / \(String(vm.capacity[0]))"
+            femaleNumber.text = "\(vm.peopleCount.female) / \(String(vm.capacity[1]))"
+        }else {
+            [maleNumber,femaleNumber,
+             maleIconImageView,femaleIconImageView
+            ].forEach({$0.isHidden = true})
+            
+            let totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female) / \(String(vm.capacity[0] + vm.capacity[1]))"
+            
+            totalNumber.text = totalNumberText
+        }
         
-        print(viewModel.participants)
-        
-//        for user in viewModel.participants {
-//            if user.value == "male" {
-//                maleCount += 1
-//            }
-//            if user.value == "female" {
-//                femaleCount += 1
-//            }
-//        }
-        
-        eventImageView.sd_setImage(with: URL(string: viewModel.imageUrlString))
-        dateLabel.text = viewModel.date
-        titleLabel.text = viewModel.title
-        locationLabel.text = viewModel.location
-        maleNumber.text = "\(maleCount) / \(String(viewModel.capacity[0]))"
-        femaleNumber.text = "\(femaleCount) / \(String(viewModel.capacity[1]))"
+        priceLabel.text = vm.price == 0.0 ? "Free" : "CA$: \(String(vm.price))"
         
     }
     

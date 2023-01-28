@@ -130,6 +130,7 @@ extension UIColor {
     }
     
     static let mainColor = UIColor(named: "mainColor")
+    static let blackBackground = UIColor(named: "blackBackground")
 }
 
 extension UILabel {

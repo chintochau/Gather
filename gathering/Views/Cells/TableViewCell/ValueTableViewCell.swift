@@ -21,7 +21,7 @@ class ValueTableViewCell: UITableViewCell {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
         accessoryType = .disclosureIndicator
         contentView.addSubview(titleLabel)
-        titleLabel.frame = CGRect(x: contentView.left+30, y: 0, width: contentView.width, height: contentView.height)
+        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width, height: contentView.height)
     }
     
     override func layoutSubviews() {

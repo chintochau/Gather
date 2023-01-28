@@ -60,15 +60,7 @@ class HomeViewController: UIViewController{
     private func createViewModels(){
         viewModels = []
         events.forEach { event in
-            viewModels.append(EventCollectionViewCellViewModel(imageUrlString: event.imageUrlString[0],
-                                                               title: event.title,
-                                                               date: event.startDateString,
-                                                               location: event.location,
-                                                               tag: nil,
-                                                               isLiked: false,
-                                                               capacity: event.capacity,
-                                                               participants:event.participants
-                                                              ))
+            viewModels.append(EventCollectionViewCellViewModel(with: event))
         }
         collectionView?.reloadData()
     }
@@ -79,6 +71,9 @@ extension HomeViewController: UINavigationControllerDelegate{
     
     private func configureCollectionView(){
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
+            
+//            var groups = [NSCollectionLayoutGroup]()
+            
             // item
             
             let item = NSCollectionLayoutItem(
@@ -88,11 +83,26 @@ extension HomeViewController: UINavigationControllerDelegate{
                         heightDimension: .fractionalHeight(1))
             
             )
-            let inset:CGFloat = 10
-            item.contentInsets = .init(top: inset, leading: inset, bottom: inset, trailing: inset)
+            let horizeltanitem = NSCollectionLayoutItem(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1),
+                        heightDimension: .fractionalHeight(1))
+            )
             
+            // registered event group
+            let registeredEventGroup = NSCollectionLayoutGroup.horizontal(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(0.95),
+                        heightDimension: .absolute(150)
+                    ),
+                subitem: horizeltanitem,
+                count: 1
+            )
+            registeredEventGroup.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
             
-            // group
+            // group 0
             let group0 = NSCollectionLayoutGroup.vertical(
                 layoutSize:
                     NSCollectionLayoutSize(
@@ -102,7 +112,9 @@ extension HomeViewController: UINavigationControllerDelegate{
                 subitem: item,
                 count: 1
             )
+            group0.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
             
+            // group 1
             let group1 = NSCollectionLayoutGroup.vertical(
                 layoutSize:
                     NSCollectionLayoutSize(
@@ -112,8 +124,16 @@ extension HomeViewController: UINavigationControllerDelegate{
                 count: 1
             )
             
-            // section
-            return NSCollectionLayoutSection(group: index == 0 ? group0 : group1)
+            switch index {
+            case 0:
+                let section = NSCollectionLayoutSection(group: registeredEventGroup)
+                section.orthogonalScrollingBehavior = .groupPagingCentered
+                return section
+            case 1:
+                return NSCollectionLayoutSection(group: group0)
+            default:
+                return NSCollectionLayoutSection(group: group1)
+            }
         }))
         
         // MARK: - Cell Registration
@@ -140,14 +160,23 @@ extension HomeViewController: UINavigationControllerDelegate{
 // MARK: - Delegate, DataSource
 extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        
+        switch section {
+        case 0:
+            return 5
+        case 1:
+            return 1
+        default:
+            return 1
+        }
     }
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return viewModels.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let model = viewModels[indexPath.section]
-        if indexPath.section == 0 {
+        if indexPath.section == 1 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventLargeCollectionViewCell.identifier, for: indexPath) as! EventLargeCollectionViewCell
             cell.configure(with: model)
             return cell
@@ -163,13 +192,8 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
         
         currentCell = cell
-        guard let image = cell.eventImageView.image else {return}
-        
-        guard let eventVM = EventMainViewModel(with: self.events[indexPath.section], image: image) else {return}
-        
-        DatabaseManager.shared.joinEvent(eventID: eventVM.event.id) { success in
-            print(success)
-        }
+        guard let image = cell.eventImageView.image,
+              let eventVM = EventMainViewModel(with: self.events[indexPath.section], image: image) else {return}
         
         
         let vc = EventViewController(viewModel: eventVM)

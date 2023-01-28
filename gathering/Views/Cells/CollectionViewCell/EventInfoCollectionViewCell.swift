@@ -171,19 +171,3 @@ class EventInfoCollectionViewCell: UICollectionViewCell {
     
 }
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Preview0: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        EventViewController(viewModel: EventMainViewModel(with: MockData.event, image: UIImage(named: "test")!)!)
-            .toPreview()
-        
-    }
-}
-#endif
-

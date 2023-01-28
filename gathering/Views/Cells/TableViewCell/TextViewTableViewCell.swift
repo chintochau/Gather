@@ -19,8 +19,8 @@ class TextViewTableViewCell: UITableViewCell {
     
     let textView:UITextView = {
         let view = UITextView()
-        view.backgroundColor = .systemBackground
         view.textColor = .label
+        view.backgroundColor = .clear
         view.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         view.isScrollEnabled = false
         view.font = .preferredFont(forTextStyle: .headline)
@@ -34,7 +34,7 @@ class TextViewTableViewCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         selectionStyle = .none
         
-        titleLabel.frame = CGRect(x: contentView.left+30, y: 0, width: contentView.width, height: 30)
+        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width, height: 30)
         textView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 20, left: 10, bottom: 0, right: 0))
     }
     

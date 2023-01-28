@@ -17,7 +17,7 @@ enum ProfileFieldType {
 
 class ProfileViewController: UIViewController {
     
-    private let logoutButton = GAButton()
+    private let logoutButton = GAButton(title: "Logout")
     
     private let tableView:UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
@@ -31,7 +31,6 @@ class ProfileViewController: UIViewController {
     
     private var viewModels = [[ProfileFieldType]]()
     private var headerViewModel:ProfileHeaderViewViewModel?
-    
     private let loginView = LoginView()
     
     // MARK: - LifeCycle
@@ -80,10 +79,12 @@ class ProfileViewController: UIViewController {
     
     private func configureProfileView() {
         view.addSubview(tableView)
+        
         tableView.fillSuperview()
         tableView.dataSource = self
         tableView.delegate = self
         tableView.reloadData()
+        
     }
     private func configureLoginView() {
         navigationItem.title = "Login"
@@ -109,13 +110,17 @@ class ProfileViewController: UIViewController {
     
     @objc private func didTapEditProfile(){
         let vc = EditProfileViewController()
-        
-        present(vc, animated: true)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
     }
     
     @objc private func didTapLogOut(){
+        
         AuthManager.shared.signOut { bool in
-            self.logoutButton.removeFromSuperview()
+            UserDefaults.standard.set(nil, forKey: "username")
+            UserDefaults.standard.set(nil, forKey: "email")
+            UserDefaults.standard.set(nil, forKey: "profileUrlString")
+            self.tableView.removeFromSuperview()
             self.configureLoginView()
         }
     }
@@ -203,7 +208,6 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             bottom: footerView.bottomAnchor,
             trailing: footerView.trailingAnchor,
             padding: .init(top: 20, left: 20, bottom: 20, right: 20))
-        logoutButton.setTitle("Logout", for: .normal)
         logoutButton.addTarget(self, action: #selector(didTapLogOut), for: .touchUpInside)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditProfile) )
         return footerView
@@ -214,21 +218,22 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
 
 extension ProfileViewController:LoginViewDelegate {
     
+    // MARK: - didTapLogin
+    
     func didTapLogin(_ view: LoginView, email: String, password: String) {
         
-        AuthManager.shared.logIn(email: email, password: password) { user in
+        AuthManager.shared.logIn(email: email, password: password) { [weak self] user in
 
             view.indicator.stopAnimating()
             view.loginButton.isHidden = false
-            guard let user = user else {
+            
+            guard user != nil else {
+                print("Failed to retrive user data")
                 return
             }
-            UserDefaults.standard.set(user.username, forKey: "username")
-            UserDefaults.standard.set(user.email, forKey: "email")
-            UserDefaults.standard.set(user.profileUrlString, forKey: "profileUrlString")
-            
-            self.loginView.removeFromSuperview()
-            self.configureProfileView()
+            self?.configureViewModels()
+            self?.loginView.removeFromSuperview()
+            self?.configureProfileView()
             
         }
         
@@ -236,18 +241,4 @@ extension ProfileViewController:LoginViewDelegate {
     
     
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewprofileview: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ProfileViewController().toPreview()
-    }
-}
-#endif
 

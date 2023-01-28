@@ -13,6 +13,7 @@ final class DatabaseManager {
     
     let database = Firestore.firestore()
     
+    // MARK: - User Profile
     /// to create user profile when user first login the app
     public func createUserProfile(newUser:User, completion: @escaping (Bool) -> Void) {
         
@@ -23,6 +24,18 @@ final class DatabaseManager {
             completion(error == nil)
         }
     }
+    
+    public func updateUserProfile(user:User, completion: @escaping (Bool) -> Void) {
+        
+        let ref = database.collection("users").document(user.username)
+        
+        guard let data = user.asDictionary() else {return}
+        ref.setData(data) { error in
+            completion(error == nil)
+        }
+        
+    }
+    
     
     // MARK: - Find User
     public func findUserWithEmail(with email:String, completion: @escaping (User?) -> Void) {
@@ -87,19 +100,59 @@ final class DatabaseManager {
     
     // MARK: - JoinEvent
     
-    public func joinEvent(eventID:String,completion:@escaping (Bool) -> Void){
-        guard let currentUser = UserDefaults.standard.string(forKey: "username"),
-              let email = UserDefaults.standard.string(forKey: "email"),
-              let participent = Participant(username: currentUser, imageUrlString: "www.google.com", gender: "male", email: email).asDictionary()
-        else {return}
+    public func registerEvent(participant: Participant,eventID:String,completion:@escaping (Bool) -> Void){
         
+        let gender = participant.gender
         
+        guard let participant = participant.asDictionary(),
+              let username = UserDefaults.standard.string(forKey: "username")
+        else {
+            completion(false)
+            print("Failed to register event")
+            return}
         
         let ref = database.collection("events").document(eventID)
+        ref.collection("participants").document(username).setData(participant)
         
-        ref.updateData([
-            "participants" : FieldValue.arrayUnion([participent])
-        ])
+        /// use dictionary
+        ref.setData([
+            "participants" : [username:gender]
+        ], merge: true)
+        /*
+         participants (map)
+         {jason:male,
+         jackie:female}
+        */
+        
+        /// use Array
+        //        ref.updateData([
+        //            "participants" : FieldValue.arrayUnion([participant])
+        //        ]) { error in
+        //            completion(error == nil)
+        //        }
+        /*
+         participants (array)
+         [0] jason:male
+         [1] jackie:female
+        */
+        
+    }
+    
+    public func unregisterEvent(eventID:String, completion:@escaping (Bool) -> Void) {
+        
+        guard let username = UserDefaults.standard.string(forKey: "username")
+        else {
+            completion(false)
+            print("Failed to retrive username")
+            return}
+        
+        let ref = database.collection("events").document(eventID)
+        ref.collection("participants").document(username).delete()
+        
+        ref.setData([
+            "participants" : [username:FieldValue.delete()]
+        ], merge: true)
+        
         
     }
     

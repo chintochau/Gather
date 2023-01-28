@@ -10,6 +10,7 @@
 		3DA8C9AD61A6A13C30D248F5 /* Pods_gathering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26968C77C627589810F5CA45 /* Pods_gathering.framework */; };
 		471900C82979BF6900B2DD8C /* EventInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471900C72979BF6900B2DD8C /* EventInfoCollectionViewCell.swift */; };
 		471D217C2976AA4000C8E8C6 /* DatePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471D217B2976AA4000C8E8C6 /* DatePickerTableViewCell.swift */; };
+		472997072985AC4400543FF6 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 472997062985AC4400543FF6 /* UserDefaultsManager.swift */; };
 		474065B02980D67B00504422 /* NewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474065AF2980D67B00504422 /* NewCategoryViewController.swift */; };
 		474065B22980DF9D00504422 /* PhotoLabelCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */; };
 		47595191296DF24300C40741 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595190296DF24300C40741 /* AppDelegate.swift */; };
@@ -37,6 +38,7 @@
 		47BE57862972135100EDA791 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57852972135100EDA791 /* StorageManager.swift */; };
 		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
 		47BE578A2972157100EDA791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47BE57892972157100EDA791 /* GoogleService-Info.plist */; };
+		47D33ACC298336E800D9A205 /* EnrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D33ACB298336E800D9A205 /* EnrollViewController.swift */; };
 		47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */; };
 		47DC14C02978A6490006D4F4 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BF2978A6490006D4F4 /* EventViewController.swift */; };
 		47DC14C22978AE510006D4F4 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14C12978AE510006D4F4 /* HeaderCollectionReusableView.swift */; };
@@ -66,6 +68,7 @@
 		26968C77C627589810F5CA45 /* Pods_gathering.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_gathering.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		471900C72979BF6900B2DD8C /* EventInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		471D217B2976AA4000C8E8C6 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
+		472997062985AC4400543FF6 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		474065AF2980D67B00504422 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLabelCollectionViewCell.swift; sourceTree = "<group>"; };
 		4759518D296DF24300C40741 /* gathering.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gathering.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +98,7 @@
 		47BE57852972135100EDA791 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		47BE57892972157100EDA791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		47D33ACB298336E800D9A205 /* EnrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollViewController.swift; sourceTree = "<group>"; };
 		47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMainViewModel.swift; sourceTree = "<group>"; };
 		47DC14BF2978A6490006D4F4 /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		47DC14C12978AE510006D4F4 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -281,6 +285,7 @@
 				47FD6F03296F7951001AF255 /* EventMainViewController.swift */,
 				4762966F297424FE001BF5B7 /* RegisterViewController.swift */,
 				47DC14BF2978A6490006D4F4 /* EventViewController.swift */,
+				47D33ACB298336E800D9A205 /* EnrollViewController.swift */,
 				4763D9D6298183BB0062C12C /* EditProfileViewController.swift */,
 			);
 			path = Others;
@@ -313,6 +318,7 @@
 				47BE57852972135100EDA791 /* StorageManager.swift */,
 				47BE57872972135500EDA791 /* AuthManager.swift */,
 				47F0CD0229760AC4003B22EB /* IdManager.swift */,
+				472997062985AC4400543FF6 /* UserDefaultsManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -478,8 +484,10 @@
 				4762966E29742416001BF5B7 /* LoginView.swift in Sources */,
 				47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */,
 				471D217C2976AA4000C8E8C6 /* DatePickerTableViewCell.swift in Sources */,
+				47D33ACC298336E800D9A205 /* EnrollViewController.swift in Sources */,
 				47BE57862972135100EDA791 /* StorageManager.swift in Sources */,
 				47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */,
+				472997072985AC4400543FF6 /* UserDefaultsManager.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
 				47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */,
 				47629670297424FE001BF5B7 /* RegisterViewController.swift in Sources */,

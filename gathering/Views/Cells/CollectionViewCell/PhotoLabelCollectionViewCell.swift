@@ -60,17 +60,3 @@ class PhotoLabelCollectionViewCell: UICollectionViewCell {
         textLabel.text = nil
     }
 }
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Previewfdsa: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewCategoryViewController().toPreview()
-    }
-}
-#endif
-

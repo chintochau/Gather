@@ -19,7 +19,7 @@ class SectionHeaderView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(headerLabel)
-        headerLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 30, bottom: 0, right: 30))
+        headerLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
     }
     
     required init?(coder: NSCoder) {
@@ -30,17 +30,3 @@ class SectionHeaderView: UIView {
         headerLabel.text = text
     }
 }
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct sectionheader: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ProfileViewController().toPreview()
-    }
-}
-#endif
-

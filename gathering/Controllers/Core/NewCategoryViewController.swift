@@ -50,6 +50,7 @@ class NewCategoryViewController: UIViewController {
     private func configureCategoryView(){
         loginView.removeFromSuperview()
         view.addSubview(collectionView)
+        
         collectionView.delegate = self
         collectionView.dataSource = self
     }
@@ -86,18 +87,20 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
 }
 
 extension NewCategoryViewController:LoginViewDelegate {
+    
     func didTapLogin(_ view: LoginView, email: String, password: String) {
-        AuthManager.shared.logIn(email: email, password: password) { user in
+        AuthManager.shared.logIn(email: email, password: password) { [weak self] user in
             
             view.indicator.stopAnimating()
             view.loginButton.isHidden = false
-            guard let user = user else {
+            
+            guard user != nil else {
+                print("Failed to retrive user data")
                 return
             }
-            UserDefaults.standard.set(user.username, forKey: "username")
-            UserDefaults.standard.set(user.email, forKey: "email")
-            UserDefaults.standard.set(user.profileUrlString, forKey: "profileUrlString")
-            self.loginView.removeFromSuperview()
+            
+            self?.loginView.removeFromSuperview()
+            self?.configureCategoryView()
         }
     }
     

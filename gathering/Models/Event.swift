@@ -19,7 +19,7 @@ struct Event:Codable {
     let tag:[String]
     let description:String
     let refundPolicy:String
-    let participants:[Participant]
+    let participants:[String:String]
     let separateGender:Bool
     let capacity:[Int]
     
@@ -27,11 +27,14 @@ struct Event:Codable {
     var date:Date {
         return DateFormatter.formatter.date(from: startDateString) ?? Date()
     }
+    var priceString:String {
+        return String(price)
+    }
 }
 
 struct Participant:Codable {
+    let name:String
     let username:String
-    let imageUrlString:String
     let gender:String
     let email:String
 }

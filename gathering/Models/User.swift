@@ -10,9 +10,10 @@ import Foundation
 struct User :Codable{
     let username:String
     let email:String
+    let name:String?
     let profileUrlString:String?
-    let hobbies:[String?]
-    let gender:String
+    let hobbies:[String?]?
+    let gender:String?
 }
 
 enum hobbyType:String,CaseIterable {
@@ -35,4 +36,10 @@ enum personalityType:String {
     case extraversion = "Extraversion"
     case agreeableness = "Agreeableness"
     case neuroticism = "Neuroticism"
+}
+
+enum gender:String,CaseIterable {
+    case male = "male"
+    case female = "female"
+    case nonBinary = "non binary"
 }

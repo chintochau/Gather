@@ -54,7 +54,7 @@ final class TransitionManager: NSObject, UIViewControllerAnimatedTransitioning {
         
         let animator = UIViewPropertyAnimator(duration: duration, curve: .easeInOut) {
             snapshotContentView.frame = containerView.convert(toViewController.view.frame, from: toViewController.view)
-            snapshotEventImageView.frame = containerView.convert(CGRect(x: 0, y: 0, width: toViewController.view.width, height: 340), from: toViewController.headerView)
+            snapshotEventImageView.frame = containerView.convert(CGRect(x: 0, y: 0, width: toViewController.view.width, height: toViewController.view.width), from: toViewController.headerView)
             snapshotEventImageView.layer.cornerRadius = 0
         }
         

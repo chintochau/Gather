@@ -14,11 +14,11 @@ class GATextField: UITextField {
     private let label:UILabel = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 18, weight: .bold)
-        view.textColor = .gray
+        view.textColor = .secondaryLabel
         return view
     }()
     
-    private let bottomLine:CALayer = {
+    let bottomLine:CALayer = {
         let view = CALayer()
         view.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
         view.borderWidth = 2
@@ -33,6 +33,8 @@ class GATextField: UITextField {
         leftView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
         layer.cornerRadius = 10
         borderStyle = .none
+        
+        label.anchor(top: topAnchor, leading: leadingAnchor, bottom: topAnchor, trailing: nil,padding: .init(top: -20, left: 10, bottom: 0, right: 0))
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +47,7 @@ class GATextField: UITextField {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        label.frame = CGRect(x: 10, y: -15, width: width, height: 20)
+//        label.frame = CGRect(x: 10, y: -15, width: width, height: 20)
         bottomLine.frame = CGRect(x: 10, y: height-2, width: width-20, height: 2)
     }
     

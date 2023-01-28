@@ -66,29 +66,14 @@ class DatePickerTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        startDate.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: UIEdgeInsets(top: 10, left: 30, bottom: 0, right: 0))
+        startDate.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: UIEdgeInsets(top: 10, left: 20, bottom: 0, right: 0))
         
-        endDate.anchor(top: startDate.bottomAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 30, bottom: 7, right: 0))
+        endDate.anchor(top: startDate.bottomAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 20, bottom: 7, right: 0))
         
         startDatePicker.anchor(top: startDate.topAnchor, leading: startDate.trailingAnchor, bottom: startDate.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
         
-        endDatePicker.anchor(top: endDate.topAnchor, leading: endDate.trailingAnchor, bottom: endDate.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
+        endDatePicker.anchor(top: endDate.topAnchor, leading: startDate.trailingAnchor, bottom: endDate.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
         
     }
     
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct PreviewInfo: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        NewEventViewController().toPreview()
-    }
-}
-#endif
-

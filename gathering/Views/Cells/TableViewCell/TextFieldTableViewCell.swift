@@ -17,7 +17,7 @@ class TextFieldTableViewCell: UITableViewCell {
     
     let textField:UITextField = {
         let view = UITextField()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .clear
         view.textColor = .label
 //        view.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
 //        view.leftViewMode = .always
@@ -34,7 +34,7 @@ class TextFieldTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        titleLabel.frame = CGRect(x: contentView.left+30, y: 0, width: contentView.width/5, height: contentView.height)
+        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width/5, height: contentView.height)
         textField.frame = CGRect(x: titleLabel.right+5, y: 0, width: contentView.width-titleLabel.width, height: contentView.height)
     }
     

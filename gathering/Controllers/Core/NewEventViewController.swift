@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import IGListKit
 
 enum newEventPageType:String {
     case photoField = "Photo"
@@ -30,6 +29,9 @@ class NewEventViewController: UIViewController{
         endDate:DateFormatter.formatter.string(from: Date()),
         startDate:DateFormatter.formatter.string(from: Date())
     )
+    
+    
+    private let picker = UIImagePickerController()
     
     private var images = [UIImage?](repeating: nil, count: 3)
     private var imageCells = [PhotoCollectionViewCell](repeating: PhotoCollectionViewCell(), count: 3)
@@ -63,6 +65,8 @@ class NewEventViewController: UIViewController{
         configureTableView()
         observeKeyboardChange()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Preview", style: .plain, target: self, action: #selector(didTapPreview))
+        UserDefaultsManager.shared.printAllUserdefaults()
+        
     }
     
     private func configureTableView(){
@@ -240,8 +244,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
 
 // MARK: - Get Image
 extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    
     func PhotoGridTableViewCellSelectImage(_ view: PhotoGridTableViewCell, cell: PhotoCollectionViewCell, index:Int) {
-        let picker = UIImagePickerController()
         
         picker.delegate = self
         picker.allowsEditing = true
@@ -380,7 +384,7 @@ extension NewEventViewController {
         dismiss(animated: true)
     }
     
-    private func configurePreviewEvent (urlString:String = "") -> Event?{
+    private func configurePreviewEvent (urlStrings:[String] = []) -> Event?{
         
         guard let username = UserDefaults.standard.string(forKey: "username") else { return nil }
         
@@ -390,25 +394,42 @@ extension NewEventViewController {
             id: IdManager.shared.createEventId(),
             title: event.title,
             organisers: [username],
-            imageUrlString: [urlString],
+            imageUrlString: urlStrings,
             price: event.price,
             startDateString: event.startDate,
             endDateString: event.endDate,
             location: event.location,
             tag: [],
             description: event.description,
-            refundPolicy: event.refund, participants: [],
+            refundPolicy: event.refund, participants: [:],
             separateGender: true,
             capacity: [10,10]
         )
     }
     
     func publishPost(with previewEvent:Event, completion: @escaping (Bool) -> Void){
-        guard let image = images[0]?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
-              let data = image.jpegData(compressionQuality: 0.5)
-        else {return}
-        StorageManager.shared.uploadImage(id: previewEvent.id, data: data) {[weak self] url in
-            guard let urlString = url?.absoluteString, let event = self?.configurePreviewEvent(urlString: urlString) else {return}
+        
+        var imagesData = [Data?]()
+        
+        for img in images {
+            guard let image = img?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
+                  let data = image.jpegData(compressionQuality: 0.5)
+            else {break}
+            
+            imagesData.append(data)
+        }
+        
+//
+//        guard let image = images[0]?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
+//              let data = image.jpegData(compressionQuality: 0.5)
+//        else {return}
+        
+        StorageManager.shared.uploadImage(id: previewEvent.id, data: imagesData) {[weak self] urlStrings in
+            
+            print(urlStrings)
+            
+            guard let event = self?.configurePreviewEvent(urlStrings: urlStrings) else {return}
+            
             DatabaseManager.shared.createEvent(with: event) { done in
                 print(done)
                 completion(done)
