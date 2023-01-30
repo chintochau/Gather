@@ -10,7 +10,7 @@ import FirebaseAuth
 
 enum ProfileFieldType {
     case textField(title:String, placeholder:String)
-    case textView(title:String, placeholder:String)
+    case textView(title:String, text:String)
     case value(title:String, value:String)
     case labelField(title:String, text:String)
 }

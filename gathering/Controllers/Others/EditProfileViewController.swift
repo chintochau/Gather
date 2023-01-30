@@ -10,9 +10,6 @@ import UIKit
 
 class EditProfileViewController: UIViewController,UITableViewDelegate,UITableViewDataSource, UITextViewDelegate,UITextFieldDelegate {
     
-    deinit {
-        print("released")
-    }
     
     private let imagePicker = UIImagePickerController()
     
@@ -20,7 +17,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     
     private let viewModels:[ProfileFieldType] = [
         .textField(title: "Name", placeholder: "Enter Name"),
-        .textView(title: "Bio", placeholder: ""),
+        .textView(title: "Bio", text: ""),
         .value(title: "Gender", value: "")
     ]
     private var tempField = (
@@ -30,8 +27,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     )
     
     private var headerViewViewModel:ProfileHeaderViewViewModel?
-    
-    private var shouldUpdateImage:Bool = false
+    private let genderSelectionView = GenderSelectionView()
     
     private let tableView:UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
@@ -44,7 +40,10 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
         return view
     }()
     
+    
+    
     var completion: (() -> Void)?
+    private var shouldUpdateImage:Bool = false
 
     
     // MARK: - LifeCycle
@@ -55,20 +54,9 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
         tableView.dataSource = self
         tableView.delegate = self
         
-        guard let username = UserDefaults.standard.string(forKey: "username"),
-              let email = UserDefaults.standard.string(forKey: "email") else {return}
-        
-        
         setUpTempField()
-        
-        headerViewViewModel = .init(
-            profileUrlString: UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
-            username: username,
-            email: email)
-        
+        configureViewModels()
         setUpNavBar()
-        
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -76,12 +64,20 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
         tableView.frame = view.frame
     }
     
+    private func configureViewModels(){
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let email = UserDefaults.standard.string(forKey: "email") else {return}
+        headerViewViewModel = .init(
+            profileUrlString: UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
+            username: username,
+            email: email)
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModels.count
     }
     
-    
+    // MARK: - setUpTempField
     fileprivate func setUpTempField() {
         if let name = UserDefaults.standard.string(forKey: "name") {
             tempField.name = name
@@ -166,13 +162,16 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             cell.textField.text = tempField.name
             cell.textField.delegate = self
             return cell
-        case .textView(title: let title, placeholder: let placeholder):
+        case .textView(title: let title, text: let text):
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             
-            cell.configure(withTitle: title, placeholder: placeholder)
+            if title == "Bio" {
+                cell.configure(withTitle: title, placeholder: tempField.bio)
+            }else {
+                cell.configure(withTitle: title, placeholder: text)
+            }
             cell.textView.delegate = self
-            
             return cell
             
         case .value(title: let title, value: _):
@@ -180,6 +179,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
             
             cell.configure(withTitle: title, placeholder: tempField.gender)
+            cell.selectionStyle = .none
             return cell
         case .labelField:
             return UITableViewCell()
@@ -192,14 +192,51 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
         return UITableView.automaticDimension
     }
     
+    // MARK: - Select Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        guard let selectedCell = tableView.cellForRow(at: indexPath) else {return}
+        
+        switch viewModels[indexPath.row] {
+        case .value(title: let title, value: _):
+            if title == "Gender" {
+                genderSelectionView.delegate = self
+                view.addSubview(genderSelectionView)
+                let viewWidth:CGFloat = 100
+                genderSelectionView.frame = CGRect(x: selectedCell.width-viewWidth-20,
+                                                   y: selectedCell.bottom+selectedCell.height,
+                                                   width: viewWidth,
+                                                   height: 0)
+                
+                UIView.animate(withDuration: 0.2, delay: 0) {
+                    self.genderSelectionView.frame = CGRect(x: selectedCell.width-viewWidth-20,
+                                                            y: selectedCell.bottom+selectedCell.height+10,
+                                                            width: viewWidth,
+                                                            height: 120)
+                }
+            }else {return}
+        default: break
+            
+        }
+        
     }
+    
+    
+//    @objc func didTapChooseGender(_ sender:UIButton) {
+//        genderSelectionView.removeFromSuperview()
+//        let text = genderType.allCases[sender.tag].rawValue
+//        genderButton.setTitle(text, for: .normal)
+//        UserDefaults.standard.set(text, forKey: "gender")
+//    }
+    
     
     // MARK: - Text Input
     func textViewDidChange(_ textView: UITextView) {
         tableView.beginUpdates()
         tableView.endUpdates()
+        if let text = textView.text {
+            tempField.bio = text
+        }
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text {
@@ -208,17 +245,23 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     }
 }
 
+extension EditProfileViewController:GenderSelectionViewDelegate {
+    // MARK: - Pick Gender
+    func GenderSelectionViewDidSelectItem(_ view: GenderSelectionView, item: String) {
+        tempField.gender = item
+        tableView.reloadData()
+    }
+    
+    
+}
+
 extension EditProfileViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
-    
-    
+    // MARK: - Pick Image
     @objc func didTapPickImage(){
-        
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
         present(imagePicker, animated: true)
-        
     }
-    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let tempImage = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
         

@@ -73,11 +73,15 @@ final class DatabaseManager {
         
         guard let data = event.asDictionary() else {return}
         
-        ref.setData(data) { error in
-            guard error == nil else {return}
-            completion(true)
+        ref.setData(data) {[weak self] error in
+            guard error == nil,
+            let user = UserDefaultsManager.shared.getCurrentUser() else {return}
+            
+            self?.registerEvent(participant: user, eventID:event.id) { success in
+                completion(success)
+            }
+            
         }
-        
     }
     
     // MARK: - Fetch Event
@@ -102,7 +106,6 @@ final class DatabaseManager {
                 completion(nil)
                 return
             }
-            print(participants)
             completion(participants)
             
         }
@@ -128,8 +131,16 @@ final class DatabaseManager {
         /// use dictionary
         ref.setData([
             "participants" : [username:gender]
-        ], merge: true) { error in
-            completion(error == nil)
+        ], merge: true) {[weak self] error in
+            guard error == nil else {
+                completion(false)
+                return}
+            
+            let selfRef = self?.database.collection("users").document(username).collection("events")
+            selfRef?.document(eventID).setData(["id" : eventID],completion: { error in
+                completion(error == nil)
+            })
+            
         }
         /*
          participants (map)

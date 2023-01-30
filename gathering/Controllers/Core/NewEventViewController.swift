@@ -20,6 +20,7 @@ enum newEventPageType:String {
 class NewEventViewController: UIViewController{
     
     
+    
     private var event = (
         title:"",
         description:"",
@@ -97,15 +98,15 @@ class NewEventViewController: UIViewController{
     // MARK: - Keyboard Handling
     private func observeKeyboardChange(){
         
-        observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) { notification in
+        observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) {[weak self] notification in
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-                self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
                 }
             
         }
         
-        hideObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
-                self.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        hideObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
+                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         }
     }
     
@@ -294,7 +295,6 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
             switch name {
             case newEventPageType.desctiptionField.rawValue:
                 event.description = text
-                print(event)
             case newEventPageType.refundField.rawValue:
                 event.refund = text
             default:
@@ -318,7 +318,6 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
             default:
                 print("please check type")
             }
-            print(text)
         }
     }
     
@@ -429,9 +428,6 @@ extension NewEventViewController {
             guard let event = self?.configurePreviewEvent(urlStrings: urlStrings) else {return}
             
             DatabaseManager.shared.createEvent(with: event) { done in
-                
-                DatabaseManager.shared.registerEvent(participant: event.organisers.first!, eventID: event.id){_ in }
-                
                 completion(done)
             }
         }

@@ -22,7 +22,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     private let eventID:String
     private let event:Event
     
-    init? (event:Event) {
+    init (event:Event) {
         self.event = event
         self.eventID = event.id
         super.init(nibName: nil, bundle: nil)
@@ -31,6 +31,8 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     
     private var viewModels = [User]()
     
@@ -102,8 +104,8 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     // MARK: - Tap Gesture
     @objc func tapGesture(sender: UITapGestureRecognizer){
         
-        UIView.animate(withDuration: 0.2) {
-            self.view.frame = CGRect(x: 0, y: self.view.width, width: self.view.width, height: self.view.height)
+        UIView.animate(withDuration: 0.2) {[weak self] in
+            self?.view.frame = CGRect(x: 0, y: self?.view.width ?? 0, width: self?.view.width ?? 0, height: self?.view.height ?? 0)
         }
     }
     
@@ -160,8 +162,8 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
                 }
                 
             }
-            UIView.animate(withDuration: 0.2) {
-                self.view.frame = CGRect(x: 0, y: finalY, width: self.view.width, height: self.view.height)
+            UIView.animate(withDuration: 0.2) {[weak self] in
+                self?.view.frame = CGRect(x: 0, y: finalY, width: self?.view.width ?? 0, height: self?.view.height ?? 0)
             }
             sender.setTranslation(.zero, in: view)
         default:
@@ -233,7 +235,7 @@ extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
         
         let vc = EnrollViewController(vm: vm)
         vc.completion = {[weak self] in
-            self?.view.frame = CGRect(x: 0, y: (self?.view.width)!, width: self!.view.width, height: self!.view.height)
+            self?.view.frame = CGRect(x: 0, y: (self?.view.width)!, width: self?.view.width ?? 0, height: self?.view.height ?? 0)
             self?.configureViewModels()
         }
         

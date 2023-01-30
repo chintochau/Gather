@@ -37,6 +37,7 @@ struct EnrollViewModel {
 
 class EnrollViewController: UIViewController {
     
+    
     private let scrollView = UIScrollView()
     private let containerView = UIView()
     
@@ -74,44 +75,33 @@ class EnrollViewController: UIViewController {
         return view
     }()
     private let confirmButton = GAButton(title: "Confirm")
-    private let eventID:String
     
     private let genderButton:UIButton = {
         let view = UIButton()
-//        view.setTitle("male", for: .normal)
         view.setTitleColor(.label, for: .normal)
         return view
     }()
     
-    private let genderSelectionView:UIStackView = {
-        let view = UIStackView()
-        view.backgroundColor = .lightGray.withAlphaComponent(0.5)
-        view.layer.cornerRadius = 15
-        view.axis = .vertical
-        view.alignment = .center
-        view.distribution = .fillEqually
-        view.spacing = 5
-        return view
-        
-    }()
+    private let genderSelectionView = GenderSelectionView()
+    
     private let maleButton:UIButton = {
         let view = UIButton()
         view.tag = 0
-        view.setTitle(gender.allCases[view.tag].rawValue, for: .normal)
+        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
         view.setTitleColor(.label, for: .normal)
         return view
     }()
     private let femaleButton:UIButton = {
         let view = UIButton()
         view.tag = 1
-        view.setTitle(gender.allCases[view.tag].rawValue, for: .normal)
+        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
         view.setTitleColor(.label, for: .normal)
         return view
     }()
     private let nonBinaryButton:UIButton = {
         let view = UIButton()
         view.tag = 2
-        view.setTitle(gender.allCases[view.tag].rawValue, for: .normal)
+        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
         view.setTitleColor(.label, for: .normal)
         return view
     }()
@@ -124,9 +114,11 @@ class EnrollViewController: UIViewController {
         
     }()
     
+    private let eventID:String
     var completion: (() -> Void)?
     
     // MARK: - Init
+    
     init(vm:EnrollViewModel){
         nameField.text = vm.name
         emailField.text = vm.email
@@ -241,7 +233,6 @@ class EnrollViewController: UIViewController {
                      name: name,
                      profileUrlString: profileUrlString,
                      gender: gender), eventID: eventID) {[weak self] success in
-                         print(123)
                          self?.completion?()
                          self?.dismiss(animated: true)
         }
@@ -249,7 +240,6 @@ class EnrollViewController: UIViewController {
     
     @objc func didTapGenderButton(){
         view.addSubview(genderSelectionView)
-        
         genderSelectionView.frame = CGRect(x: genderButton.left + (genderButton.width-100)/2, y: genderButton.top+20, width: 100, height: 0)
         UIView.animate(withDuration: 0.2, delay: 0) {
             self.genderSelectionView.frame = CGRect(x: self.genderButton.left + (self.genderButton.width-100)/2, y: self.genderButton.bottom+5, width: 100, height: 120)
@@ -258,7 +248,7 @@ class EnrollViewController: UIViewController {
     
     @objc func didTapChooseGender(_ sender:UIButton) {
         genderSelectionView.removeFromSuperview()
-        let text = gender.allCases[sender.tag].rawValue
+        let text = genderType.allCases[sender.tag].rawValue
         genderButton.setTitle(text, for: .normal)
         UserDefaults.standard.set(text, forKey: "gender")
     }

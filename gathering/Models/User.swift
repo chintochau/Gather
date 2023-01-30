@@ -37,7 +37,7 @@ enum personalityType:String {
     case neuroticism = "Neuroticism"
 }
 
-enum gender:String,CaseIterable {
+enum genderType:String,CaseIterable {
     case male = "male"
     case female = "female"
     case nonBinary = "non binary"

@@ -10,9 +10,7 @@ import UIKit
 class EventViewController: UIViewController {
     
     private let image:UIImage
-    var headerView:HeaderCollectionReusableView!
-    
-    
+    var headerView:HeaderCollectionReusableView?
     public var completion: (() -> Void)?
     
     private let collectionView:UICollectionView = {
@@ -22,13 +20,6 @@ class EventViewController: UIViewController {
     }()
     
     
-    private let bottomBar:UIToolbar = {
-        let view = UIToolbar()
-        view.backgroundColor = .tertiarySystemBackground
-        view.tintColor = .mainColor
-        view.barTintColor = .tertiarySystemBackground
-        return view
-    }()
     
     private let priceLabel: UILabel = {
         let view = UILabel()
@@ -40,6 +31,8 @@ class EventViewController: UIViewController {
         let view = UILabel()
         return view
     }()
+    
+    private let bottomSheet:ParticipantsViewController
     private let selectButton = GAButton(title: "Enroll")
     
     var LikeButton:UIBarButtonItem?
@@ -48,6 +41,7 @@ class EventViewController: UIViewController {
     
     var infoViewModels:[EventInfoCollectionViewCellViewModel]
     private let event:Event
+    
     
     // MARK: - Init
     init(viewModel vm:EventMainViewModel){
@@ -62,13 +56,13 @@ class EventViewController: UIViewController {
             .extraInfo(title: "About", info: vm.about)
         ]
         priceNumberLabel.text = vm.price
+        bottomSheet = ParticipantsViewController(event: event)
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     func configureExit(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
@@ -95,10 +89,7 @@ class EventViewController: UIViewController {
         configureCollectionView()
         configureCollectionViewLayout()
         configureNavBar(shouldBeTransparent: true)
-        
-        //        configureBottomBar()
     }
-    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -121,32 +112,30 @@ class EventViewController: UIViewController {
         super.viewDidAppear(animated)
         addBottomSheet()
         tabBarController?.tabBar.isHidden = true
-//        addBottomBar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        bottomBar.removeFromSuperview()
+        bottomSheet.removeFromParent()
         tabBarController?.tabBar.isHidden = false
     }
     
     // MARK: - bottomSheet
     
     fileprivate func addBottomSheet() {
-        guard let bottomSheetVC = ParticipantsViewController(event: event) else {return}
-        addChild(bottomSheetVC)
-        view.addSubview(bottomSheetVC.view)
-        bottomSheetVC.didMove(toParent: self)
+        addChild(bottomSheet)
+        view.addSubview(bottomSheet.view)
+        bottomSheet.didMove(toParent: self)
     }
     
     
     // MARK: - collectionView
     fileprivate func configureCollectionView() {
         collectionView.contentInsetAdjustmentBehavior = .never
-        
         collectionView.register(EventInfoCollectionViewCell.self, forCellWithReuseIdentifier: EventInfoCollectionViewCell.identifier)
         collectionView.register(HeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier)
         collectionView.register(EventOwnerCollectionViewCell.self, forCellWithReuseIdentifier: EventOwnerCollectionViewCell.identifier)
+        
         collectionView.alwaysBounceVertical = true
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -163,30 +152,6 @@ class EventViewController: UIViewController {
     }
     
     
-    // MARK: - Bottom Bar
-    fileprivate func configureBottomBar() {
-        bottomBar.addSubview(priceLabel)
-        bottomBar.addSubview(priceNumberLabel)
-        bottomBar.addSubview(selectButton)
-        let padding:CGFloat = 30
-        priceLabel.sizeToFit()
-        priceLabel.frame = CGRect(x: padding, y: bottomBar.top+20, width: priceLabel.width, height: priceLabel.height)
-        priceNumberLabel.sizeToFit()
-        priceNumberLabel.frame = CGRect(x: padding, y: priceLabel.bottom+5, width: priceNumberLabel.width, height: priceNumberLabel.height)
-        
-        let buttonWidth:CGFloat = (view.width-40)/2
-        selectButton.frame = CGRect(x: view.width-padding-buttonWidth, y: 20, width: buttonWidth, height: 50)
-        selectButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
-
-    }
-    
-    
-    fileprivate func addBottomBar(){
-        guard let tabBar = tabBarController?.tabBar else {return}
-        let extraHeight:CGFloat = 30
-        bottomBar.frame = CGRect(x: 0, y: tabBar.top-extraHeight, width: tabBar.width, height: tabBar.height+extraHeight)
-        tabBarController?.view.addSubview(bottomBar)
-    }
     
     @objc private func didTapEnroll(){
         guard let vm = EnrollViewModel(with: event) else {
@@ -200,19 +165,13 @@ class EventViewController: UIViewController {
 extension EventViewController {
     // MARK: - NavBar
     private func configureNavBar(shouldBeTransparent:Bool){
-        
         guard let navBar = navigationController?.navigationBar else {return}
-        
-        
-        
         if navigationItem.rightBarButtonItem == nil {
-            
             LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: nil)
             shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: nil)
             navigationItem.rightBarButtonItems =  [
                 shareButton!,LikeButton!
             ]
-            
         }
         
         
@@ -256,7 +215,8 @@ extension EventViewController {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first,
               let statusBarHeight = window.windowScene?.statusBarManager?.statusBarFrame.height,
-              let navBar = navigationController?.navigationBar
+              let navBar = navigationController?.navigationBar,
+              let headerView = headerView
         else {return}
         let offset = headerView.height - statusBarHeight - (navBar.height)
         
@@ -283,6 +243,8 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
     // MARK: - cell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        let cell1 = collectionView.dequeueReusableCell(withReuseIdentifier: EventOwnerCollectionViewCell.identifier, for: indexPath)
+        
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {return UICollectionViewCell()}
         let padding = layout.sectionInset.left + layout.sectionInset.right
         
@@ -295,11 +257,8 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
             return cell
         }
         
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventInfoCollectionViewCell.identifier, for: indexPath) as! EventInfoCollectionViewCell
-        
         cell.widthAnchor.constraint(equalToConstant: view.width-padding).isActive = true
-        
         cell.configureCell(with:vm)
         cell.delegate = self
         return cell
@@ -311,17 +270,11 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
     
     // MARK: - header, footer
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        
-        headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier, for: indexPath) as? HeaderCollectionReusableView
-        
-        headerView.configure(with: image)
-        headerView.clipsToBounds = true
-        return headerView!
-        
-        
-        
-        
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionReusableView.identifier, for: indexPath) as! HeaderCollectionReusableView
+        header.configure(with: image)
+        header.clipsToBounds = true
+        headerView = header
+        return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

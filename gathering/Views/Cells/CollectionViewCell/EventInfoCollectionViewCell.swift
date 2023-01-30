@@ -11,7 +11,7 @@ enum EventInfoCollectionViewCellViewModel {
     case title(title:String)
     case info (title:String,subTitle:String, type:InfoCardType)
     case extraInfo (title:String, info:String)
-    case owner(name:String)
+    case owner(name:User)
 }
 
 enum InfoCardType {
@@ -27,7 +27,7 @@ protocol EventInfoCollectionViewCellDelegate:AnyObject {
 class EventInfoCollectionViewCell: UICollectionViewCell {
     static let identifier = "EventDetailCollectionViewCell"
     
-    var delegate: EventInfoCollectionViewCellDelegate?
+    weak var delegate: EventInfoCollectionViewCellDelegate?
     private var cellType: EventInfoCollectionViewCellViewModel?
     
     let titleLabel:UILabel = {

@@ -54,8 +54,9 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with owner:String) {
-        nameLabel.text = owner
+    func configure(with owner:User) {
+        nameLabel.text = owner.name
+        imageView.sd_setImage(with: URL(string: owner.profileUrlString ?? ""))
     }
     
     

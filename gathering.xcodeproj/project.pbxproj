@@ -39,6 +39,7 @@
 		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
 		47BE578A2972157100EDA791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47BE57892972157100EDA791 /* GoogleService-Info.plist */; };
 		47D33ACC298336E800D9A205 /* EnrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D33ACB298336E800D9A205 /* EnrollViewController.swift */; };
+		47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D44EF7298831A600DEB3B4 /* GenderSelectionView.swift */; };
 		47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */; };
 		47DC14C02978A6490006D4F4 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BF2978A6490006D4F4 /* EventViewController.swift */; };
 		47DC14C22978AE510006D4F4 /* HeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14C12978AE510006D4F4 /* HeaderCollectionReusableView.swift */; };
@@ -101,6 +102,7 @@
 		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		47BE57892972157100EDA791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		47D33ACB298336E800D9A205 /* EnrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollViewController.swift; sourceTree = "<group>"; };
+		47D44EF7298831A600DEB3B4 /* GenderSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSelectionView.swift; sourceTree = "<group>"; };
 		47DC14BD297869C30006D4F4 /* EventMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMainViewModel.swift; sourceTree = "<group>"; };
 		47DC14BF2978A6490006D4F4 /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		47DC14C12978AE510006D4F4 /* HeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */,
 				47DC14C32978B5470006D4F4 /* StretchyHeaderLayout.swift */,
 				47FD6EF7296F4EC0001AF255 /* Storyboards */,
+				47D44EF7298831A600DEB3B4 /* GenderSelectionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -468,6 +471,7 @@
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
+				47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */,
 				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,
 				47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */,
 				471900C82979BF6900B2DD8C /* EventInfoCollectionViewCell.swift in Sources */,

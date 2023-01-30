@@ -64,7 +64,7 @@ extension EventCollectionViewCellViewModel {
 //            }
 //        }
         
-        self.imageUrlString = event.imageUrlString[0]
+        self.imageUrlString = event.imageUrlString.first ?? ""
         self.title = event.title
         self.date = event.startDateString
         self.location = event.location
