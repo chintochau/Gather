@@ -105,7 +105,7 @@ class EventViewController: UIViewController {
         collectionView.frame = view.bounds
         var insets = view.safeAreaInsets
         insets.top = 0
-        insets.bottom = insets.bottom+50
+        insets.bottom = insets.bottom+180
         collectionView.contentInset = insets
     }
     
@@ -115,7 +115,6 @@ class EventViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        prepareBackgroundView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -134,24 +133,12 @@ class EventViewController: UIViewController {
     // MARK: - bottomSheet
     
     fileprivate func addBottomSheet() {
-        let bottomSheetVC = ParticipantsViewController()
+        guard let bottomSheetVC = ParticipantsViewController(event: event) else {return}
         addChild(bottomSheetVC)
         view.addSubview(bottomSheetVC.view)
         bottomSheetVC.didMove(toParent: self)
-        bottomSheetVC.view.frame = CGRect(x: 0, y: view.height-100, width: view.width, height: view.height)
     }
     
-    func prepareBackgroundView(){
-        let blurEffect = UIBlurEffect.init(style: .dark)
-        let visualEffect = UIVisualEffectView.init(effect: blurEffect)
-        let bluredView = UIVisualEffectView.init(effect: blurEffect)
-        bluredView.contentView.addSubview(visualEffect)
-
-        visualEffect.frame = UIScreen.main.bounds
-        bluredView.frame = UIScreen.main.bounds
-
-        view.insertSubview(bluredView, at: 0)
-    }
     
     // MARK: - collectionView
     fileprivate func configureCollectionView() {

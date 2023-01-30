@@ -430,7 +430,7 @@ extension NewEventViewController {
             
             DatabaseManager.shared.createEvent(with: event) { done in
                 
-                DatabaseManager.shared.registerEvent(participant: Participant(with: event.organisers.first!)!, eventID: event.id){_ in }
+                DatabaseManager.shared.registerEvent(participant: event.organisers.first!, eventID: event.id){_ in }
                 
                 completion(done)
             }

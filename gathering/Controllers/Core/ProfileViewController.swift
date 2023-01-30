@@ -24,8 +24,6 @@ class ProfileViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         view.register(ValueTableViewCell.self, forCellReuseIdentifier: ValueTableViewCell.identifier)
-        
-        
         return view
     }()
     
@@ -127,8 +125,13 @@ class ProfileViewController: UIViewController {
         }
     }
     
+    // MARK: - Tap Register
     @objc private func didTapRegister(){
         let vc = RegisterViewController()
+        vc.completion = {[weak self] in
+            self?.configureViewModels()
+            self?.configureProfileView()
+        }
         present(UINavigationController(rootViewController: vc),animated: true)
     }
     

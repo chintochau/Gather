@@ -124,6 +124,8 @@ class EnrollViewController: UIViewController {
         
     }()
     
+    var completion: (() -> Void)?
+    
     // MARK: - Init
     init(vm:EnrollViewModel){
         nameField.text = vm.name
@@ -149,7 +151,17 @@ class EnrollViewController: UIViewController {
         view.backgroundColor = .blackBackground
         setupScrollView()
         anchorSubviews()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        tapGesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(tapGesture)
     }
+    
+    
+    @objc private func didTapView(){
+        view.endEditing(true)
+        genderSelectionView.removeFromSuperview()
+    }
+    
 
     fileprivate func setupScrollView() {
         view.addSubview(scrollView)
@@ -217,12 +229,21 @@ class EnrollViewController: UIViewController {
         let info = UserDefaults.standard
         
         guard let username = info.string(forKey: "username"),
-        let name = info.string(forKey: "name"),
-              let gender = info.string(forKey: "gender")
+              let name = info.string(forKey: "name"),
+              let gender = info.string(forKey: "gender"),
+              let profileUrlString = info.string(forKey: UserDefaultsType.profileUrlString.rawValue)
         else {return}
         
-        DatabaseManager.shared.registerEvent(participant: Participant(name: name, username: username, gender: gender, email: emailField.text!), eventID: eventID) { success in
-            print(success)
+        DatabaseManager.shared.registerEvent(
+            participant:
+                User(username: username,
+                     email: emailField.text!,
+                     name: name,
+                     profileUrlString: profileUrlString,
+                     gender: gender), eventID: eventID) {[weak self] success in
+                         print(123)
+                         self?.completion?()
+                         self?.dismiss(animated: true)
         }
     }
     
@@ -241,6 +262,8 @@ class EnrollViewController: UIViewController {
         genderButton.setTitle(text, for: .normal)
         UserDefaults.standard.set(text, forKey: "gender")
     }
+    
+    
 
 }
 
@@ -249,8 +272,8 @@ extension EnrollViewController:UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text,
               !text.isEmpty else {return}
-        
         UserDefaults.standard.set(text, forKey: "name")
+        textField.resignFirstResponder()
         print(text)
         
     }

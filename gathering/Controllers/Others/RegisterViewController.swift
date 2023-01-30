@@ -9,6 +9,8 @@ import UIKit
 
 class RegisterViewController: UIViewController {
     
+    var completion: (() -> Void)?
+    
     private let titleLabel:UILabel = {
         let view = UILabel()
         view.text = "Create new account"
@@ -19,6 +21,7 @@ class RegisterViewController: UIViewController {
     private let usernameField:GATextField = {
         let view = GATextField()
         view.configure(name: "Username")
+        view.autocapitalizationType = .none
         view.text = "jjchau"
         view.placeholder = "Enter your username"
         return view
@@ -155,7 +158,7 @@ class RegisterViewController: UIViewController {
             }
             
             UserDefaultsManager.shared.updateUserProfile(with: user)
-            
+            self?.completion?()
             self?.dismiss(animated: true)
         }
     }

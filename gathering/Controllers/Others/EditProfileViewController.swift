@@ -123,7 +123,6 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             email: email,
             name: self.tempField.name,
             profileUrlString: urlString ?? UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
-            hobbies: nil,
             gender: self.tempField.gender)
         
         DatabaseManager.shared.updateUserProfile(user: user) { [weak self] success in

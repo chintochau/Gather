@@ -29,6 +29,7 @@ class GAButton: UIButton {
         layer.cornerRadius = 15
         tintColor = .white
         titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        translatesAutoresizingMaskIntoConstraints = false
         heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     

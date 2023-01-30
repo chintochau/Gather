@@ -119,6 +119,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         ].forEach({addSubview($0)})
         
         
+        layer.borderColor = UIColor.opaqueSeparator.cgColor
+        layer.borderWidth = 0.5
+        
+        
         
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
     }

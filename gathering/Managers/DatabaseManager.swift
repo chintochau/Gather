@@ -17,8 +17,8 @@ final class DatabaseManager {
     /// to create user profile when user first login the app
     public func createUserProfile(newUser:User, completion: @escaping (Bool) -> Void) {
         
+        print(4)
         let ref = database.collection("users").document(newUser.username)
-        
         guard let data = newUser.asDictionary() else {return}
         ref.setData(data) { error in
             completion(error == nil)
@@ -94,13 +94,24 @@ final class DatabaseManager {
         }
     }
     
-    public func fetchEvent(with eventID:String) {
+    public func fetchParticipants(with eventID:String, completion:@escaping ([User]?) -> Void ) {
+        let ref = database.collection("events").document(eventID).collection("participants")
+        
+        ref.getDocuments { snapshot, error in
+            guard let participants = snapshot?.documents.compactMap({ User(with: $0.data()) }) else {
+                completion(nil)
+                return
+            }
+            print(participants)
+            completion(participants)
+            
+        }
         
     }
     
     // MARK: - JoinEvent
     
-    public func registerEvent(participant: Participant,eventID:String,completion:@escaping (Bool) -> Void){
+    public func registerEvent(participant: User,eventID:String,completion:@escaping (Bool) -> Void){
         
         let gender = participant.gender
         
@@ -117,7 +128,9 @@ final class DatabaseManager {
         /// use dictionary
         ref.setData([
             "participants" : [username:gender]
-        ], merge: true)
+        ], merge: true) { error in
+            completion(error == nil)
+        }
         /*
          participants (map)
          {jason:male,

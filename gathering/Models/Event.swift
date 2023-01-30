@@ -32,21 +32,21 @@ struct Event:Codable {
     }
 }
 
-struct Participant:Codable {
-    let name:String
-    let username:String
-    let gender:String
-    let email:String
-    
-}
-
-extension Participant {
-    init?(with user:User){
-        guard let name = user.name, let gender = user.gender else {
-            fatalError("Name / Gender is nil")}
-        self.name = name
-        self.username = user.username
-        self.gender = gender
-        self.email = user.email
-    }
-}
+//struct Participant:Codable {
+//    let name:String
+//    let username:String
+//    let gender:String
+//    let email:String
+//    
+//}
+//
+//extension Participant {
+//    init?(with user:User){
+//        guard let name = user.name, let gender = user.gender else {
+//            fatalError("Name / Gender is nil")}
+//        self.name = name
+//        self.username = user.username
+//        self.gender = gender
+//        self.email = user.email
+//    }
+//}

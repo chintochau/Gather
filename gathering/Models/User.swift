@@ -12,7 +12,6 @@ struct User :Codable{
     let email:String
     let name:String?
     let profileUrlString:String?
-    let hobbies:[String?]?
     let gender:String?
 }
 

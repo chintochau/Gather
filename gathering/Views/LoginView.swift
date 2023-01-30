@@ -11,7 +11,7 @@ protocol LoginViewDelegate:AnyObject {
     func didTapLogin (_ view:LoginView, email:String,password:String)
 }
 
-class LoginView: UIView {
+class LoginView: UIView, UITextFieldDelegate {
     
     weak var delegate:LoginViewDelegate?
     
@@ -95,6 +95,13 @@ class LoginView: UIView {
         
         loginButton.addTarget(self, action: #selector(didTapSignIn), for: .touchUpInside)
         
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        gesture.numberOfTapsRequired = 1
+        addGestureRecognizer(gesture)
+    }
+    
+    @objc private func didTapView(){
+        endEditing(true)
     }
     
     required init?(coder: NSCoder) {
@@ -123,6 +130,9 @@ class LoginView: UIView {
         loginButton.frame = CGRect(x: padding, y: height-buttonHeight-30, width: width-2*padding, height: buttonHeight)
         indicator.frame = loginButton.frame
         
+        emailField.delegate = self
+        passwordField.delegate = self
+        
     }
     
     @objc private func didTapSignIn(){
@@ -133,5 +143,8 @@ class LoginView: UIView {
     }
     
 
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.resignFirstResponder()
+    }
 }
 

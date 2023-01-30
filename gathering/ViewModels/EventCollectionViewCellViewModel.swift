@@ -21,9 +21,15 @@ struct EventCollectionViewCellViewModel {
     let isLiked: Bool
     let isSeparated:Bool
     let capacity:[Int]
+    let totalCapacity:Int
     let participants:[String:String]
     let peopleCount: (male:Int, female:Int)
     let price:Double
+    let totalPeopleCount:Int
+    
+    var priceString:String {
+        return String(price)
+    }
 }
 
 
@@ -58,7 +64,6 @@ extension EventCollectionViewCellViewModel {
 //            }
 //        }
         
-        
         self.imageUrlString = event.imageUrlString[0]
         self.title = event.title
         self.date = event.startDateString
@@ -69,6 +74,8 @@ extension EventCollectionViewCellViewModel {
         self.isSeparated = event.separateGender
         self.participants = [:]
         self.peopleCount = (male:maleCount, female:femaleCount)
+        self.totalPeopleCount = peopleCount.male + peopleCount.female
         self.price = event.price
+        self.totalCapacity = event.capacity.reduce(0, +)
     }
 }
