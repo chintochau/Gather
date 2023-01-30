@@ -15,7 +15,7 @@ struct ProfileHeaderViewViewModel {
 
 class ProfileHeaderView: UIView {
     
-    private let imageView:UIImageView = {
+    let imageView:UIImageView = {
         let view = UIImageView()
         view.layer.masksToBounds = true
         view.clipsToBounds = true
@@ -23,6 +23,7 @@ class ProfileHeaderView: UIView {
         view.image = UIImage(systemName: "person.crop.circle")
         view.tintColor = .lightGray
         view.backgroundColor = .secondarySystemBackground
+        view.isUserInteractionEnabled = true
         return view
         
     }()

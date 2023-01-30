@@ -51,7 +51,7 @@ extension EventMainViewModel {
         self.location = (area: event.location, address: event.location)
         self.refundPolicy = event.refundPolicy
         self.about = event.description
-        self.owner = event.organisers[0]
+        self.owner = event.organisers[0].username
         
         self.price = event.price == 0.0 ? "Free" : "CA$: \(String(event.price))"
         

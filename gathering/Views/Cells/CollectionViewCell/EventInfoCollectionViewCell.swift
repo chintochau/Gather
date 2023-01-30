@@ -95,7 +95,7 @@ class EventInfoCollectionViewCell: UICollectionViewCell {
             case .location:
                 iconString = "mappin.and.ellipse"
             case .refundPolicy:
-                iconString = "dollarsign"
+                iconString = "questionmark.circle"
             }
             icon.image = UIImage(systemName: iconString)
             

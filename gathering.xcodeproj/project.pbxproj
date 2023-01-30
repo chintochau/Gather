@@ -47,6 +47,7 @@
 		47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CCFE2975BA60003B22EB /* PhotoCollectionViewCell.swift */; };
 		47F0CD012975DDAB003B22EB /* GAButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CD002975DDAB003B22EB /* GAButton.swift */; };
 		47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CD0229760AC4003B22EB /* IdManager.swift */; };
+		47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */; };
 		47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EDE296F2B12001AF255 /* HomeViewController.swift */; };
 		47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */; };
 		47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */; };
@@ -107,6 +108,7 @@
 		47F0CCFE2975BA60003B22EB /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		47F0CD002975DDAB003B22EB /* GAButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAButton.swift; sourceTree = "<group>"; };
 		47F0CD0229760AC4003B22EB /* IdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdManager.swift; sourceTree = "<group>"; };
+		47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewController.swift; sourceTree = "<group>"; };
 		47FD6EDE296F2B12001AF255 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -251,17 +253,17 @@
 		47FD6EE9296F2F43001AF255 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				47FD6EF6296F4EA5001AF255 /* Cells */,
 				477FC1A62970C21B00D7C45A /* EventInfoCard.swift */,
 				478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */,
 				4763D9DA2981CA950062C12C /* ProfileHeaderView.swift */,
-				47FD6EF6296F4EA5001AF255 /* Cells */,
-				47FD6EF7296F4EC0001AF255 /* Storyboards */,
 				4762966D29742416001BF5B7 /* LoginView.swift */,
 				477FE39B297255830074B7AA /* GATextField.swift */,
 				47F0CD002975DDAB003B22EB /* GAButton.swift */,
 				47DC14C12978AE510006D4F4 /* HeaderCollectionReusableView.swift */,
 				47DC14C32978B5470006D4F4 /* StretchyHeaderLayout.swift */,
 				4763D9DC2981E1480062C12C /* SectionHeaderView.swift */,
+				47FD6EF7296F4EC0001AF255 /* Storyboards */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -287,6 +289,7 @@
 				47DC14BF2978A6490006D4F4 /* EventViewController.swift */,
 				47D33ACB298336E800D9A205 /* EnrollViewController.swift */,
 				4763D9D6298183BB0062C12C /* EditProfileViewController.swift */,
+				47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 				47BC0576297491F700242E45 /* TextFieldTableViewCell.swift in Sources */,
 				47DC14C02978A6490006D4F4 /* EventViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
+				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,

@@ -31,6 +31,15 @@ final class UserDefaultsManager {
         }
     }
     
+    public func resetUserProfile(){
+        UserDefaults.standard.set(nil, forKey: "username")
+        UserDefaults.standard.set(nil, forKey: "email")
+        UserDefaults.standard.set(nil, forKey: "profileUrlString")
+        UserDefaults.standard.set(nil, forKey: "gender")
+        UserDefaults.standard.set(nil, forKey: "name")
+        UserDefaults.standard.set(nil, forKey: "user")
+    }
+    
     public func printAllUserdefaults(){
         UserDefaultsType.allCases.forEach({
             switch $0 {

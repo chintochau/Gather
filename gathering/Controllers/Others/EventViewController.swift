@@ -88,13 +88,15 @@ class EventViewController: UIViewController {
 
     // MARK: - LifeCycle
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(collectionView)
         configureCollectionView()
         configureCollectionViewLayout()
         configureNavBar(shouldBeTransparent: true)
-        configureBottomBar()
+        
+        //        configureBottomBar()
     }
     
     
@@ -105,26 +107,50 @@ class EventViewController: UIViewController {
         insets.top = 0
         insets.bottom = insets.bottom+50
         collectionView.contentInset = insets
-        layoutBottomBar()
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle{
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        prepareBackgroundView()
+    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard let tabBar = tabBarController?.tabBar else {return}
-        
-        let extraHeight:CGFloat = 30
-        bottomBar.frame = CGRect(x: 0, y: tabBar.top-extraHeight, width: tabBar.width, height: tabBar.height+extraHeight)
-        tabBarController?.view.addSubview(bottomBar)
+        addBottomSheet()
+        tabBarController?.tabBar.isHidden = true
+//        addBottomBar()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         bottomBar.removeFromSuperview()
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    // MARK: - bottomSheet
+    
+    fileprivate func addBottomSheet() {
+        let bottomSheetVC = ParticipantsViewController()
+        addChild(bottomSheetVC)
+        view.addSubview(bottomSheetVC.view)
+        bottomSheetVC.didMove(toParent: self)
+        bottomSheetVC.view.frame = CGRect(x: 0, y: view.height-100, width: view.width, height: view.height)
+    }
+    
+    func prepareBackgroundView(){
+        let blurEffect = UIBlurEffect.init(style: .dark)
+        let visualEffect = UIVisualEffectView.init(effect: blurEffect)
+        let bluredView = UIVisualEffectView.init(effect: blurEffect)
+        bluredView.contentView.addSubview(visualEffect)
+
+        visualEffect.frame = UIScreen.main.bounds
+        bluredView.frame = UIScreen.main.bounds
+
+        view.insertSubview(bluredView, at: 0)
     }
     
     // MARK: - collectionView
@@ -155,9 +181,6 @@ class EventViewController: UIViewController {
         bottomBar.addSubview(priceLabel)
         bottomBar.addSubview(priceNumberLabel)
         bottomBar.addSubview(selectButton)
-    }
-    
-    fileprivate func layoutBottomBar() {
         let padding:CGFloat = 30
         priceLabel.sizeToFit()
         priceLabel.frame = CGRect(x: padding, y: bottomBar.top+20, width: priceLabel.width, height: priceLabel.height)
@@ -167,6 +190,15 @@ class EventViewController: UIViewController {
         let buttonWidth:CGFloat = (view.width-40)/2
         selectButton.frame = CGRect(x: view.width-padding-buttonWidth, y: 20, width: buttonWidth, height: 50)
         selectButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
+
+    }
+    
+    
+    fileprivate func addBottomBar(){
+        guard let tabBar = tabBarController?.tabBar else {return}
+        let extraHeight:CGFloat = 30
+        bottomBar.frame = CGRect(x: 0, y: tabBar.top-extraHeight, width: tabBar.width, height: tabBar.height+extraHeight)
+        tabBarController?.view.addSubview(bottomBar)
     }
     
     @objc private func didTapEnroll(){

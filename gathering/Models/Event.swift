@@ -10,7 +10,7 @@ import Foundation
 struct Event:Codable {
     let id: String
     let title:String
-    let organisers:[String]
+    let organisers:[User]
     let imageUrlString:[String]
     let price: Double
     let startDateString:String
@@ -37,4 +37,16 @@ struct Participant:Codable {
     let username:String
     let gender:String
     let email:String
+    
+}
+
+extension Participant {
+    init?(with user:User){
+        guard let name = user.name, let gender = user.gender else {
+            fatalError("Name / Gender is nil")}
+        self.name = name
+        self.username = user.username
+        self.gender = gender
+        self.email = user.email
+    }
 }

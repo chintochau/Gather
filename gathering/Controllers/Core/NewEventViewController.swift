@@ -256,7 +256,7 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let tempImage:UIImage = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+        let tempImage:UIImage = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
         
         imageCells[currentIndex].imageView.image = tempImage
         imageCells[currentIndex].imageView.contentMode = .scaleAspectFill
@@ -386,14 +386,14 @@ extension NewEventViewController {
     
     private func configurePreviewEvent (urlStrings:[String] = []) -> Event?{
         
-        guard let username = UserDefaults.standard.string(forKey: "username") else { return nil }
+        guard let user = UserDefaultsManager.shared.getCurrentUser() else { return nil }
         
         print(IdManager.shared.createEventId())
         
         return Event(
             id: IdManager.shared.createEventId(),
             title: event.title,
-            organisers: [username],
+            organisers: [user],
             imageUrlString: urlStrings,
             price: event.price,
             startDateString: event.startDate,
@@ -424,14 +424,14 @@ extension NewEventViewController {
 //              let data = image.jpegData(compressionQuality: 0.5)
 //        else {return}
         
-        StorageManager.shared.uploadImage(id: previewEvent.id, data: imagesData) {[weak self] urlStrings in
-            
-            print(urlStrings)
+        StorageManager.shared.uploadEventImage(id: previewEvent.id, data: imagesData) {[weak self] urlStrings in
             
             guard let event = self?.configurePreviewEvent(urlStrings: urlStrings) else {return}
             
             DatabaseManager.shared.createEvent(with: event) { done in
-                print(done)
+                
+                DatabaseManager.shared.registerEvent(participant: Participant(with: event.organisers.first!)!, eventID: event.id){_ in }
+                
                 completion(done)
             }
         }

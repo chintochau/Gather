@@ -57,7 +57,7 @@ class ProfileViewController: UIViewController {
         else {return}
         
         headerViewModel = .init(
-            profileUrlString: nil,
+            profileUrlString: UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
             username: username,
             email: email)
         
@@ -110,6 +110,10 @@ class ProfileViewController: UIViewController {
     
     @objc private func didTapEditProfile(){
         let vc = EditProfileViewController()
+        vc.completion = { [weak self] in
+            self?.configureViewModels()
+            self?.tableView.reloadData()
+        }
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
     }
@@ -117,9 +121,7 @@ class ProfileViewController: UIViewController {
     @objc private func didTapLogOut(){
         
         AuthManager.shared.signOut { bool in
-            UserDefaults.standard.set(nil, forKey: "username")
-            UserDefaults.standard.set(nil, forKey: "email")
-            UserDefaults.standard.set(nil, forKey: "profileUrlString")
+            UserDefaultsManager.shared.resetUserProfile()
             self.tableView.removeFromSuperview()
             self.configureLoginView()
         }

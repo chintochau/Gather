@@ -27,7 +27,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     let dateLabel:UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     

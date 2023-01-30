@@ -83,6 +83,7 @@ extension HomeViewController: UINavigationControllerDelegate{
                         heightDimension: .fractionalHeight(1))
             
             )
+            item.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
             let horizeltanitem = NSCollectionLayoutItem(
                 layoutSize:
                     NSCollectionLayoutSize(
@@ -94,13 +95,13 @@ extension HomeViewController: UINavigationControllerDelegate{
             let registeredEventGroup = NSCollectionLayoutGroup.horizontal(
                 layoutSize:
                     NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(0.95),
+                        widthDimension: .fractionalWidth(1),
                         heightDimension: .absolute(150)
                     ),
                 subitem: horizeltanitem,
                 count: 1
             )
-            registeredEventGroup.contentInsets = .init(top: 5, leading: 5, bottom: 5, trailing: 5)
+            registeredEventGroup.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
             
             // group 0
             let group0 = NSCollectionLayoutGroup.vertical(
@@ -112,7 +113,6 @@ extension HomeViewController: UINavigationControllerDelegate{
                 subitem: item,
                 count: 1
             )
-            group0.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
             
             // group 1
             let group1 = NSCollectionLayoutGroup.vertical(
