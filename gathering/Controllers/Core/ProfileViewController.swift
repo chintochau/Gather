@@ -8,13 +8,6 @@
 import UIKit
 import FirebaseAuth
 
-enum ProfileFieldType {
-    case textField(title:String, placeholder:String)
-    case textView(title:String, text:String)
-    case value(title:String, value:String)
-    case labelField(title:String, text:String)
-}
-
 class ProfileViewController: UIViewController {
     
     private let logoutButton = GAButton(title: "Logout")
@@ -27,7 +20,7 @@ class ProfileViewController: UIViewController {
         return view
     }()
     
-    private var viewModels = [[ProfileFieldType]]()
+    private var viewModels = [[InputFieldType]]()
     private var headerViewModel:ProfileHeaderViewViewModel?
     private let loginView = LoginView()
     
@@ -153,7 +146,7 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
         switch viewModels[indexPath.section][indexPath.row] {
         case .value(title: let title, value: let value) :
             let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
-            cell.configure(withTitle: title, placeholder: value)
+            cell.configure(withTitle: title, value: value)
             return cell
         default: return UITableViewCell()
         }

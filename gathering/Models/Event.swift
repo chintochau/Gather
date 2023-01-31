@@ -32,21 +32,22 @@ struct Event:Codable {
     }
 }
 
-//struct Participant:Codable {
-//    let name:String
-//    let username:String
-//    let gender:String
-//    let email:String
-//    
-//}
-//
-//extension Participant {
-//    init?(with user:User){
-//        guard let name = user.name, let gender = user.gender else {
-//            fatalError("Name / Gender is nil")}
-//        self.name = name
-//        self.username = user.username
-//        self.gender = gender
-//        self.email = user.email
-//    }
-//}
+
+enum hobbyType:String,CaseIterable {
+    case outdoor = "Outdoor Activity"
+    case sports = "Sports"
+    case travel = "Travel"
+    case arts = "Traditional Arts"
+    case creative = "Creative Hobbies"
+    case crafting = "Crafting"
+    case food = "Food & Cooking"
+    case games = "Games"
+    case spiritual = "Spiritual & Self Improve"
+    case videoGames = "Video Games"
+    case animals = "Pets"
+}
+
+enum eventType:String,CaseIterable {
+    case formEvent = "Form an Event"
+    case newEvent = "Post an Event"
+}

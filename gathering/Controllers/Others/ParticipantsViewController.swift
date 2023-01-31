@@ -13,15 +13,18 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     
     private let tableView:UITableView = {
         let view = UITableView()
+        view.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
         return view
     }()
     
     private var headerView:ParticipantsViewHeaderView?
     
-
     private let eventID:String
     private let event:Event
     
+    private var viewModels = [User]()
+    
+    // MARK: - Init
     init (event:Event) {
         self.event = event
         self.eventID = event.id
@@ -32,9 +35,6 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    
-    private var viewModels = [User]()
     
     // MARK: - Lifecycle
     
@@ -204,19 +204,18 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
         return viewModels.count
     }
     
+    // MARK: - Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let vm = viewModels[indexPath.row]
         
-        var cell:UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: "cell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as! UserTableViewCell
+        cell.configure(with: vm)
         
-        if cell == nil {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
-        }
-        
-        cell!.textLabel?.text = vm.name
-        cell!.detailTextLabel?.text = vm.username
-        cell?.imageView?.sd_setImage(with: URL(string: vm.profileUrlString ?? ""))
-        return cell!
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -19,7 +19,9 @@ enum newEventPageType:String {
 
 class NewEventViewController: UIViewController{
     
-    
+    deinit{
+        print("released")
+    }
     
     private var event = (
         title:"",
@@ -41,7 +43,7 @@ class NewEventViewController: UIViewController{
     private var hideObserver: NSObjectProtocol?
     
     private var tableView:UITableView = {
-        let view = UITableView(frame: .zero,style: .grouped)
+        let view = UITableView(frame: .zero, style: .grouped)
         return view
     }()
     
@@ -66,16 +68,15 @@ class NewEventViewController: UIViewController{
         configureTableView()
         observeKeyboardChange()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Preview", style: .plain, target: self, action: #selector(didTapPreview))
-        UserDefaultsManager.shared.printAllUserdefaults()
-        
     }
     
+    // MARK: - TableView
     private func configureTableView(){
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .systemBackground
         tableView.keyboardDismissMode = .interactive
-        
+        tableView.contentInset = .init(top: 0, left: 0, bottom: -100, right: 0)
         view.addSubview(tableView)
         tableView.frame = view.bounds
         tableView.rowHeight = UITableView.automaticDimension
@@ -238,6 +239,9 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 1
+    }
     
     
  
@@ -272,8 +276,6 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
 
 // MARK: - Input Data
 extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,DatePickerTableViewCellDelegate {
-    
-    
     /*
      case photoField = "photo"
      case titleField = "title"
@@ -327,6 +329,12 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         event.endDate = DateFormatter.formatter.string(from: endDate)
         
     }
+    func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
+        
+    }
+    
+    
+    
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
@@ -339,6 +347,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         }
         
         return true
+        
     }
     
     
@@ -386,8 +395,6 @@ extension NewEventViewController {
     private func configurePreviewEvent (urlStrings:[String] = []) -> Event?{
         
         guard let user = UserDefaultsManager.shared.getCurrentUser() else { return nil }
-        
-        print(IdManager.shared.createEventId())
         
         return Event(
             id: IdManager.shared.createEventId(),

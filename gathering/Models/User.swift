@@ -15,20 +15,6 @@ struct User :Codable{
     let gender:String?
 }
 
-enum hobbyType:String,CaseIterable {
-    case outdoor = "Outdoor Activity"
-    case sports = "Sports"
-    case travel = "Travel"
-    case arts = "Traditional Arts"
-    case creative = "Creative Hobbies"
-    case crafting = "Crafting"
-    case food = "Food & Cooking"
-    case games = "Games"
-    case spiritual = "Spiritual & Self Improve"
-    case videoGames = "Video Games"
-    case animals = "Pets"
-}
-
 enum personalityType:String {
     case openness = "Openness"
     case conscientiousness = "Conscientiousness"

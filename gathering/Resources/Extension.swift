@@ -39,32 +39,48 @@ extension UIView {
         heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
     }
     
-    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) {
+    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) -> [NSLayoutConstraint] {
         translatesAutoresizingMaskIntoConstraints = false
         
+        var anchors = [NSLayoutConstraint]()
+        
         if let top = top {
-            topAnchor.constraint(equalTo: top, constant: padding.top).isActive = true
+            let anchor = topAnchor.constraint(equalTo: top, constant: padding.top)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
         
         if let leading = leading {
-            leadingAnchor.constraint(equalTo: leading, constant: padding.left).isActive = true
+            let anchor = leadingAnchor.constraint(equalTo: leading, constant: padding.left)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
         
         if let bottom = bottom {
-            bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom).isActive = true
+            let anchor = bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
         
         if let trailing = trailing {
-            trailingAnchor.constraint(equalTo: trailing, constant: -padding.right).isActive = true
+            let anchor = trailingAnchor.constraint(equalTo: trailing, constant: -padding.right)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
         
         if size.width != 0 {
-            widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            let anchor = widthAnchor.constraint(equalToConstant: size.width)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
         
         if size.height != 0 {
-            heightAnchor.constraint(equalToConstant: size.height).isActive = true
+            let anchor = heightAnchor.constraint(equalToConstant: size.height)
+            anchor.isActive = true
+            anchors.append(anchor)
         }
+        
+        return anchors
     }
 }
 
@@ -145,6 +161,13 @@ extension UILabel {
         return Int(ceil(CGFloat(labelSize.height) / self.font.lineHeight))
     }
 }
+
+extension UITableViewCell {
+  func separator(hide: Bool) {
+    separatorInset.left = hide ? bounds.size.width : 0
+  }
+}
+
 
 
 #if DEBUG

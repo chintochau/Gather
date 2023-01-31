@@ -119,7 +119,7 @@ extension HomeViewController: UINavigationControllerDelegate{
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(200)),
+                        heightDimension: .fractionalWidth(1/3.5)),
                 subitem: item,
                 count: 1
             )
@@ -174,6 +174,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return viewModels.count
     }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let model = viewModels[indexPath.section]
         if indexPath.section == 1 {

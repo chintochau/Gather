@@ -122,13 +122,18 @@ class EventInfoCollectionViewCell: UICollectionViewCell {
             addSubview(infoTitleLabel)
             addSubview(subTitleLabel)
             addSubview(button)
+            subTitleLabel.sizeToFit()
+            subTitleLabel.frame = CGRect(x: 0, y: 0, width: subTitleLabel.width, height: subTitleLabel.height)
             
-            infoTitleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor)
-            
-            subTitleLabel.anchor(top: infoTitleLabel.bottomAnchor, leading: infoTitleLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor)
-            
-            
-            button.anchor(top: subTitleLabel.bottomAnchor, leading: infoTitleLabel.leadingAnchor, bottom: bottomAnchor, trailing: nil)
+            if subTitleLabel.countLines() > 4 {
+                infoTitleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor)
+                subTitleLabel.anchor(top: infoTitleLabel.bottomAnchor, leading: infoTitleLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor)
+                button.anchor(top: subTitleLabel.bottomAnchor, leading: infoTitleLabel.leadingAnchor, bottom: bottomAnchor, trailing: nil)
+            }else {
+                button.isHidden = true
+                infoTitleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor)
+                subTitleLabel.anchor(top: infoTitleLabel.bottomAnchor, leading: infoTitleLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
+            }
             
             
         case .owner:

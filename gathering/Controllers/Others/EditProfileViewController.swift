@@ -15,7 +15,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     
     private var headerView:ProfileHeaderView?
     
-    private let viewModels:[ProfileFieldType] = [
+    private let viewModels:[InputFieldType] = [
         .textField(title: "Name", placeholder: "Enter Name"),
         .textView(title: "Bio", text: ""),
         .value(title: "Gender", value: "")
@@ -178,10 +178,10 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             
             let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
             
-            cell.configure(withTitle: title, placeholder: tempField.gender)
+            cell.configure(withTitle: title, value: tempField.gender)
             cell.selectionStyle = .none
             return cell
-        case .labelField:
+        case  .userField, .textLabel,.datePicker:
             return UITableViewCell()
         }
         
@@ -203,16 +203,18 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
                 genderSelectionView.delegate = self
                 view.addSubview(genderSelectionView)
                 let viewWidth:CGFloat = 100
-                genderSelectionView.frame = CGRect(x: selectedCell.width-viewWidth-20,
-                                                   y: selectedCell.bottom+selectedCell.height,
-                                                   width: viewWidth,
-                                                   height: 0)
+                genderSelectionView.frame = CGRect(
+                    x: selectedCell.width-viewWidth-20,
+                    y: selectedCell.bottom+selectedCell.height,
+                    width: viewWidth,
+                    height: 0)
                 
                 UIView.animate(withDuration: 0.2, delay: 0) {
-                    self.genderSelectionView.frame = CGRect(x: selectedCell.width-viewWidth-20,
-                                                            y: selectedCell.bottom+selectedCell.height+10,
-                                                            width: viewWidth,
-                                                            height: 120)
+                    self.genderSelectionView.frame = CGRect(
+                        x: selectedCell.width-viewWidth-20,
+                        y: selectedCell.bottom+selectedCell.height+10,
+                        width: viewWidth,
+                        height: 120)
                 }
             }else {return}
         default: break

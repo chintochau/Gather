@@ -9,14 +9,15 @@ import UIKit
 
 class NewCategoryViewController: UIViewController {
     
-    private let viewModels = hobbyType.allCases.map{$0.rawValue}
+    private let viewModels = eventType.allCases.map{$0}
     
     private let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = .init(top: 0, left:10, bottom: 0, right: 10)
+        layout.sectionInset = .init(top: 10, left:10, bottom: 0, right: 10)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.alwaysBounceVertical = true
         view.register(PhotoLabelCollectionViewCell.self, forCellWithReuseIdentifier: PhotoLabelCollectionViewCell.identifier)
         return view
     }()
@@ -66,22 +67,53 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoLabelCollectionViewCell.identifier, for: indexPath) as! PhotoLabelCollectionViewCell
         
-        cell.configure(withImage: UIImage(named: "test")!, text: viewModels[indexPath.row])
+        let vm = viewModels[indexPath.row]
+        switch vm {
+        case .formEvent:
+            cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
+        case .newEvent:
+            cell.configure(withImage: UIImage(named: "post.event"), text: vm.rawValue)
+        }
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let imageSize:CGFloat = (view.width-30)/2
+        let imageSize:CGFloat = (view.height/2.6)
         return CGSize(width: imageSize, height: imageSize)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vm = viewModels[indexPath.row]
+        
+        switch vm {
+        case .formEvent:
+            let vc = FormEventViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        case .newEvent:
+            let vc = NewEventViewController()
+            navigationController?.pushViewController(vc, animated: true)
+        }
         collectionView.deselectItem(at: indexPath, animated: true)
-        let vc = NewEventViewController()
-        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    // MARK: - Highlight animation
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        UIView.animate(withDuration: 0.5){
+            if let cell = collectionView.cellForItem(at: indexPath) as? PhotoLabelCollectionViewCell {
+                cell.imageView.transform = .init(scaleX: 1.1, y: 1.1)
+            }
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        UIView.animate(withDuration: 0.5) {
+            if let cell = collectionView.cellForItem(at: indexPath) as? PhotoLabelCollectionViewCell {
+                cell.imageView.transform = .identity
+            }
+        }
     }
     
 }

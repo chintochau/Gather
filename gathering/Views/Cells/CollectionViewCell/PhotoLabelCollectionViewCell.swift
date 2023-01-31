@@ -11,12 +11,14 @@ class PhotoLabelCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PhotoLabelCollectionViewCell"
     
-    private let imageView:UIImageView = {
+    let imageView:UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 15
+        view.tintColor = .lightGray
+        view.backgroundColor = .secondarySystemBackground
         return view
     }()
     private let textLabel:UILabel = {
@@ -30,7 +32,9 @@ class PhotoLabelCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         addSubview(imageView)
         addSubview(textLabel)
+        
     }
+    
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -49,7 +53,7 @@ class PhotoLabelCollectionViewCell: UICollectionViewCell {
         textLabel.text = text
     }
     
-    func configure(withImage image:UIImage,text:String){
+    func configure(withImage image:UIImage?,text:String){
         imageView.image = image
         textLabel.text = text
     }

@@ -37,8 +37,8 @@ class ValueTableViewCell: UITableViewCell {
     }
     
     
-    func configure(withTitle title: String, placeholder:String) {
+    func configure(withTitle title: String, value:String) {
         titleLabel.text = title
-        detailTextLabel?.text = placeholder
+        detailTextLabel?.text = value
     }
 }

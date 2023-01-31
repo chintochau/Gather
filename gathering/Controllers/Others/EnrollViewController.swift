@@ -264,7 +264,6 @@ extension EnrollViewController:UITextFieldDelegate {
               !text.isEmpty else {return}
         UserDefaults.standard.set(text, forKey: "name")
         textField.resignFirstResponder()
-        print(text)
         
     }
 }
