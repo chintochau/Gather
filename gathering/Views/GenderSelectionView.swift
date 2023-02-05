@@ -25,6 +25,7 @@ class GenderSelectionView: UIStackView {
         alignment = .center
         distribution = .fillEqually
         spacing = 5
+        clipsToBounds = true
         
         genderType.allCases.forEach({
             let button = UIButton()

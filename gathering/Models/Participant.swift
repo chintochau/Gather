@@ -11,7 +11,7 @@ struct Participant:Codable {
     let name:String
     let username:String?
     let gender:String
-    let contact:String
+    let contact:String?
 
 }
 

@@ -193,7 +193,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
         
         currentCell = cell
-        guard let image = cell.eventImageView.image,
+        guard let image = cell.eventImageView.image ?? UIImage(named: "test"),
               let eventVM = EventMainViewModel(with: self.events[indexPath.section], image: image) else {return}
         
         

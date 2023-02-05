@@ -20,7 +20,7 @@ struct EventCollectionViewCellViewModel {
     let tag: [EventTagType]?
     let isLiked: Bool
     let isSeparated:Bool
-    let capacity:[Int]
+    let headcount:Headcount
     let totalCapacity:Int
     let participants:[String:String]
     let peopleCount: (male:Int, female:Int)
@@ -67,15 +67,15 @@ extension EventCollectionViewCellViewModel {
         self.imageUrlString = event.imageUrlString.first ?? ""
         self.title = event.title
         self.date = event.startDateString
-        self.location = event.location
+        self.location = event.location.name
         self.tag = nil
         self.isLiked = false
-        self.capacity = event.capacity
-        self.isSeparated = event.separateGender
+        self.headcount = event.headcount
+        self.isSeparated = event.headcount.isGenderSpecific
         self.participants = [:]
         self.peopleCount = (male:maleCount, female:femaleCount)
         self.totalPeopleCount = peopleCount.male + peopleCount.female
         self.price = event.price
-        self.totalCapacity = event.capacity.reduce(0, +)
+        self.totalCapacity = event.headcount.max ?? 0
     }
 }

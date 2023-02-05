@@ -48,7 +48,7 @@ extension EventMainViewModel {
         self.image = image
         self.title = event.title
         self.date = (title:date , subTitle: timeInterval)
-        self.location = (area: event.location, address: event.location)
+        self.location = (area: event.location.name, address: event.location.address ?? "")
         self.refundPolicy = event.refundPolicy
         self.about = event.description
         self.owner = event.organisers[0]

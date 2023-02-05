@@ -20,7 +20,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     let titleLabel:UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     
@@ -34,7 +34,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     let locationLabel:UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     
@@ -54,17 +54,17 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let maleIconImageView:UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "male")?.withRenderingMode(.alwaysTemplate)
+        view.image = UIImage(systemName:  "person.crop.circle")
         view.contentMode = .scaleAspectFit
-        view.tintColor = .blue
+        view.tintColor = UIColor(named: "blueColor")
         return view
     }()
     
     let femaleIconImageView:UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "female")?.withRenderingMode(.alwaysTemplate)
+        view.image = UIImage(systemName:  "person.crop.circle")
         view.contentMode = .scaleAspectFit
-        view.tintColor = .red
+        view.tintColor = UIColor(named: "redColor")
         return view
     }()
     
@@ -165,14 +165,31 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             [totalNumber,totalIconImageView
             ].forEach({$0.isHidden = true})
             
-            maleNumber.text = "\(vm.peopleCount.male) / \(String(vm.capacity[0]))"
-            femaleNumber.text = "\(vm.peopleCount.female) / \(String(vm.capacity[1]))"
+            if let maleMax = vm.headcount.mMax,let femaleMax = vm.headcount.fMax{
+                if maleMax == 0 {
+                    maleNumber.text = "\(vm.peopleCount.male)"
+                }else {
+                    maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
+                }
+                if femaleMax == 0 {
+                    femaleNumber.text = "\(vm.peopleCount.female)"
+                }else {
+                    femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
+                }
+            }
+            
         }else {
             [maleNumber,femaleNumber,
              maleIconImageView,femaleIconImageView
             ].forEach({$0.isHidden = true})
             
-            let totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female) / \(String(vm.capacity[0] + vm.capacity[1]))"
+            var totalNumberText = ""
+            if vm.totalCapacity == 0 {
+                totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female)"
+            }else {
+                totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female) / \(vm.totalCapacity)"
+            }
+            
             
             totalNumber.text = totalNumberText
         }

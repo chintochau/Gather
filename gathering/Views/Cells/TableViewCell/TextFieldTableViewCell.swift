@@ -19,6 +19,7 @@ class TextFieldTableViewCell: UITableViewCell {
         let view = UITextField()
         view.backgroundColor = .clear
         view.textColor = .label
+        view.textAlignment = .right
 //        view.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
 //        view.leftViewMode = .always
         return view
@@ -34,8 +35,9 @@ class TextFieldTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width/5, height: contentView.height)
-        textField.frame = CGRect(x: titleLabel.right+5, y: 0, width: contentView.width-titleLabel.width, height: contentView.height)
+        titleLabel.sizeToFit()
+        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: titleLabel.width, height: contentView.height)
+        textField.frame = CGRect(x: titleLabel.right+5, y: 0, width: contentView.width-titleLabel.width-45, height: contentView.height)
     }
     
     override func prepareForReuse() {
@@ -58,9 +60,10 @@ class TextFieldTableViewCell: UITableViewCell {
         }
     }
     
-    func configure(withTitle title: String, placeholder:String) {
+    func configure(withTitle title: String, placeholder:String, text:String = "") {
         titleLabel.text = title
         textField.placeholder = placeholder
+        textField.text = text
     }
     
     

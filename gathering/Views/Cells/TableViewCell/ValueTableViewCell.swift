@@ -15,13 +15,20 @@ class ValueTableViewCell: UITableViewCell {
         let view = UILabel()
         return view
     }()
+    let valueLabel:UILabel = {
+        let view = UILabel()
+        view.textColor = .secondaryLabel
+        view.numberOfLines = 2
+        return view
+    }()
     
    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
         accessoryType = .disclosureIndicator
         contentView.addSubview(titleLabel)
-        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width, height: contentView.height)
+        titleLabel.sizeToFit()
+        titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width/3, height: contentView.height)
     }
     
     override func layoutSubviews() {
@@ -38,7 +45,9 @@ class ValueTableViewCell: UITableViewCell {
     
     
     func configure(withTitle title: String, value:String) {
-        titleLabel.text = title
+//        titleLabel.text = title
+        textLabel?.text = title
         detailTextLabel?.text = value
+        detailTextLabel?.numberOfLines = 2
     }
 }

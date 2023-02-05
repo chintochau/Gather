@@ -74,12 +74,14 @@ final class DatabaseManager {
         guard let data = event.asDictionary() else {return}
         
         ref.setData(data) {[weak self] error in
-            guard error == nil,
-            let user = UserDefaultsManager.shared.getCurrentUser() else {return}
             
-            self?.registerEvent(participant: user, eventID:event.id) { success in
-                completion(success)
-            }
+            completion(error == nil)
+//            guard error == nil,
+//            let user = UserDefaultsManager.shared.getCurrentUser() else {return}
+//
+//            self?.registerEvent(participant: user, eventID:event.id) { success in
+//                completion(success)
+//            }
             
         }
     }

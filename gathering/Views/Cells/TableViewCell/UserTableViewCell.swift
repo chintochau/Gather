@@ -49,25 +49,25 @@ class UserTableViewCell: UITableViewCell {
             valuelabel
         ].forEach({contentView.addSubview($0)})
         
+        profileImageView.anchor(
+            top: contentView.topAnchor,
+            leading: contentView.leadingAnchor,
+            bottom: contentView.bottomAnchor,
+            trailing: nil,
+            padding: .init(top: 5, left: 20, bottom: 5, right: 0),
+            size: CGSize(width: 60, height: 60))
+        profileImageView.layer.cornerRadius = 30
+        
+        nameLabel.anchor(top: nil, leading: profileImageView.trailingAnchor, bottom: contentView.centerYAnchor, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        usernameLabel.anchor(top: contentView.centerYAnchor, leading: nameLabel.leadingAnchor, bottom: nil, trailing: nil)
+        
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        [nameLabel,
-        usernameLabel,
-         valuelabel].forEach({$0.sizeToFit()})
-        
-        let imageSize = contentView.height-20
-        profileImageView.frame = CGRect(x: 20, y: 10, width: imageSize, height: imageSize)
-        profileImageView.layer.cornerRadius = imageSize/2
-        nameLabel.frame = CGRect(x: profileImageView.right+10, y: contentView.height/2-nameLabel.height, width: nameLabel.width, height: nameLabel.height)
-        usernameLabel.frame = CGRect(x:nameLabel.left , y: nameLabel.bottom, width: usernameLabel.width, height: usernameLabel.height)
-        valuelabel.frame = CGRect(x: contentView.width-valuelabel.width, y: 5, width: valuelabel.width, height: valuelabel.height)
-    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -85,7 +85,8 @@ class UserTableViewCell: UITableViewCell {
     }
     
     func configure(with vm:Participant){
-        
+        nameLabel.text = vm.name
+        profileImageView.image = UIImage(systemName: "person.circle")
     }
     
     

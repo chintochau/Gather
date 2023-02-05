@@ -156,13 +156,13 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
         
         switch viewModels[indexPath.row] {
             
-        case .textField(title: let title, placeholder: let placeholder):
+        case .textField(title: let title, placeholder: let placeholder,text: _):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextFieldTableViewCell.identifier, for: indexPath) as! TextFieldTableViewCell
             cell.configure(withTitle: title, placeholder: placeholder)
             cell.textField.text = tempField.name
             cell.textField.delegate = self
             return cell
-        case .textView(title: let title, text: let text):
+        case .textView(title: let title, text: let text,tag: _):
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             
@@ -181,7 +181,9 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             cell.configure(withTitle: title, value: tempField.gender)
             cell.selectionStyle = .none
             return cell
-        case  .userField, .textLabel,.datePicker:
+        case  .userField, .textLabel,.datePicker,.headCount :
+            return UITableViewCell()
+        default:
             return UITableViewCell()
         }
         

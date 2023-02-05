@@ -18,13 +18,11 @@ struct MockData {
         price: 123.4,
         startDateString: String.date(from: Date()) ?? "NOW",
         endDateString: String.date(from: Date()) ?? "NOW",
-        location: "Hong Kong", tag: ["Jason","Marco"],
+        location: .toronto, tag: ["Jason","Marco"],
         description: "Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!Join us to have happy dinner together!!",
         refundPolicy: "No Refund",
         participants: [:
-        ],
-        separateGender: true,
-        capacity: [10,10]
+        ], headcount: Headcount(isGenderSpecific: true, min: 5, max: 5, mMin: 6, mMax: 6, fMin: 7, fMax: 7)
         
     )
     

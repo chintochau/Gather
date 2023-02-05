@@ -15,13 +15,12 @@ struct Event:Codable {
     let price: Double
     let startDateString:String
     let endDateString:String
-    let location:String
+    let location:Location
     let tag:[String]
     let description:String
     let refundPolicy:String
     let participants:[String:String]
-    let separateGender:Bool
-    let capacity:[Int]
+    let headcount:Headcount
     
     
     var date:Date {
@@ -30,6 +29,16 @@ struct Event:Codable {
     var priceString:String {
         return String(price)
     }
+}
+
+struct Headcount:Codable {
+    let isGenderSpecific:Bool
+    let min:Int?
+    let max:Int?
+    let mMin:Int?
+    let mMax:Int?
+    let fMin:Int?
+    let fMax:Int?
 }
 
 
@@ -51,3 +60,5 @@ enum eventType:String,CaseIterable {
     case formEvent = "Form an Event"
     case newEvent = "Post an Event"
 }
+
+

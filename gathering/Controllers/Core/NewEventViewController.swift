@@ -26,7 +26,7 @@ class NewEventViewController: UIViewController{
     private var event = (
         title:"",
         description:"",
-        location:"",
+        location:Location.toronto,
         price:0.0,
         refund:"",
         endDate:DateFormatter.formatter.string(from: Date()),
@@ -312,7 +312,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
             case newEventPageType.titleField.rawValue:
                 event.title = text
             case newEventPageType.locationField.rawValue:
-                event.location = text
+                event.location = Location.toronto
             case newEventPageType.priceField.rawValue:
                 guard let price = Double(text) else {
                     fatalError("cannot change price to type double")}
@@ -408,8 +408,7 @@ extension NewEventViewController {
             tag: [],
             description: event.description,
             refundPolicy: event.refund, participants: [:],
-            separateGender: true,
-            capacity: [10,10]
+            headcount: Headcount(isGenderSpecific: true, min: 5, max: 5, mMin: 6, mMax: 6, fMin: 7, fMax: 7)
         )
     }
     

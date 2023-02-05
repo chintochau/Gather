@@ -39,44 +39,69 @@ extension UIView {
         heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
     }
     
-    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) -> [NSLayoutConstraint] {
+    func anchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero){
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        if let top = top {
+            topAnchor.constraint(equalTo: top, constant: padding.top).isActive = true
+        }
+        
+        if let leading = leading {
+            leadingAnchor.constraint(equalTo: leading, constant: padding.left).isActive = true
+        }
+        
+        if let bottom = bottom {
+            bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom).isActive = true
+        }
+        
+        if let trailing = trailing {
+            trailingAnchor.constraint(equalTo: trailing, constant: -padding.right).isActive = true
+        }
+        
+        if size.width != 0 {
+            widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        }
+        
+        if size.height != 0 {
+            let heightConstrant = heightAnchor.constraint(equalToConstant: size.height)
+            heightConstrant.priority = .defaultHigh
+            heightConstrant.isActive = true
+        }
+    }
+    
+    func setAnchors(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) -> [NSLayoutConstraint] {
         translatesAutoresizingMaskIntoConstraints = false
         
         var anchors = [NSLayoutConstraint]()
         
         if let top = top {
             let anchor = topAnchor.constraint(equalTo: top, constant: padding.top)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
         if let leading = leading {
             let anchor = leadingAnchor.constraint(equalTo: leading, constant: padding.left)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
         if let bottom = bottom {
             let anchor = bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
         if let trailing = trailing {
             let anchor = trailingAnchor.constraint(equalTo: trailing, constant: -padding.right)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
         if size.width != 0 {
             let anchor = widthAnchor.constraint(equalToConstant: size.width)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
         if size.height != 0 {
             let anchor = heightAnchor.constraint(equalToConstant: size.height)
-            anchor.isActive = true
             anchors.append(anchor)
         }
         
@@ -146,7 +171,12 @@ extension UIColor {
     }
     
     static let mainColor = UIColor(named: "mainColor")
+    static let redColor = UIColor(named: "redColor")
+    static let blueColor = UIColor(named: "blueColor")
     static let blackBackground = UIColor(named: "blackBackground")
+}
+extension UIImage {
+    static let personIcon = UIImage(systemName: "person.circle")
 }
 
 extension UILabel {

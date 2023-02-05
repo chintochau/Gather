@@ -35,7 +35,7 @@ class TextViewTableViewCell: UITableViewCell {
         selectionStyle = .none
         
         titleLabel.frame = CGRect(x: contentView.left+20, y: 0, width: contentView.width, height: 30)
-        textView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 20, left: 10, bottom: 0, right: 0))
+        textView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
     }
     
     override func layoutSubviews() {
@@ -59,9 +59,10 @@ class TextViewTableViewCell: UITableViewCell {
     }
     
     
-    func configure(withTitle title: String, placeholder:String) {
+    func configure(withTitle title: String, placeholder:String,tag:Int = 0) {
         titleLabel.text = title
         textView.text = placeholder
+        textView.tag = tag
     }
 }
 

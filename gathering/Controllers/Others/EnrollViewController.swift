@@ -28,7 +28,7 @@ struct EnrollViewModel {
         self.email = email
         self.eventTitle = event.title
         self.dateString = event.startDateString
-        self.location = event.location
+        self.location = event.location.name
         self.price = event.priceString
         self.eventID = event.id
     }
