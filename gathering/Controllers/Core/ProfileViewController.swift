@@ -112,7 +112,7 @@ class ProfileViewController: UIViewController {
     @objc private func didTapLogOut(){
         
         AuthManager.shared.signOut { bool in
-            UserDefaultsManager.shared.resetUserProfile()
+            DefaultsManager.shared.resetUserProfile()
             self.tableView.removeFromSuperview()
             self.configureLoginView()
         }

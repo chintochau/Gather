@@ -70,43 +70,48 @@ extension UIView {
         }
     }
     
-    func setAnchors(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero) -> [NSLayoutConstraint] {
+    func flexibleAnchor(top: NSLayoutYAxisAnchor?, leading: NSLayoutXAxisAnchor?, bottom: NSLayoutYAxisAnchor?, trailing: NSLayoutXAxisAnchor?, padding: UIEdgeInsets = .zero, size: CGSize = .zero){
         translatesAutoresizingMaskIntoConstraints = false
         
-        var anchors = [NSLayoutConstraint]()
         
         if let top = top {
-            let anchor = topAnchor.constraint(equalTo: top, constant: padding.top)
-            anchors.append(anchor)
+            let topConstraint = topAnchor.constraint(equalTo: top, constant: padding.top)
+            topConstraint.priority = .defaultHigh
+            topConstraint.isActive = true
         }
         
         if let leading = leading {
-            let anchor = leadingAnchor.constraint(equalTo: leading, constant: padding.left)
-            anchors.append(anchor)
+            let leadingConstraint = leadingAnchor.constraint(equalTo: leading, constant: padding.left)
+            leadingConstraint.priority = .defaultHigh
+            leadingConstraint.isActive = true
         }
         
         if let bottom = bottom {
-            let anchor = bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom)
-            anchors.append(anchor)
+            let bottomConstraint = bottomAnchor.constraint(equalTo: bottom, constant: -padding.bottom)
+            bottomConstraint.priority = .defaultHigh
+            bottomConstraint.isActive = true
         }
         
         if let trailing = trailing {
-            let anchor = trailingAnchor.constraint(equalTo: trailing, constant: -padding.right)
-            anchors.append(anchor)
+            let trailConstraint = trailingAnchor.constraint(equalTo: trailing, constant: -padding.right)
+            trailConstraint.priority = .defaultHigh
+            trailConstraint.isActive = true
         }
         
         if size.width != 0 {
-            let anchor = widthAnchor.constraint(equalToConstant: size.width)
-            anchors.append(anchor)
+            let widthConstrant = widthAnchor.constraint(equalToConstant: size.width)
+            widthConstrant.priority = .defaultHigh
+            widthConstrant.isActive = true
         }
         
         if size.height != 0 {
-            let anchor = heightAnchor.constraint(equalToConstant: size.height)
-            anchors.append(anchor)
+            let heightConstrant = heightAnchor.constraint(equalToConstant: size.height)
+            heightConstrant.priority = .defaultHigh
+            heightConstrant.isActive = true
         }
-        
-        return anchors
     }
+    
+    
 }
 
 

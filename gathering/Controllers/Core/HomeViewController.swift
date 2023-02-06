@@ -53,6 +53,7 @@ class HomeViewController: UIViewController{
             guard let events = events else {return}
             self.events = events
             self.createViewModels()
+            
         }
         
     }
@@ -72,57 +73,68 @@ extension HomeViewController: UINavigationControllerDelegate{
     private func configureCollectionView(){
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
             
-//            var groups = [NSCollectionLayoutGroup]()
             
-            // item
             
-            let item = NSCollectionLayoutItem(
-                layoutSize:
-                    NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalHeight(1))
-            
-            )
-            item.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
+            // item for registered group
             let horizeltanitem = NSCollectionLayoutItem(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalHeight(1))
+                        heightDimension: .estimated(30))
             )
             
             // registered event group
             let registeredEventGroup = NSCollectionLayoutGroup.horizontal(
                 layoutSize:
                     NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .absolute(150)
+                        widthDimension: .absolute(self.view.width-20),
+                        heightDimension: .estimated(30)
                     ),
                 subitem: horizeltanitem,
                 count: 1
             )
-            registeredEventGroup.contentInsets = .init(top: 5, leading: 10, bottom: 5, trailing: 10)
+            registeredEventGroup.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
+            
+            // item for group 0
+            let LargeItem = NSCollectionLayoutItem(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1),
+                        heightDimension: .fractionalHeight(1))
+            
+            )
+            LargeItem.contentInsets = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
             
             // group 0
             let group0 = NSCollectionLayoutGroup.vertical(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalHeight(0.8)
+                        heightDimension: .fractionalHeight(0.5)
                     ),
-                subitem: item,
+                subitem: LargeItem,
                 count: 1
             )
             
-            // group 1
-            let group1 = NSCollectionLayoutGroup.vertical(
+            // item for group 1
+            let smallItem = NSCollectionLayoutItem(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalWidth(1/3.5)),
-                subitem: item,
+                        heightDimension: .estimated(30))
+            )
+            smallItem.edgeSpacing = .init(leading: .none, top: .fixed(5), trailing: .none, bottom: .fixed(5))
+            
+            // group 1
+            let group1 = NSCollectionLayoutGroup.horizontal(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1),
+                        heightDimension: .estimated(30)),
+                subitem: smallItem,
                 count: 1
             )
+            group1.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
             
             switch index {
             case 0:
@@ -137,8 +149,9 @@ extension HomeViewController: UINavigationControllerDelegate{
         }))
         
         // MARK: - Cell Registration
-        collectionView.register(EventSmallCollectionViewCell.self, forCellWithReuseIdentifier: EventSmallCollectionViewCell.identifier)
-        collectionView.register(EventLargeCollectionViewCell.self, forCellWithReuseIdentifier: EventLargeCollectionViewCell.identifier)
+        collectionView.register(SmallEventCollectionViewCell.self, forCellWithReuseIdentifier: SmallEventCollectionViewCell.identifier)
+        collectionView.register(LargeEventCollectionViewCell.self, forCellWithReuseIdentifier: LargeEventCollectionViewCell.identifier)
+        collectionView.register(EmojiEventCollectionViewCell.self, forCellWithReuseIdentifier: EmojiEventCollectionViewCell.identifier)
         
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -147,6 +160,7 @@ extension HomeViewController: UINavigationControllerDelegate{
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
+        collectionView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
         
         self.collectionView = collectionView
     }
@@ -177,15 +191,24 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let model = viewModels[indexPath.section]
-        if indexPath.section == 1 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventLargeCollectionViewCell.identifier, for: indexPath) as! EventLargeCollectionViewCell
-            cell.configure(with: model)
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventSmallCollectionViewCell.identifier, for: indexPath) as! EventSmallCollectionViewCell
+        
+        if model.imageUrlString == nil {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiEventCollectionViewCell.identifier, for: indexPath) as! EmojiEventCollectionViewCell
             cell.configure(with: model)
             return cell
         }
+        
+        if indexPath.section == 1 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LargeEventCollectionViewCell.identifier, for: indexPath) as! LargeEventCollectionViewCell
+            cell.configure(with: model)
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SmallEventCollectionViewCell.identifier, for: indexPath) as! SmallEventCollectionViewCell
+            cell.configure(with: model)
+            return cell
+        }
+        
+        
     }
     
     // MARK: - select cell
@@ -214,4 +237,18 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     
 }
+
+
+#if DEBUG
+import SwiftUI
+
+@available(iOS 13, *)
+struct Preview: PreviewProvider {
+    
+    static var previews: some View {
+        // view controller using programmatic UI
+        HomeViewController().toPreview()
+    }
+}
+#endif
 

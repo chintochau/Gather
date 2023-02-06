@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EmojiPicker
 
 
 enum InputFieldType {
@@ -17,6 +18,7 @@ enum InputFieldType {
     case datePicker
     case headCount
     case participants
+    case titleField
 }
 
 
@@ -29,19 +31,24 @@ class FormEventViewController: UIViewController {
     
     private var viewModels = [[InputFieldType]()]
     
+    private var emojiButton:UIButton?
+    
     
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
+    var completion: ((_ event:Event) -> Void)?
     
     var tempEvent = (
         title:"",
+        emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
         startDate:String.date(from: Date()),
         endDate:String.date(from: Date()),
         location:Location.toronto,
         detail:"",
         headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
         participants:["":""],
-        participantsArray:[Participant]()
+        participantsArray:[Participant](),
+        addDetail:""
     )
     
     // MARK: - LifeCycle
@@ -50,8 +57,7 @@ class FormEventViewController: UIViewController {
         super.viewDidLoad()
         configureViewModels()
         view.backgroundColor = .systemBackground
-        guard let user = UserDefaultsManager.shared.getCurrentUser() else {return}
-        tempEvent.participants = [user.username: user.gender!]
+        initialUser()
         configureTableView()
         setupNavBar()
         observeKeyboardChange()
@@ -62,8 +68,14 @@ class FormEventViewController: UIViewController {
     }
     
     // MARK: - ViewModels
+    
+    private func initialUser(){
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+        tempEvent.participants = [user.username: user.gender!]
+        tempEvent.participantsArray = [Participant(with: user)]
+    }
     private func configureViewModels(){
-        guard let user = UserDefaultsManager.shared.getCurrentUser() else {return}
+        guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
         var location = tempEvent.location.name
         if let address = tempEvent.location.address {
@@ -72,12 +84,12 @@ class FormEventViewController: UIViewController {
         
         viewModels = [
             [
-                .userField(username: user.username, name: user.name, profileUrl: user.profileUrlString)
+                .titleField,
+                .textView(title: "Intro: ", text: tempEvent.detail,tag: 0)
             ],[
-                .textField(title: "Title: ", placeholder: "Enter eyecatching title!",text: tempEvent.title),
                 .datePicker,
                 .value(title: "Location: ", value: location),
-                .textView(title: "Detail: ", text: tempEvent.detail,tag: 0)
+                .textView(title: "Additional details: ", text: tempEvent.detail,tag: 1)
             ],[
                 .headCount,
                 .participants
@@ -127,6 +139,7 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(ValueTableViewCell.self, forCellReuseIdentifier: ValueTableViewCell.identifier)
         tableView.register(HeadcountTableViewCell.self, forCellReuseIdentifier: HeadcountTableViewCell.identifier)
         tableView.register(ParticipantsTableViewCell.self, forCellReuseIdentifier: ParticipantsTableViewCell.identifier)
+        tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -145,7 +158,7 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         switch vm {
         case .userField:
             let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as! UserTableViewCell
-            let user = UserDefaultsManager.shared.getCurrentUser()!
+            let user = DefaultsManager.shared.getCurrentUser()!
             cell.configure(with: user)
             cell.selectionStyle = .none
             cell.separator(hide: true)
@@ -182,13 +195,20 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
             return cell
+        case .titleField:
+            let cell = tableView.dequeueReusableCell(withIdentifier: TitleWithImageTableViewCell.identifier, for: indexPath) as! TitleWithImageTableViewCell
+            cell.emojiButton.addTarget(self, action: #selector(openEmojiPickerModule), for: .touchUpInside)
+            cell.titleField.delegate = self
+            emojiButton = cell.emojiButton
+            return cell
         }
     }
     
     // MARK: - Select Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 2 {
+        
+        if indexPath.row == 1 && indexPath.section == 1 {
             let vc = LocationSearchViewController()
             vc.delegate = self
             let navVc = UINavigationController(rootViewController: vc)
@@ -221,10 +241,11 @@ extension FormEventViewController {
     
     private func createEventFromTempEvent() -> Event?{
         
-        guard let user = UserDefaultsManager.shared.getCurrentUser() else {return nil}
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
         
         return Event(
             id: IdManager.shared.createEventId(),
+            emojiTitle: tempEvent.emojiTitle,
             title: tempEvent.title,
             organisers: [user],
             imageUrlString: [],
@@ -233,7 +254,7 @@ extension FormEventViewController {
             endDateString: tempEvent.endDate ?? "Now",
             location: tempEvent.location,
             tag: [],
-            description: tempEvent.detail,
+            introduction: tempEvent.detail, additionalDetail: tempEvent.addDetail,
             refundPolicy: "",
             participants: tempEvent.participants,
             headcount: tempEvent.headcount)
@@ -247,8 +268,10 @@ extension FormEventViewController {
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))
         
+        
         vc.modalPresentationStyle = .overCurrentContext
         vc.modalTransitionStyle = .crossDissolve
+        vc.action = didTapPost
         
         present(vc, animated: true)
         
@@ -260,8 +283,10 @@ extension FormEventViewController {
         
         guard let event = createEventFromTempEvent() else {return}
         
-        DatabaseManager.shared.createEvent(with: event) { [weak self] success in
-            self?.tabBarController?.selectedIndex = 0
+        DatabaseManager.shared.createEvent(with: event,participants:tempEvent.participantsArray) { [weak self] success in
+            self?.navigationController?.popToRootViewController(animated: false)
+            self?.completion?(event)
+            //            self?.tabBarController?.selectedIndex = 0
         }
         
     }
@@ -316,8 +341,11 @@ extension FormEventViewController:UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         switch textView.tag {
         case 0:
-            // Detail View
+            // Intro View
             tempEvent.detail = textView.text
+        case 1:
+            // addDetail View
+            tempEvent.addDetail = textView.text
         default:
             print("Invalid Tag")
         }
@@ -342,5 +370,25 @@ extension FormEventViewController:ParticipantsTableViewCellDelegate {
     }
     
     
+    
+}
+
+extension FormEventViewController:EmojiPickerDelegate {
+    // MARK: - Pick Emoji
+    
+    @objc private func openEmojiPickerModule(sender: UIButton) {
+        let viewController = EmojiPickerViewController()
+        viewController.selectedEmojiCategoryTintColor = .mainColor
+        viewController.delegate = self
+        viewController.sourceView = sender
+        present(viewController, animated: true)
+    }
+    
+    
+    func didGetEmoji(emoji: String) {
+        UserDefaults.standard.setValue(emoji, forKey: "selectedEmoji")
+        tempEvent.emojiTitle = emoji
+        emojiButton?.setTitle(emoji, for: .normal)
+    }
     
 }

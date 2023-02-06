@@ -61,7 +61,7 @@ final class AuthManager {
                     completion(nil)
                     return}
                 
-                UserDefaultsManager.shared.updateUserProfile(with: user)
+                DefaultsManager.shared.updateUserProfile(with: user)
                 completion(user)
             }
         }

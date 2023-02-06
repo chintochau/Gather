@@ -14,6 +14,7 @@ target 'gathering' do
   pod 'Firebase/Auth'
   pod 'SDWebImage'
   pod 'IGListKit', '~> 4.0.0'
+  pod 'EmojiPicker', :git => 'https://github.com/htmlprogrammist/EmojiPicker'
 
     # Pods for Instagram
 

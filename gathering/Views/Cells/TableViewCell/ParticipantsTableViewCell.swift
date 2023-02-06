@@ -156,7 +156,7 @@ class ParticipantsTableViewCell:UITableViewCell {
         textView.tag = tag
     }
     private func initialUser() {
-        guard let user = UserDefaultsManager.shared.getCurrentUser() else {return}
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
         userLabel.text = user.name
         switch user.gender {
         case genderType.male.rawValue:
@@ -209,7 +209,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
     
     func textViewDidEndEditing(_ textView: UITextView) {
         guard let text = textView.text,
-        let user = UserDefaultsManager.shared.getCurrentUser() else {return}
+        let user = DefaultsManager.shared.getCurrentUser() else {return}
             if text.isEmpty || text.last == "\n" {
             if text.last == "\n"{
                 textView.text.removeLast()
@@ -221,7 +221,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
         var participants:[String:String]  = [user.username:user.gender ?? "non binary"]
         var participantArray = [Participant(with: user)]
         
-        var counter:Int = 0
+        var counter:Int = 1
         
         for (index,item) in text.split(separator: "\n").enumerated() {
             var gender:String
@@ -241,11 +241,11 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
                 let replacedName = name + "-" + String(counter)
                 
                 participants[replacedName] = gender
-                participantArray.append(Participant(name: replacedName, username: nil, gender: gender, contact: nil))
+                participantArray.append(Participant(name: replacedName, username: nil, gender: gender, contact: nil, profileUrlString: nil))
                 counter += 1
             }else {
                 participants[name] = gender
-                participantArray.append(Participant(name: name, username: nil, gender: gender, contact: nil))
+                participantArray.append(Participant(name: name, username: nil, gender: gender, contact: nil, profileUrlString: nil))
             }
             
         }

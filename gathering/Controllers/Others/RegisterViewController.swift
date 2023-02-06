@@ -157,7 +157,7 @@ class RegisterViewController: UIViewController {
                 return
             }
             
-            UserDefaultsManager.shared.updateUserProfile(with: user)
+            DefaultsManager.shared.updateUserProfile(with: user)
             self?.completion?()
             self?.dismiss(animated: true)
         }

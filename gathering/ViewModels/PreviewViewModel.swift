@@ -9,10 +9,14 @@ import Foundation
 
 struct PreviewViewModel{
     let event:Event
+    
     var eventString:String {
         
+        print(event)
         
-        let title:String = event.title
+        let emojiTitle:String = event.emojiTitle ?? ""
+        
+        let title:String = emojiTitle + " " + event.title
         
         let startString:String = {
             return "\nTime: " + event.startDateString
@@ -30,12 +34,18 @@ struct PreviewViewModel{
         }()
         
         let participants:String = {
+            let user = DefaultsManager.shared.getCurrentUser()
+            
+            let currentUsername = user?.username
+            let currentName = user?.name
             
             var counter:Int = 1
             
             var namelist = "\nNamelist: "
+            
             for participant in event.participants {
-                namelist += "\n\(counter). " + participant.key
+                
+                namelist += "\n\(counter). " + (participant.key == currentUsername ? currentName ?? "Not Valid" : participant.key)
                 counter += 1
             }
             

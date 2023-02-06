@@ -17,8 +17,8 @@ enum UserDefaultsType:String,CaseIterable {
 }
 
 
-final class UserDefaultsManager {
-    static let shared = UserDefaultsManager()
+final class DefaultsManager {
+    static let shared = DefaultsManager()
     
     public func updateUserProfile(with user:User){
         UserDefaults.standard.set(user.username, forKey: "username")

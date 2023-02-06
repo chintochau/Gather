@@ -92,6 +92,10 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
         switch vm {
         case .formEvent:
             let vc = FormEventViewController()
+            vc.completion = { [weak self] event in
+                let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: UIImage(named: "test")!)!)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
             navigationController?.pushViewController(vc, animated: true)
         case .newEvent:
             let vc = NewEventViewController()

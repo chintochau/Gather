@@ -68,22 +68,47 @@ final class DatabaseManager {
     }
     
     // MARK: - create Event
-    public func createEvent (with event:Event, completion: @escaping (Bool) -> Void) {
-        let ref = database.collection("events").document(event.id)
+    public func createEvent (with event:Event,participants:[Participant], completion: @escaping (Bool) -> Void) {
         
-        guard let data = event.asDictionary() else {return}
-        
-        ref.setData(data) {[weak self] error in
+        database.runTransaction {[weak self] transaction, error in
             
-            completion(error == nil)
+            guard let eventRef = self?.database.collection("events").document(event.id),
+                  let eventData = event.asDictionary(),
+                  let user = DefaultsManager.shared.getCurrentUser(),
+                  let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(event.id)
+            else {return}
+            
+            transaction.setData(eventData, forDocument: eventRef)
+            transaction.setData(["id":event.id], forDocument: userEventRef)
+            
+            for participant in participants {
+                let ref = eventRef.collection("participants").document(participant.username ?? participant.name)
+                guard let participantData = participant.asDictionary() else {return}
+                transaction.setData(participantData, forDocument: ref)
+            }
+            return nil
+        } completion: { (_,error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                print("Transaction successfully committed!")
+            }
+        }
+
+        
+//        guard let data = event.asDictionary() else {return}
+//
+//        ref.setData(data) {[weak self] error in
+//
+//            completion(error == nil)
 //            guard error == nil,
 //            let user = UserDefaultsManager.shared.getCurrentUser() else {return}
 //
 //            self?.registerEvent(participant: user, eventID:event.id) { success in
 //                completion(success)
 //            }
-            
-        }
+//
+//        }
     }
     
     // MARK: - Fetch Event
@@ -100,11 +125,11 @@ final class DatabaseManager {
         }
     }
     
-    public func fetchParticipants(with eventID:String, completion:@escaping ([User]?) -> Void ) {
+    public func fetchParticipants(with eventID:String, completion:@escaping ([Participant]?) -> Void ) {
         let ref = database.collection("events").document(eventID).collection("participants")
         
         ref.getDocuments { snapshot, error in
-            guard let participants = snapshot?.documents.compactMap({ User(with: $0.data()) }) else {
+            guard let participants = snapshot?.documents.compactMap({ Participant(with: $0.data()) }) else {
                 completion(nil)
                 return
             }

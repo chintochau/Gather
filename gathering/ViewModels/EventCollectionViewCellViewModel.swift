@@ -13,7 +13,8 @@ enum EventTagType {
 }
 
 struct EventCollectionViewCellViewModel {
-    let imageUrlString:String
+    let imageUrlString:String?
+    let emojiString:String?
     let title:String
     let date:String
     let location:String
@@ -64,7 +65,7 @@ extension EventCollectionViewCellViewModel {
 //            }
 //        }
         
-        self.imageUrlString = event.imageUrlString.first ?? ""
+        self.imageUrlString = event.imageUrlString.first
         self.title = event.title
         self.date = event.startDateString
         self.location = event.location.name
@@ -77,5 +78,6 @@ extension EventCollectionViewCellViewModel {
         self.totalPeopleCount = peopleCount.male + peopleCount.female
         self.price = event.price
         self.totalCapacity = event.headcount.max ?? 0
+        self.emojiString = event.emojiTitle
     }
 }

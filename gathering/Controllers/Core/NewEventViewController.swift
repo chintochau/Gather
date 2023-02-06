@@ -23,7 +23,7 @@ class NewEventViewController: UIViewController{
         print("released")
     }
     
-    private var event = (
+    private var tempEvent = (
         title:"",
         description:"",
         location:Location.toronto,
@@ -296,9 +296,9 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         if let name = textView.layer.name,let text = textView.text {
             switch name {
             case newEventPageType.desctiptionField.rawValue:
-                event.description = text
+                tempEvent.description = text
             case newEventPageType.refundField.rawValue:
-                event.refund = text
+                tempEvent.refund = text
             default:
                 print("please check type")
             }
@@ -310,13 +310,13 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         if let name = textField.layer.name,let text = textField.text, !text.isEmpty {
             switch name {
             case newEventPageType.titleField.rawValue:
-                event.title = text
+                tempEvent.title = text
             case newEventPageType.locationField.rawValue:
-                event.location = Location.toronto
+                tempEvent.location = Location.toronto
             case newEventPageType.priceField.rawValue:
                 guard let price = Double(text) else {
                     fatalError("cannot change price to type double")}
-                event.price = price
+                tempEvent.price = price
             default:
                 print("please check type")
             }
@@ -325,8 +325,8 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        event.startDate = DateFormatter.formatter.string(from: startDate)
-        event.endDate = DateFormatter.formatter.string(from: endDate)
+        tempEvent.startDate = DateFormatter.formatter.string(from: startDate)
+        tempEvent.endDate = DateFormatter.formatter.string(from: endDate)
         
     }
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
@@ -394,20 +394,20 @@ extension NewEventViewController {
     
     private func configurePreviewEvent (urlStrings:[String] = []) -> Event?{
         
-        guard let user = UserDefaultsManager.shared.getCurrentUser() else { return nil }
+        guard let user = DefaultsManager.shared.getCurrentUser() else { return nil }
         
         return Event(
-            id: IdManager.shared.createEventId(),
-            title: event.title,
+            id: IdManager.shared.createEventId(), emojiTitle: nil,
+            title: tempEvent.title,
             organisers: [user],
             imageUrlString: urlStrings,
-            price: event.price,
-            startDateString: event.startDate,
-            endDateString: event.endDate,
-            location: event.location,
+            price: tempEvent.price,
+            startDateString: tempEvent.startDate,
+            endDateString: tempEvent.endDate,
+            location: tempEvent.location,
             tag: [],
-            description: event.description,
-            refundPolicy: event.refund, participants: [:],
+            introduction: tempEvent.description, additionalDetail: "",
+            refundPolicy: tempEvent.refund, participants: [:],
             headcount: Headcount(isGenderSpecific: true, min: 5, max: 5, mMin: 6, mMax: 6, fMin: 7, fMax: 7)
         )
     }
@@ -433,7 +433,7 @@ extension NewEventViewController {
             
             guard let event = self?.configurePreviewEvent(urlStrings: urlStrings) else {return}
             
-            DatabaseManager.shared.createEvent(with: event) { done in
+            DatabaseManager.shared.createEvent(with: event, participants: []) { done in
                 completion(done)
             }
         }

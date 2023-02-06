@@ -86,7 +86,16 @@ class UserTableViewCell: UITableViewCell {
     
     func configure(with vm:Participant){
         nameLabel.text = vm.name
-        profileImageView.image = UIImage(systemName: "person.circle")
+        if let urlString = vm.profileUrlString {
+            profileImageView.sd_setImage(with: URL(string: urlString))
+        }else {
+            profileImageView.image =  UIImage(systemName: "person.circle")
+        }
+        if let username = vm.username {
+            usernameLabel.text = "@\(username)"
+        }else {
+            usernameLabel.text = "Guest"
+        }
     }
     
     

@@ -22,7 +22,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     private let eventID:String
     private let event:Event
     
-    private var viewModels = [User]()
+    private var viewModels = [Participant]()
     
     // MARK: - Init
     init (event:Event) {

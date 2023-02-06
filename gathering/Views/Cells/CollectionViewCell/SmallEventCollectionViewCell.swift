@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class EventSmallCollectionViewCell: BasicEventCollectionViewCell{
+final class SmallEventCollectionViewCell: BasicEventCollectionViewCell{
     static let identifier = "EventSmallCollectionViewCell"
     
     override func layoutSubviews() {

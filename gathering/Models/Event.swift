@@ -9,6 +9,7 @@ import Foundation
 
 struct Event:Codable {
     let id: String
+    let emojiTitle:String?
     let title:String
     let organisers:[User]
     let imageUrlString:[String]
@@ -17,7 +18,8 @@ struct Event:Codable {
     let endDateString:String
     let location:Location
     let tag:[String]
-    let description:String
+    let introduction:String?
+    let additionalDetail:String?
     let refundPolicy:String
     let participants:[String:String]
     let headcount:Headcount

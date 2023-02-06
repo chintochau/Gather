@@ -101,17 +101,3 @@ class ParticipantsViewHeaderView: UIView {
     
     
 }
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Preview: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        EventViewController(viewModel: EventMainViewModel(with: MockData.event, image: MockData.image)!).toPreview()
-    }
-}
-#endif
-

@@ -50,7 +50,7 @@ extension EventMainViewModel {
         self.date = (title:date , subTitle: timeInterval)
         self.location = (area: event.location.name, address: event.location.address ?? "")
         self.refundPolicy = event.refundPolicy
-        self.about = event.description
+        self.about = event.introduction ?? ""
         self.owner = event.organisers[0]
         
         self.price = event.price == 0.0 ? "Free" : "CA$: \(String(event.price))"

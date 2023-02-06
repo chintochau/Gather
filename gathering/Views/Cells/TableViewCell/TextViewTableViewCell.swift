@@ -21,7 +21,7 @@ class TextViewTableViewCell: UITableViewCell {
         let view = UITextView()
         view.textColor = .label
         view.backgroundColor = .clear
-        view.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        view.textContainerInset = UIEdgeInsets(top: 20, left: 15, bottom: 20, right: 20)
         view.isScrollEnabled = false
         view.font = .preferredFont(forTextStyle: .body)
         return view

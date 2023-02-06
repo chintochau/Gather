@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class EventLargeCollectionViewCell: BasicEventCollectionViewCell {
+final class LargeEventCollectionViewCell: BasicEventCollectionViewCell {
     static let identifier = "EventLargeCollectionViewCell"
     
     

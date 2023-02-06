@@ -17,6 +17,12 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
+    let emojiStringView:UILabel = {
+        let view = UILabel()
+        view.font = .systemFont(ofSize: 30)
+        return view
+    }()
+    
     let titleLabel:UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
@@ -115,7 +121,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             femaleNumber,
             totalIconImageView,
             totalNumber,
-            priceLabel
+            priceLabel,
+            emojiStringView
         ].forEach({addSubview($0)})
         
         
@@ -149,6 +156,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         locationLabel.text = nil
         likeButton.setImage(UIImage(systemName:  "heart"), for: .normal)
         likeButton.tintColor = .label
+        emojiStringView.text = nil
         [
             totalNumber,totalIconImageView,maleIconImageView,maleNumber,femaleNumber,femaleIconImageView
         ].forEach({$0.isHidden = false})
@@ -156,11 +164,12 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     func configure(with vm:EventCollectionViewCellViewModel) {
         
-        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString))
+        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
         dateLabel.text = vm.date
         titleLabel.text = vm.title
         locationLabel.text = vm.location
-        
+        emojiStringView.text = vm.emojiString
+
         if vm.isSeparated {
             [totalNumber,totalIconImageView
             ].forEach({$0.isHidden = true})
