@@ -16,8 +16,11 @@ struct EventCollectionViewCellViewModel {
     let imageUrlString:String?
     let emojiString:String?
     let title:String
-    let date:String
+    let dateString:String
+    let dayString:String
+    let timeString:String
     let location:String
+    let intro:String?
     let tag: [EventTagType]?
     let isLiked: Bool
     let isSeparated:Bool
@@ -65,9 +68,14 @@ extension EventCollectionViewCellViewModel {
 //            }
 //        }
         
+        let fullDateString = String.localeDate(from: event.startDateString, .enUS)
+        
+        self.dateString = fullDateString.date ?? ""
+        self.dayString = fullDateString.dayOfWeek ?? ""
+        self.timeString = fullDateString.time ?? ""
+        
         self.imageUrlString = event.imageUrlString.first
         self.title = event.title
-        self.date = event.startDateString
         self.location = event.location.name
         self.tag = nil
         self.isLiked = false
@@ -79,5 +87,6 @@ extension EventCollectionViewCellViewModel {
         self.price = event.price
         self.totalCapacity = event.headcount.max ?? 0
         self.emojiString = event.emojiTitle
+        self.intro = event.introduction
     }
 }

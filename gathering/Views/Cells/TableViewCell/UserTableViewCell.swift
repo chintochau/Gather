@@ -49,14 +49,15 @@ class UserTableViewCell: UITableViewCell {
             valuelabel
         ].forEach({contentView.addSubview($0)})
         
+        let imageSize:CGFloat = 50
         profileImageView.anchor(
             top: contentView.topAnchor,
             leading: contentView.leadingAnchor,
             bottom: contentView.bottomAnchor,
             trailing: nil,
             padding: .init(top: 5, left: 20, bottom: 5, right: 0),
-            size: CGSize(width: 60, height: 60))
-        profileImageView.layer.cornerRadius = 30
+            size: CGSize(width: imageSize, height: imageSize))
+        profileImageView.layer.cornerRadius = imageSize/2
         
         nameLabel.anchor(top: nil, leading: profileImageView.trailingAnchor, bottom: contentView.centerYAnchor, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         usernameLabel.anchor(top: contentView.centerYAnchor, leading: nameLabel.leadingAnchor, bottom: nil, trailing: nil)

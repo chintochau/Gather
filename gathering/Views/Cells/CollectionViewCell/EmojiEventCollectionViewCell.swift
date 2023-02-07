@@ -22,7 +22,7 @@ final class EmojiEventCollectionViewCell: BasicEventCollectionViewCell{
         emojiStringView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor,constant: 0).isActive = true
         
         
-        dateLabel.anchor(top: topAnchor, leading: emojiStringView.trailingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        dateLabel.anchor(top: emojiStringView.bottomAnchor, leading: emojiStringView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
         
         titleLabel.anchor(top: dateLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor)
@@ -30,9 +30,12 @@ final class EmojiEventCollectionViewCell: BasicEventCollectionViewCell{
         
         locationLabel.anchor(top: titleLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: nil)
         
+        introLabel.anchor(top: locationLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: maleIconImageView.topAnchor, trailing: trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 10))
+        
         
         let imageSize:CGFloat = 25
-        maleIconImageView.anchor(top: locationLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 0, bottom: 0, right: 0),size: CGSize(width: imageSize, height: imageSize))
+        maleIconImageView.anchor(top: nil, leading: dateLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: CGSize(width: imageSize, height: imageSize))
+        maleIconImageView.topAnchor.constraint(greaterThanOrEqualTo: locationLabel.bottomAnchor,constant: 5).isActive = true
         
         femaleIconImageView.anchor(top: maleIconImageView.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: CGSize(width: imageSize, height: imageSize))
         
@@ -60,6 +63,7 @@ final class EmojiEventCollectionViewCell: BasicEventCollectionViewCell{
         let buttonSize:CGFloat = 30
         shareButton.frame = CGRect(x: width-buttonSize-5, y: priceLabel.top-buttonSize-5, width: buttonSize, height: buttonSize)
         likeButton.frame = CGRect(x: shareButton.left-buttonSize, y: priceLabel.top-buttonSize-5, width: buttonSize, height: buttonSize)
+        
         
         
     }

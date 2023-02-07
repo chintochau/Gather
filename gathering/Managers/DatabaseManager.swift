@@ -112,15 +112,24 @@ final class DatabaseManager {
     }
     
     // MARK: - Fetch Event
-    public func fetchEvents(completion: @escaping ([Event]?) -> Void) {
-        let ref = database.collection("events")
+    public func fetchEvents(exclude events:[Event] = [],completion: @escaping ([Event]?) -> Void) {
         
-        ref.getDocuments { snapshot, error in
+        let excludedEventIDs = events.compactMap({$0.id})
+        
+        let ref = database.collection("events")
+        var query = ref.order(by: "startDateString").limit(to: 30)
+        
+        if !excludedEventIDs.isEmpty {
+            query = ref.whereField("id", notIn: excludedEventIDs).order(by: "startDateString").limit(to: 30)
+        }
+        
+        query.getDocuments { snapshot, error in
             
             guard let events = snapshot?.documents.compactMap({ Event(with: $0.data()) }) else {
                 completion(nil)
                 return
             }
+            
             completion(events)
         }
     }
@@ -134,6 +143,30 @@ final class DatabaseManager {
                 return
             }
             completion(participants)
+            
+        }
+        
+    }
+    
+    public func fetchUserEvents(with userID:String, completion:@escaping ([Event]?) -> Void) {
+        let ref = database.collection("users").document(userID).collection("events")
+        
+        ref.getDocuments {[weak self] snapshot, error in
+            guard error == nil else {return}
+            guard let array = snapshot?.documents.compactMap({$0.data()["id"]}) as? [String],
+            !array.isEmpty else {
+                completion([])
+                return
+            }
+            
+            let eventsRef = self?.database.collection("events")
+            
+            eventsRef?.whereField("id", in: array).order(by: "startDateString").getDocuments(completion: { snapshot, error in
+                guard error == nil else {return}
+                let events = snapshot?.documents.compactMap({Event(with:$0.data())})
+                completion(events)
+            })
+            
             
         }
         

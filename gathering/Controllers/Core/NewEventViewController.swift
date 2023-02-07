@@ -254,6 +254,7 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
         
         picker.delegate = self
         picker.allowsEditing = true
+        
         imageCells[index] = cell
         currentIndex = index
         
@@ -261,7 +262,7 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let tempImage:UIImage = info[UIImagePickerController.InfoKey.editedImage] as! UIImage
+        guard let tempImage:UIImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {return}
         
         imageCells[currentIndex].imageView.image = tempImage
         imageCells[currentIndex].imageView.contentMode = .scaleAspectFill

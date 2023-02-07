@@ -102,7 +102,10 @@ class RegisterViewController: UIViewController {
         ].forEach{(view.addSubview($0))}
         signUpButton.addTarget(self, action: #selector(didTapSignUp), for: .touchUpInside)
         
+        addTapCancelGesture()
+        
     }
+    
     
     
     override func viewDidLayoutSubviews() {
@@ -128,6 +131,16 @@ class RegisterViewController: UIViewController {
         indicator.frame = CGRect(x: signUpButton.left, y: signUpButton.top, width: signUpButton.width, height: signUpButton.height)
         
         
+    }
+    
+    private func addTapCancelGesture(){
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapCancel))
+        gesture.numberOfTapsRequired = 1
+        view.addGestureRecognizer(gesture)
+    }
+    
+    @objc private func didTapCancel(){
+        view.endEditing(true)
     }
     
     @objc private func didTapClose(){

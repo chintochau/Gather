@@ -87,21 +87,34 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vm = viewModels[indexPath.row]
-        
-        switch vm {
-        case .formEvent:
-            let vc = FormEventViewController()
-            vc.completion = { [weak self] event in
-                let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: UIImage(named: "test")!)!)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            }
-            navigationController?.pushViewController(vc, animated: true)
-        case .newEvent:
-            let vc = NewEventViewController()
-            navigationController?.pushViewController(vc, animated: true)
-        }
         collectionView.deselectItem(at: indexPath, animated: true)
+        
+        if let user = DefaultsManager.shared.getCurrentUser(),
+           let name = user.name,
+           let gender = user.gender{
+            
+            let vm = viewModels[indexPath.row]
+            switch vm {
+            case .formEvent:
+                let vc = FormEventViewController()
+                vc.completion = { [weak self] event in
+                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: UIImage(named: "test")!)!)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+                navigationController?.pushViewController(vc, animated: true)
+            case .newEvent:
+                let vc = NewEventViewController()
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            
+        }else {
+            let vc = EditProfileViewController()
+            let navVC = UINavigationController(rootViewController: vc)
+            present(navVC, animated: true)
+        }
+        
+        
+        
     }
     
     // MARK: - Highlight animation

@@ -63,6 +63,7 @@
 		47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CD0229760AC4003B22EB /* IdManager.swift */; };
 		47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */; };
 		47F1204C2987737700C5CAF6 /* ParticipantsViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */; };
+		47F912002991F59600DD5597 /* SectionHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F911FF2991F59500DD5597 /* SectionHeaderCollectionReusableView.swift */; };
 		47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EDE296F2B12001AF255 /* HomeViewController.swift */; };
 		47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */; };
 		47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */; };
@@ -139,6 +140,7 @@
 		47F0CD0229760AC4003B22EB /* IdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdManager.swift; sourceTree = "<group>"; };
 		47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewController.swift; sourceTree = "<group>"; };
 		47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewHeaderView.swift; sourceTree = "<group>"; };
+		47F911FF2991F59500DD5597 /* SectionHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		47FD6EDE296F2B12001AF255 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */,
 				471900C72979BF6900B2DD8C /* EventInfoCollectionViewCell.swift */,
 				47A35965297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift */,
+				47F911FF2991F59500DD5597 /* SectionHeaderCollectionReusableView.swift */,
 			);
 			path = CollectionViewCell;
 			sourceTree = "<group>";
@@ -560,6 +563,7 @@
 				47BC0578297491FF00242E45 /* TextViewTableViewCell.swift in Sources */,
 				4763D9DB2981CA950062C12C /* ProfileHeaderView.swift in Sources */,
 				4763D9DD2981E1480062C12C /* SectionHeaderView.swift in Sources */,
+				47F912002991F59600DD5597 /* SectionHeaderCollectionReusableView.swift in Sources */,
 				477C615B2990088500CDB241 /* TitleWithImageTableViewCell.swift in Sources */,
 				47F0CCFB2975B2A1003B22EB /* PhotoGridTableViewCell.swift in Sources */,
 				47E7DD7A298A23BE000C1FFC /* Location.swift in Sources */,

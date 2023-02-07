@@ -30,10 +30,17 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    let introLabel:UILabel = {
+        let view = UILabel()
+        view.numberOfLines = 4
+        view.lineBreakMode = .byTruncatingTail
+        return view
+    }()
+    
     let dateLabel:UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         return label
     }()
     
@@ -122,7 +129,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             totalIconImageView,
             totalNumber,
             priceLabel,
-            emojiStringView
+            emojiStringView,
+            introLabel
         ].forEach({addSubview($0)})
         
         
@@ -157,6 +165,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         likeButton.setImage(UIImage(systemName:  "heart"), for: .normal)
         likeButton.tintColor = .label
         emojiStringView.text = nil
+        introLabel.text = nil
         [
             totalNumber,totalIconImageView,maleIconImageView,maleNumber,femaleNumber,femaleIconImageView
         ].forEach({$0.isHidden = false})
@@ -165,10 +174,11 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     func configure(with vm:EventCollectionViewCellViewModel) {
         
         eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
-        dateLabel.text = vm.date
+        dateLabel.text = vm.dateString + " - " + vm.dayString + "\n" + vm.timeString
         titleLabel.text = vm.title
         locationLabel.text = vm.location
         emojiStringView.text = vm.emojiString
+        introLabel.text = vm.intro
 
         if vm.isSeparated {
             [totalNumber,totalIconImageView

@@ -17,7 +17,6 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     
     private let viewModels:[InputFieldType] = [
         .textField(title: "Name", placeholder: "Enter Name"),
-        .textView(title: "Bio", text: ""),
         .value(title: "Gender", value: "")
     ]
     private var tempField = (

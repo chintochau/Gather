@@ -146,11 +146,58 @@ extension DateFormatter {
 }
 
 extension String {
+    
     static func date(from date: Date) -> String? {
         let formatter = DateFormatter.formatter
         let string = formatter.string(from: date)
         return string
     }
+    
+    static func localeDate(from date:String,_ identifier: LocaleIdentifier) -> (date:String?,dayOfWeek:String?,time:String?) {
+        
+        let formatter = DateFormatter.formatter
+        guard let date = formatter.date(from: date) else {return (nil,nil,nil)}
+        
+        let fullDateString = localeDate(from: date, identifier)
+        
+        return (fullDateString.date,fullDateString.dayOfWeek,fullDateString.time)
+    }
+    
+    static func localeDate(from date:Date,_ identifier: LocaleIdentifier) -> (date:String?,dayOfWeek:String?,time:String?) {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: identifier.rawValue)
+
+        // Date
+        dateFormatter.dateFormat = "d MMM"
+        let dateString = dateFormatter.string(from: date)
+
+        // Day of the week
+        dateFormatter.dateFormat = "EEEE"
+        let dayString = dateFormatter.string(from: date)
+
+        // Time
+        dateFormatter.dateFormat = "HH:mm a"
+        let timeString = dateFormatter.string(from: date)
+        
+        return (dateString,dayString,timeString)
+    }
+    
+    
+}
+
+
+enum LocaleIdentifier: String {
+    case enUS = "en_US"
+    case esES = "es_ES"
+    case frFR = "fr_FR"
+    case deDE = "de_DE"
+    case jaJP = "ja_JP"
+    case zhHansCN = "zh_Hans_CN"
+    case zhHantTW = "zh_Hant_TW"
+    case arAE = "ar_AE"
+    case ruRU = "ru_RU"
+    case hiIN = "hi_IN"
 }
 
 extension Notification.Name {
