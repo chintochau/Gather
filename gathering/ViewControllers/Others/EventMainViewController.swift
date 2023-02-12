@@ -10,7 +10,7 @@ import UIKit
 class EventMainViewController: UIViewController, UIScrollViewDelegate {
     
     private let event:Event
-    private let eventImage:UIImage
+    private let eventImage:UIImage?
     
     public var completion: (() -> Void)?
     

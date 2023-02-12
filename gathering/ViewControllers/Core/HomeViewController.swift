@@ -26,7 +26,7 @@ class HomeViewController: UIViewController{
         view.backgroundColor = .systemBackground
         navigationItem.title = "Home"
         configureCollectionView()
-        fetchDate()
+        fetchData()
     }
     
     override func viewDidLayoutSubviews() {
@@ -47,13 +47,13 @@ class HomeViewController: UIViewController{
     }
     
     // MARK: - Fetch Data
-    private func fetchDate(){
+    private func fetchData(){
         
         if let user = DefaultsManager.shared.getCurrentUser() {
             DatabaseManager.shared.fetchUserEvents(with: user.username) {[weak self] selfEvents in
                 guard let selfEvents = selfEvents else {return}
                 self?.selfEvents = selfEvents
-                DatabaseManager.shared.fetchEvents(exclude: selfEvents) { events in
+                DatabaseManager.shared.fetchAllEvents(exclude: selfEvents) { events in
                     guard let events = events else {return}
                     self?.events = events
                     self?.createViewModels()
@@ -61,10 +61,11 @@ class HomeViewController: UIViewController{
             }
         }else {
             self.selfEvents = []
-            DatabaseManager.shared.fetchEvents{ [weak self] events in
+            DatabaseManager.shared.fetchAllEvents{ [weak self] events in
                 guard let events = events else {return}
                 self?.events = events
                 self?.createViewModels()
+                print(events)
             }
         }
         
@@ -113,33 +114,13 @@ extension HomeViewController: UINavigationControllerDelegate{
             )
             registeredEventGroup.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
             
-            // item for group 0
-            let LargeItem = NSCollectionLayoutItem(
-                layoutSize:
-                    NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalHeight(1))
-            
-            )
-            LargeItem.contentInsets = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
-            
-            // group 0, not in use
-            let group0 = NSCollectionLayoutGroup.vertical(
-                layoutSize:
-                    NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .fractionalHeight(0.5)
-                    ),
-                subitem: LargeItem,
-                count: 1
-            )
             
             // item for group 1
             let smallItem = NSCollectionLayoutItem(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(30))
+                        heightDimension: .estimated(10))
             )
             smallItem.edgeSpacing = .init(leading: .none, top: .fixed(5), trailing: .none, bottom: .fixed(5))
             
@@ -185,7 +166,7 @@ extension HomeViewController: UINavigationControllerDelegate{
         collectionView.register(SmallEventCollectionViewCell.self, forCellWithReuseIdentifier: SmallEventCollectionViewCell.identifier)
         collectionView.register(LargeEventCollectionViewCell.self, forCellWithReuseIdentifier: LargeEventCollectionViewCell.identifier)
         collectionView.register(EmojiEventCollectionViewCell.self, forCellWithReuseIdentifier: EmojiEventCollectionViewCell.identifier)
-        collectionView.register(SectionHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.identifier)
+        collectionView.register(HomeSectionHeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeSectionHeaderReusableView.identifier)
         
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -200,25 +181,27 @@ extension HomeViewController: UINavigationControllerDelegate{
     }
     
     @objc private func didPullToRefresh(){
-        fetchDate()
+        fetchData()
         refreshControl.endRefreshing()
     }
 }
 
 // MARK: - Delegate, DataSource
-extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource {
+extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource,HomeSectionHeaderReusableViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderCollectionReusableView.identifier, for: indexPath) as! SectionHeaderCollectionReusableView
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeSectionHeaderReusableView.identifier, for: indexPath) as! HomeSectionHeaderReusableView
+            
+            header.delegate = self
             
             switch indexPath.section {
             case 0:
                 header.configure(with: SectionHeaderViewModel(title: "Your Events", buttonText: "Show All"))
             case 1:
-                header.configure(with: SectionHeaderViewModel(title: "Explore Events", buttonText: "Show All"))
+                header.configure(with: SectionHeaderViewModel(title: "Explore Events", buttonText: nil))
             default:
                 print("section number is not handled")
             }
@@ -255,7 +238,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
             return cell
         }
         
-        if indexPath.section == 1 {
+        if indexPath.section == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LargeEventCollectionViewCell.identifier, for: indexPath) as! LargeEventCollectionViewCell
             cell.configure(with: model)
             return cell
@@ -273,18 +256,19 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         let cell = collectionView.cellForItem(at: indexPath) as! BasicEventCollectionViewCell
         
         currentCell = cell
-        guard let image = cell.eventImageView.image ?? UIImage(named: "test"),
-              let eventVM:EventMainViewModel = {
-                  switch indexPath.section {
-                  case 0:
-                      return EventMainViewModel(with: self.selfEvents[indexPath.row], image: image)
-                  case 1:
-                      return EventMainViewModel(with: self.events[indexPath.row], image: image)
-                  default:
-                      print("section not handled")
-                      return nil
-                  }
-              }() else {return}
+        guard let eventVM:EventMainViewModel = {
+            let image = cell.eventImageView.image
+            
+            switch indexPath.section {
+            case 0:
+                return EventMainViewModel(with: self.selfEvents[indexPath.row], image: image)
+            case 1:
+                return EventMainViewModel(with: self.events[indexPath.row], image: image)
+            default:
+                print("section not handled")
+                return nil
+            }
+        }() else {return}
         
         let vc = EventViewController(viewModel: eventVM)
         
@@ -304,19 +288,18 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         
     }
     
-}
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct Preview: PreviewProvider {
     
-    static var previews: some View {
-        // view controller using programmatic UI
-        HomeViewController().toPreview()
+    // MARK: - Header Show All
+    
+    
+    func HomeSectionHeaderReusableViewDidTapShowAll(_ view: HomeSectionHeaderReusableView, button: UIButton) {
+        print(button.layer.name)
+        
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+        let vc = UserProfileViewController(user: user)
+        present(vc, animated: true)
     }
+    
+    
 }
-#endif
 

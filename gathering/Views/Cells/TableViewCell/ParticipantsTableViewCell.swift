@@ -241,11 +241,11 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
                 let replacedName = name + "-" + String(counter)
                 
                 participants[replacedName] = gender
-                participantArray.append(Participant(name: replacedName, username: nil, gender: gender, contact: nil, profileUrlString: nil))
+                participantArray.append(Participant(name: replacedName, username: nil, gender: gender, email: nil, profileUrlString: nil))
                 counter += 1
             }else {
                 participants[name] = gender
-                participantArray.append(Participant(name: name, username: nil, gender: gender, contact: nil, profileUrlString: nil))
+                participantArray.append(Participant(name: name, username: nil, gender: gender, email: nil, profileUrlString: nil))
             }
             
         }

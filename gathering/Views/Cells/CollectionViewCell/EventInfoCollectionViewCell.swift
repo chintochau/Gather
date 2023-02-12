@@ -47,7 +47,7 @@ class EventInfoCollectionViewCell: UICollectionViewCell {
     private let subTitleLabel:UILabel = {
         let label = UILabel()
         label.numberOfLines = 4
-        label.font = .systemFont(ofSize: 14,weight: .light)
+        label.font = .systemFont(ofSize: 16,weight: .light)
         return label
     }()
     

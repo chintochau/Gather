@@ -27,16 +27,21 @@ class LoginView: UIView, UITextFieldDelegate {
     private let emailField:GATextField = {
         let view = GATextField()
         view.configure(name: "Email")
-        view.text = "jj@jj.com"
+        view.text = K.email
+        view.autocapitalizationType = .none
         view.placeholder = "name@example.com"
+        view.autocorrectionType = .no
+        view.keyboardType = .emailAddress
         return view
     }()
     
     private let passwordField:GATextField = {
         let view = GATextField()
         view.configure(name: "Password")
-        view.text = "password"
+        view.text = K.password
         view.placeholder = "Enter your password"
+        view.autocapitalizationType = .none
+        view.autocorrectionType = .no
         view.isSecureTextEntry = true
         return view
     }()
@@ -123,10 +128,12 @@ class LoginView: UIView, UITextFieldDelegate {
         passwordField.frame = CGRect(x: padding, y: emailField.bottom+space, width: width-2*padding, height: 50)
         registerButton.sizeToFit()
         registerButton.frame = CGRect(x: padding, y: passwordField.bottom+20, width: fieldWidth, height: registerButton.height)
-        termsButton.frame = CGRect(x: padding, y: registerButton.bottom+30, width: fieldWidth, height: registerButton.height)
-        privacyButton.frame = CGRect(x: padding, y: termsButton.bottom, width: fieldWidth, height: registerButton.height)
+        
         
         let buttonHeight:CGFloat = 50
+        termsButton.frame = CGRect(x: padding, y: height-buttonHeight-30-60, width: fieldWidth, height: registerButton.height)
+        privacyButton.frame = CGRect(x: padding, y: height-buttonHeight-30-30, width: fieldWidth, height: registerButton.height)
+        
         loginButton.frame = CGRect(x: padding, y: height-buttonHeight-30, width: width-2*padding, height: buttonHeight)
         indicator.frame = loginButton.frame
         

@@ -43,14 +43,9 @@ class ProfileViewController: UIViewController {
     
     private func configureViewModels(){
         
-        guard let username = UserDefaults.standard.string(forKey: "username"),
-              let email = UserDefaults.standard.string(forKey: "email")
-        else {return}
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
         
-        headerViewModel = .init(
-            profileUrlString: UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
-            username: username,
-            email: email)
+        headerViewModel = .init(user:user)
         
         viewModels = [
             // events

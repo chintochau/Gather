@@ -186,6 +186,17 @@ extension String {
     
 }
 
+extension Double {
+    static func todayAtMidnightTimestamp() -> Double {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
+        let dateString = dateFormatter.string(from: Date())
+        let todayAtMidnight = dateFormatter.date(from: dateString)
+        
+        return todayAtMidnight!.timeIntervalSince1970
+    }
+}
+
 
 enum LocaleIdentifier: String {
     case enUS = "en_US"

@@ -11,7 +11,7 @@ struct Participant:Codable {
     let name:String
     let username:String?
     let gender:String
-    let contact:String?
+    let email:String?
     let profileUrlString:String?
 
 }
@@ -23,7 +23,7 @@ extension Participant {
         self.name = name
         self.username = user.username
         self.gender = gender
-        self.contact = user.email
+        self.email = user.email
         self.profileUrlString = user.profileUrlString
     }
     

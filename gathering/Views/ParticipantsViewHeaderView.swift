@@ -40,7 +40,7 @@ class ParticipantsViewHeaderView: UIView {
         return view
     }()
     
-    private let selectButton = GAButton(title: "Enroll")
+    private let enrollButton = GAButton(title: "Enroll")
     
     
     override init(frame: CGRect) {
@@ -49,11 +49,11 @@ class ParticipantsViewHeaderView: UIView {
             participantsLabel,
             priceTitleLabel,
             priceValueLabel,
-            selectButton,
+            enrollButton,
             genderLabel
         ].forEach({addSubview($0)})
         backgroundColor = .systemBackground.withAlphaComponent(0.4)
-        selectButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
+        enrollButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
         
         
         layer.cornerRadius = 20
@@ -69,7 +69,7 @@ class ParticipantsViewHeaderView: UIView {
     
     
     func configure(with vm: EventCollectionViewCellViewModel) {
-        priceValueLabel.text = "CA$: \(vm.priceString)"
+        priceValueLabel.text = vm.priceString
         genderLabel.text = "\(vm.totalPeopleCount)/\(String(vm.totalCapacity))"
     }
     
@@ -84,11 +84,11 @@ class ParticipantsViewHeaderView: UIView {
         
         
         let buttonWidth:CGFloat = (width-40)/2
-        selectButton.frame = CGRect(x: width-padding-buttonWidth, y: priceTitleLabel.top, width: buttonWidth, height: 50)
+        enrollButton.frame = CGRect(x: width-padding-buttonWidth, y: priceTitleLabel.top, width: buttonWidth, height: 50)
         
         
         priceValueLabel.sizeToFit()
-        priceValueLabel.frame = CGRect(x: priceTitleLabel.left, y: selectButton.bottom-priceValueLabel.height, width: priceValueLabel.width, height: priceValueLabel.height)
+        priceValueLabel.frame = CGRect(x: priceTitleLabel.left, y: enrollButton.bottom-priceValueLabel.height, width: priceValueLabel.width, height: priceValueLabel.height)
         
         participantsLabel.frame = CGRect(x: padding, y: priceValueLabel.bottom+20, width: participantsLabel.width, height: participantsLabel.height)
         genderLabel.sizeToFit()

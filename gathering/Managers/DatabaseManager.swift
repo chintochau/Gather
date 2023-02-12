@@ -17,7 +17,6 @@ final class DatabaseManager {
     /// to create user profile when user first login the app
     public func createUserProfile(newUser:User, completion: @escaping (Bool) -> Void) {
         
-        print(4)
         let ref = database.collection("users").document(newUser.username)
         guard let data = newUser.asDictionary() else {return}
         ref.setData(data) { error in
@@ -54,6 +53,8 @@ final class DatabaseManager {
             completion(user)
         }
     }
+    
+    
     public func findUserWithUsername(with username:String, completion: @escaping (User?) -> Void) {
         
         let ref = database.collection("users").document(username)
@@ -65,6 +66,24 @@ final class DatabaseManager {
             
             completion(user)
         }
+    }
+    
+    public func searchForUsers(with username:String, completion: @escaping ([User]) -> Void) {
+        
+        
+        let ref = database.collection("users")
+            .whereField("username", isGreaterThanOrEqualTo: username.lowercased())
+            .whereField("username", isLessThanOrEqualTo: "\(username.lowercased())~")
+        
+        ref.getDocuments { snapshot, error in
+            
+            guard let users = snapshot?.documents.compactMap({ User(with: $0.data()) }) else {return}
+            
+            completion(users)
+            
+        }
+        
+        
     }
     
     // MARK: - create Event
@@ -79,7 +98,7 @@ final class DatabaseManager {
             else {return}
             
             transaction.setData(eventData, forDocument: eventRef)
-            transaction.setData(["id":event.id], forDocument: userEventRef)
+            transaction.setData(["id":event.id,"startTimestamp":Double.todayAtMidnightTimestamp()], forDocument: userEventRef)
             
             for participant in participants {
                 let ref = eventRef.collection("participants").document(participant.username ?? participant.name)
@@ -91,6 +110,7 @@ final class DatabaseManager {
             if let error = error {
                 print("Transaction failed: \(error)")
             } else {
+                completion(true)
                 print("Transaction successfully committed!")
             }
         }
@@ -112,16 +132,13 @@ final class DatabaseManager {
     }
     
     // MARK: - Fetch Event
-    public func fetchEvents(exclude events:[Event] = [],completion: @escaping ([Event]?) -> Void) {
+    public func fetchAllEvents(exclude excludeEvents:[Event] = [],completion: @escaping ([Event]?) -> Void) {
         
-        let excludedEventIDs = events.compactMap({$0.id})
+        let excludedEventIDs = excludeEvents.compactMap({$0.id})
         
         let ref = database.collection("events")
-        var query = ref.order(by: "startDateString").limit(to: 30)
+        let query = ref.whereField("startTimestamp", isGreaterThanOrEqualTo: Double.todayAtMidnightTimestamp()).limit(to: 30)
         
-        if !excludedEventIDs.isEmpty {
-            query = ref.whereField("id", notIn: excludedEventIDs).order(by: "startDateString").limit(to: 30)
-        }
         
         query.getDocuments { snapshot, error in
             
@@ -130,7 +147,11 @@ final class DatabaseManager {
                 return
             }
             
-            completion(events)
+            let filterEvents = events.filter { event in
+                return !excludedEventIDs.contains(event.id)
+            }
+            
+            completion(filterEvents)
         }
     }
     
@@ -148,10 +169,12 @@ final class DatabaseManager {
         
     }
     
-    public func fetchUserEvents(with userID:String, completion:@escaping ([Event]?) -> Void) {
+    public func fetchUserEvents(with userID:String,todayAndAfter:Bool = true, completion:@escaping ([Event]?) -> Void) {
+        
         let ref = database.collection("users").document(userID).collection("events")
         
-        ref.getDocuments {[weak self] snapshot, error in
+        
+        ref.whereField("startTimestamp", isGreaterThanOrEqualTo: todayAndAfter ? Double.todayAtMidnightTimestamp() : 0.0 ).limit(to: 9).getDocuments {[weak self] snapshot, error in
             guard error == nil else {return}
             guard let array = snapshot?.documents.compactMap({$0.data()["id"]}) as? [String],
             !array.isEmpty else {
@@ -159,12 +182,20 @@ final class DatabaseManager {
                 return
             }
             
+            
             let eventsRef = self?.database.collection("events")
             
-            eventsRef?.whereField("id", in: array).order(by: "startDateString").getDocuments(completion: { snapshot, error in
+            eventsRef?.whereField("id", in: array).getDocuments(completion: { snapshot, error in
                 guard error == nil else {return}
-                let events = snapshot?.documents.compactMap({Event(with:$0.data())})
-                completion(events)
+                let events = snapshot?.documents.compactMap({
+                    
+                    
+                    Event(with:$0.data())
+                })
+                
+                completion(events?.sorted(by: { lhs, rhs in
+                    return lhs.startTimestamp < rhs.startTimestamp
+                }))
             })
             
             
@@ -174,7 +205,7 @@ final class DatabaseManager {
     
     // MARK: - JoinEvent
     
-    public func registerEvent(participant: User,eventID:String,completion:@escaping (Bool) -> Void){
+    public func registerEvent(participant: User,eventID:String,eventStarttimestamp:Double,completion:@escaping (Bool) -> Void){
         
         let gender = participant.gender
         
@@ -197,9 +228,12 @@ final class DatabaseManager {
                 return}
             
             let selfRef = self?.database.collection("users").document(username).collection("events")
-            selfRef?.document(eventID).setData(["id" : eventID],completion: { error in
-                completion(error == nil)
-            })
+            selfRef?.document(eventID)
+                .setData(["id" : eventID,
+                          "startTimestamp":eventStarttimestamp],
+                         completion: { error in
+                    completion(error == nil)
+                })
             
         }
         /*

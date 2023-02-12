@@ -18,7 +18,7 @@ class TitleWithImageTableViewCell: UITableViewCell {
         }else {
             view.setTitle("😃", for: .normal)
         }
-        view.titleLabel?.font = .systemFont(ofSize: 40)
+        view.titleLabel?.font = .systemFont(ofSize: 35)
         return view
     }()
     let titleField:UITextField = {

@@ -30,9 +30,10 @@ struct EventCollectionViewCellViewModel {
     let peopleCount: (male:Int, female:Int)
     let price:Double
     let totalPeopleCount:Int
+    let organiser:User
     
     var priceString:String {
-        return String(price)
+        return price == 0 ? "Free" : "CA$: " + String(price)
     }
 }
 
@@ -88,5 +89,6 @@ extension EventCollectionViewCellViewModel {
         self.totalCapacity = event.headcount.max ?? 0
         self.emojiString = event.emojiTitle
         self.intro = event.introduction
+        self.organiser = event.organisers.first!
     }
 }

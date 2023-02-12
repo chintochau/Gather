@@ -17,7 +17,8 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     
     private let viewModels:[InputFieldType] = [
         .textField(title: "Name", placeholder: "Enter Name"),
-        .value(title: "Gender", value: "")
+        .value(title: "Gender", value: ""),
+        .value(title: "Age (only visible to yourself)", value: "")
     ]
     private var tempField = (
         name:"",
@@ -64,12 +65,8 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     }
     
     private func configureViewModels(){
-        guard let username = UserDefaults.standard.string(forKey: "username"),
-              let email = UserDefaults.standard.string(forKey: "email") else {return}
-        headerViewViewModel = .init(
-            profileUrlString: UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
-            username: username,
-            email: email)
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+        headerViewViewModel = .init(user:user)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -118,7 +115,10 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             email: email,
             name: self.tempField.name,
             profileUrlString: urlString ?? UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
-            gender: self.tempField.gender)
+            gender: self.tempField.gender,
+            rating: UserDefaults.standard.double(forKey: "rating"),
+            age:UserDefaults.standard.integer(forKey: "age")
+        )
         
         DatabaseManager.shared.updateUserProfile(user: user) { [weak self] success in
             guard success else {return}

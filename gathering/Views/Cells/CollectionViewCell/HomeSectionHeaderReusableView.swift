@@ -9,11 +9,17 @@ import UIKit
 
 struct SectionHeaderViewModel {
     let title:String
-    let buttonText:String
+    let buttonText:String?
 }
 
-class SectionHeaderCollectionReusableView: UICollectionReusableView {
+protocol HomeSectionHeaderReusableViewDelegate:AnyObject {
+    func HomeSectionHeaderReusableViewDidTapShowAll(_ view: HomeSectionHeaderReusableView, button:UIButton)
+}
+
+class HomeSectionHeaderReusableView: UICollectionReusableView {
     static let identifier = "SectionHeaderCollectionReusableView"
+    
+    weak var delegate:HomeSectionHeaderReusableViewDelegate?
     
     private let titleLabel:UILabel = {
         let view = UILabel()
@@ -28,7 +34,6 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
         return view
     }()
     
-    @objc var action: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,6 +44,7 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
                           padding: .init(top: 5, left: 0, bottom: 5, right: 0))
         
         button.anchor(top: titleLabel.topAnchor, leading: nil, bottom: titleLabel.bottomAnchor, trailing: trailingAnchor)
+        button.addTarget(self, action: #selector(didTapShowAll), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -48,6 +54,12 @@ class SectionHeaderCollectionReusableView: UICollectionReusableView {
     func configure(with vm:SectionHeaderViewModel) {
         titleLabel.text = vm.title
         button.setTitle(vm.buttonText, for: .normal)
+        button.layer.name = vm.buttonText
+    }
+    
+    
+    @objc private func didTapShowAll(){
+        delegate?.HomeSectionHeaderReusableViewDidTapShowAll(self, button: button)
     }
     
     

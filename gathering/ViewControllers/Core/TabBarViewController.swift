@@ -25,9 +25,9 @@ class TabBarViewController: UITabBarController {
         
         //Define VC
         let home = HomeViewController()
-        let explore = UIViewController()
+        let explore = ExploreViewController()
         let newevent = NewCategoryViewController()
-        let tickets = TicketViewController()
+        let tickets = FavouritedViewController()
         let profile = ProfileViewController()
         
         let nav1 = UINavigationController(rootViewController: home)

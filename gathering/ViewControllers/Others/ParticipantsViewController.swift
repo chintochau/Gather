@@ -22,12 +22,19 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     private let eventID:String
     private let event:Event
     
-    private var viewModels = [Participant]()
+    var models:[Participant] {
+        didSet{
+            self.tableView.reloadData()
+        }
+    }
+    
+    var openProfile:(() -> Void)?
     
     // MARK: - Init
     init (event:Event) {
         self.event = event
         self.eventID = event.id
+        self.models = []
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -47,7 +54,6 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
         view.clipsToBounds = true
         view.frame = CGRect(x: 0, y: view.height-130, width: view.width, height: view.height)
         configureHeaderView()
-        configureViewModels()
         addGesture()
         setupTableView()
     }
@@ -60,11 +66,10 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     
     // MARK: - ViewModels
     
-    fileprivate func configureViewModels() {
+    fileprivate func fetchParticipants() {
         DatabaseManager.shared.fetchParticipants(with:eventID){[weak self] participants in
             guard let participants = participants else {return}
-            self?.viewModels = participants
-            self?.tableView.reloadData()
+            self?.models = participants
         }
     }
     
@@ -201,12 +206,12 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModels.count
+        return models.count
     }
     
     // MARK: - Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let vm = viewModels[indexPath.row]
+        let vm = models[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as! UserTableViewCell
         cell.configure(with: vm)
@@ -214,16 +219,31 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
         return cell
     }
     
+    // MARK: - Select Cell
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let model = models[indexPath.row]
+        
+        if let user = User(with: model) {
+            let vc = UserProfileViewController(user: user)
+            self.present(vc, animated: true)
+        }
         
     }
+    
     
 }
 
 extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
     func didTapEnroll(_ view: ParticipantsViewHeaderView) {
+        
+        if !AuthManager.shared.isSignedIn {
+            let vc = UIAlertController(title: "Oops~", message: "Please login to join events", preferredStyle: .alert)
+            let action = UIAlertAction(title: "dismiss", style: .default)
+            vc.addAction(action)
+            present(vc, animated: true)
+        }
         
         guard let vm = EnrollViewModel(with: event) else {
             print("Fail to create VM")
@@ -232,7 +252,7 @@ extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
         let vc = EnrollViewController(vm: vm)
         vc.completion = {[weak self] in
             self?.view.frame = CGRect(x: 0, y: (self?.view.width)!, width: self?.view.width ?? 0, height: self?.view.height ?? 0)
-            self?.configureViewModels()
+            self?.fetchParticipants()
         }
         
         present(vc, animated: true)

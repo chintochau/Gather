@@ -14,6 +14,7 @@ struct EnrollViewModel {
     let email:String
     let eventTitle:String
     let dateString:String
+    let startTimestamp:Double
     let location:String
     let price:String
     let eventID:String
@@ -31,6 +32,7 @@ struct EnrollViewModel {
         self.location = event.location.name
         self.price = event.priceString
         self.eventID = event.id
+        self.startTimestamp = event.startTimestamp
     }
 }
 
@@ -115,6 +117,7 @@ class EnrollViewController: UIViewController {
     }()
     
     private let eventID:String
+    private let startTimestamp:Double
     var completion: (() -> Void)?
     
     // MARK: - Init
@@ -128,7 +131,7 @@ class EnrollViewController: UIViewController {
         locationLabel.text = vm.location
         eventID = vm.eventID
         genderButton.setTitle(vm.gender, for: .normal)
-        
+        startTimestamp = vm.startTimestamp
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -218,21 +221,14 @@ class EnrollViewController: UIViewController {
     }
     
     @objc func didTapConfirm(){
-        let info = UserDefaults.standard
         
-        guard let username = info.string(forKey: "username"),
-              let name = info.string(forKey: "name"),
-              let gender = info.string(forKey: "gender"),
-              let profileUrlString = info.string(forKey: UserDefaultsType.profileUrlString.rawValue)
-        else {return}
+        guard let user = DefaultsManager.shared.getCurrentUser() else {
+            print("cannot get user")
+            return
+        }
         
         DatabaseManager.shared.registerEvent(
-            participant:
-                User(username: username,
-                     email: emailField.text!,
-                     name: name,
-                     profileUrlString: profileUrlString,
-                     gender: gender), eventID: eventID) {[weak self] success in
+            participant:user, eventID: eventID, eventStarttimestamp: startTimestamp) {[weak self] success in
                          self?.completion?()
                          self?.dismiss(animated: true)
         }

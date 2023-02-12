@@ -21,24 +21,31 @@ class RegisterViewController: UIViewController {
     private let usernameField:GATextField = {
         let view = GATextField()
         view.configure(name: "Username")
+        view.autocorrectionType = .no
         view.autocapitalizationType = .none
-        view.text = "jjchau"
+        view.text = K.username
         view.placeholder = "Enter your username"
+        view.keyboardType = .alphabet
         return view
     }()
     
     private let emailField:GATextField = {
         let view = GATextField()
         view.configure(name: "Email")
-        view.text = "jj@jj.com"
+        view.autocorrectionType = .no
+        view.autocapitalizationType = .none
+        view.text = K.email
         view.placeholder = "name@example.com"
+        view.keyboardType = .emailAddress
         return view
     }()
     
     private let passwordField:GATextField = {
         let view = GATextField()
         view.configure(name: "Password")
-        view.text = "password"
+        view.autocorrectionType = .no
+        view.autocapitalizationType = .none
+        view.text = K.password
         view.placeholder = "Enter your password"
         view.isSecureTextEntry = true
         return view
@@ -47,7 +54,7 @@ class RegisterViewController: UIViewController {
     private let confirmPasswordField:GATextField = {
         let view = GATextField()
         view.configure(name: "Confirm Password")
-        view.text = "password"
+        view.text = K.password
         view.placeholder = "Repeat password"
         view.isSecureTextEntry = true
         return view
@@ -122,10 +129,11 @@ class RegisterViewController: UIViewController {
         passwordField.frame = CGRect(x: padding, y: emailField.bottom+space, width: fieldWidth, height: 50)
         confirmPasswordField.frame = CGRect(x: padding, y: passwordField.bottom+space, width: fieldWidth, height: 50)
         termsButton.sizeToFit()
-        termsButton.frame = CGRect(x: padding, y: confirmPasswordField.bottom+30, width: fieldWidth, height: termsButton.height)
-        privacyButton.frame = CGRect(x: padding, y: termsButton.bottom, width: fieldWidth, height: termsButton.height)
         
         let buttonHeight:CGFloat = 50
+        termsButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30-60, width: fieldWidth, height: termsButton.height)
+        privacyButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30-30, width: fieldWidth, height: termsButton.height)
+        
         signUpButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30, width: fieldWidth, height: buttonHeight)
         
         indicator.frame = CGRect(x: signUpButton.left, y: signUpButton.top, width: signUpButton.width, height: signUpButton.height)

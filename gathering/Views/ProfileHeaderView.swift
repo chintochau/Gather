@@ -11,6 +11,12 @@ struct ProfileHeaderViewViewModel {
     let profileUrlString:String?
     let username:String
     let email:String
+    
+    init(user:User) {
+        self.profileUrlString = user.profileUrlString
+        self.username = user.username
+        self.email = user.email
+    }
 }
 
 class ProfileHeaderView: UIView {

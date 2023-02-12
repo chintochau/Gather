@@ -56,7 +56,7 @@ class TextFieldTableViewCell: UITableViewCell {
         textField.layer.name = type.rawValue
         titleLabel.text = "\(type.rawValue):"
         if type == .priceField{
-            textField.keyboardType = .numberPad
+            textField.keyboardType = .decimalPad
         }
     }
     

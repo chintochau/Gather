@@ -13,6 +13,24 @@ struct User :Codable{
     let name:String?
     let profileUrlString:String?
     let gender:String?
+    let rating:Double?
+    let age:Int?
+}
+
+extension User {
+    init?(with participant:Participant){
+        guard let username = participant.username,
+              let email = participant.email else {return nil}
+        
+        self.username = username
+        self.email = email
+        self.name = participant.name
+        self.profileUrlString = participant.profileUrlString
+        self.gender = participant.gender
+        self.rating = nil
+        self.age = nil
+        
+    }
 }
 
 enum personalityType:String {

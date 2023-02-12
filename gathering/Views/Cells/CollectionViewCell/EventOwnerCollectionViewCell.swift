@@ -18,7 +18,7 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFit
         view.backgroundColor = .secondarySystemBackground
-        view.image = UIImage(systemName: "person.crop.circle")
+        view.image = .personIcon
         view.layer.borderColor = UIColor.mainColor!.withAlphaComponent(0.5).cgColor
         view.tintColor = .lightGray
         view.layer.borderWidth = 1
@@ -27,26 +27,44 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
     
     private let nameLabel:UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 25)
+        view.font = .systemFont(ofSize: 22)
         return view
     }()
-    private let descriptionLabel:UILabel = {
-        let view = UILabel()
-        view.font = .systemFont(ofSize: 18,weight: .light)
-        view.textColor = .lightGray
-        view.text = "Description..."
+    
+    private let followButton:UIButton = {
+        let view = UIButton()
+        view.setTitle("Follow", for: .normal)
+        view.setTitleColor(.link, for: .normal)
         return view
     }()
+    
+    var isFollowing:Bool = false {
+        didSet {
+            if isFollowing {
+                followButton.setTitle("Followed", for: .normal)
+            }else {
+                followButton.setTitle("Follow", for: .normal)
+            }
+        }
+    }
+    
+    var user:User?
     
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [imageView,nameLabel,descriptionLabel].forEach({addSubview($0)})
-        let iconSize:CGFloat = 60
+        [imageView,nameLabel,followButton].forEach({addSubview($0)})
+        let iconSize:CGFloat = 35
         imageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: CGSize(width: iconSize, height: iconSize))
         imageView.layer.cornerRadius = iconSize/2
-        nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 0))
-        descriptionLabel.anchor(top: nameLabel.bottomAnchor, leading: nameLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
+        
+        nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: bottomAnchor, trailing: followButton.leadingAnchor,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        
+        followButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: trailingAnchor)
+        followButton.addTarget(self, action: #selector(didTapFollow), for: .touchUpInside)
+        
+        followButton.isHidden = !AuthManager.shared.isSignedIn
+        
         
     }
     
@@ -56,7 +74,22 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
     
     func configure(with owner:User) {
         nameLabel.text = owner.name
-        imageView.sd_setImage(with: URL(string: owner.profileUrlString ?? ""))
+        if let urlString = owner.profileUrlString {
+            imageView.sd_setImage(with: URL(string: urlString))
+        }
+        isFollowing = DefaultsManager.shared.isUserFavourited(userID: owner.username)
+        user = owner
+    }
+    
+    @objc private func didTapFollow(){
+        guard let user = user else {return}
+        isFollowing.toggle()
+        if isFollowing {
+            DefaultsManager.shared.toFollowUser(userID: user.username)
+        }else {
+            DefaultsManager.shared.removeFromFavouritedUsers(userID: user.username)
+        }
+        
     }
     
     

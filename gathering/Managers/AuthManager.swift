@@ -23,7 +23,7 @@ final class AuthManager {
     // MARK: - Login/Signup
     public func signUp(username:String,email:String, password:String, completion: @escaping (User?) -> Void) {
         
-        let newUser = User(username: username, email: email, name: nil, profileUrlString: nil,  gender: "")
+        let newUser = User(username: username, email: email, name: nil, profileUrlString: nil,  gender: genderType.nonBinary.rawValue,rating: nil,age:nil)
         
         
         DatabaseManager.shared.findUserWithUsername(with: username) { user in

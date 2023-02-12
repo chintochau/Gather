@@ -14,6 +14,8 @@ enum UserDefaultsType:String,CaseIterable {
     case gender = "gender"
     case name = "name"
     case user = "user"
+    case favEvent = "favouriteEvents"
+    case favUser = "favouriteUsers"
 }
 
 
@@ -32,12 +34,10 @@ final class DefaultsManager {
     }
     
     public func resetUserProfile(){
-        UserDefaults.standard.set(nil, forKey: "username")
-        UserDefaults.standard.set(nil, forKey: "email")
-        UserDefaults.standard.set(nil, forKey: "profileUrlString")
-        UserDefaults.standard.set(nil, forKey: "gender")
-        UserDefaults.standard.set(nil, forKey: "name")
-        UserDefaults.standard.set(nil, forKey: "user")
+        UserDefaultsType.allCases.forEach({
+            UserDefaults.standard.set(nil, forKey: $0.rawValue)
+        })
+        
     }
     
     public func printAllUserdefaults(){
@@ -56,6 +56,85 @@ final class DefaultsManager {
         return User(with: user)
     }
     
+    
+    
+    // MARK: - Fav Events
+    public func getFavouritedEvents() -> [String] {
+        if let array = UserDefaults.standard.array(forKey: UserDefaultsType.favEvent.rawValue) as? [String] {
+            return array
+        }
+        return []
+    }
+    
+    public func saveFavouritedEvents(eventID:String){
+        var array = getFavouritedEvents()
+        array.append(eventID)
+        UserDefaults.standard.set(array, forKey: UserDefaultsType.favEvent.rawValue)
+    }
+    public func removeFromFavouritedEvents(eventID:String){
+        var array = getFavouritedEvents()
+        
+        print(array)
+        
+        if let index = array.firstIndex(of: eventID) {
+            array.remove(at: index)
+            UserDefaults.standard.set(array, forKey: UserDefaultsType.favEvent.rawValue)
+            
+            print(array)
+            
+        }else{
+            
+            UserDefaults.standard.set(array, forKey: UserDefaultsType.favEvent.rawValue)
+        }
+        
+    }
+    public func isEventFavourited(eventID:String) -> Bool {
+        let array = getFavouritedEvents()
+        if let _ = array.firstIndex(of: eventID) {
+            return true
+        }else {
+            return false
+        }
+    }
+    
+    // MARK: - Follows
+    public func getFavouritedUsers() -> [String] {
+        if let array = UserDefaults.standard.array(forKey: UserDefaultsType.favUser.rawValue) as? [String] {
+            return array
+        }
+        return []
+    }
+    
+    public func toFollowUser(userID:String){
+        var array = getFavouritedUsers()
+        array.append(userID)
+        UserDefaults.standard.set(array, forKey: UserDefaultsType.favUser.rawValue)
+    }
+    public func removeFromFavouritedUsers(userID:String){
+        var array = getFavouritedUsers()
+        
+        print(array)
+        
+        if let index = array.firstIndex(of: userID) {
+            array.remove(at: index)
+            UserDefaults.standard.set(array, forKey: UserDefaultsType.favUser.rawValue)
+            
+            print(array)
+            
+        }else{
+            
+            UserDefaults.standard.set(array, forKey: UserDefaultsType.favUser.rawValue)
+        }
+        
+    }
+    public func isUserFavourited(userID:String) -> Bool {
+        let array = getFavouritedUsers()
+        if let _ = array.firstIndex(of: userID) {
+            return true
+        }else {
+            return false
+        }
+    }
     
 }
 

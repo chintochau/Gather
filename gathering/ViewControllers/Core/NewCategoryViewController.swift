@@ -9,7 +9,7 @@ import UIKit
 
 class NewCategoryViewController: UIViewController {
     
-    private let viewModels = eventType.allCases.map{$0}
+    private let viewModels = categoryType.allCases.map{$0}
     
     private let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -76,6 +76,8 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
         case .newEvent:
             cell.configure(withImage: UIImage(named: "post.event"), text: vm.rawValue)
+        default:
+            cell.configure(withImage: UIImage(named: "create.group"), text: vm.rawValue)
         }
         
         return cell
@@ -90,21 +92,23 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
         collectionView.deselectItem(at: indexPath, animated: true)
         
         if let user = DefaultsManager.shared.getCurrentUser(),
-           let name = user.name,
-           let gender = user.gender{
+           let _ = user.name,
+           let _ = user.gender{
             
             let vm = viewModels[indexPath.row]
             switch vm {
             case .formEvent:
                 let vc = FormEventViewController()
                 vc.completion = { [weak self] event in
-                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: UIImage(named: "test")!)!)
+                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: nil)!)
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)
             case .newEvent:
                 let vc = NewEventViewController()
                 navigationController?.pushViewController(vc, animated: true)
+            default:
+                print("Not yet implemented")
             }
             
         }else {

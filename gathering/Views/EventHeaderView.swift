@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderCollectionReusableView: UICollectionReusableView {
+class EventHeaderView: UICollectionReusableView {
     
     static let identifier = "HeaderCollectionReusableView"
     
@@ -26,7 +26,7 @@ class HeaderCollectionReusableView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with image:UIImage) {
+    func configure(with image:UIImage?) {
         imageView.image = image
     }
     

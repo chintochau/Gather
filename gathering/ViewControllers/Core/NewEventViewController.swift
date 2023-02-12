@@ -29,8 +29,8 @@ class NewEventViewController: UIViewController{
         location:Location.toronto,
         price:0.0,
         refund:"",
-        endDate:DateFormatter.formatter.string(from: Date()),
-        startDate:DateFormatter.formatter.string(from: Date())
+        endTimestamp:Date().timeIntervalSince1970,
+        startTimestamp:Date().timeIntervalSince1970
     )
     
     
@@ -326,8 +326,8 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        tempEvent.startDate = DateFormatter.formatter.string(from: startDate)
-        tempEvent.endDate = DateFormatter.formatter.string(from: endDate)
+        tempEvent.startTimestamp = startDate.timeIntervalSince1970
+        tempEvent.endTimestamp = endDate.timeIntervalSince1970
         
     }
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
@@ -403,11 +403,12 @@ extension NewEventViewController {
             organisers: [user],
             imageUrlString: urlStrings,
             price: tempEvent.price,
-            startDateString: tempEvent.startDate,
-            endDateString: tempEvent.endDate,
+            startTimestamp: tempEvent.startTimestamp,
+            endTimestamp: tempEvent.endTimestamp,
             location: tempEvent.location,
             tag: [],
-            introduction: tempEvent.description, additionalDetail: "",
+            introduction: tempEvent.description,
+            additionalDetail: "",
             refundPolicy: tempEvent.refund, participants: [:],
             headcount: Headcount(isGenderSpecific: true, min: 5, max: 5, mMin: 6, mMax: 6, fMin: 7, fMax: 7)
         )

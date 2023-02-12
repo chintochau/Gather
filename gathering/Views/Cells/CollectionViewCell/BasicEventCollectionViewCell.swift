@@ -10,6 +10,21 @@ import SDWebImage
 
 class BasicEventCollectionViewCell: UICollectionViewCell {
     
+    let profileImageview:UIImageView = {
+        let view = UIImageView()
+        view.image = .personIcon
+        view.tintColor = .lightGray
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
+    let profileTitleLabel:UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.numberOfLines = 1
+        return label
+    }()
+    
     let eventImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
@@ -116,6 +131,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         [
+            profileImageview,
             eventImageView,
             dateLabel,
             titleLabel,
@@ -130,7 +146,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             totalNumber,
             priceLabel,
             emojiStringView,
-            introLabel
+            introLabel,
+            profileTitleLabel
         ].forEach({addSubview($0)})
         
         
@@ -158,6 +175,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        profileImageview.image = .personIcon
         eventImageView.image = nil
         dateLabel.text = nil
         titleLabel.text = nil
@@ -166,19 +184,24 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         likeButton.tintColor = .label
         emojiStringView.text = nil
         introLabel.text = nil
+        profileTitleLabel.text = nil
+        
         [
             totalNumber,totalIconImageView,maleIconImageView,maleNumber,femaleNumber,femaleIconImageView
         ].forEach({$0.isHidden = false})
     }
     
     func configure(with vm:EventCollectionViewCellViewModel) {
-        
+        if let profileImage = vm.organiser.profileUrlString {
+            profileImageview.sd_setImage(with: URL(string: profileImage))
+        }
         eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
         dateLabel.text = vm.dateString + " - " + vm.dayString + "\n" + vm.timeString
         titleLabel.text = vm.title
         locationLabel.text = vm.location
         emojiStringView.text = vm.emojiString
         introLabel.text = vm.intro
+        profileTitleLabel.text = vm.organiser.name
 
         if vm.isSeparated {
             [totalNumber,totalIconImageView

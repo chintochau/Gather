@@ -41,8 +41,8 @@ class FormEventViewController: UIViewController {
     var tempEvent = (
         title:"",
         emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
-        startDate:String.date(from: Date()),
-        endDate:String.date(from: Date()),
+        startTimestamp:Date().timeIntervalSince1970,
+        endTimestamp:Date().timeIntervalSince1970,
         location:Location.toronto,
         detail:"",
         headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
@@ -89,7 +89,7 @@ class FormEventViewController: UIViewController {
             ],[
                 .datePicker,
                 .value(title: "Location: ", value: location),
-                .textView(title: "Additional details: ", text: tempEvent.detail,tag: 1)
+                .textView(title: "Additional details: ", text: tempEvent.addDetail,tag: 1)
             ],[
                 .headCount,
                 .participants
@@ -250,8 +250,8 @@ extension FormEventViewController {
             organisers: [user],
             imageUrlString: [],
             price: 0,
-            startDateString: tempEvent.startDate ?? "Now",
-            endDateString: tempEvent.endDate ?? "Now",
+            startTimestamp: tempEvent.startTimestamp,
+            endTimestamp: tempEvent.endTimestamp,
             location: tempEvent.location,
             tag: [],
             introduction: tempEvent.detail, additionalDetail: tempEvent.addDetail,
@@ -282,11 +282,9 @@ extension FormEventViewController {
         view.endEditing(true)
         
         guard let event = createEventFromTempEvent() else {return}
-        
         DatabaseManager.shared.createEvent(with: event,participants:tempEvent.participantsArray) { [weak self] success in
             self?.navigationController?.popToRootViewController(animated: false)
             self?.completion?(event)
-            //            self?.tabBarController?.selectedIndex = 0
         }
         
     }
@@ -303,8 +301,8 @@ extension FormEventViewController: LocationSerchViewControllerDelegate {
 extension FormEventViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        tempEvent.startDate = .date(from: startDate)
-        tempEvent.endDate = .date(from: endDate)
+        tempEvent.startTimestamp = startDate.timeIntervalSince1970
+        tempEvent.endTimestamp = endDate.timeIntervalSince1970
     }
     
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {

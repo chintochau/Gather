@@ -10,7 +10,7 @@ import UIKit
 struct EventMainViewModel {
     let owner:User
     let event:Event
-    let image:UIImage
+    let image:UIImage?
     let title:String
     let date:(
         title:String,
@@ -28,7 +28,7 @@ struct EventMainViewModel {
 
 extension EventMainViewModel {
     
-    init?(with event:Event, image:UIImage) {
+    init?(with event:Event, image:UIImage?) {
         guard  let startDate = DateFormatter.formatter.date(from: event.startDateString),
                let endDate = DateFormatter.formatter.date(from: event.endDateString) else {return nil}
         
