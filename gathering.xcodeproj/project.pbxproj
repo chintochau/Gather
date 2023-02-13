@@ -72,6 +72,8 @@
 		47F1204C2987737700C5CAF6 /* ParticipantsViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */; };
 		47F38E31299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F38E30299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift */; };
 		47F912002991F59600DD5597 /* HomeSectionHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F911FF2991F59500DD5597 /* HomeSectionHeaderReusableView.swift */; };
+		47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FC52A92999686900B0C25D /* PolicyViewController.swift */; };
+		47FC52AC29996B5900B0C25D /* Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FC52AB29996B5900B0C25D /* Policy.swift */; };
 		47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EDE296F2B12001AF255 /* HomeViewController.swift */; };
 		47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */; };
 		47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */; };
@@ -98,7 +100,7 @@
 		473B8E8C29989C6000992C15 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		474065AF2980D67B00504422 /* NewCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCategoryViewController.swift; sourceTree = "<group>"; };
 		474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLabelCollectionViewCell.swift; sourceTree = "<group>"; };
-		4759518D296DF24300C40741 /* gathering.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gathering.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4759518D296DF24300C40741 /* Gather Pool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gather Pool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47595190296DF24300C40741 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		47595192296DF24300C40741 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		47595194296DF24300C40741 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
@@ -157,6 +159,8 @@
 		47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewHeaderView.swift; sourceTree = "<group>"; };
 		47F38E30299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
 		47F911FF2991F59500DD5597 /* HomeSectionHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionHeaderReusableView.swift; sourceTree = "<group>"; };
+		47FC52A92999686900B0C25D /* PolicyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyViewController.swift; sourceTree = "<group>"; };
+		47FC52AB29996B5900B0C25D /* Policy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Policy.swift; sourceTree = "<group>"; };
 		47FD6EDE296F2B12001AF255 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
@@ -210,7 +214,7 @@
 		4759518E296DF24300C40741 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4759518D296DF24300C40741 /* gathering.app */,
+				4759518D296DF24300C40741 /* Gather Pool.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -344,6 +348,7 @@
 				47595192296DF24300C40741 /* SceneDelegate.swift */,
 				47595199296DF24400C40741 /* Assets.xcassets */,
 				473B8E8C29989C6000992C15 /* Constant.swift */,
+				47FC52AB29996B5900B0C25D /* Policy.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -362,6 +367,7 @@
 				47E7DD7B298A288B000C1FFC /* LocationSearchResultTableVC.swift */,
 				47D3DAD7298DB43300F9A3F3 /* PreviewViewController.swift */,
 				4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */,
+				47FC52A92999686900B0C25D /* PolicyViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -409,9 +415,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4759518C296DF24300C40741 /* gathering */ = {
+		4759518C296DF24300C40741 /* Gather Pool */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 475951A1296DF24400C40741 /* Build configuration list for PBXNativeTarget "gathering" */;
+			buildConfigurationList = 475951A1296DF24400C40741 /* Build configuration list for PBXNativeTarget "Gather Pool" */;
 			buildPhases = (
 				5FDA469FE42312985E7E0726 /* [CP] Check Pods Manifest.lock */,
 				47595189296DF24300C40741 /* Sources */,
@@ -423,11 +429,11 @@
 			);
 			dependencies = (
 			);
-			name = gathering;
+			name = "Gather Pool";
 			packageProductDependencies = (
 			);
 			productName = gathering;
-			productReference = 4759518D296DF24300C40741 /* gathering.app */;
+			productReference = 4759518D296DF24300C40741 /* Gather Pool.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -460,7 +466,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4759518C296DF24300C40741 /* gathering */,
+				4759518C296DF24300C40741 /* Gather Pool */,
 			);
 		};
 /* End PBXProject section */
@@ -538,11 +544,13 @@
 				47BC0576297491F700242E45 /* TextFieldTableViewCell.swift in Sources */,
 				47DC14C02978A6490006D4F4 /* EventViewController.swift in Sources */,
 				47D44EFA298851C500DEB3B4 /* Participant.swift in Sources */,
+				47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
 				47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */,
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
+				47FC52AC29996B5900B0C25D /* Policy.swift in Sources */,
 				473B8E8D29989C6000992C15 /* Constant.swift in Sources */,
 				47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */,
 				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,
@@ -751,11 +759,12 @@
 				DEVELOPMENT_TEAM = K68DSN9255;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = gathering/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is needed to show where you are currently on the map.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to Photo Library to upload photos";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -766,7 +775,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -781,11 +790,12 @@
 				DEVELOPMENT_TEAM = K68DSN9255;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = gathering/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your location is needed to show where you are currently on the map.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to Photo Library to upload photos";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -796,7 +806,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -812,7 +822,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		475951A1296DF24400C40741 /* Build configuration list for PBXNativeTarget "gathering" */ = {
+		475951A1296DF24400C40741 /* Build configuration list for PBXNativeTarget "Gather Pool" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				475951A2296DF24400C40741 /* Debug */,

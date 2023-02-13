@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import SafariServices
 
 class ProfileViewController: UIViewController {
     
@@ -141,7 +142,7 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
         switch viewModels[indexPath.section][indexPath.row] {
         case .value(title: let title, value: let value) :
             let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
-            cell.configure(withTitle: title, value: value)
+            cell.configure(withTitle: title, value: value,index: indexPath.row)
             return cell
         default: return UITableViewCell()
         }
@@ -150,6 +151,30 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        if let cell = tableView.cellForRow(at: indexPath) as? ValueTableViewCell {
+            switch indexPath.section{
+            case 0:
+                break
+            case 1:
+                break
+            case 2:
+                break
+            case 3:
+                switch cell.index {
+                case 0:
+                    self.didTapPrivacy()
+                case 1:
+                    self.didTapTerms()
+                case 2: break
+                default:
+                    break
+                }
+            default:
+                print("Not implemented yet")
+            }
+        }
+        
     }
     
     // MARK: - Header
@@ -210,6 +235,20 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
 }
 
 extension ProfileViewController:LoginViewDelegate {
+    
+    func didTapPrivacy() {
+        let vc = PolicyViewController(title: "Privacy Policy", policyString: Policy.privacyPolicy)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+    }
+    
+    func didTapTerms() {
+        let vc = PolicyViewController(title: "Terms", policyString: Policy.terms)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+        
+    }
+    
     
     // MARK: - didTapLogin
     

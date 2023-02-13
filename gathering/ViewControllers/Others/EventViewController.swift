@@ -223,6 +223,7 @@ extension EventViewController {
         if navigationItem.rightBarButtonItem == nil {
             
             LikeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(didTapLike))
+            
             shareButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(didTapShare))
             navigationItem.rightBarButtonItems =  [
                 shareButton!,LikeButton!

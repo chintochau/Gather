@@ -239,7 +239,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         }
         
         if indexPath.section == 0 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LargeEventCollectionViewCell.identifier, for: indexPath) as! LargeEventCollectionViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SmallEventCollectionViewCell.identifier, for: indexPath) as! SmallEventCollectionViewCell
             cell.configure(with: model)
             return cell
         } else {
@@ -293,8 +293,6 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     
     func HomeSectionHeaderReusableViewDidTapShowAll(_ view: HomeSectionHeaderReusableView, button: UIButton) {
-        print(button.layer.name)
-        
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
         let vc = UserProfileViewController(user: user)
         present(vc, animated: true)

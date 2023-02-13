@@ -60,6 +60,14 @@ class RegisterViewController: UIViewController {
         return view
     }()
     
+    
+    private let agreeText:UILabel = {
+        let view = UILabel()
+        view.text = Policy.agreedMessage
+        view.numberOfLines = 2
+        view.font = .systemFont(ofSize: 14)
+        return view
+    }()
     private let signUpButton:UIButton = {
         let view = UIButton(type: .system)
         view.setTitle("Sign Up", for: .normal)
@@ -87,6 +95,7 @@ class RegisterViewController: UIViewController {
     private let indicator:UIActivityIndicatorView = {
         let view = UIActivityIndicatorView()
         view.hidesWhenStopped = true
+        
         return view
     }()
 
@@ -105,7 +114,8 @@ class RegisterViewController: UIViewController {
          signUpButton,
          termsButton,
          privacyButton,
-         indicator
+         indicator,
+         agreeText
         ].forEach{(view.addSubview($0))}
         signUpButton.addTarget(self, action: #selector(didTapSignUp), for: .touchUpInside)
         
@@ -131,11 +141,16 @@ class RegisterViewController: UIViewController {
         termsButton.sizeToFit()
         
         let buttonHeight:CGFloat = 50
-        termsButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30-60, width: fieldWidth, height: termsButton.height)
-        privacyButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30-30, width: fieldWidth, height: termsButton.height)
+        termsButton.frame = CGRect(x: padding, y: view.height-buttonHeight-60-55, width: fieldWidth, height: termsButton.height)
+        privacyButton.frame = CGRect(x: padding, y: view.height-buttonHeight-60-35, width: fieldWidth, height: termsButton.height)
+        
+        termsButton.addTarget(self, action: #selector(didTapTerms), for: .touchUpInside)
+        privacyButton.addTarget(self, action: #selector(didTapPrivacy), for: .touchUpInside)
+        
+        agreeText.sizeToFit()
+        agreeText.frame = CGRect(x: padding, y: view.height-buttonHeight-60-10, width: fieldWidth, height: agreeText.height)
         
         signUpButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30, width: fieldWidth, height: buttonHeight)
-        
         indicator.frame = CGRect(x: signUpButton.left, y: signUpButton.top, width: signUpButton.width, height: signUpButton.height)
         
         
@@ -147,6 +162,21 @@ class RegisterViewController: UIViewController {
         view.addGestureRecognizer(gesture)
     }
     
+    
+    
+    @objc private func didTapPrivacy() {
+        let vc = PolicyViewController(title: "Privacy Policy", policyString: Policy.privacyPolicy)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+    }
+    
+    @objc private func didTapTerms() {
+        let vc = PolicyViewController(title: "Terms", policyString: Policy.terms)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+        
+    }
+    
     @objc private func didTapCancel(){
         view.endEditing(true)
     }
@@ -154,6 +184,7 @@ class RegisterViewController: UIViewController {
     @objc private func didTapClose(){
         dismiss(animated: true)
     }
+    
     @objc private func didTapSignUp(){
         guard let email = emailField.text, !email.isEmpty,
               let password = passwordField.text, !password.isEmpty,

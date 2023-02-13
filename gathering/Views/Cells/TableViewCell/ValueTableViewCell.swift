@@ -22,6 +22,8 @@ class ValueTableViewCell: UITableViewCell {
         return view
     }()
     
+    var index:Int = 0
+    
    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
@@ -44,10 +46,10 @@ class ValueTableViewCell: UITableViewCell {
     }
     
     
-    func configure(withTitle title: String, value:String) {
-//        titleLabel.text = title
+    func configure(withTitle title: String, value:String,index:Int = 0) {
         textLabel?.text = title
         detailTextLabel?.text = value
         detailTextLabel?.numberOfLines = 2
+        self.index = index
     }
 }

@@ -360,6 +360,7 @@ extension NewEventViewController {
     @objc private func didTapSubmit (){
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent() else {return}
+        print(123)
         publishPost(with: previewEvent) {[weak self] success in
             if success {DispatchQueue.main.async{
                 self?.tabBarController?.selectedIndex = 0}

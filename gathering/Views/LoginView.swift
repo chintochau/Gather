@@ -8,7 +8,9 @@
 import UIKit
 
 protocol LoginViewDelegate:AnyObject {
-    func didTapLogin (_ view:LoginView, email:String,password:String)
+    func didTapLogin (_ view:LoginView,email:String,password:String)
+    func didTapTerms()
+    func didTapPrivacy()
 }
 
 class LoginView: UIView, UITextFieldDelegate {
@@ -133,6 +135,9 @@ class LoginView: UIView, UITextFieldDelegate {
         let buttonHeight:CGFloat = 50
         termsButton.frame = CGRect(x: padding, y: height-buttonHeight-30-60, width: fieldWidth, height: registerButton.height)
         privacyButton.frame = CGRect(x: padding, y: height-buttonHeight-30-30, width: fieldWidth, height: registerButton.height)
+        termsButton.addTarget(self, action: #selector(didTapTermsButton), for: .touchUpInside)
+        privacyButton.addTarget(self, action: #selector(didTapPrivacy), for: .touchUpInside)
+        
         
         loginButton.frame = CGRect(x: padding, y: height-buttonHeight-30, width: width-2*padding, height: buttonHeight)
         indicator.frame = loginButton.frame
@@ -140,13 +145,23 @@ class LoginView: UIView, UITextFieldDelegate {
         emailField.delegate = self
         passwordField.delegate = self
         
+        
+        
     }
     
     @objc private func didTapSignIn(){
         guard let email = emailField.text, let password = passwordField.text else {return}
         indicator.startAnimating()
         loginButton.isHidden = true
-        delegate?.didTapLogin(self, email: email, password: password)
+        delegate?.didTapLogin( self, email: email, password: password)
+    }
+    
+    @objc private func didTapTermsButton(){
+        delegate?.didTapTerms()
+    }
+    
+    @objc private func didTapPrivacy(){
+        delegate?.didTapPrivacy()
     }
     
 

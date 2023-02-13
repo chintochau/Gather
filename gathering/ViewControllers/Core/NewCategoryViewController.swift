@@ -7,6 +7,16 @@
 
 import UIKit
 
+
+enum categoryType:String,CaseIterable {
+    case AIAssistant = "AI assistant"
+    case formEvent = "Form an Event"
+    case newEvent = "Post an Event"
+    case newGroup = "Create a new Group"
+}
+
+
+
 class NewCategoryViewController: UIViewController {
     
     private let viewModels = categoryType.allCases.map{$0}
@@ -140,6 +150,21 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
 }
 
 extension NewCategoryViewController:LoginViewDelegate {
+    
+    
+    func didTapPrivacy() {
+        let vc = PolicyViewController(title: "Privacy Policy", policyString: Policy.privacyPolicy)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+    }
+    
+    func didTapTerms() {
+        let vc = PolicyViewController(title: "Terms", policyString: Policy.terms)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+        
+    }
+    
     
     func didTapLogin(_ view: LoginView, email: String, password: String) {
         AuthManager.shared.logIn(email: email, password: password) { [weak self] user in

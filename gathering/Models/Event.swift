@@ -116,10 +116,3 @@ enum hobbyType:String,CaseIterable {
     case animals = "Pets"
 }
 
-enum categoryType:String,CaseIterable {
-    case formEvent = "Form an Event"
-    case newEvent = "Post an Event"
-    case newGroup = "Create a new Group"
-}
-
-
