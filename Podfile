@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '13.0'
 
-target 'gathering' do
+target 'Gather Pool' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
@@ -12,6 +12,7 @@ target 'gathering' do
   pod 'Firebase/Firestore'
   pod 'Firebase/Storage'
   pod 'Firebase/Auth'
+  pod 'Firebase/Messaging'
   pod 'SDWebImage'
   pod 'IGListKit', '~> 4.0.0'
   pod 'EmojiPicker', :git => 'https://github.com/htmlprogrammist/EmojiPicker'

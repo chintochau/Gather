@@ -267,6 +267,8 @@ extension ProfileViewController:LoginViewDelegate {
             self?.loginView.removeFromSuperview()
             self?.configureProfileView()
             
+            NotificationManager.shared.requestForNotification()
+            
         }
         
     }

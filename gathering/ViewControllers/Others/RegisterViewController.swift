@@ -121,6 +121,7 @@ class RegisterViewController: UIViewController {
         
         addTapCancelGesture()
         
+        usernameField.delegate = self
     }
     
     
@@ -212,8 +213,30 @@ class RegisterViewController: UIViewController {
             DefaultsManager.shared.updateUserProfile(with: user)
             self?.completion?()
             self?.dismiss(animated: true)
+            NotificationManager.shared.requestForNotification()
         }
     }
+    
 }
 
 
+
+extension RegisterViewController:UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string == " " {
+            return false
+        }
+        
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        if let text = textField.text {
+            textField.text = text.lowercased()
+        }
+        
+    }
+    
+}

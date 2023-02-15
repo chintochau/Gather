@@ -117,6 +117,9 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             case .newEvent:
                 let vc = NewEventViewController()
                 navigationController?.pushViewController(vc, animated: true)
+            case .AIAssistant:
+                let vc = AIAssistantViewController()
+                navigationController?.pushViewController(vc, animated: true)
             default:
                 print("Not yet implemented")
             }
@@ -179,6 +182,8 @@ extension NewCategoryViewController:LoginViewDelegate {
             
             self?.loginView.removeFromSuperview()
             self?.configureCategoryView()
+            
+            NotificationManager.shared.requestForNotification()
         }
     }
     

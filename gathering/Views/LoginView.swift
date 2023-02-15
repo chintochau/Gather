@@ -166,7 +166,9 @@ class LoginView: UIView, UITextFieldDelegate {
     
 
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
         textField.resignFirstResponder()
     }
+    
+    
 }
-

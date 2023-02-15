@@ -7,19 +7,20 @@
 
 import UIKit
 import FirebaseCore
+import UserNotifications
+import FirebaseMessaging
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+        attemptRegisterForNotifications(application: application)
         return true
     }
-
+    
+    
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -37,3 +38,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+
+extension AppDelegate:MessagingDelegate,UNUserNotificationCenterDelegate {
+    
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler(.alert)
+    }
+    
+    
+    
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("retistered for notifications:", deviceToken)
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("Registered with FCM with token:" , fcmToken)
+    }
+    
+    private func attemptRegisterForNotifications(application:UIApplication) {
+        print("Attempting to register APNS...")
+        
+        let messaging = Messaging.messaging()
+        messaging.delegate = self
+        
+        UNUserNotificationCenter.current().delegate = self
+        
+        application.registerForRemoteNotifications()
+    }
+
+    
+}
