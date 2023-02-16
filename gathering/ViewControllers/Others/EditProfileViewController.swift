@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseMessaging
 
 
 class EditProfileViewController: UIViewController,UITableViewDelegate,UITableViewDataSource, UITextViewDelegate,UITextFieldDelegate {
@@ -116,8 +117,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             name: self.tempField.name,
             profileUrlString: urlString ?? UserDefaults.standard.string(forKey: UserDefaultsType.profileUrlString.rawValue),
             gender: self.tempField.gender,
-            rating: UserDefaults.standard.double(forKey: "rating"),
-            age:UserDefaults.standard.integer(forKey: "age")
+            fcmToken: Messaging.messaging().fcmToken
         )
         
         DatabaseManager.shared.updateUserProfile(user: user) { [weak self] success in

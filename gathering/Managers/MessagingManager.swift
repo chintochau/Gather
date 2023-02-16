@@ -6,9 +6,12 @@
 //
 
 import UIKit
+import FirebaseMessaging
 
-struct NotificationManager {
-    static let shared = NotificationManager()
+struct MessagingManager {
+    static let shared = MessagingManager()
+    
+    static let fcmToken = Messaging.messaging().fcmToken
     
     
     func requestForNotification(){

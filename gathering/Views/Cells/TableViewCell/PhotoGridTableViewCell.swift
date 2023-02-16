@@ -16,6 +16,8 @@ class PhotoGridTableViewCell: UITableViewCell {
     
     weak var delegate: PhotoGridTableViewCellDelegate?
     
+    var imageCount:Int = 0
+    
     var cells = [UICollectionViewCell]()
     
     var collectionView:UICollectionView = {
@@ -37,6 +39,8 @@ class PhotoGridTableViewCell: UITableViewCell {
         collectionView.dataSource = self
         collectionView.delegate = self
         registerCell()
+        
+        collectionView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,size: CGSize(width: 0, height: (contentView.width/2)))
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,16 +50,12 @@ class PhotoGridTableViewCell: UITableViewCell {
         collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.identifier)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        collectionView.frame = bounds
-    }
 }
 
 extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return imageCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

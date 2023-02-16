@@ -9,7 +9,6 @@ import UIKit
 
 
 enum categoryType:String,CaseIterable {
-    case AIAssistant = "AI assistant"
     case formEvent = "Form an Event"
     case newEvent = "Post an Event"
     case newGroup = "Create a new Group"
@@ -114,11 +113,13 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)
+                
             case .newEvent:
                 let vc = NewEventViewController()
-                navigationController?.pushViewController(vc, animated: true)
-            case .AIAssistant:
-                let vc = AIAssistantViewController()
+                vc.completion = { [weak self] event,image in
+                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: image)!)
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
                 navigationController?.pushViewController(vc, animated: true)
             default:
                 print("Not yet implemented")
@@ -183,7 +184,7 @@ extension NewCategoryViewController:LoginViewDelegate {
             self?.loginView.removeFromSuperview()
             self?.configureCategoryView()
             
-            NotificationManager.shared.requestForNotification()
+            MessagingManager.shared.requestForNotification()
         }
     }
     

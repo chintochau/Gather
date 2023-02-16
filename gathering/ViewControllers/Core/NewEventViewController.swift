@@ -15,6 +15,7 @@ enum newEventPageType:String {
     case refundField = "Refund Policy"
     case dateField = "Date"
     case priceField = "Price"
+    case headCount
 }
 
 class NewEventViewController: UIViewController{
@@ -30,14 +31,17 @@ class NewEventViewController: UIViewController{
         price:0.0,
         refund:"",
         endTimestamp:Date().timeIntervalSince1970,
-        startTimestamp:Date().timeIntervalSince1970
+        startTimestamp:Date().timeIntervalSince1970,
+        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil)
     )
     
     
     private let picker = UIImagePickerController()
     
-    private var images = [UIImage?](repeating: nil, count: 3)
-    private var imageCells = [PhotoCollectionViewCell](repeating: PhotoCollectionViewCell(), count: 3)
+    private static let imageCount:Int = 1
+    
+    private var images = [UIImage?](repeating: nil, count: imageCount)
+    private var imageCells = [PhotoCollectionViewCell](repeating: PhotoCollectionViewCell(), count: imageCount)
     private var currentIndex:Int = 0
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
@@ -46,6 +50,19 @@ class NewEventViewController: UIViewController{
         let view = UITableView(frame: .zero, style: .grouped)
         return view
     }()
+    
+    
+    private let buttonView = UIView()
+    private let publishButton = GAButton(type: .system)
+    private let previewButton = GAButton(type: .system)
+    private let activatyIndicator:UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.isHidden = true
+        view.hidesWhenStopped = true
+        return view
+    }()
+    
+    var completion: ((_ event:Event,_ image:UIImage?) -> Void)?
     
     // MARK: - ViewModels
     private let viewModels:[[newEventPageType]] = [
@@ -57,6 +74,9 @@ class NewEventViewController: UIViewController{
          .dateField,
          .priceField,
          .refundField
+        ],
+        [
+            .headCount
         ]
     ]
     
@@ -76,7 +96,7 @@ class NewEventViewController: UIViewController{
         tableView.delegate = self
         tableView.backgroundColor = .systemBackground
         tableView.keyboardDismissMode = .interactive
-        tableView.contentInset = .init(top: 0, left: 0, bottom: -100, right: 0)
+        tableView.contentInset = .init(top: 0, left: 0, bottom: 100, right: 0)
         view.addSubview(tableView)
         tableView.frame = view.bounds
         tableView.rowHeight = UITableView.automaticDimension
@@ -94,6 +114,7 @@ class NewEventViewController: UIViewController{
         tableView.register(TextViewTableViewCell.self, forCellReuseIdentifier: TextViewTableViewCell.identifier)
         tableView.register(PhotoGridTableViewCell.self, forCellReuseIdentifier: PhotoGridTableViewCell.identifier)
         tableView.register(DatePickerTableViewCell.self, forCellReuseIdentifier: DatePickerTableViewCell.identifier)
+        tableView.register(HeadcountTableViewCell.self, forCellReuseIdentifier: HeadcountTableViewCell.identifier)
     }
 
     // MARK: - Keyboard Handling
@@ -136,14 +157,16 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         case .desctiptionField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "...",type: .desctiptionField)
+            cell.configure(with: "",type: .desctiptionField)
             cell.textView.delegate = self
             return cell
             
         case .photoField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoGridTableViewCell.identifier, for: indexPath) as! PhotoGridTableViewCell
+            cell.imageCount = NewEventViewController.imageCount
             cell.delegate = self
+            
             return cell
             
         case .locationField:
@@ -158,7 +181,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(with: "...",type: .refundField)
+            cell.configure(with: "",type: .refundField)
             cell.textView.delegate = self
             return cell
             
@@ -179,6 +202,10 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             
             return cell
             
+        case .headCount:
+            let cell = tableView.dequeueReusableCell(withIdentifier: HeadcountTableViewCell.identifier, for: indexPath) as! HeadcountTableViewCell
+            cell.delegate = self
+            return cell
         }
     }
     
@@ -189,26 +216,14 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
     
     
     
-    // MARK: - Row Height
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch viewModels[indexPath.section][indexPath.row] {
-        case .photoField:
-            return (view.width+18)/3
-        case .dateField:
-            return 88
-        default:
-            return UITableView.automaticDimension
-        }
-
-    }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        // MARK: - Bottom View
+        
         if section == viewModels.count-1 {
-            let buttonView = UIView()
-            let publishButton = GAButton(type: .system)
-            let previewButton = GAButton(type: .system)
             
-            [publishButton,previewButton].forEach{buttonView.addSubview($0)}
+            [publishButton,previewButton,activatyIndicator].forEach{buttonView.addSubview($0)}
             
             previewButton.anchor(
                 top: buttonView.topAnchor,
@@ -232,6 +247,9 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             publishButton.addTarget(self, action: #selector(didTapSubmit), for: .touchUpInside)
             publishButton.setTitle("publish", for: .normal)
             
+            activatyIndicator.anchor(top: publishButton.topAnchor, leading: publishButton.leadingAnchor, bottom: publishButton.bottomAnchor, trailing: publishButton.trailingAnchor)
+            
+            
             return  buttonView
         }
         else {
@@ -247,8 +265,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
  
 }
 
-// MARK: - Get Image
 extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+    // MARK: - Image
     
     func PhotoGridTableViewCellSelectImage(_ view: PhotoGridTableViewCell, cell: PhotoCollectionViewCell, index:Int) {
         
@@ -275,8 +293,10 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
 }
 
 
-// MARK: - Input Data
-extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,DatePickerTableViewCellDelegate {
+extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,DatePickerTableViewCellDelegate,HeadcountTableViewCellDelegate {
+    
+    // MARK: - Input Data
+    
     /*
      case photoField = "photo"
      case titleField = "title"
@@ -330,25 +350,48 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
         tempEvent.endTimestamp = endDate.timeIntervalSince1970
         
     }
+    
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
-        
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
+    
+    
     
     
     
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
-        if let name = textField.layer.name, name == newEventPageType.priceField.rawValue {
+        if let name = textField.layer.name, name == newEventPageType.priceField.rawValue,
+           let price = textField.text{
+            
+            if price.contains(".") && string == "." {
+                return false
+            }
+            
             if let _ = string.rangeOfCharacter(from: NSCharacterSet.decimalDigits) {
                 return true
             }
+            
             
             return string.isEmpty || string == "."
         }
         
         return true
         
+    }
+    
+    
+    func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
+        
+        tempEvent.headcount = headcount
+    }
+    
+    func HeadcountTableViewCellDidTapExpand(_ cell: HeadcountTableViewCell, headcount: Headcount) {
+        
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
     
     
@@ -359,27 +402,37 @@ extension NewEventViewController {
     
     @objc private func didTapSubmit (){
         view.endEditing(true)
+        
         guard let previewEvent = configurePreviewEvent() else {return}
-        print(123)
-        publishPost(with: previewEvent) {[weak self] success in
-            if success {DispatchQueue.main.async{
-                self?.tabBarController?.selectedIndex = 0}
-            }
+        
+        publishButton.isHidden = true
+        activatyIndicator.startAnimating()
+        
+        publishPost(with: previewEvent) {[weak self] event in
+            self?.publishButton.isHidden = false
+            self?.activatyIndicator.stopAnimating()
+            self?.navigationController?.popToRootViewController(animated: false)
+            self?.completion?(event, self?.images[0])
+            
         }
     }
     
     @objc private func didTapPreview(){
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent(),
-        let eventVM = EventMainViewModel(with: previewEvent, image:  images[0] ?? UIImage(named: "test")!) else {return}
+              let eventVM = EventMainViewModel(with: previewEvent, image:  images[0]) else {return}
         
         let vc = EventViewController(viewModel: eventVM)
         vc.configureExit()
         vc.completion = { [weak self] in
-            self?.publishPost(with: previewEvent,completion: { [weak self] success in
-                if success {
-                    DispatchQueue.main.async{
-                        self?.tabBarController!.selectedIndex = 0}
+            self?.publishPost(with: previewEvent,completion: { [weak self] event in
+                
+                DispatchQueue.main.async{
+                    //                        self?.tabBarController!.selectedIndex = 0
+                    self?.navigationController?.popToRootViewController(animated: false)
+                    self?.completion?(previewEvent, self?.images[0])
+                    
+                    
                 }
             })
         }
@@ -396,7 +449,12 @@ extension NewEventViewController {
     
     private func configurePreviewEvent (urlStrings:[String] = []) -> Event?{
         
-        guard let user = DefaultsManager.shared.getCurrentUser() else { return nil }
+        guard let user = DefaultsManager.shared.getCurrentUser(),
+              let gender = user.gender
+        else {
+            print("user / gender not found")
+            return nil
+        }
         
         return Event(
             id: IdManager.shared.createEventId(), emojiTitle: nil,
@@ -410,12 +468,14 @@ extension NewEventViewController {
             tag: [],
             introduction: tempEvent.description,
             additionalDetail: "",
-            refundPolicy: tempEvent.refund, participants: [:],
-            headcount: Headcount(isGenderSpecific: true, min: 5, max: 5, mMin: 6, mMax: 6, fMin: 7, fMax: 7)
+            refundPolicy: tempEvent.refund,
+            participants: [user.username:gender],
+            headcount: tempEvent.headcount,
+            ownerFcmToken: user.fcmToken
         )
     }
     
-    func publishPost(with previewEvent:Event, completion: @escaping (Bool) -> Void){
+    func publishPost(with previewEvent:Event, completion: @escaping (Event) -> Void){
         
         var imagesData = [Data?]()
         
@@ -434,10 +494,12 @@ extension NewEventViewController {
         
         StorageManager.shared.uploadEventImage(id: previewEvent.id, data: imagesData) {[weak self] urlStrings in
             
-            guard let event = self?.configurePreviewEvent(urlStrings: urlStrings) else {return}
+            guard let event = self?.configurePreviewEvent(urlStrings: urlStrings),
+                  let user = DefaultsManager.shared.getCurrentUser()
+            else {return}
             
-            DatabaseManager.shared.createEvent(with: event, participants: []) { done in
-                completion(done)
+            DatabaseManager.shared.createEvent(with: event, participants: [Participant(with: user)]) { done in
+                completion(event)
             }
         }
     }

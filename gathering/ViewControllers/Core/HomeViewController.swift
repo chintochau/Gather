@@ -65,7 +65,6 @@ class HomeViewController: UIViewController{
                 guard let events = events else {return}
                 self?.events = events
                 self?.createViewModels()
-                print(events)
             }
         }
         

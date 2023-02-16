@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseMessaging
 
 final class DatabaseManager {
     static let shared = DatabaseManager()
@@ -25,11 +26,17 @@ final class DatabaseManager {
     }
     
     public func updateUserProfile(user:User, completion: @escaping (Bool) -> Void) {
+        var user = user
+        
+        if let fcmToken = Messaging.messaging().fcmToken {
+            user.fcmToken = fcmToken
+        }
+        
         
         let ref = database.collection("users").document(user.username)
         
         guard let data = user.asDictionary() else {return}
-        ref.setData(data) { error in
+        ref.updateData(data) { error in
             completion(error == nil)
         }
         

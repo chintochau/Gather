@@ -13,8 +13,9 @@ struct User :Codable{
     let name:String?
     let profileUrlString:String?
     let gender:String?
-    let rating:Double?
-    let age:Int?
+    var rating:Double? = nil
+    var age:Int? = nil
+    var fcmToken:String? = nil
 }
 
 extension User {
@@ -27,10 +28,10 @@ extension User {
         self.name = participant.name
         self.profileUrlString = participant.profileUrlString
         self.gender = participant.gender
-        self.rating = nil
-        self.age = nil
         
     }
+    
+    
 }
 
 enum personalityType:String {

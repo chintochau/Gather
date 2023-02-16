@@ -241,7 +241,7 @@ extension FormEventViewController {
     
     private func createEventFromTempEvent() -> Event?{
         
-        guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
+        guard let user = DefaultsManager.shared.getCurrentUser()else {return nil}
         
         return Event(
             id: IdManager.shared.createEventId(),
@@ -257,7 +257,9 @@ extension FormEventViewController {
             introduction: tempEvent.detail, additionalDetail: tempEvent.addDetail,
             refundPolicy: "",
             participants: tempEvent.participants,
-            headcount: tempEvent.headcount)
+            headcount: tempEvent.headcount,
+            ownerFcmToken: user.fcmToken
+        )
     }
     
     @objc private func didTapPreview(){

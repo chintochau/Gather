@@ -23,6 +23,7 @@ struct Event:Codable {
     let refundPolicy:String
     let participants:[String:String]
     let headcount:Headcount
+    let ownerFcmToken:String?
     
     
     var date:Date {

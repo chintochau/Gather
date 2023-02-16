@@ -50,16 +50,12 @@ extension AppDelegate:MessagingDelegate,UNUserNotificationCenterDelegate {
     
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("retistered for notifications:", deviceToken)
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        print("Registered with FCM with token:" , fcmToken)
     }
     
     private func attemptRegisterForNotifications(application:UIApplication) {
-        print("Attempting to register APNS...")
-        
         let messaging = Messaging.messaging()
         messaging.delegate = self
         

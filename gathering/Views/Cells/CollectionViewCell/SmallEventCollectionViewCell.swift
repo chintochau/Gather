@@ -35,6 +35,35 @@ final class SmallEventCollectionViewCell: BasicEventCollectionViewCell{
         locationLabel.anchor(top: dateLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil)
         
         
+        // MARK: - Gender separated
+        
+        let imageSize:CGFloat = 25
+        maleIconImageView.anchor(top: profileImageview.topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,
+                                 padding: .init(top: 0, left: 0, bottom: 0, right: 5),
+                                 size: CGSize(width: imageSize, height: imageSize))
+        
+        femaleIconImageView.anchor(top: maleIconImageView.bottomAnchor, leading: maleIconImageView.leadingAnchor, bottom: nil, trailing: nil,
+                                   size: CGSize(width: imageSize, height: imageSize))
+        
+        
+        maleNumber.sizeToFit()
+        maleNumber.anchor(top: maleIconImageView.topAnchor, leading: nil, bottom: maleIconImageView.bottomAnchor, trailing: maleIconImageView.leadingAnchor)
+        
+        femaleNumber.sizeToFit()
+        femaleNumber.anchor(top: femaleIconImageView.topAnchor, leading: nil, bottom: femaleIconImageView.bottomAnchor, trailing: femaleIconImageView.leadingAnchor)
+        
+        // MARK: - all gender
+        
+        let totalImageSize:CGFloat = 30
+        totalIconImageView.anchor(top: profileImageview.topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,
+                                  padding: .init(top: 0, left: 0, bottom: 0, right: 10),
+                                  size: CGSize(width: totalImageSize, height: totalImageSize))
+
+        totalNumber.sizeToFit()
+        totalNumber.anchor(top: totalIconImageView.topAnchor, leading: nil, bottom: totalIconImageView.bottomAnchor, trailing: totalIconImageView.leadingAnchor
+                           ,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
+
+        
         
     }
     
