@@ -16,6 +16,7 @@ enum UserDefaultsType:String,CaseIterable {
     case user = "user"
     case favEvent = "favouriteEvents"
     case favUser = "favouriteUsers"
+    case chatToken = "chatToken"
 }
 
 
@@ -30,9 +31,21 @@ final class DefaultsManager {
         UserDefaults.standard.set(user.profileUrlString, forKey: "profileUrlString")
         UserDefaults.standard.set(user.gender, forKey: "gender")
         UserDefaults.standard.set(user.name, forKey: "name")
+        UserDefaults.standard.set(user.chatToken, forKey: "chatToken")
         if let user = user.asDictionary() {
             UserDefaults.standard.set(user, forKey: "user")
         }
+    }
+    
+    public func updateUserProfileFromServer(username:String) {
+        
+        DatabaseManager.shared.findUserWithUsername(with: username) {[weak self] user in
+            guard let user = user else {return}
+            self?.updateUserProfile(with: user)
+            print(user)
+            
+        }
+        
     }
     
     public func resetUserProfile(){
@@ -54,7 +67,13 @@ final class DefaultsManager {
     }
     
     public func getCurrentUser() -> User? {
-        guard let user = UserDefaults.standard.object(forKey: "user") as? [String : Any] else {return nil}
+        
+        guard let user = UserDefaults.standard.object(forKey: "user") as? [String : Any] else {
+            
+            return nil
+            
+        }
+        
         return User(with: user)
     }
     

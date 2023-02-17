@@ -16,6 +16,8 @@ target 'Gather Pool' do
   pod 'SDWebImage'
   pod 'IGListKit', '~> 4.0.0'
   pod 'EmojiPicker', :git => 'https://github.com/htmlprogrammist/EmojiPicker'
+  pod 'Hero'
+  pod 'PubNubSwift', '~> 6.0.3'
 
     # Pods for Instagram
 

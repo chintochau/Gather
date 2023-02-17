@@ -25,19 +25,25 @@ final class DatabaseManager {
         }
     }
     
-    public func updateUserProfile(user:User, completion: @escaping (Bool) -> Void) {
+    public func updateUserProfile(user:User, completion: @escaping (User) -> Void) {
         var user = user
         
         if let fcmToken = Messaging.messaging().fcmToken {
             user.fcmToken = fcmToken
         }
         
-        
         let ref = database.collection("users").document(user.username)
         
         guard let data = user.asDictionary() else {return}
-        ref.updateData(data) { error in
-            completion(error == nil)
+        ref.updateData(data) { [weak self] error in
+            
+            self?.findUserWithUsername(with: user.username) { user in
+                guard let user = user else {return}
+                completion(user)
+                
+                
+            }
+            
         }
         
     }

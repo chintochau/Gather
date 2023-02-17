@@ -184,7 +184,7 @@ extension NewCategoryViewController:LoginViewDelegate {
             self?.loginView.removeFromSuperview()
             self?.configureCategoryView()
             
-            MessagingManager.shared.requestForNotification()
+            CustomNotificationManager.shared.requestForNotification()
         }
     }
     

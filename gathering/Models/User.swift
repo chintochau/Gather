@@ -16,6 +16,7 @@ struct User :Codable{
     var rating:Double? = nil
     var age:Int? = nil
     var fcmToken:String? = nil
+    var chatToken:String? = nil
 }
 
 extension User {

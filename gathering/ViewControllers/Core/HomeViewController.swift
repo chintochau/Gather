@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Hero
 
 class HomeViewController: UIViewController{
     
@@ -21,10 +22,11 @@ class HomeViewController: UIViewController{
     private let refreshControl = UIRefreshControl()
 
     // MARK: - LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        navigationItem.title = "Home"
+        view.backgroundColor = .streamWhiteSnow
+        configureNavBar()
         configureCollectionView()
         fetchData()
     }
@@ -45,6 +47,13 @@ class HomeViewController: UIViewController{
 
         navigationController?.navigationBar.barStyle = statusBarStyle
     }
+    
+    
+    fileprivate func configureNavBar() {
+        navigationItem.title = "Home"
+        navigationItem.rightBarButtonItem = .init(image: UIImage(systemName: "message"), style: .done, target: self, action: #selector(didTapChat))
+    }
+    
     
     // MARK: - Fetch Data
     private func fetchData(){
@@ -89,6 +98,7 @@ class HomeViewController: UIViewController{
 extension HomeViewController: UINavigationControllerDelegate{
     
     private func configureCollectionView(){
+        
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
             
             
@@ -175,6 +185,8 @@ extension HomeViewController: UINavigationControllerDelegate{
         collectionView.alwaysBounceVertical = true
         collectionView.refreshControl = refreshControl
         collectionView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
+        collectionView.backgroundColor = .streamWhiteSnow
+        
         
         self.collectionView = collectionView
     }
@@ -300,3 +312,13 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
 }
 
+
+
+extension HomeViewController{
+    // MARK: - Handle Chat App
+    
+    
+    @objc private func didTapChat(){
+    }
+    
+}

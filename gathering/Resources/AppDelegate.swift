@@ -10,6 +10,8 @@ import FirebaseCore
 import UserNotifications
 import FirebaseMessaging
 
+
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -20,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+
     
     // MARK: UISceneSession Lifecycle
 
@@ -50,17 +53,20 @@ extension AppDelegate:MessagingDelegate,UNUserNotificationCenterDelegate {
     
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        
+        
+        
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     }
     
+    
     private func attemptRegisterForNotifications(application:UIApplication) {
+        // MARK: - Firebase Notification
         let messaging = Messaging.messaging()
         messaging.delegate = self
-        
         UNUserNotificationCenter.current().delegate = self
-        
         application.registerForRemoteNotifications()
     }
 

@@ -8,8 +8,8 @@
 import UIKit
 import FirebaseMessaging
 
-struct MessagingManager {
-    static let shared = MessagingManager()
+struct CustomNotificationManager {
+    static let shared = CustomNotificationManager()
     
     static let fcmToken = Messaging.messaging().fcmToken
     

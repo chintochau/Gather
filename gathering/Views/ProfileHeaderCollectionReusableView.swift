@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol ProfileHeaderReusableViewDelegate:AnyObject {
+    func ProfileHeaderReusableViewDelegatedidTapMessage(_ header:UICollectionReusableView, user:User)
+}
+
 class ProfileHeaderCollectionReusableView: UICollectionReusableView {
     
     static let identifier = "ProfileHeaderCollectionReusableView"
     
+    weak var delegate:ProfileHeaderReusableViewDelegate?
     
     let segmentedControl: UISegmentedControl = {
         let segmentedItems = [
@@ -128,7 +133,7 @@ class ProfileHeaderCollectionReusableView: UICollectionReusableView {
         followButton.addTarget(self, action: #selector(didTapFollow), for: .touchUpInside)
         messageButton.anchor(top: followButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,size: CGSize(width: 0, height: 20))
         messageButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        
+        messageButton.addTarget(self, action: #selector(didTapMessage), for: .touchUpInside)
         
         segmentedControl.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 10, right: 20))
         
@@ -148,6 +153,10 @@ class ProfileHeaderCollectionReusableView: UICollectionReusableView {
         }else {
             DefaultsManager.shared.removeFromFavouritedUsers(userID: user!.username)
         }
+    }
+    
+    @objc private func didTapMessage(){
+        delegate?.ProfileHeaderReusableViewDelegatedidTapMessage(self, user: user!)
     }
     
 }

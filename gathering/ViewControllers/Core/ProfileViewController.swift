@@ -263,11 +263,13 @@ extension ProfileViewController:LoginViewDelegate {
                 print("Failed to retrive user data")
                 return
             }
+            
+            
             self?.configureViewModels()
             self?.loginView.removeFromSuperview()
             self?.configureProfileView()
             
-            MessagingManager.shared.requestForNotification()
+            CustomNotificationManager.shared.requestForNotification()
             
         }
         

@@ -81,7 +81,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         if indexPath.section == 0 {
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ProfileHeaderCollectionReusableView.identifier, for: indexPath) as! ProfileHeaderCollectionReusableView
             view.user = self.user
-            
+            view.delegate = self
             return view
         }else {
             return UICollectionReusableView()
@@ -109,3 +109,15 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
     
 }
 
+
+extension UserProfileViewController:ProfileHeaderReusableViewDelegate {
+    // MARK: - Handle send Message
+    func ProfileHeaderReusableViewDelegatedidTapMessage(_ header: UICollectionReusableView, user: User) {
+        
+        
+        
+        
+    }
+    
+    
+}
