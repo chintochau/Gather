@@ -319,6 +319,15 @@ extension HomeViewController{
     
     
     @objc private func didTapChat(){
+        
+        let vc = ChatMainViewController()
+        
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        navVc.modalPresentationStyle = .fullScreen
+        present(navVc, animated: true)
+        
     }
     
 }
