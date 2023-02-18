@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		470D58A8299FDF800034293D /* ChatMessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58A7299FDF800034293D /* ChatMessageManager.swift */; };
 		470D58AA299FE3360034293D /* ChatMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58A9299FE3360034293D /* ChatMainViewController.swift */; };
+		470D58AC29A01FD80034293D /* ChatMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58AB29A01FD80034293D /* ChatMessageViewController.swift */; };
 		471302E529960E81006D23B1 /* SegmentedButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471302E429960E81006D23B1 /* SegmentedButtonsView.swift */; };
 		471900C82979BF6900B2DD8C /* EventInfoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471900C72979BF6900B2DD8C /* EventInfoCollectionViewCell.swift */; };
 		471D217C2976AA4000C8E8C6 /* DatePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471D217B2976AA4000C8E8C6 /* DatePickerTableViewCell.swift */; };
@@ -98,6 +99,7 @@
 /* Begin PBXFileReference section */
 		470D58A7299FDF800034293D /* ChatMessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageManager.swift; sourceTree = "<group>"; };
 		470D58A9299FE3360034293D /* ChatMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMainViewController.swift; sourceTree = "<group>"; };
+		470D58AB29A01FD80034293D /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
 		471302E429960E81006D23B1 /* SegmentedButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedButtonsView.swift; sourceTree = "<group>"; };
 		471900C72979BF6900B2DD8C /* EventInfoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoCollectionViewCell.swift; sourceTree = "<group>"; };
 		471D217B2976AA4000C8E8C6 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				47FC52A92999686900B0C25D /* PolicyViewController.swift */,
 				4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */,
 				470D58A9299FE3360034293D /* ChatMainViewController.swift */,
+				470D58AB29A01FD80034293D /* ChatMessageViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -624,6 +627,7 @@
 				47F912002991F59600DD5597 /* HomeSectionHeaderReusableView.swift in Sources */,
 				477C615B2990088500CDB241 /* TitleWithImageTableViewCell.swift in Sources */,
 				47F0CCFB2975B2A1003B22EB /* PhotoGridTableViewCell.swift in Sources */,
+				470D58AC29A01FD80034293D /* ChatMessageViewController.swift in Sources */,
 				47E7DD7A298A23BE000C1FFC /* Location.swift in Sources */,
 				47AD2E0F298F78C200D42E45 /* PreviewViewModel.swift in Sources */,
 				478B0C322971C36F000CECAB /* EventExtraInfoCard.swift in Sources */,

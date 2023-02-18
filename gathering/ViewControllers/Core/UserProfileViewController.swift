@@ -114,10 +114,12 @@ extension UserProfileViewController:ProfileHeaderReusableViewDelegate {
     // MARK: - Handle send Message
     func ProfileHeaderReusableViewDelegatedidTapMessage(_ header: UICollectionReusableView, user: User) {
         
-        
-        
+        let vc = ChatMessageViewController()
+        vc.setupNavBar()
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.modalPresentationStyle = .fullScreen
+        present(navVc, animated: true)
         
     }
-    
     
 }

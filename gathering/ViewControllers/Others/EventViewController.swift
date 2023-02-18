@@ -78,6 +78,11 @@ class EventViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configureBack(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
+        
+    }
+    
     func configureExit(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Publish", style: .done, target: self, action: #selector(didTapPublish))

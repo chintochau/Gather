@@ -7,21 +7,68 @@
 
 import UIKit
 import Hero
+import PubNub
 
 class ChatMainViewController: UIViewController {
     
-    
+    private let listener = SubscriptionListener(queue: .main)
+    private let channels = ["awesomeChannel"]
+    private let pubnub = ChatMessageManager.shared.pubnub
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupNavBar()
         setUpPanGesture()
+        
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
+        ChatMessageManager.shared.fetchChannelGroup(groupid: username) { channels in
+            print(channels)
+        }
+        
+        
+        
+        listener.didReceiveMessage = { message in
+            print("[Message]: \(message)")
+        }
+        
+        
+        listener.didReceiveStatus = { status in
+            switch status {
+            case .success(let connection):
+                
+                if connection == .connected {
+                    
+                    self.pubnub.publish(channel: self.channels[0], message: "Hello, PubNub Swift!") { result in
+                        print(result.map { "Publish Response at \($0.timetokenDate)" })
+                    }
+                }
+                
+            case .failure(let error):
+                print("Status Error: \(error.localizedDescription)")
+            }
+        }
+
+        pubnub.add(listener)
+
+        pubnub.subscribe(to: channels, withPresence: true)
+        
+        
     }
     
     private func setupNavBar(){
         navigationItem.title = "Chat"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(didTapBack))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(didTapNewMessage))
+    }
+    
+    @objc private func didTapNewMessage(){
+        let vc = ChatMessageViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didTapBack (){
+        dismiss(animated: true)
     }
     
     private func setUpPanGesture(){
@@ -55,8 +102,5 @@ class ChatMainViewController: UIViewController {
         }
     }
     
-    @objc private func didTapBack (){
-        dismiss(animated: true)
-    }
 
 }
