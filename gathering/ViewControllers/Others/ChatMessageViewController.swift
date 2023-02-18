@@ -8,23 +8,33 @@
 
 import UIKit
 
+struct ChatMessage {
+    let text:String
+    let isIncoming:Bool
+}
+
 class ChatMessageViewController: UIViewController {
+    
+    // MARK: - Components
     
     let tableView:UITableView = {
         let view = UITableView()
         view.backgroundColor = .systemBackground
-        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.register(ChatMessageTableViewCell.self, forCellReuseIdentifier: ChatMessageTableViewCell.identifier)
+        view.keyboardDismissMode = .interactive
+        view.separatorStyle = .none
         view.keyboardDismissMode = .interactive
         return view
     }()
     
     let textView:UITextView = {
         let view = UITextView()
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .secondarySystemBackground
         view.font = .preferredFont(forTextStyle: .body)
         view.layer.cornerRadius = 5
         return view
     }()
+    
     let sendButton:UIButton = {
         let view = UIButton()
         view.setTitle("Send", for: .normal)
@@ -32,9 +42,29 @@ class ChatMessageViewController: UIViewController {
         return view
     }()
     
-    let maxNumberOfLines = 5
+    // MARK: - Properties
     
+    let maxNumberOfLines = 5
+    let targetUsername:String
     var textViewBottomConstraint: NSLayoutConstraint?
+    
+    let  chatMessages:[ChatMessage] = []
+    
+    
+    
+    // MARK: - Init
+    
+    init(targetUsername:String) {
+        self.targetUsername = targetUsername
+        super.init(nibName: nil, bundle: nil)
+        navigationItem.title = targetUsername
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +75,7 @@ class ChatMessageViewController: UIViewController {
         scrollToBottom()
         registerKeyboardNotifications()
         scrollToBottom()
+        ChatMessageManager.shared.listenToChannel(targetUsername: targetUsername)
     }
     
     func setupNavBar(){
@@ -61,9 +92,6 @@ class ChatMessageViewController: UIViewController {
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: textView.topAnchor).isActive = true
-        tableView.backgroundColor = .white
-        tableView.separatorStyle = .none
-        tableView.keyboardDismissMode = .interactive
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -74,22 +102,24 @@ class ChatMessageViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    func setupInputComponent(){
+    private func setupInputComponent(){
         
         sendButton.anchor(top: nil, leading: nil, bottom: textView.bottomAnchor, trailing: view.trailingAnchor,size: CGSize(width: 80, height: 0))
+        
+        sendButton.addTarget(self, action: #selector(didTapSend), for: .touchUpInside)
         
         textView.anchor(top: nil, leading: view.leadingAnchor, bottom: nil, trailing: sendButton.leadingAnchor,padding: .init(top: 0, left: 5, bottom: 0, right: 5))
         
         textView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        textViewBottomConstraint = textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,constant: 5)
+        textViewBottomConstraint = textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,constant: 10)
         textViewBottomConstraint?.isActive = true
         
         textView.delegate = self
         
     }
     
-    func scrollToBottom(animated:Bool = true) {
+    private func scrollToBottom(animated:Bool = true) {
         let lastRow = tableView.numberOfRows(inSection: 0) - 1
         if lastRow >= 0 {
             let lastIndexPath = IndexPath(row: lastRow, section: 0)
@@ -111,17 +141,29 @@ class ChatMessageViewController: UIViewController {
     @objc func keyboardWillHide(notification: NSNotification) {
         textViewBottomConstraint?.constant = 10
     }
+    
+    
+    // MARK: - Handle Send Message
+    @objc private func didTapSend(){
+        
+        if let text = textView.text {
+            ChatMessageManager.shared.sendMessageAndAddToChannelGroup(targetUsername: targetUsername, message: text)
+            
+        }
+    }
 }
 
 
 extension ChatMessageViewController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+        return chatMessages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = "Message \(indexPath.row + 1)"
+        let message = chatMessages[indexPath.row]
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChatMessageTableViewCell.identifier, for: indexPath) as! ChatMessageTableViewCell
+        cell.chatMessage = message
         return cell
     }
     
@@ -130,8 +172,6 @@ extension ChatMessageViewController: UITableViewDataSource,UITableViewDelegate {
     
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    }
 }
 
 extension ChatMessageViewController: UITextViewDelegate {
@@ -172,18 +212,4 @@ extension ChatMessageViewController: UITextViewDelegate {
     }
 }
 
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct PreviewChatMes: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ChatMessageViewController().toPreview()
-    }
-}
-#endif
 

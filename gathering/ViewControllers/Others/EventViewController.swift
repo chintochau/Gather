@@ -315,6 +315,7 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
         if case .owner(let name) = vm {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventOwnerCollectionViewCell.identifier, for: indexPath) as! EventOwnerCollectionViewCell
             cell.configure(with: name)
+            cell.delegate = self
             cell.widthAnchor.constraint(equalToConstant: view.width-padding).isActive = true
             return cell
         }
@@ -353,3 +354,16 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
 }
 
 
+extension EventViewController:EventOwnerCollectionViewCellDelegate {
+    // MARK: - open message view
+    func EventOwnerCollectionViewCellDidTapMessage(_ cell: EventOwnerCollectionViewCell, username: String) {
+        let vc = ChatMessageViewController(targetUsername: username)
+        vc.setupNavBar()
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .push(direction: .right))
+        navVc.modalPresentationStyle = .fullScreen
+        present(navVc, animated: true)
+    }
+    
+}

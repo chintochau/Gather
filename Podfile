@@ -18,6 +18,7 @@ target 'Gather Pool' do
   pod 'EmojiPicker', :git => 'https://github.com/htmlprogrammist/EmojiPicker'
   pod 'Hero'
   pod 'PubNubSwift', '~> 6.0.3'
+  pod 'IQKeyboardManagerSwift'
 
     # Pods for Instagram
 

@@ -73,6 +73,7 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: bottomAnchor, trailing: followButton.leadingAnchor,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         
         messageButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: trailingAnchor)
+        messageButton.addTarget(self, action: #selector(didTapMessage), for: .touchUpInside)
         
         
         followButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 10))

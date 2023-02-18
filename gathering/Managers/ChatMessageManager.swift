@@ -21,51 +21,107 @@ struct ChatMessageManager {
         return PubNub(configuration: config)
     }()
     
+    let listener:SubscriptionListener = {
+        let listener = SubscriptionListener()
+        return listener
+    }()
     
     
-    // MARK: - Fetch Channel
+    
+    
+    // MARK: - Fetch ChannelIDs
     public func fetchChannelGroup(groupid:String, completion:@escaping ([String]) -> Void ) {
-        // Check if group exists
         
-        pubnub.listChannelGroups { result in
-            
+        pubnub.listChannels(for: groupid) { result in
             switch result {
+            case .success(( _, let channels)):
+                print(channels)
+                listenToChannels(channels: channels)
+                completion(channels)
+            case .failure(_):
+                completion([])
+            }
+        }
+    }
+    
+    // MARK: - Listen to Channels
+    public func listenToChannels(channels:[String]){
+        let messageQueue = DispatchQueue(label: "pubnub-message-queue")
+        
+        listener.didReceiveMessage = { message in
+            messageQueue.async {
+                print("[Message]: \(message)")
+            }
+        }
+        pubnub.add(listener)
+        pubnub.subscribe(to: channels, withPresence: true)
+        print("Listen to Channels: \(channels)")
+    }
+    
+    public func listenToChannel(targetUsername:String) {
+        let messageQueue = DispatchQueue(label: "pubnub-message-queue")
+        
+        let channelId = generateChannelIDFor(receiverUsername: targetUsername)
+        
+        listener.didReceiveMessage = { message in
+            messageQueue.async {
+                print("[Message]: \(message)")
+            }
+        }
+        
+        pubnub.add(listener)
+        pubnub.subscribe(to: [channelId], withPresence: true)
+        print("Listen to Channels: \(channelId)")
+    }
+    
+    // MARK: - Send message, create channel and add to groups
+    public func sendMessageAndAddToChannelGroup(targetUsername:String, message:String){
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
+        let channelId = generateChannelIDFor(receiverUsername: targetUsername)
+        
+        // Publish the message to the channel
+        pubnub.publish(
+            channel: channelId,
+            message: ["text": message],
+            completion: { result in
+            switch result {
+            case .success(_):
+                pubnub.add(
+                  channels: [channelId],
+                  to: username
+                ) { result in
+                  switch result {
+                    case let .success(response):
+                      print("Success \(response)")
+                      
+                      pubnub.subscribe(
+                        to: [channelId],
+                        and: [username],
+                        withPresence: true
+                      )
+                      
+
+                    case let .failure(error):
+                      print("failed: \(error.localizedDescription)")
+                  }
+                }
                 
-            case let .success(groups):
-                
-                if !groups.contains(groupid) {
-                    createChannelGroup(groupid: groupid)
-                }else {
-                    pubnub.listChannels(for: groupid) { result in
-                        switch result {
-                        case .success(( _, let channels)):
-                            completion(channels)
-                        case .failure(_):
-                            completion([])
-                        }
+                pubnub.add(channels: [channelId], to: targetUsername) { result in
+                    switch result {
+                    case let .success(response):
+                        print("success\(response)")
+                    case let .failure(error):
+                        print("Failed: \(error.localizedDescription)")
                     }
                 }
-            case .failure(_):
-                print("Faailed to list channel groups")
-            }
-        }
-    }
-    
-    public func createChannelGroup(groupid:String){
-        // Create the channel group
-        pubnub.add(channels: [], to: groupid) { result in
-            switch result {
-            case .success:
-                // Channel group created successfully
-                print("Channel group created successfully")
+                
+                
             case let .failure(error):
-                // Handle error
-                print("Error creating channel group: \(error.localizedDescription)")
+                print("Fail message: \(error)")
             }
-        }
-    }
-    
-    public func createChannelForGroup(channelID:String, groupID:String){
+        })
+        
+        
         
     }
     

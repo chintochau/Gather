@@ -113,11 +113,12 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
 extension UserProfileViewController:ProfileHeaderReusableViewDelegate {
     // MARK: - Handle send Message
     func ProfileHeaderReusableViewDelegatedidTapMessage(_ header: UICollectionReusableView, user: User) {
-        
-        let vc = ChatMessageViewController()
+        let vc = ChatMessageViewController(targetUsername: user.username)
         vc.setupNavBar()
         let navVc = UINavigationController(rootViewController: vc)
         navVc.modalPresentationStyle = .fullScreen
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         present(navVc, animated: true)
         
     }

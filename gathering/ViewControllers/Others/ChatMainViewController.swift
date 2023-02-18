@@ -11,8 +11,6 @@ import PubNub
 
 class ChatMainViewController: UIViewController {
     
-    private let listener = SubscriptionListener(queue: .main)
-    private let channels = ["awesomeChannel"]
     private let pubnub = ChatMessageManager.shared.pubnub
 
     override func viewDidLoad() {
@@ -21,38 +19,15 @@ class ChatMainViewController: UIViewController {
         setupNavBar()
         setUpPanGesture()
         
-        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
+        guard let username = UserDefaults.standard.string(forKey: "username") else {
+            fatalError()
+        }
+        
         ChatMessageManager.shared.fetchChannelGroup(groupid: username) { channels in
-            print(channels)
+            
+            print("channels: \(channels)")
+            
         }
-        
-        
-        
-        listener.didReceiveMessage = { message in
-            print("[Message]: \(message)")
-        }
-        
-        
-        listener.didReceiveStatus = { status in
-            switch status {
-            case .success(let connection):
-                
-                if connection == .connected {
-                    
-                    self.pubnub.publish(channel: self.channels[0], message: "Hello, PubNub Swift!") { result in
-                        print(result.map { "Publish Response at \($0.timetokenDate)" })
-                    }
-                }
-                
-            case .failure(let error):
-                print("Status Error: \(error.localizedDescription)")
-            }
-        }
-
-        pubnub.add(listener)
-
-        pubnub.subscribe(to: channels, withPresence: true)
-        
         
     }
     
@@ -63,8 +38,6 @@ class ChatMainViewController: UIViewController {
     }
     
     @objc private func didTapNewMessage(){
-        let vc = ChatMessageViewController()
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func didTapBack (){

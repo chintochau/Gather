@@ -45,6 +45,7 @@
 		478EE83F2996E610001BA53E /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478EE83E2996E610001BA53E /* SearchResult.swift */; };
 		4796DC10299574E7005802E2 /* FilterButtonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */; };
 		4796DC122995A66F005802E2 /* GeneralSearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */; };
+		479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */; };
 		47A35966297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A35965297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift */; };
 		47AD2E0F298F78C200D42E45 /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47AD2E0E298F78C200D42E45 /* PreviewViewModel.swift */; };
 		47BC0576297491F700242E45 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BC0575297491F700242E45 /* TextFieldTableViewCell.swift */; };
@@ -138,6 +139,7 @@
 		478EE83E2996E610001BA53E /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
 		4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonCollectionViewCell.swift; sourceTree = "<group>"; };
 		4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSearchResultViewController.swift; sourceTree = "<group>"; };
+		479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
 		47A35965297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventOwnerCollectionViewCell.swift; sourceTree = "<group>"; };
 		47AD2E0E298F78C200D42E45 /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		47BC0575297491F700242E45 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				47685DF9298B445B00B50DEC /* HeadcountTableViewCell.swift */,
 				47710615298C4B07004BC473 /* ParticipantsTableViewCell.swift */,
 				477C615A2990088500CDB241 /* TitleWithImageTableViewCell.swift */,
+				479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -580,6 +583,7 @@
 				47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */,
 				47FD6EF5296F36F8001AF255 /* Event.swift in Sources */,
 				47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */,
+				479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */,
 				47A35966297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift in Sources */,
 				47E7DD7C298A288B000C1FFC /* LocationSearchResultTableVC.swift in Sources */,
 				47D44EFE298896E500DEB3B4 /* FormEventViewController.swift in Sources */,
