@@ -800,6 +800,11 @@ PODS:
   - nanopb/encode (2.30909.0)
   - PromisesObjC (2.1.1)
   - PubNubSwift (6.0.3)
+  - Realm (10.36.0):
+    - Realm/Headers (= 10.36.0)
+  - Realm/Headers (10.36.0)
+  - RealmSwift (10.36.0):
+    - Realm (= 10.36.0)
   - SDWebImage (5.14.3):
     - SDWebImage/Core (= 5.14.3)
   - SDWebImage/Core (5.14.3)
@@ -815,6 +820,7 @@ DEPENDENCIES:
   - IGListKit (~> 4.0.0)
   - IQKeyboardManagerSwift
   - PubNubSwift (~> 6.0.3)
+  - RealmSwift (~> 10)
   - SDWebImage
 
 SPEC REPOS:
@@ -848,6 +854,8 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - PubNubSwift
+    - Realm
+    - RealmSwift
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -890,8 +898,10 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PubNubSwift: c22025ea55e4251410e640e5e86923a643159383
+  Realm: 3fd136cb4c83a927482a7f1612496d37beed3cf5
+  RealmSwift: 513d4dcbf5bfc4d573454088b592685fc48dd716
   SDWebImage: 9c36e66c8ce4620b41a7407698dda44211a96764
 
-PODFILE CHECKSUM: f24b8c80363a0720c4782267c7b2113982b20fcc
+PODFILE CHECKSUM: c44b54c351ace2398a3144cb7339302c79ef533d
 
 COCOAPODS: 1.11.3

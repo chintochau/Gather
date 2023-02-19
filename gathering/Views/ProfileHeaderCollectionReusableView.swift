@@ -137,6 +137,9 @@ class ProfileHeaderCollectionReusableView: UICollectionReusableView {
         
         segmentedControl.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 10, right: 20))
         
+        [messageButton,followButton].forEach({
+            $0.isHidden = !AuthManager.shared.isSignedIn
+        })
         
     }
     

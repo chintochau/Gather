@@ -7,6 +7,7 @@
 
 
 import UIKit
+import RealmSwift
 
 struct ChatMessage {
     let text:String
@@ -47,15 +48,16 @@ class ChatMessageViewController: UIViewController {
     let maxNumberOfLines = 5
     let targetUsername:String
     var textViewBottomConstraint: NSLayoutConstraint?
+    var conversation:ConversationObject
     
-    let  chatMessages:[ChatMessage] = []
-    
-    
+
+
     
     // MARK: - Init
     
     init(targetUsername:String) {
         self.targetUsername = targetUsername
+        self.conversation = ChatMessageManager.shared.createConversationIfNotExist(targetUsername: targetUsername)!
         super.init(nibName: nil, bundle: nil)
         navigationItem.title = targetUsername
     }
@@ -72,15 +74,14 @@ class ChatMessageViewController: UIViewController {
         [textView,sendButton,tableView].forEach({view.addSubview($0)})
         setupTableView()
         setupInputComponent()
-        scrollToBottom()
         registerKeyboardNotifications()
-        scrollToBottom()
         ChatMessageManager.shared.listenToChannel(targetUsername: targetUsername)
     }
     
     func setupNavBar(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(didTapGoBack))
     }
+    
     
     @objc private func didTapGoBack (){
         self.dismiss(animated: true)
@@ -147,20 +148,24 @@ class ChatMessageViewController: UIViewController {
     @objc private func didTapSend(){
         
         if let text = textView.text {
-            ChatMessageManager.shared.sendMessageAndAddToChannelGroup(targetUsername: targetUsername, message: text)
             
+            ChatMessageManager.shared.sendMessageAndAddToChannelGroup(targetUsername: targetUsername, message: text)
         }
     }
+}
+
+extension ChatMessageViewController {
+    
 }
 
 
 extension ChatMessageViewController: UITableViewDataSource,UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatMessages.count
+        return conversation.messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = chatMessages[indexPath.row]
+        let message = conversation.messages[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: ChatMessageTableViewCell.identifier, for: indexPath) as! ChatMessageTableViewCell
         cell.chatMessage = message

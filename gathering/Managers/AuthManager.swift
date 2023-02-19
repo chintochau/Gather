@@ -47,6 +47,7 @@ final class AuthManager {
                         completion(nil)
                         return
                     }
+                    ChatMessageManager.shared.ConnectToChatServer()
                     completion(newUser)
                 }
             }
@@ -66,6 +67,7 @@ final class AuthManager {
                     return}
                 
                 DefaultsManager.shared.updateUserProfile(with: user)
+                ChatMessageManager.shared.ConnectToChatServer()
                 completion(user)
             }
         }
@@ -74,6 +76,8 @@ final class AuthManager {
     public func signOut(completion: @escaping (Bool) -> Void){
         do {
             try auth.signOut()
+            ChatMessageManager.shared.disconnectFromChatServer()
+            RealmManager.shared.clearRealmDatabase()
             completion(true)
         }catch{
             print(error)

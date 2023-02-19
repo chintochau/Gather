@@ -8,27 +8,58 @@
 import UIKit
 import Hero
 import PubNub
+import RealmSwift
 
 class ChatMainViewController: UIViewController {
     
+    // MARK: - Components
+    private let tableView:UITableView = {
+        let view = UITableView()
+        view.backgroundColor = .systemBackground
+        view.register(ChatConversationTableViewCell.self, forCellReuseIdentifier: ChatConversationTableViewCell.identifier)
+        return view
+    }()
+    
+    private let signinMessage:UILabel = {
+        let view = UILabel()
+        view.text = "Login to send Message"
+        view.textColor = .label
+        return view
+    }()
+    
+    // MARK: - Properties
+    
     private let pubnub = ChatMessageManager.shared.pubnub
-
+    private var conversations:[ConversationObject] = []
+    let realm = try! Realm()
+    
+    // MARK: - LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        view.addSubview(tableView)
+        view.addSubview(signinMessage)
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.fillSuperview()
         setupNavBar()
         setUpPanGesture()
+        loadConversationsFromRealm()
+        ChatMessageManager.shared.ConnectToChatServer()
         
-        guard let username = UserDefaults.standard.string(forKey: "username") else {
-            fatalError()
-        }
+        signinMessage.isHidden = AuthManager.shared.isSignedIn
+        print(signinMessage.isHidden)
+        signinMessage.sizeToFit()
+        signinMessage.center = view.center
         
-        ChatMessageManager.shared.fetchChannelGroup(groupid: username) { channels in
-            
-            print("channels: \(channels)")
-            
-        }
-        
+    }
+    
+    private func loadConversationsFromRealm() {
+        let results = realm.objects(ConversationObject.self)
+        conversations = Array(results)
+        tableView.reloadData()
     }
     
     private func setupNavBar(){
@@ -38,6 +69,7 @@ class ChatMainViewController: UIViewController {
     }
     
     @objc private func didTapNewMessage(){
+        
     }
     
     @objc private func didTapBack (){
@@ -76,4 +108,30 @@ class ChatMainViewController: UIViewController {
     }
     
 
+}
+
+extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate{
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let model = conversations[indexPath.row]
+        tableView.deselectRow(at: indexPath, animated: true)
+        let vc = ChatMessageViewController(targetUsername: model.targetname)
+        navigationController?.pushViewController(vc, animated: true)
+        
+        
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return conversations.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let model = conversations[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChatConversationTableViewCell.identifier, for: indexPath) as! ChatConversationTableViewCell
+        cell.conversation = model
+        return cell
+    }
+    
+    
 }

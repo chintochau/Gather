@@ -62,7 +62,6 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
     
     var user:User?
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         [imageView,nameLabel,followButton,messageButton].forEach({addSubview($0)})
@@ -79,7 +78,10 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         followButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 10))
         followButton.addTarget(self, action: #selector(didTapFollow), for: .touchUpInside)
         
+        
         followButton.isHidden = !AuthManager.shared.isSignedIn
+        messageButton.isHidden = !AuthManager.shared.isSignedIn
+        
         
         
     }
@@ -95,6 +97,7 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         }
         isFollowing = DefaultsManager.shared.isUserFavourited(userID: owner.username)
         user = owner
+        
     }
     
     @objc private func didTapFollow(){

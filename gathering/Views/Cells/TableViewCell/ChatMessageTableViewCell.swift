@@ -30,7 +30,7 @@ class ChatMessageTableViewCell: UITableViewCell {
     var leadingLayoutConstraint:NSLayoutConstraint!
     var trailingLayoutConstraint:NSLayoutConstraint!
     
-    var chatMessage:ChatMessage! {
+    var chatMessage:MessageObject! {
         didSet {
             messageText.text = chatMessage.text
             bubbleBackgroundView.backgroundColor = chatMessage.isIncoming ? .secondarySystemBackground : .mainColor

@@ -9,15 +9,12 @@ import UIKit
 import FirebaseCore
 import UserNotifications
 import FirebaseMessaging
-import IQKeyboardManagerSwift
-
+import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-//        IQKeyboardManager.shared.enable = true
         
         // Override point for customization after application launch.
         FirebaseApp.configure()
@@ -25,7 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-
     
     // MARK: UISceneSession Lifecycle
 

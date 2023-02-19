@@ -29,6 +29,11 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        if UserDefaults.standard.string(forKey: "username") == nil && AuthManager.shared.isSignedIn{
+            AuthManager.shared.signOut { success in
+                print("Signed out")
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

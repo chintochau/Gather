@@ -22,6 +22,8 @@ class WelcomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "mainColor")
         view.addSubview(logo)
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
+        ChatMessageManager.shared.ConnectToChatServer()
     }
     
     override func viewDidAppear(_ animated: Bool) {
