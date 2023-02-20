@@ -127,10 +127,18 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     }()
     
     
+     let backgroundShade:UIView = {
+        let view = UIView()
+        view.backgroundColor = .streamWhiteSnow
+        return view
+    }()
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         [
+            backgroundShade,
             profileImageview,
             eventImageView,
             dateLabel,
@@ -151,10 +159,6 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         ].forEach({addSubview($0)})
         
         
-        layer.borderColor = UIColor.opaqueSeparator.cgColor
-        layer.borderWidth = 0.5
-        
-        
         
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
     }
@@ -165,8 +169,6 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        layer.cornerRadius = 10
-        layer.masksToBounds = true
         dateLabel.sizeToFit()
         titleLabel.sizeToFit()
         locationLabel.sizeToFit()
@@ -191,7 +193,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         ].forEach({$0.isHidden = false})
     }
     
-    func configure(with vm:EventCollectionViewCellViewModel) {
+    func configure(with vm:EventCellViewModel) {
         if let profileImage = vm.organiser.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }

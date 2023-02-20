@@ -68,7 +68,7 @@ class ParticipantsViewHeaderView: UIView {
     }
     
     
-    func configure(with vm: EventCollectionViewCellViewModel) {
+    func configure(with vm: EventCellViewModel) {
         priceValueLabel.text = vm.priceString
         genderLabel.text = "\(vm.totalPeopleCount)/\(String(vm.totalCapacity))"
     }

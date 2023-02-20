@@ -20,6 +20,7 @@ target 'Gather Pool' do
   pod 'PubNubSwift', '~> 6.0.3'
   pod 'IQKeyboardManagerSwift'
   pod 'RealmSwift', '~>10'
+  pod 'IGListKit', '~> 4.0.0'
 
     # Pods for Instagram
 
