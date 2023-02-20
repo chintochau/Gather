@@ -46,5 +46,9 @@ extension AppDelegate:MessagingDelegate,UNUserNotificationCenterDelegate {
         application.registerForRemoteNotifications()
     }
 
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Show the notification even if the app is in the foreground
+        completionHandler([.alert, .badge])
+    }
     
 }

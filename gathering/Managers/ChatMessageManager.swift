@@ -38,7 +38,7 @@ struct ChatMessageManager {
             switch result {
             case .success(( _, let channels)):
                 listenToChannels(channels: channels)
-                print("Connected to chatserver")
+                print("Connected to chatserver: \(username)")
             case .failure(_): break
             }
         }
@@ -185,6 +185,8 @@ struct ChatMessageManager {
             try! realm.write({
                 conversation.messages.append(message)
             })
+            
+            triggerInAppNotification(message: message)
         }
     }
     
@@ -242,5 +244,27 @@ struct ChatMessageManager {
         return "messages_\(sortedUsername[0])_to_\(sortedUsername[1])"
     }
     
+    
+    // MARK: - In-app notification
+    public func triggerInAppNotification(message:MessageObject){
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let senderName = message.sender?.username,
+              username != senderName else {return}
+        
+        let content = UNMutableNotificationContent()
+        content.title = senderName
+        content.body = message.text
+        content.sound = UNNotificationSound.default
+        content.userInfo = ["view": "MyViewController"]
+
+        let request = UNNotificationRequest(identifier: "myNotification", content: content, trigger: nil)
+
+        let center = UNUserNotificationCenter.current()
+        center.add(request) { (error) in
+            if let error = error {
+                print("Error adding notification request: \(error.localizedDescription)")
+            }
+        }
+    }
     
 }
