@@ -26,21 +26,6 @@ class EventSectionController: ListSectionController {
     }
     
     
-    override func sizeForItem(at index: Int) -> CGSize {
-        let width = collectionContext!.containerSize.width
-        let height: CGFloat
-        
-        let cell = collectionContext?.dequeueReusableCell(of: EventCell.self, for: self, at: index) as! EventCell
-        cell.bindViewModel(viewModel as! EventHomeCellViewModel)
-        
-        let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
-        height = size.height
-        
-        return CGSize(width: width, height: height)
-    }
-    
-    
-    
     override func cellForItem(at index: Int) -> UICollectionViewCell {
         let cell = collectionContext?.dequeueReusableCell(of: EventCell.self, for: self, at: index) as! EventCell
         cell.bindViewModel(viewModel as! EventHomeCellViewModel)
@@ -49,9 +34,9 @@ class EventSectionController: ListSectionController {
     
     override func didSelectItem(at index: Int) {
         let viewModel = viewModel as! EventHomeCellViewModel
-        let vc = DemoViewController()
+//        let vc = DemoViewController()
         
-//        let vc = EventViewController(viewModel: EventMainViewModel(with: viewModel.event, image: nil)!)
+        let vc = EventViewController(viewModel: EventMainViewModel(with: viewModel.event, image: nil)!)
         viewController?.navigationController?.pushViewController(vc, animated: true)
         
     }

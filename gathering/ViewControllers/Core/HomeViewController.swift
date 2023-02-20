@@ -16,36 +16,78 @@ class HomeViewController: UIViewController{
     private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
     
     // MARK: - Components
-    private let collectionView:UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        let refreshControl = UIRefreshControl()
-        view.register(EventCell.self, forCellWithReuseIdentifier: EventCell.identifier)
-        view.alwaysBounceVertical = true
-        view.refreshControl = refreshControl
-        return view
-    }()
-    
+    private var collectionView:UICollectionView?
+    private let refreshControl = UIRefreshControl()
     
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureCollectionView()
+        configureNavBar()
+        fetchData()
+        
+        
+    }
+    
+    private func configureCollectionView(){
+        
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
+            
+            // item
+            let smallItem = NSCollectionLayoutItem(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1),
+                        heightDimension: .estimated(10))
+            )
+            
+            
+            // group
+            let group1 = NSCollectionLayoutGroup.horizontal(
+                layoutSize:
+                    NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1),
+                        heightDimension: .estimated(30)),
+                subitem: smallItem,
+                count: 1
+            )
+            
+            
+            //Header
+            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1),
+                    heightDimension: .estimated(44)
+                ),
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top
+            )
+            sectionHeader.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
+            
+            let section = NSCollectionLayoutSection(group: group1)
+            return section
+        }))
+        
         view.addSubview(collectionView)
-        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        collectionView.alwaysBounceVertical = true
+        collectionView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
+        
+        view.addSubview(collectionView)
+        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
         view.backgroundColor = .streamWhiteSnow
         collectionView.fillSuperview()
         adapter.collectionView = collectionView
         adapter.dataSource = self
         adapter.viewController = self
-        configureNavBar()
-        fetchData()
+        self.collectionView = collectionView
     }
     
     
     @objc private func didPullToRefresh(){
         fetchData()
-        collectionView.refreshControl?.endRefreshing()
+        collectionView?.refreshControl?.endRefreshing()
     }
     
     override func viewWillAppear(_ animated: Bool) {

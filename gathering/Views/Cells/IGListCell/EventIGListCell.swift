@@ -24,8 +24,6 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         super.init(frame: frame)
         
         
-        backgroundShade.anchor(top: titleLabel.topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
-        
         let emojiSize:CGFloat = 35
         
         profileImageview.anchor(
@@ -80,6 +78,10 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         totalNumber.sizeToFit()
         totalNumber.anchor(top: totalIconImageView.topAnchor, leading: nil, bottom: totalIconImageView.bottomAnchor, trailing: totalIconImageView.leadingAnchor
                            ,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
+        
+        
+        backgroundShade.anchor(top: titleLabel.topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
+        
     }
     
     required init?(coder: NSCoder) {

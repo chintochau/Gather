@@ -21,7 +21,11 @@ class HomeViewModel {
             self?.createViewModels()
             completion()
         }
-        
+    }
+    
+    func insertEvent(event:Event, at index:Int, completion:@escaping () -> Void ) {
+        events.insert(event, at: index)
+        completion()
     }
     
     private func createViewModels(){
@@ -32,6 +36,5 @@ class HomeViewModel {
             }
         }
         
-        print(items)
     }
 }
