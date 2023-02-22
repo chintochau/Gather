@@ -98,11 +98,7 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
 
 extension FavouritedViewController:FavouritedTableCollectionViewCellDelegate {
     func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FavouritedTableCollectionViewCell, result: Any) {
-        
         guard let result = result as? String else {return}
-        
-        
-        
     }
     
     

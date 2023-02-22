@@ -59,15 +59,7 @@ class OldHomeViewController: UIViewController{
     private func fetchData(){
         
         if let user = DefaultsManager.shared.getCurrentUser() {
-            DatabaseManager.shared.fetchUserEvents(with: user.username) {[weak self] selfEvents in
-                guard let selfEvents = selfEvents else {return}
-                self?.selfEvents = selfEvents
-                DatabaseManager.shared.fetchAllEvents(exclude: selfEvents) { events in
-                    guard let events = events else {return}
-                    self?.events = events
-                    self?.createViewModels()
-                }
-            }
+            
         }else {
             self.selfEvents = []
             DatabaseManager.shared.fetchAllEvents{ [weak self] events in

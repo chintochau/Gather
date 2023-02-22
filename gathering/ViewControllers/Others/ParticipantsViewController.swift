@@ -22,19 +22,19 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     private let eventID:String
     private let event:Event
     
-    var models:[Participant] {
-        didSet{
-            self.tableView.reloadData()
-        }
-    }
-    
+    var models:[Participant]
     var openProfile:(() -> Void)?
     
     // MARK: - Init
     init (event:Event) {
         self.event = event
         self.eventID = event.id
-        self.models = []
+        self.models = event.participants.values.map({ participant in
+            return participant
+        })
+        
+        print("Participants: ")
+        print(models)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -49,13 +49,12 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer.cornerRadius = 20
-//        view.layer.borderColor = UIColor.opaqueSeparator.cgColor
-//        view.layer.borderWidth = 0.5
         view.clipsToBounds = true
         view.frame = CGRect(x: 0, y: view.height-130, width: view.width, height: view.height)
+        print(models)
         configureHeaderView()
-        addGesture()
         setupTableView()
+        addGesture()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -238,7 +237,6 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
 extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
     func didTapQuit(_ view: ParticipantsViewHeaderView) {
         DatabaseManager.shared.unregisterEvent(eventID: eventID) { success in
-            print(success)
         }
     }
     
@@ -258,7 +256,7 @@ extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
         let vc = EnrollViewController(vm: vm)
         vc.completion = {[weak self] in
             self?.view.frame = CGRect(x: 0, y: (self?.view.width)!, width: self?.view.width ?? 0, height: self?.view.height ?? 0)
-            self?.fetchParticipants()
+
         }
         
         present(vc, animated: true)

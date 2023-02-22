@@ -46,11 +46,8 @@ class UserProfileViewController: UIViewController {
     
     
     private func fetchData() {
-        DatabaseManager.shared.fetchUserEvents(with: user.username) { [weak self] events in
-            
-            guard let events = events else {return}
-            self?.events = events
-        }
+        
+        print("Fetch user events not implemented")
     }
 }
 

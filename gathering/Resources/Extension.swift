@@ -145,6 +145,23 @@ extension DateFormatter {
     }()
 }
 
+extension Date {
+    
+    /// return String in format yyyyMM, i.e. 202312
+    func getYearMonth () -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMM"
+        return dateFormatter.string(from: self)
+    }
+    
+    func getMonthInDate () -> Date {
+        let calendar = Calendar.current // The calendar to use for the conversion
+        let components = calendar.dateComponents([.year, .month], from: self) // Extract the year and month components of the date
+        return calendar.date(from: components)! // Create a new date using the year and month components
+    }
+    
+}
+
 extension String {
     
     static func date(from date: Date) -> String? {
@@ -187,13 +204,13 @@ extension String {
 }
 
 extension Double {
-    static func todayAtMidnightTimestamp() -> Double {
+    static func todayAtMidnightTimestamp() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
         let dateString = dateFormatter.string(from: Date())
         let todayAtMidnight = dateFormatter.date(from: dateString)
         
-        return todayAtMidnight!.timeIntervalSince1970
+        return todayAtMidnight!
     }
 }
 

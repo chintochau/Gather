@@ -45,19 +45,20 @@ class EventHomeCellViewModel: HomeCellViewModel {
         var femaleCount = 0
         var nonBinaryCount = 0
         
-        event.participants.forEach({
-            switch $0.value{
-            case "male":
+        event.participants.forEach { key,value in
+            switch value.gender {
+            case genderType.male.rawValue:
                 maleCount += 1
-            case "female":
+            case genderType.female.rawValue:
                 femaleCount += 1
-            case "non binary":
+            case genderType.nonBinary.rawValue:
                 nonBinaryCount += 1
-            default :
-                print("case no handled")
+            default:
+                print("case not handled")
             }
             
-        })
+        }
+        
         let fullDateString = String.localeDate(from: event.startDateString, .enUS)
         self.dateString = fullDateString.date ?? ""
         self.dayString = fullDateString.dayOfWeek ?? ""
@@ -128,19 +129,22 @@ extension EventCellViewModel {
         var femaleCount = 0
         var nonBinaryCount = 0
         
-        event.participants.forEach({
-            switch $0.value{
-            case "male":
-                maleCount += 1
-            case "female":
-                femaleCount += 1
-            case "non binary":
-                nonBinaryCount += 1
-            default :
-                print("case no handled")
-            }
-            
-        })
+        event.participants.forEach { key,value in
+        }
+        
+//        event.participants.forEach({
+//            switch $0.value{
+//            case "male":
+//                maleCount += 1
+//            case "female":
+//                femaleCount += 1
+//            case "non binary":
+//                nonBinaryCount += 1
+//            default :
+//                print("case no handled")
+//            }
+//
+//        })
         
         let fullDateString = String.localeDate(from: event.startDateString, .enUS)
         

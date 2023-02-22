@@ -35,6 +35,8 @@
 		4763D9DB2981CA950062C12C /* ProfileHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763D9DA2981CA950062C12C /* ProfileHeaderView.swift */; };
 		4763D9DD2981E1480062C12C /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4763D9DC2981E1480062C12C /* SectionHeaderView.swift */; };
 		47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47685DF9298B445B00B50DEC /* HeadcountTableViewCell.swift */; };
+		476F995129A68490007CA9A4 /* UserEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 476F995029A68490007CA9A4 /* UserEvent.swift */; };
+		476F995329A68856007CA9A4 /* NewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 476F995229A68856007CA9A4 /* NewEvent.swift */; };
 		47710616298C4B07004BC473 /* ParticipantsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47710615298C4B07004BC473 /* ParticipantsTableViewCell.swift */; };
 		477C615B2990088500CDB241 /* TitleWithImageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477C615A2990088500CDB241 /* TitleWithImageTableViewCell.swift */; };
 		477FC1A5297099FD00D7C45A /* TransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1A4297099FD00D7C45A /* TransitionManager.swift */; };
@@ -143,6 +145,8 @@
 		4763D9DA2981CA950062C12C /* ProfileHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderView.swift; sourceTree = "<group>"; };
 		4763D9DC2981E1480062C12C /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		47685DF9298B445B00B50DEC /* HeadcountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadcountTableViewCell.swift; sourceTree = "<group>"; };
+		476F995029A68490007CA9A4 /* UserEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEvent.swift; sourceTree = "<group>"; };
+		476F995229A68856007CA9A4 /* NewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEvent.swift; sourceTree = "<group>"; };
 		47710615298C4B07004BC473 /* ParticipantsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsTableViewCell.swift; sourceTree = "<group>"; };
 		4771E0BE299B3F3F0084C0B3 /* Gather Pool.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gather Pool.entitlements"; sourceTree = "<group>"; };
 		477C615A2990088500CDB241 /* TitleWithImageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleWithImageTableViewCell.swift; sourceTree = "<group>"; };
@@ -393,6 +397,8 @@
 				479C3B8E29A1560E000D55BA /* RealmObject */,
 				47FD6EF0296F2FF6001AF255 /* User.swift */,
 				47FD6EF4296F36F8001AF255 /* Event.swift */,
+				476F995029A68490007CA9A4 /* UserEvent.swift */,
+				476F995229A68856007CA9A4 /* NewEvent.swift */,
 				47D44EF9298851C500DEB3B4 /* Participant.swift */,
 				47E7DD79298A23BE000C1FFC /* Location.swift */,
 				478EE83E2996E610001BA53E /* SearchResult.swift */,
@@ -697,10 +703,12 @@
 				4796DC10299574E7005802E2 /* FilterButtonCollectionViewCell.swift in Sources */,
 				47D3DAD8298DB43300F9A3F3 /* PreviewViewController.swift in Sources */,
 				47F1204C2987737700C5CAF6 /* ParticipantsViewHeaderView.swift in Sources */,
+				476F995129A68490007CA9A4 /* UserEvent.swift in Sources */,
 				47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */,
 				47E7DD78298A124B000C1FFC /* LocationSearchViewController.swift in Sources */,
 				472997072985AC4400543FF6 /* DefaultsManager.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
+				476F995329A68856007CA9A4 /* NewEvent.swift in Sources */,
 				47CC052F299038EC00E97C1F /* EmojiEventCollectionViewCell.swift in Sources */,
 				478EE83D2996C447001BA53E /* FavouritedTableCollectionViewCell.swift in Sources */,
 				47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */,

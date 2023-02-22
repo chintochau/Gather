@@ -30,8 +30,8 @@ class NewEventViewController: UIViewController{
         location:Location.toronto,
         price:0.0,
         refund:"",
-        endTimestamp:Date().timeIntervalSince1970,
-        startTimestamp:Date().timeIntervalSince1970,
+        endTimestamp:Date(),
+        startTimestamp:Date(),
         headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil)
     )
     
@@ -346,8 +346,8 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        tempEvent.startTimestamp = startDate.timeIntervalSince1970
-        tempEvent.endTimestamp = endDate.timeIntervalSince1970
+        tempEvent.startTimestamp = startDate
+        tempEvent.endTimestamp = endDate
         
     }
     
@@ -462,14 +462,14 @@ extension NewEventViewController {
             organisers: [user],
             imageUrlString: urlStrings,
             price: tempEvent.price,
-            startTimestamp: tempEvent.startTimestamp,
-            endTimestamp: tempEvent.endTimestamp,
+            startDate: tempEvent.startTimestamp,
+            endDate: tempEvent.endTimestamp,
             location: tempEvent.location,
             tag: [],
             introduction: tempEvent.description,
             additionalDetail: "",
             refundPolicy: tempEvent.refund,
-            participants: [user.username:gender],
+            participants: [:],
             headcount: tempEvent.headcount,
             ownerFcmToken: user.fcmToken
         )
@@ -498,7 +498,7 @@ extension NewEventViewController {
                   let user = DefaultsManager.shared.getCurrentUser()
             else {return}
             
-            DatabaseManager.shared.createEvent(with: event, participants: [Participant(with: user)]) { done in
+            DatabaseManager.shared.createEvent(with: event) { done in
                 completion(event)
             }
         }

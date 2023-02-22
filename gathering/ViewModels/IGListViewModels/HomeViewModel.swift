@@ -17,6 +17,7 @@ class HomeViewModel {
     func fetchData(completion:@escaping () -> Void) {
         DatabaseManager.shared.fetchAllEvents { [weak self] events in
             guard let events = events else {return}
+            
             self?.events = events
             self?.createViewModels()
             completion()

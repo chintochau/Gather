@@ -43,8 +43,6 @@ final class DefaultsManager {
         DatabaseManager.shared.findUserWithUsername(with: username) {[weak self] user in
             guard let user = user else {return}
             self?.updateUserProfile(with: user)
-            print(user)
-            
         }
         
     }
@@ -96,13 +94,11 @@ final class DefaultsManager {
     public func removeFromFavouritedEvents(eventID:String){
         var array = getFavouritedEvents()
         
-        print(array)
         
         if let index = array.firstIndex(of: eventID) {
             array.remove(at: index)
             UserDefaults.standard.set(array, forKey: UserDefaultsType.favEvent.rawValue)
             
-            print(array)
             
         }else{
             
@@ -135,13 +131,9 @@ final class DefaultsManager {
     public func removeFromFavouritedUsers(userID:String){
         var array = getFavouritedUsers()
         
-        print(array)
-        
         if let index = array.firstIndex(of: userID) {
             array.remove(at: index)
             UserDefaults.standard.set(array, forKey: UserDefaultsType.favUser.rawValue)
-            
-            print(array)
             
         }else{
             

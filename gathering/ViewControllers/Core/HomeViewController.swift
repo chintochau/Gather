@@ -106,6 +106,8 @@ class HomeViewController: UIViewController{
         viewModel.fetchData {[weak self] in
             self?.adapter.performUpdates(animated: true)
             completion?()
+            
+            
         }
     }
     

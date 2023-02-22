@@ -10,7 +10,7 @@ import UIKit
 
 protocol ParticipantsTableViewCellDelegate:AnyObject {
     func ParticipantsTableViewCellTextViewDidChange(_ cell:ParticipantsTableViewCell,_ textView:UITextView)
-    func ParticipantsTableViewCellTextViewDidEndEditing(_ cell:ParticipantsTableViewCell,_ textView:UITextView,participants:[String:String],participantsArray:[Participant])
+    func ParticipantsTableViewCellTextViewDidEndEditing(_ cell:ParticipantsTableViewCell,_ textView:UITextView,participants:[String:Participant])
 }
 
 class ParticipantsTableViewCell:UITableViewCell {
@@ -218,7 +218,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             
         }
         
-        var participants:[String:String]  = [user.username:user.gender ?? "non binary"]
+        var participants:[String:Participant]  = [user.username:Participant(with: user)]
         var participantArray = [Participant(with: user)]
         
         var counter:Int = 1
@@ -240,21 +240,18 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             if participants[name] != nil {
                 let replacedName = name + "-" + String(counter)
                 
-                participants[replacedName] = gender
+                participants[replacedName] = Participant(name: replacedName, gender: gender)
                 participantArray.append(Participant(name: replacedName, username: nil, gender: gender, email: nil, profileUrlString: nil))
                 counter += 1
             }else {
-                participants[name] = gender
+                participants[name] = Participant(name: name, gender: gender)
                 participantArray.append(Participant(name: name, username: nil, gender: gender, email: nil, profileUrlString: nil))
             }
             
         }
         
-        print(participants)
-        print(participantArray)
         
-        self.delegate?.ParticipantsTableViewCellTextViewDidEndEditing(self, textView, participants: participants, participantsArray: participantArray)
-        
+        self.delegate?.ParticipantsTableViewCellTextViewDidEndEditing(self, textView, participants: participants)
     }
     
     private func addButtonToArrayAndStackView(_ user:User? = nil){

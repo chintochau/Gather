@@ -7,13 +7,19 @@
 
 import Foundation
 
+enum participantStatus:Int {
+    case interested = 0
+    case going = 1
+    case waitList = 2
+}
+
 struct Participant:Codable {
     let name:String
-    let username:String?
+    var username:String? = nil
     let gender:String
-    let email:String?
-    let profileUrlString:String?
-
+    var email:String? = nil
+    var profileUrlString:String? = nil
+    var status:Int = 0
 }
 
 extension Participant {
@@ -26,7 +32,5 @@ extension Participant {
         self.email = user.email
         self.profileUrlString = user.profileUrlString
     }
-    
-    
     
 }

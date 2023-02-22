@@ -14,7 +14,7 @@ struct EnrollViewModel {
     let email:String
     let eventTitle:String
     let dateString:String
-    let startTimestamp:Double
+    let startTimestamp:Date
     let location:String
     let price:String
     let eventID:String
@@ -32,7 +32,7 @@ struct EnrollViewModel {
         self.location = event.location.name
         self.price = event.priceString
         self.eventID = event.id
-        self.startTimestamp = event.startTimestamp
+        self.startTimestamp = event.startDate
     }
 }
 
@@ -117,7 +117,7 @@ class EnrollViewController: UIViewController {
     }()
     
     private let eventID:String
-    private let startTimestamp:Double
+    private let startTimestamp:Date
     var completion: (() -> Void)?
     
     // MARK: - Init

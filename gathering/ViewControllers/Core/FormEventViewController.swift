@@ -38,18 +38,20 @@ class FormEventViewController: UIViewController {
     private var hideObserver: NSObjectProtocol?
     var completion: ((_ event:Event) -> Void)?
     
-    var tempEvent = (
-        title:"",
-        emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
-        startTimestamp:Date().timeIntervalSince1970,
-        endTimestamp:Date().timeIntervalSince1970,
-        location:Location.toronto,
-        detail:"",
-        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
-        participants:["":""],
-        participantsArray:[Participant](),
-        addDetail:""
-    )
+    var newEvent = NewEvent()
+    
+//    var tempEvent = (
+//        title:"",
+//        emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
+//        startTimestamp:Date(),
+//        endTimestamp:Date(),
+//        location:Location.toronto,
+//        detail:"",
+//        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
+//        participants:["":""],
+//        participantsArray:[Participant](),
+//        addDetail:""
+//    )
     
     // MARK: - LifeCycle
     
@@ -71,25 +73,24 @@ class FormEventViewController: UIViewController {
     
     private func initialUser(){
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
-        tempEvent.participants = [user.username: user.gender!]
-        tempEvent.participantsArray = [Participant(with: user)]
+        newEvent.participants = [user.username: Participant(with: user)]
     }
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
-        var location = tempEvent.location.name
-        if let address = tempEvent.location.address {
+        var location = newEvent.location.name
+        if let address = newEvent.location.address {
             location = location + "\n" + address
         }
         
         viewModels = [
             [
                 .titleField,
-                .textView(title: "Intro: ", text: tempEvent.detail,tag: 0)
+                .textView(title: "Intro: ", text: newEvent.detail,tag: 0)
             ],[
                 .datePicker,
                 .value(title: "Location: ", value: location),
-                .textView(title: "Additional details: ", text: tempEvent.addDetail,tag: 1)
+                .textView(title: "Additional details: ", text: "Not yeat imple.",tag: 1)
             ],[
                 .headCount,
                 .participants
@@ -240,26 +241,7 @@ extension FormEventViewController {
     // MARK: - Handle Preview/ Post
     
     private func createEventFromTempEvent() -> Event?{
-        
-        guard let user = DefaultsManager.shared.getCurrentUser()else {return nil}
-        
-        return Event(
-            id: IdManager.shared.createEventId(),
-            emojiTitle: tempEvent.emojiTitle,
-            title: tempEvent.title,
-            organisers: [user],
-            imageUrlString: [],
-            price: 0,
-            startTimestamp: tempEvent.startTimestamp,
-            endTimestamp: tempEvent.endTimestamp,
-            location: tempEvent.location,
-            tag: [],
-            introduction: tempEvent.detail, additionalDetail: tempEvent.addDetail,
-            refundPolicy: "",
-            participants: tempEvent.participants,
-            headcount: tempEvent.headcount,
-            ownerFcmToken: user.fcmToken
-        )
+        newEvent.toEvent()
     }
     
     @objc private func didTapPreview(){
@@ -284,7 +266,7 @@ extension FormEventViewController {
         view.endEditing(true)
         
         guard let event = createEventFromTempEvent() else {return}
-        DatabaseManager.shared.createEvent(with: event,participants:tempEvent.participantsArray) { [weak self] success in
+        DatabaseManager.shared.createEvent(with: event) { [weak self] success in
             self?.navigationController?.popToRootViewController(animated: false)
             self?.completion?(event)
         }
@@ -295,7 +277,7 @@ extension FormEventViewController {
 extension FormEventViewController: LocationSerchViewControllerDelegate {
     // MARK: - Handle Location
     func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
-        tempEvent.location = location
+        newEvent.location = location
         configureViewModels()
     }
 }
@@ -303,8 +285,8 @@ extension FormEventViewController: LocationSerchViewControllerDelegate {
 extension FormEventViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        tempEvent.startTimestamp = startDate.timeIntervalSince1970
-        tempEvent.endTimestamp = endDate.timeIntervalSince1970
+        newEvent.startDate = startDate
+        newEvent.endDate = endDate
     }
     
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
@@ -317,12 +299,12 @@ extension FormEventViewController:DatePickerTableViewCellDelegate {
 extension FormEventViewController:HeadcountTableViewCellDelegate {
     // MARK: - handle Headcount
     func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
-        tempEvent.headcount = headcount
+        newEvent.headcount = headcount
     }
     
     
     func HeadcountTableViewCellDidTapExpand(_ cell: HeadcountTableViewCell, headcount: Headcount) {
-        tempEvent.headcount = headcount
+        newEvent.headcount = headcount
         tableView.beginUpdates()
         tableView.endUpdates()
     }
@@ -332,7 +314,7 @@ extension FormEventViewController:UITextFieldDelegate {
     // MARK: - Handle TextField
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text, !text.isEmpty else {return}
-        tempEvent.title = text
+        newEvent.title = text
     }
 }
 
@@ -342,10 +324,10 @@ extension FormEventViewController:UITextViewDelegate {
         switch textView.tag {
         case 0:
             // Intro View
-            tempEvent.detail = textView.text
+            newEvent.detail = textView.text
         case 1:
             // addDetail View
-            tempEvent.addDetail = textView.text
+            print("add info not yet implemented")
         default:
             print("Invalid Tag")
         }
@@ -357,9 +339,8 @@ extension FormEventViewController:UITextViewDelegate {
 
 extension FormEventViewController:ParticipantsTableViewCellDelegate {
     // MARK: - Handle Participants
-    func ParticipantsTableViewCellTextViewDidEndEditing(_ cell: ParticipantsTableViewCell, _ textView: UITextView, participants: [String : String], participantsArray: [Participant]) {
-        tempEvent.participants = participants
-        tempEvent.participantsArray = participantsArray
+    func ParticipantsTableViewCellTextViewDidEndEditing(_ cell: ParticipantsTableViewCell, _ textView: UITextView, participants: [String : Participant]) {
+        newEvent.participants = participants
         tableView.beginUpdates()
         tableView.endUpdates()
     }
@@ -387,7 +368,7 @@ extension FormEventViewController:EmojiPickerDelegate {
     
     func didGetEmoji(emoji: String) {
         UserDefaults.standard.setValue(emoji, forKey: "selectedEmoji")
-        tempEvent.emojiTitle = emoji
+        newEvent.emojiTitle = emoji
         emojiButton?.setTitle(emoji, for: .normal)
     }
     

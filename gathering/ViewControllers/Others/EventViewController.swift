@@ -50,12 +50,6 @@ class EventViewController: UIViewController {
     
     private let event:Event
     
-    private var participants:[Participant] {
-        didSet{
-            bottomSheet.models = participants
-        }
-    }
-    
     
     // MARK: - Init
     init(viewModel vm:EventMainViewModel){
@@ -70,7 +64,6 @@ class EventViewController: UIViewController {
         ]
         priceNumberLabel.text = vm.price
         bottomSheet = ParticipantsViewController(event: event)
-        participants = []
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,7 +98,6 @@ class EventViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(collectionView)
-        fetchParticipantsList()
         configureCollectionView()
         configureCollectionViewLayout()
         configureNavBar(shouldBeTransparent: true)
@@ -142,15 +134,6 @@ class EventViewController: UIViewController {
         super.viewWillDisappear(animated)
         bottomSheet.removeFromParent()
         tabBarController?.tabBar.isHidden = false
-    }
-    
-    // MARK: - FetchParticipants
-    private func fetchParticipantsList() {
-        DatabaseManager.shared.fetchParticipants(with:event.id){[weak self] participants in
-            guard let participants = participants else {return}
-            self?.participants = participants
-            
-        }
     }
     
     // MARK: - bottomSheet
