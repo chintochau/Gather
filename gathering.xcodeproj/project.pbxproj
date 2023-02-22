@@ -64,6 +64,8 @@
 		47BCF58229A3D9D800F82FB4 /* EventSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCF58129A3D9D800F82FB4 /* EventSectionController.swift */; };
 		47BCF58429A3DBA700F82FB4 /* AdCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCF58329A3DBA700F82FB4 /* AdCollectionViewCell.swift */; };
 		47BCF58629A3E7EC00F82FB4 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCF58529A3E7EC00F82FB4 /* DemoViewController.swift */; };
+		47BCF58A29A41F5D00F82FB4 /* RelationshipObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCF58929A41F5D00F82FB4 /* RelationshipObject.swift */; };
+		47BCF58C29A4233C00F82FB4 /* NotificationObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BCF58B29A4233C00F82FB4 /* NotificationObject.swift */; };
 		47BE57842972134B00EDA791 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57832972134B00EDA791 /* DatabaseManager.swift */; };
 		47BE57862972135100EDA791 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57852972135100EDA791 /* StorageManager.swift */; };
 		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
@@ -80,6 +82,7 @@
 		47DC14C02978A6490006D4F4 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14BF2978A6490006D4F4 /* EventViewController.swift */; };
 		47DC14C22978AE510006D4F4 /* EventHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14C12978AE510006D4F4 /* EventHeaderView.swift */; };
 		47DC14C42978B5470006D4F4 /* StretchyHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47DC14C32978B5470006D4F4 /* StretchyHeaderLayout.swift */; };
+		47E76C2829A55B540039E12C /* RelationshipManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E76C2729A55B540039E12C /* RelationshipManager.swift */; };
 		47E7DD78298A124B000C1FFC /* LocationSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E7DD77298A124B000C1FFC /* LocationSearchViewController.swift */; };
 		47E7DD7A298A23BE000C1FFC /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E7DD79298A23BE000C1FFC /* Location.swift */; };
 		47E7DD7C298A288B000C1FFC /* LocationSearchResultTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E7DD7B298A288B000C1FFC /* LocationSearchResultTableVC.swift */; };
@@ -89,7 +92,7 @@
 		47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F0CD0229760AC4003B22EB /* IdManager.swift */; };
 		47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */; };
 		47F1204C2987737700C5CAF6 /* ParticipantsViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */; };
-		47F38E31299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F38E30299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift */; };
+		47F38E31299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F38E30299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift */; };
 		47F912002991F59600DD5597 /* HomeSectionHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F911FF2991F59500DD5597 /* HomeSectionHeaderReusableView.swift */; };
 		47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FC52A92999686900B0C25D /* PolicyViewController.swift */; };
 		47FC52AC29996B5900B0C25D /* Policy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FC52AB29996B5900B0C25D /* Policy.swift */; };
@@ -103,7 +106,6 @@
 		47FD6EF3296F34F5001AF255 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EF2296F34F5001AF255 /* Extension.swift */; };
 		47FD6EF5296F36F8001AF255 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EF4296F36F8001AF255 /* Event.swift */; };
 		47FD6EF9296F4F04001AF255 /* SmallEventCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EF8296F4F04001AF255 /* SmallEventCollectionViewCell.swift */; };
-		47FD6EFE296F5637001AF255 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EFD296F5637001AF255 /* MockData.swift */; };
 		47FD6F00296F60B9001AF255 /* LargeEventCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6EFF296F60B9001AF255 /* LargeEventCollectionViewCell.swift */; };
 		47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6F01296F623A001AF255 /* BasicEventCollectionViewCell.swift */; };
 		47FD6F04296F7951001AF255 /* EventMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FD6F03296F7951001AF255 /* EventMainViewController.swift */; };
@@ -171,6 +173,8 @@
 		47BCF58129A3D9D800F82FB4 /* EventSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSectionController.swift; sourceTree = "<group>"; };
 		47BCF58329A3DBA700F82FB4 /* AdCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdCollectionViewCell.swift; sourceTree = "<group>"; };
 		47BCF58529A3E7EC00F82FB4 /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
+		47BCF58929A41F5D00F82FB4 /* RelationshipObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipObject.swift; sourceTree = "<group>"; };
+		47BCF58B29A4233C00F82FB4 /* NotificationObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationObject.swift; sourceTree = "<group>"; };
 		47BE57832972134B00EDA791 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		47BE57852972135100EDA791 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
@@ -187,6 +191,7 @@
 		47DC14BF2978A6490006D4F4 /* EventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		47DC14C12978AE510006D4F4 /* EventHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHeaderView.swift; sourceTree = "<group>"; };
 		47DC14C32978B5470006D4F4 /* StretchyHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderLayout.swift; sourceTree = "<group>"; };
+		47E76C2729A55B540039E12C /* RelationshipManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelationshipManager.swift; sourceTree = "<group>"; };
 		47E7DD77298A124B000C1FFC /* LocationSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchViewController.swift; sourceTree = "<group>"; };
 		47E7DD79298A23BE000C1FFC /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		47E7DD7B298A288B000C1FFC /* LocationSearchResultTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchResultTableVC.swift; sourceTree = "<group>"; };
@@ -196,7 +201,7 @@
 		47F0CD0229760AC4003B22EB /* IdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdManager.swift; sourceTree = "<group>"; };
 		47F1204929872FD800C5CAF6 /* ParticipantsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewController.swift; sourceTree = "<group>"; };
 		47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsViewHeaderView.swift; sourceTree = "<group>"; };
-		47F38E30299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderCollectionReusableView.swift; sourceTree = "<group>"; };
+		47F38E30299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileHeaderReusableView.swift; sourceTree = "<group>"; };
 		47F911FF2991F59500DD5597 /* HomeSectionHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionHeaderReusableView.swift; sourceTree = "<group>"; };
 		47FC52A92999686900B0C25D /* PolicyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyViewController.swift; sourceTree = "<group>"; };
 		47FC52AB29996B5900B0C25D /* Policy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Policy.swift; sourceTree = "<group>"; };
@@ -210,7 +215,6 @@
 		47FD6EF2296F34F5001AF255 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		47FD6EF4296F36F8001AF255 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		47FD6EF8296F4F04001AF255 /* SmallEventCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallEventCollectionViewCell.swift; sourceTree = "<group>"; };
-		47FD6EFD296F5637001AF255 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		47FD6EFF296F60B9001AF255 /* LargeEventCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeEventCollectionViewCell.swift; sourceTree = "<group>"; };
 		47FD6F01296F623A001AF255 /* BasicEventCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicEventCollectionViewCell.swift; sourceTree = "<group>"; };
 		47FD6F03296F7951001AF255 /* EventMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMainViewController.swift; sourceTree = "<group>"; };
@@ -284,6 +288,8 @@
 				479C3B8F29A1561D000D55BA /* UserObject+Extensions.swift */,
 				479C3B9129A1568E000D55BA /* ConversationObject.swift */,
 				4728D87429A1830400E2F431 /* MessageObject.swift */,
+				47BCF58929A41F5D00F82FB4 /* RelationshipObject.swift */,
+				47BCF58B29A4233C00F82FB4 /* NotificationObject.swift */,
 			);
 			path = RealmObject;
 			sourceTree = "<group>";
@@ -421,7 +427,7 @@
 				4763D9DC2981E1480062C12C /* SectionHeaderView.swift */,
 				47F1204B2987737700C5CAF6 /* ParticipantsViewHeaderView.swift */,
 				47DC14C32978B5470006D4F4 /* StretchyHeaderLayout.swift */,
-				47F38E30299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift */,
+				47F38E30299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift */,
 				47FD6EF7296F4EC0001AF255 /* Storyboards */,
 				471302E429960E81006D23B1 /* SegmentedButtonsView.swift */,
 			);
@@ -485,7 +491,6 @@
 		47FD6EFC296F5619001AF255 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				47FD6EFD296F5637001AF255 /* MockData.swift */,
 				477FC1A4297099FD00D7C45A /* TransitionManager.swift */,
 				47BE57832972134B00EDA791 /* DatabaseManager.swift */,
 				47BE57852972135100EDA791 /* StorageManager.swift */,
@@ -495,6 +500,7 @@
 				47C939CB299C1045002917CE /* CustomNotificationManager.swift */,
 				470D58A7299FDF800034293D /* ChatMessageManager.swift */,
 				474A2F6529A1E46100ADE1B6 /* RealmManager.swift */,
+				47E76C2729A55B540039E12C /* RelationshipManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -641,6 +647,7 @@
 				47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
 				47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */,
+				47BCF58A29A41F5D00F82FB4 /* RelationshipObject.swift in Sources */,
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
@@ -648,7 +655,6 @@
 				470D58A8299FDF800034293D /* ChatMessageManager.swift in Sources */,
 				473B8E8D29989C6000992C15 /* Constant.swift in Sources */,
 				47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */,
-				47FD6EFE296F5637001AF255 /* MockData.swift in Sources */,
 				47C939CC299C1045002917CE /* CustomNotificationManager.swift in Sources */,
 				47DC14BE297869C30006D4F4 /* EventMainViewModel.swift in Sources */,
 				471900C82979BF6900B2DD8C /* EventInfoCollectionViewCell.swift in Sources */,
@@ -667,8 +673,9 @@
 				47DC14C22978AE510006D4F4 /* EventHeaderView.swift in Sources */,
 				4796DC122995A66F005802E2 /* GeneralSearchResultViewController.swift in Sources */,
 				479C3B9029A1561D000D55BA /* UserObject+Extensions.swift in Sources */,
-				47F38E31299423FB00F3ADF0 /* ProfileHeaderCollectionReusableView.swift in Sources */,
+				47F38E31299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift in Sources */,
 				474065B22980DF9D00504422 /* PhotoLabelCollectionViewCell.swift in Sources */,
+				47BCF58C29A4233C00F82FB4 /* NotificationObject.swift in Sources */,
 				47FD6EF3296F34F5001AF255 /* Extension.swift in Sources */,
 				47FD6EEF296F2FEA001AF255 /* NewEventViewController.swift in Sources */,
 				474A2F6429A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift in Sources */,
@@ -703,6 +710,7 @@
 				479C3B9229A1568E000D55BA /* ConversationObject.swift in Sources */,
 				47F0CD012975DDAB003B22EB /* GAButton.swift in Sources */,
 				47FD6EF1296F2FF6001AF255 /* User.swift in Sources */,
+				47E76C2829A55B540039E12C /* RelationshipManager.swift in Sources */,
 				47FD6EDF296F2B12001AF255 /* HomeViewController.swift in Sources */,
 				4748FEAC299AA75C000E408E /* AIAssistantViewController.swift in Sources */,
 				47BCF57629A39AEB00F82FB4 /* EventIGListCell.swift in Sources */,

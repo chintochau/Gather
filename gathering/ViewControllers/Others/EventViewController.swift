@@ -306,7 +306,6 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
     // MARK: - cell
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        
         guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {return UICollectionViewCell()}
         let padding = layout.sectionInset.left + layout.sectionInset.right
         

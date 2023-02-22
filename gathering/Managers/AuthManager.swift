@@ -73,15 +73,15 @@ final class AuthManager {
         }
     }
 
-    public func signOut(completion: @escaping (Bool) -> Void){
+    public func signOut(completion: ((Bool) -> Void)? = nil){
         do {
             try auth.signOut()
             ChatMessageManager.shared.disconnectFromChatServer()
             RealmManager.shared.clearRealmDatabase()
-            completion(true)
+            completion?(true)
         }catch{
             print(error)
-            completion(false)
+            completion?(false)
         }
     }
 

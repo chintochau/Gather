@@ -33,11 +33,11 @@ class DemoViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let edgePanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        let edgePanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGestureForNavigationController(_:)))
         view.addGestureRecognizer(edgePanGesture)
     }
 
-    @objc private func handlePanGesture(_ gesture: UIScreenEdgePanGestureRecognizer) {
+    @objc private func handlePanGestureForNavigationController(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .began:
             interactionController = UIPercentDrivenInteractiveTransition()

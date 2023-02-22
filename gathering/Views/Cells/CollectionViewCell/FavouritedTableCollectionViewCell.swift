@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import RealmSwift
 
 protocol FavouritedTableCollectionViewCellDelegate:AnyObject {
-    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell:FavouritedTableCollectionViewCell, result:SearchResult)
+    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell:FavouritedTableCollectionViewCell, result:Any)
 }
 
 class FavouritedTableCollectionViewCell: UICollectionViewCell {
@@ -17,7 +18,27 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
     
     weak var delegate:FavouritedTableCollectionViewCellDelegate?
     
+    // MARK: - Components
+    
+    let refreshControl = UIRefreshControl()
+    
+    let tableView:UITableView = {
+        let view = UITableView()
+        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        return view
+    }()
+    
+    private let searchBar:UISearchBar = {
+        let view = UISearchBar()
+        view.placeholder = "Search"
+        return view
+    }()
+    
+    
+    // MARK: - Properties
     private var viewModels:[SearchResult] = []
+    
+    private var relationships:Results<RelationshipObject>
     
     var favType:String?{
         didSet{
@@ -45,21 +66,11 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
         
     }
     
-    let refreshControl = UIRefreshControl()
-    
-    let tableView:UITableView = {
-        let view = UITableView()
-        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        return view
-    }()
-    
-    private let searchBar:UISearchBar = {
-        let view = UISearchBar()
-        view.placeholder = "Search"
-        return view
-    }()
     
     override init(frame: CGRect) {
+        let realm = try! Realm()
+        relationships = realm.objects(RelationshipObject.self)
+        
         super.init(frame: frame)
         [searchBar,tableView].forEach({addSubview($0)})
         
@@ -91,19 +102,19 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
 
 extension FavouritedTableCollectionViewCell:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModels.count
+        return relationships.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = viewModels[indexPath.row]
+        let model = relationships[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = model.title
+        cell.textLabel?.text = model.targetUsername
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         searchBar.resignFirstResponder()
-        delegate?.FavouritedTableCollectionViewCellDelegateDidTapResult(self, result: viewModels[indexPath.row])
+        delegate?.FavouritedTableCollectionViewCellDelegateDidTapResult(self, result: relationships[indexPath.row].targetUsername)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

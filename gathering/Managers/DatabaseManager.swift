@@ -73,7 +73,11 @@ final class DatabaseManager {
         let ref = database.collection("users").document(username)
         
         ref.getDocument { snapshot, error in
+            print(snapshot?.data())
+            print(User(with:snapshot?.data() ?? [:]))
+            
             guard let data = snapshot?.data(),let user = User(with: data) else {
+                
                 completion(nil)
                 return}
             
@@ -284,6 +288,75 @@ final class DatabaseManager {
             "participants" : [username:FieldValue.delete()]
         ], merge: true)
         
+        
+    }
+    
+    
+    // MARK: - Friends
+    
+    public func sendFriendRequest(targetUsername:String){
+        
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let relationshipString = IdManager.shared.generateRelationshipIdFor(targetUsername: targetUsername)
+        else {return}
+        
+        let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)
+        let selfRef = database.collection("users").document(username).collection("relationship").document(targetUsername)
+        
+        
+        let batch  = database.batch()
+        let relationshipObject = RelationshipObject()
+        relationshipObject.id = relationshipString.id
+        
+        // write to target
+        relationshipObject.targetUsername = username
+        relationshipObject.selfUsername = targetUsername
+        relationshipObject.status = relationshipType.received.rawValue
+        batch.setData(relationshipObject.asDictionary()!, forDocument: targetRef)
+        
+        // write to self
+        relationshipObject.targetUsername = targetUsername
+        relationshipObject.selfUsername = username
+        relationshipObject.status = relationshipType.pending.rawValue
+        batch.setData(relationshipObject.asDictionary()!, forDocument: selfRef)
+        
+        
+        batch.commit()
+    }
+    public func cancelFriendRequestAndUnfriend(targetUsername:String){
+        
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let relationshipString = IdManager.shared.generateRelationshipIdFor(targetUsername: targetUsername)
+        else {return}
+        
+        let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)
+        let selfRef = database.collection("users").document(username).collection("relationship").document(targetUsername)
+        
+        let batch  = database.batch()
+        
+        batch.deleteDocument(targetRef)
+        batch.deleteDocument(selfRef)
+        
+        batch.commit()
+        
+    }
+    
+    public func acceptFriendRequest(targetUsername:String) {
+        // status set to friend
+        
+        guard let username = UserDefaults.standard.string(forKey: "username")
+        else {return}
+        
+        let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)
+        let selfRef = database.collection("users").document(username).collection("relationship").document(targetUsername)
+        
+        
+        let batch  = database.batch()
+        
+        batch.updateData(["status" : relationshipType.friend.rawValue], forDocument: selfRef)
+        batch.updateData(["status" : relationshipType.friend.rawValue], forDocument: targetRef)
+        
+        batch.commit()
         
     }
     

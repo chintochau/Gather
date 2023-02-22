@@ -16,6 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        // Get the URL of the default Realm file
+        if let defaultRealmURL = Realm.Configuration.defaultConfiguration.fileURL {
+            print("Default Realm file URL: \(defaultRealmURL)")
+        } else {
+            print("Unable to get default Realm file URL")
+        }
+        
         // Override point for customization after application launch.
         FirebaseApp.configure()
         attemptRegisterForNotifications(application: application)

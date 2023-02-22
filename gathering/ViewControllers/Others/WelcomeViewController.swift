@@ -18,12 +18,12 @@ class WelcomeViewController: UIViewController {
     }()
     
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "mainColor")
         view.addSubview(logo)
-        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
-        ChatMessageManager.shared.ConnectToChatServer()
+        appInitialListener()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -43,6 +43,14 @@ class WelcomeViewController: UIViewController {
             vc.modalPresentationStyle = .fullScreen
             self?.present(vc, animated: false)
         }
+    }
+    
+    
+    
+    fileprivate func appInitialListener() {
+        guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
+        ChatMessageManager.shared.ConnectToChatServer()
+        RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
     }
 
 

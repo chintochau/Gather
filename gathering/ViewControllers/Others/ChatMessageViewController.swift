@@ -8,13 +8,14 @@
 
 import UIKit
 import RealmSwift
+import Hero
 
 struct ChatMessage {
     let text:String
     let isIncoming:Bool
 }
 
-class ChatMessageViewController: UIViewController {
+class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
     
     // MARK: - Components
     
@@ -49,21 +50,27 @@ class ChatMessageViewController: UIViewController {
     let targetUsername:String
     var textViewBottomConstraint: NSLayoutConstraint?
     var conversation:ConversationObject
-    
-
-
+    var messages: Results<MessageObject>
+    var notificationToken:NotificationToken?
     
     // MARK: - Init
     
     init(targetUsername:String) {
         self.targetUsername = targetUsername
         self.conversation = ChatMessageManager.shared.createConversationIfNotExist(targetUsername: targetUsername)!
+        self.messages = conversation.messages.sorted(byKeyPath: "sentDate")
+        
         super.init(nibName: nil, bundle: nil)
         navigationItem.title = targetUsername
+        observeConversationsFromRealm()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        notificationToken?.invalidate()
     }
     
     // MARK: - Life Cycle
@@ -76,7 +83,22 @@ class ChatMessageViewController: UIViewController {
         setupInputComponent()
         registerKeyboardNotifications()
         ChatMessageManager.shared.listenToChannel(targetUsername: targetUsername)
+        
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        // Customize the gesture recognizer to work with Hero transitions
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        for recognizer in self.view.gestureRecognizers ?? [] {
+            recognizer.delegate = self
+        }
     }
+    
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let navigationController = self.navigationController, navigationController.viewControllers.count > 1 {
+            return !Hero.shared.transitioning && navigationController.value(forKey: "_isTransitioning") as? Bool != true
+        }
+        return false
+    }
+
     
     func setupNavBar(){
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(didTapGoBack))
@@ -86,6 +108,7 @@ class ChatMessageViewController: UIViewController {
     @objc private func didTapGoBack (){
         self.dismiss(animated: true)
     }
+    
     
     fileprivate func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -132,7 +155,6 @@ class ChatMessageViewController: UIViewController {
         
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             textViewBottomConstraint?.constant = -keyboardSize.height + 10
-            
             DispatchQueue.main.async {
                 self.scrollToBottom()
             }
@@ -148,15 +170,32 @@ class ChatMessageViewController: UIViewController {
     @objc private func didTapSend(){
         
         if let text = textView.text {
-            
             ChatMessageManager.shared.sendMessageAndAddToChannelGroup(targetUsername: targetUsername, message: text)
+            textView.text = nil
         }
+    }
+    
+    // MARK: - Observe Message changes
+    private func observeConversationsFromRealm() {
+        
+        notificationToken = messages.observe({ [weak self] changes in
+            guard let self = self else {return}
+            switch changes {
+            case .initial(_):
+                self.tableView.reloadData()
+                self.scrollToBottom(animated: false)
+            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                // Subsequent notification blocks will return .update, which is where you can update the UI to reflect changes to the MyObject instance
+                self.tableView.reloadData()
+                self.scrollToBottom(animated: false)
+            case .error(let error):
+                print("Error observing Realm changes: \(error.localizedDescription)")
+            }
+        })
+        
     }
 }
 
-extension ChatMessageViewController {
-    
-}
 
 
 extension ChatMessageViewController: UITableViewDataSource,UITableViewDelegate {
@@ -174,7 +213,7 @@ extension ChatMessageViewController: UITableViewDataSource,UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    
+        
     }
     
 }

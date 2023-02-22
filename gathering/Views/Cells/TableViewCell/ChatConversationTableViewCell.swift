@@ -10,15 +10,16 @@ import UIKit
 class ChatConversationTableViewCell: UITableViewCell {
     static let identifier = "ChatConversationTableViewCell"
     
-    
     // MARK: - Components
     private let channelImageView:UIImageView = {
         let view = UIImageView()
         view.image = .personIcon
         view.tintColor = .lightGray
         view.backgroundColor = .secondarySystemBackground
+        view.layer.masksToBounds = true
         return view
     }()
+    
     private let channelName:UILabel = {
         let view = UILabel()
         return view
@@ -27,6 +28,7 @@ class ChatConversationTableViewCell: UITableViewCell {
     private let lastMessage:UILabel = {
         let view = UILabel()
         view.textColor = .secondaryLabel
+        view.text = "Last message testing..."
         return view
     }()
     
@@ -35,9 +37,13 @@ class ChatConversationTableViewCell: UITableViewCell {
         didSet{
             guard let users = conversation?.participants,
                   let username = UserDefaults.standard.string(forKey: "username") else {return}
+            
             for user in users {
                 if user.username != username {
-                    channelName.text = user.username
+                    channelName.text = user.name ?? user.username
+                    channelImageView.sd_setImage(with: URL(string: user.profileUrlString ?? ""))
+                    let lastMessageText = (conversation?.messages.last?.sender?.username ?? "") + ": " + (conversation?.messages.last?.text ?? "")
+                    lastMessage.text = lastMessageText
                     return
                 }
             }
@@ -55,8 +61,9 @@ class ChatConversationTableViewCell: UITableViewCell {
         channelImageView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 5, left: 5, bottom: 5, right: 5),size: .init(width: imageSize, height: imageSize))
         channelImageView.layer.cornerRadius = imageSize/2
         
-        channelName.anchor(top: channelImageView.topAnchor, leading: channelImageView.trailingAnchor, bottom: channelName.bottomAnchor, trailing: nil)
+        channelName.anchor(top: channelImageView.topAnchor, leading: channelImageView.trailingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 10, bottom: 5, right: 5))
         
+        lastMessage.anchor(top: channelName.bottomAnchor, leading: channelName.leadingAnchor, bottom: nil, trailing: nil)
         
     }
     

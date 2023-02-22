@@ -28,12 +28,16 @@ class ProfileViewController: UIViewController {
     // MARK: - LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .systemBackground
+        
         if UserDefaults.standard.string(forKey: "username") == nil && AuthManager.shared.isSignedIn{
             AuthManager.shared.signOut { success in
                 print("Signed out")
             }
         }
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,7 +53,20 @@ class ProfileViewController: UIViewController {
     
     private func configureViewModels(){
         
-        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+        guard let user = DefaultsManager.shared.getCurrentUser() else {
+            AuthManager.shared.signOut()
+            return
+            let alert = UIAlertController(title: "Oopsss~", message: "cannot retrive user data, sign out now", preferredStyle: .alert)
+            let action = UIAlertAction(title: "Log out", style: .destructive) { action in
+                AuthManager.shared.signOut { success in
+                    print("signed out")
+                }
+            }
+            alert.addAction(action)
+            present(alert, animated: true)
+            viewWillAppear(true)
+            return
+        }
         
         headerViewModel = .init(user:user)
         

@@ -8,7 +8,7 @@
 import UIKit
 
 enum favouriteType:String, CaseIterable {
-    case users = "Users"
+    case users = "Friends"
     case events = "Events"
 }
 
@@ -97,15 +97,12 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
 }
 
 extension FavouritedViewController:FavouritedTableCollectionViewCellDelegate {
-    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FavouritedTableCollectionViewCell, result: SearchResult) {
-        if result.type == .user {
-            DatabaseManager.shared.findUserWithUsername(with: result.title) {[weak self] user in
-                guard let user = user else {return}
-                let vc = UserProfileViewController(user: user)
-                self?.present(vc, animated: true)
-            }
-            
-        }
+    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FavouritedTableCollectionViewCell, result: Any) {
+        
+        guard let result = result as? String else {return}
+        
+        
+        
     }
     
     
@@ -121,11 +118,6 @@ extension FavouritedViewController:SegmentedControlDelegate {
             moveToFrame(contentOffset: contentOffset)
             
         }else if index == 1 {
-            // scroll backward
-            let collectionBounds = collectionView.bounds
-            let contentOffset = CGFloat(floor(collectionView.contentOffset.x + collectionBounds.size.width))
-            moveToFrame(contentOffset: contentOffset)
-        }else if index == 2 {
             // scroll backward
             let collectionBounds = collectionView.bounds
             let contentOffset = CGFloat(floor(collectionView.contentOffset.x + collectionBounds.size.width))

@@ -30,8 +30,9 @@ class ChatMainViewController: UIViewController {
     // MARK: - Properties
     
     private let pubnub = ChatMessageManager.shared.pubnub
-    private var conversations:[ConversationObject] = []
-    let realm = try! Realm()
+    private var conversations:Results<ConversationObject>?
+    
+    var notificationToken:NotificationToken?
     
     // MARK: - LifeCycle
     
@@ -46,20 +47,39 @@ class ChatMainViewController: UIViewController {
         tableView.fillSuperview()
         setupNavBar()
         setUpPanGesture()
-        loadConversationsFromRealm()
+        observeConversationsFromRealm()
+        
         ChatMessageManager.shared.ConnectToChatServer()
         
         signinMessage.isHidden = AuthManager.shared.isSignedIn
-        print(signinMessage.isHidden)
         signinMessage.sizeToFit()
         signinMessage.center = view.center
-        
     }
     
-    private func loadConversationsFromRealm() {
+    deinit {
+        notificationToken?.invalidate()
+    }
+    
+    private func observeConversationsFromRealm() {
+        let realm = try! Realm()
         let results = realm.objects(ConversationObject.self)
-        conversations = Array(results)
-        tableView.reloadData()
+        notificationToken = results.observe({ [weak self] changes in
+            guard let self = self else {return}
+            switch changes {
+            case .initial(_):
+                self.tableView.reloadData()
+            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                // Subsequent notification blocks will return .update, which is where you can update the UI to reflect changes to the MyObject instance
+                print("Collection state has changed:")
+                print("Deletions: \(deletions)")
+                print("Insertions: \(insertions)")
+                print("Modifications: \(modifications)")
+                self.tableView.reloadData()
+            case .error(let error):
+                print("Error observing Realm changes: \(error.localizedDescription)")
+            }
+        })
+        conversations = results
     }
     
     private func setupNavBar(){
@@ -69,65 +89,35 @@ class ChatMainViewController: UIViewController {
     }
     
     @objc private func didTapNewMessage(){
-        
+        print("Tapped new message")
     }
     
     @objc private func didTapBack (){
         dismiss(animated: true)
     }
     
-    private func setUpPanGesture(){
-        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
-        view.addGestureRecognizer(panGesture)
-    }
-    
-    @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
-        let translation = gestureRecognizer.translation(in: view)
-        let progress = translation.x / view.bounds.width
-
-        switch gestureRecognizer.state {
-        case .began:
-            dismiss(animated: true, completion: nil)
-        case .changed:
-            
-            Hero.shared.update(progress)
-            let translation = gestureRecognizer.translation(in: nil)
-            let relativeTranslation = translation.x / view.bounds.width
-            let newProgress = max(0, min(1, relativeTranslation))
-            Hero.shared.apply(modifiers: [.position(CGPoint(x: view.center.x, y: translation.y))], to: view)
-            Hero.shared.update(newProgress)
-        case .ended, .cancelled:
-            if progress + gestureRecognizer.velocity(in: view).x / view.bounds.width > 0.5 {
-                Hero.shared.finish()
-            } else {
-                Hero.shared.cancel()
-            }
-        default:
-            break
-        }
-    }
-    
-
 }
 
 extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate{
     
+    
+    // MARK: - Delegate + DataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let model = conversations[indexPath.row]
+        
+        guard let model = conversations?[indexPath.row] else {return}
+        
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = ChatMessageViewController(targetUsername: model.targetname)
         navigationController?.pushViewController(vc, animated: true)
-        
-        
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return conversations.count
+        return conversations?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = conversations[indexPath.row]
+        let model = conversations?[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: ChatConversationTableViewCell.identifier, for: indexPath) as! ChatConversationTableViewCell
         cell.conversation = model
         return cell

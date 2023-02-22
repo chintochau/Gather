@@ -9,6 +9,7 @@ import UIKit
 
 protocol ParticipantsViewHeaderViewDelegate:AnyObject {
     func didTapEnroll(_ view:ParticipantsViewHeaderView)
+    func didTapQuit(_ view:ParticipantsViewHeaderView)
 }
 
 class ParticipantsViewHeaderView: UIView {
@@ -42,6 +43,8 @@ class ParticipantsViewHeaderView: UIView {
     
     private let enrollButton = GAButton(title: "Enroll")
     
+    private let quitBUtton = GAButton(title: "Quit")
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -50,11 +53,12 @@ class ParticipantsViewHeaderView: UIView {
             priceTitleLabel,
             priceValueLabel,
             enrollButton,
-            genderLabel
+            genderLabel,
+            quitBUtton
         ].forEach({addSubview($0)})
         backgroundColor = .systemBackground.withAlphaComponent(0.4)
         enrollButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
-        
+        quitBUtton.addTarget(self, action: #selector(didTapQuit), for: .touchUpInside)
         
         layer.cornerRadius = 20
         layer.borderColor = UIColor.opaqueSeparator.cgColor
@@ -94,9 +98,15 @@ class ParticipantsViewHeaderView: UIView {
         genderLabel.sizeToFit()
         genderLabel.frame = CGRect(x: participantsLabel.right+5, y: participantsLabel.top, width: width-participantsLabel.width-padding, height: genderLabel.height)
         
+        quitBUtton.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+        
     }
     @objc private func didTapEnroll(){
         delegate?.didTapEnroll(self)
+    }
+    
+    @objc private func didTapQuit(){
+        delegate?.didTapQuit(self)
     }
     
     

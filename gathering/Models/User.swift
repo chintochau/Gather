@@ -17,6 +17,7 @@ struct User :Codable{
     var age:Int? = nil
     var fcmToken:String? = nil
     var chatToken:String? = nil
+    var happy:String? = nil
 }
 
 extension User {
@@ -29,7 +30,6 @@ extension User {
         self.name = participant.name
         self.profileUrlString = participant.profileUrlString
         self.gender = participant.gender
-        
     }
     
     

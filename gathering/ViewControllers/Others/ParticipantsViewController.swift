@@ -236,6 +236,12 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
 }
 
 extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
+    func didTapQuit(_ view: ParticipantsViewHeaderView) {
+        DatabaseManager.shared.unregisterEvent(eventID: eventID) { success in
+            print(success)
+        }
+    }
+    
     func didTapEnroll(_ view: ParticipantsViewHeaderView) {
         
         if !AuthManager.shared.isSignedIn {

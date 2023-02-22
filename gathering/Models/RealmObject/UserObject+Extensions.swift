@@ -14,6 +14,22 @@ class UserObject: Object{
     @Persisted var profileUrlString:String?
     
     let conversations = LinkingObjects(fromType: ConversationObject.self, property: "participants")
+    
+    
+    
+    convenience init(username: String, name: String?, profileUrlString: String?) {
+        self.init()
+        self.username = username
+        self.name = name
+        self.profileUrlString = profileUrlString
+    }
+    
+}
+
+extension UserObject {
+    func toUser() -> User {
+        return User(username: username, email: "", name: name, profileUrlString: profileUrlString, gender: "")
+    }
 }
 
 extension User {
@@ -23,5 +39,11 @@ extension User {
         userObject.name = self.name
         userObject.profileUrlString = self.profileUrlString
         return userObject
+    }
+    
+    func getRelationshipObject() -> RelationshipObject? {
+        let realm = try! Realm()
+        let object = realm.object(ofType: RelationshipObject.self, forPrimaryKey: self.username)
+        return object
     }
 }

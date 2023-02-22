@@ -36,12 +36,6 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let followButton:UIButton = {
-        let view = UIButton()
-        view.setTitle("Follow", for: .normal)
-        view.setTitleColor(.link, for: .normal)
-        return view
-    }()
     
     private let messageButton:UIButton = {
         let view = UIButton()
@@ -50,36 +44,32 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    var isFollowing:Bool = false {
+    
+    
+    
+    var user:User? {
         didSet {
-            if isFollowing {
-                followButton.setTitle("Followed", for: .normal)
-            }else {
-                followButton.setTitle("Follow", for: .normal)
-            }
+            if user?.username == UserDefaults.standard.string(forKey: "username") {
+                messageButton.isHidden = true
+                }
+            
+            
         }
     }
     
-    var user:User?
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [imageView,nameLabel,followButton,messageButton].forEach({addSubview($0)})
+        [imageView,nameLabel,messageButton].forEach({addSubview($0)})
         let iconSize:CGFloat = 35
         imageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: CGSize(width: iconSize, height: iconSize))
         imageView.layer.cornerRadius = iconSize/2
         
-        nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: bottomAnchor, trailing: followButton.leadingAnchor,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: bottomAnchor, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         
         messageButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: trailingAnchor)
         messageButton.addTarget(self, action: #selector(didTapMessage), for: .touchUpInside)
         
         
-        followButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 10))
-        followButton.addTarget(self, action: #selector(didTapFollow), for: .touchUpInside)
-        
-        
-        followButton.isHidden = !AuthManager.shared.isSignedIn
         messageButton.isHidden = !AuthManager.shared.isSignedIn
         
         
@@ -91,23 +81,17 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with owner:User) {
+        
         nameLabel.text = owner.name
         if let urlString = owner.profileUrlString {
             imageView.sd_setImage(with: URL(string: urlString))
         }
-        isFollowing = DefaultsManager.shared.isUserFavourited(userID: owner.username)
         user = owner
         
     }
     
     @objc private func didTapFollow(){
         guard let user = user else {return}
-        isFollowing.toggle()
-        if isFollowing {
-            DefaultsManager.shared.toFollowUser(userID: user.username)
-        }else {
-            DefaultsManager.shared.removeFromFavouritedUsers(userID: user.username)
-        }
         
     }
     

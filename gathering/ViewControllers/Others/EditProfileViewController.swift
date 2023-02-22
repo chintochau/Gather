@@ -120,14 +120,12 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             fcmToken: Messaging.messaging().fcmToken
         )
         
-        print(user)
-        
         DatabaseManager.shared.updateUserProfile(user: user) { [weak self] user in
             
-            print(user)
-            
             DefaultsManager.shared.updateUserProfile(with: user)
+            
             self?.completion?()
+            
             self?.dismiss(animated: true)
         }
     }

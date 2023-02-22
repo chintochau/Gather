@@ -9,19 +9,24 @@ import UIKit
 
 class UserProfileViewController: UIViewController {
     
+    // MARK: - Components
+    
     private var collectionView:UICollectionView?
+    
+    
+    // MARK: - Properties
     
     private let user:User
     
-    private var events:[Event] {
+    private var events:[Event] = [] {
         didSet{
             collectionView?.reloadData()
         }
     }
     
+    // MARK: - Init
     init(user:User){
         self.user = user
-        self.events = []
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,6 +37,8 @@ class UserProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        RealmManager.shared.fetchUserFromFirestore(userId: user.username)
         
         setupCollectionView()
         fetchData()
@@ -62,7 +69,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(EmojiEventCollectionViewCell.self, forCellWithReuseIdentifier: EmojiEventCollectionViewCell.identifier)
-        collectionView.register(ProfileHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeaderCollectionReusableView.identifier)
+        collectionView.register(UserProfileHeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeaderReusableView.identifier)
         self.collectionView = collectionView
     }
     
@@ -79,7 +86,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if indexPath.section == 0 {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ProfileHeaderCollectionReusableView.identifier, for: indexPath) as! ProfileHeaderCollectionReusableView
+            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: UserProfileHeaderReusableView.identifier, for: indexPath) as! UserProfileHeaderReusableView
             view.user = self.user
             view.delegate = self
             return view
@@ -111,6 +118,10 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
 
 
 extension UserProfileViewController:ProfileHeaderReusableViewDelegate {
+    // MARK: - Handle Follow
+    func ProfileHeaderDelegateDidTapFollowBUtton(_ header: UICollectionReusableView, user: User) {
+    }
+    
     // MARK: - Handle send Message
     func ProfileHeaderReusableViewDelegatedidTapMessage(_ header: UICollectionReusableView, user: User) {
         let vc = ChatMessageViewController(targetUsername: user.username)

@@ -86,8 +86,10 @@ class HomeViewController: UIViewController{
     
     
     @objc private func didPullToRefresh(){
-        fetchData()
-        collectionView?.refreshControl?.endRefreshing()
+        fetchData {[weak self] in
+            self?.adapter.reloadData()
+            self?.collectionView?.refreshControl?.endRefreshing()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -100,9 +102,10 @@ class HomeViewController: UIViewController{
     
     
     // MARK: - Fetch Data
-    private func fetchData(){
+    private func fetchData(completion: (() -> (Void))? = nil ){
         viewModel.fetchData {[weak self] in
             self?.adapter.performUpdates(animated: true)
+            completion?()
         }
     }
     

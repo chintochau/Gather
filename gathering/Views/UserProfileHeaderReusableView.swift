@@ -9,13 +9,17 @@ import UIKit
 
 protocol ProfileHeaderReusableViewDelegate:AnyObject {
     func ProfileHeaderReusableViewDelegatedidTapMessage(_ header:UICollectionReusableView, user:User)
+    func ProfileHeaderDelegateDidTapFollowBUtton(_ header:UICollectionReusableView, user:User)
 }
 
-class ProfileHeaderCollectionReusableView: UICollectionReusableView {
+class UserProfileHeaderReusableView: UICollectionReusableView {
     
     static let identifier = "ProfileHeaderCollectionReusableView"
-    
+
     weak var delegate:ProfileHeaderReusableViewDelegate?
+
+    // MARK: - components
+    
     
     let segmentedControl: UISegmentedControl = {
         let segmentedItems = [
@@ -67,27 +71,51 @@ class ProfileHeaderCollectionReusableView: UICollectionReusableView {
         return view
     }()
     
-    var isFollowing:Bool = false {
-        didSet{
-            if isFollowing {
-                followButton.setTitle("Followed", for: .normal)
-            }else {
-                followButton.setTitle("Follow", for: .normal)
-                
-            }
-        }
-    }
     
+    // MARK: - Properties
     
     var user:User? {
         didSet {
-            usernameLabel.text = user?.username
-            nameLabel.text = user?.name
-            isFollowing = DefaultsManager.shared.isUserFavourited(userID: user!.username)
-            if let profileUrlString = user?.profileUrlString {
+            guard let user = user else {return}
+            
+            if user.username == UserDefaults.standard.string(forKey: "username") {
+                followButton.isHidden = true
+                messageButton.isHidden = true
+            }
+            
+            usernameLabel.text = user.username
+            nameLabel.text = user.name
+            
+            if let profileUrlString = user.profileUrlString {
                 profileImageView.sd_setImage(with: URL(string: profileUrlString))
             }
             
+            let relationship = user.getRelationshipObject()
+            friendStatus = relationship?.status ?? 0
+        }
+    }
+    
+    var friendStatus:Int? = 0 {
+        didSet {
+            switch friendStatus {
+            case relationshipType.friend.rawValue:
+                followButton.setTitle("Friend", for: .normal)
+                
+            case relationshipType.pending.rawValue:
+                followButton.setTitle("Requested", for: .normal)
+                
+            case relationshipType.blocked.rawValue:
+                print("Blocked, Should not happen")
+                
+            case relationshipType.received.rawValue:
+                followButton.setTitle("Accept", for: .normal)
+                
+            case relationshipType.noRelation.rawValue:
+                followButton.setTitle("Add", for: .normal)
+                
+            default:
+                print("Not yet implemented")
+            }
             
         }
     }
@@ -150,12 +178,38 @@ class ProfileHeaderCollectionReusableView: UICollectionReusableView {
     
     
     @objc private func didTapFollow(){
-        isFollowing.toggle()
-        if isFollowing {
-            DefaultsManager.shared.toFollowUser(userID: user!.username)
-        }else {
-            DefaultsManager.shared.removeFromFavouritedUsers(userID: user!.username)
+        switch friendStatus {
+        case relationshipType.noRelation.rawValue:
+            friendStatus = relationshipType.pending.rawValue
+            DatabaseManager.shared.sendFriendRequest(targetUsername: user!.username)
+            print("pending")
+            
+        case relationshipType.friend.rawValue:
+            // Prompt to confirm, tap to unfriend
+            friendStatus = relationshipType.noRelation.rawValue
+            DatabaseManager.shared.cancelFriendRequestAndUnfriend(targetUsername: user!.username)
+            
+            print("noRelation")
+        case relationshipType.pending.rawValue:
+            // Tap to cancel request
+            friendStatus = relationshipType.noRelation.rawValue
+            DatabaseManager.shared.cancelFriendRequestAndUnfriend(targetUsername: user!.username)
+            
+            print("noRelation")
+        case relationshipType.received.rawValue:
+            // tap to accept
+            friendStatus = relationshipType.friend.rawValue
+            // impelemtn add friend
+            DatabaseManager.shared.acceptFriendRequest(targetUsername: user!.username)
+            
+            print("friend")
+        case relationshipType.blocked.rawValue:
+            print("Blocked: should not happen")
+        default:
+            print("Default: should not happen")
         }
+        
+        delegate?.ProfileHeaderDelegateDidTapFollowBUtton(self, user: user!)
     }
     
     @objc private func didTapMessage(){
