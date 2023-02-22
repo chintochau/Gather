@@ -19,8 +19,8 @@ class TabBarViewController: UITabBarController {
 //        self.tabBar.isTranslucent = false
         self.tabBar.tintColor = .mainColor
         self.tabBar.unselectedItemTintColor = .gray.withAlphaComponent(0.5)
-        self.tabBar.backgroundColor = .tertiarySystemBackground
-        self.tabBar.barTintColor = .tertiarySystemBackground
+        self.tabBar.backgroundColor = .streamWhiteSnow
+        self.tabBar.barTintColor = .streamWhiteSnow
         
         
         //Define VC

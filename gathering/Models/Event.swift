@@ -42,16 +42,49 @@ struct Event:Codable {
     }
 }
 
+extension Event {
+    func headCountString () -> (total:String,male:String,female:String) {
+        var maleCount = 0
+        var femaleCount = 0
+        var nonBinaryCount = 0
+        
+        self.participants.forEach { key,value in
+            switch value.gender {
+            case genderType.male.rawValue:
+                maleCount += 1
+            case genderType.female.rawValue:
+                femaleCount += 1
+            case genderType.nonBinary.rawValue:
+                nonBinaryCount += 1
+            default:
+                print("case not handled")
+            }
+        }
+        
+        let headcount = self.headcount
+        let total:String = headcount.max == 0 ? "" : "/\(headcount.max)"
+        let female:String = headcount.fMax == 0 ? "" : "/\(headcount.fMax)"
+        let male:String = headcount.mMax == 0 ? "" : "/\(headcount.mMax)"
+        
+        let totalString = "\(maleCount + femaleCount)\(total)"
+        let maleString = "\(maleCount)\(male)"
+        let femaleString = "\(femaleCount)\(female)"
+        
+        return (totalString,maleString,femaleString)
+        
+    }
+}
 
 struct Headcount:Codable {
     var isGenderSpecific:Bool = false
-    var min:Int? = nil
-    var max:Int? = nil
-    var mMin:Int? = nil
-    var mMax:Int? = nil
-    var fMin:Int? = nil
-    var fMax:Int? = nil
+    var min:Int = 0
+    var max:Int = 0
+    var mMin:Int = 0
+    var mMax:Int = 0
+    var fMin:Int = 0
+    var fMax:Int = 0
 }
+
 
 enum hobbyType:String,CaseIterable {
     case outdoor = "Outdoor Activity"

@@ -161,56 +161,66 @@ final class DatabaseManager {
         
     }
     
+    public func listenForEventChanges(eventId: String, completion: @escaping (Event?, Error?) -> Void) -> ListenerRegistration {
+        let db = Firestore.firestore()
+        let eventRef = db.collection("events").document(eventId)
+        
+        let listener = eventRef.addSnapshotListener { (snapshot, error) in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+            
+            guard let data = snapshot?.data(),
+                  let event = Event(with: data) else {
+                completion(nil, nil)
+                return
+            }
+            
+            completion(event, nil)
+        }
+        
+        return listener
+    }
+    
+    
+
+    
     // MARK: - UpdateEvents
     
     public func registerEvent(participant: User,eventID:String,eventStarttimestamp:Date,completion:@escaping (Bool) -> Void){
         
-        let gender = participant.gender
-        
-        guard let participant = participant.asDictionary(),
+        guard let participant = Participant(with: participant).asDictionary(),
               let username = UserDefaults.standard.string(forKey: "username")
         else {
             completion(false)
             print("Failed to register event")
             return}
         
-        let ref = database.collection("events").document(eventID)
-        ref.collection("participants").document(username).setData(participant)
-        
-        /// use dictionary
-        ref.setData([
-            "participants" : [username:gender]
-        ], merge: true) {[weak self] error in
-            guard error == nil else {
-                completion(false)
-                return}
+        database.runTransaction {[weak self] transaction, error in
             
-            let selfRef = self?.database.collection("users").document(username).collection("events")
-            selfRef?.document(eventID)
-                .setData(["id" : eventID,
-                          "startTimestamp":eventStarttimestamp],
-                         completion: { error in
-                    completion(error == nil)
-                })
+            guard let eventRef = self?.database.collection("events").document(eventID),
+                  let userEventRef = self?.database.collection("users").document(username).collection("events").document(eventStarttimestamp.getYearMonth())
+            else {return}
             
+            transaction.setData(["participants":[username:participant]],
+                                forDocument: eventRef,merge: true)
+            
+            transaction.setData([
+                "month": eventStarttimestamp.getMonthInDate().timeIntervalSince1970,
+                eventID: "event.toUserEvent().asDictionary()!"
+            ], forDocument: userEventRef,merge: true)
+            
+            return nil
+            
+        } completion: { (_,error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                completion(true)
+                print("Transaction successfully committed!")
+            }
         }
-        /*
-         participants (map)
-         {jason:male,
-         jackie:female}
-        */
-        
-        /// use Array
-        //        ref.updateData([
-        //            "participants" : FieldValue.arrayUnion([participant])
-        //        ]) { error in
-        //            completion(error == nil)
-        //        }
-        /*
-         participants (array)
-         [0] jason:male
-         [1] jackie:female
-        */
         
     }
     
@@ -267,8 +277,7 @@ final class DatabaseManager {
     }
     public func cancelFriendRequestAndUnfriend(targetUsername:String){
         
-        guard let username = UserDefaults.standard.string(forKey: "username"),
-              let relationshipString = IdManager.shared.generateRelationshipIdFor(targetUsername: targetUsername)
+        guard let username = UserDefaults.standard.string(forKey: "username")
         else {return}
         
         let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)

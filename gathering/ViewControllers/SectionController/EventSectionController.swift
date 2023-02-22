@@ -36,7 +36,7 @@ class EventSectionController: ListSectionController {
         let viewModel = viewModel as! EventHomeCellViewModel
 //        let vc = DemoViewController()
         
-        let vc = EventViewController(viewModel: EventMainViewModel(with: viewModel.event, image: nil)!)
+        let vc = EventViewController(viewModel: EventViewModel(with: viewModel.event, image: nil)!)
         viewController?.navigationController?.pushViewController(vc, animated: true)
         
     }

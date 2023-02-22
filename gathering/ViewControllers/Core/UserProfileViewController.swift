@@ -106,7 +106,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         let model = events[indexPath.row]
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiEventCollectionViewCell.identifier, for: indexPath) as! EmojiEventCollectionViewCell
-        cell.configure(with: EventCellViewModel(with: model))
+        cell.configure(with: EventHomeCellViewModel(event: model))
         cell.widthAnchor.constraint(equalToConstant: view.width-20).isActive = true
         return cell
     }

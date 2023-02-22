@@ -32,7 +32,7 @@ class NewEventViewController: UIViewController{
         refund:"",
         endTimestamp:Date(),
         startTimestamp:Date(),
-        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil)
+        headcount:Headcount()
     )
     
     
@@ -420,7 +420,7 @@ extension NewEventViewController {
     @objc private func didTapPreview(){
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent(),
-              let eventVM = EventMainViewModel(with: previewEvent, image:  images[0]) else {return}
+              let eventVM = EventViewModel(with: previewEvent, image:  images[0]) else {return}
         
         let vc = EventViewController(viewModel: eventVM)
         vc.configureExit()

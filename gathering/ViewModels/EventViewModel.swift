@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct EventMainViewModel {
+struct EventViewModel {
     let owner:User
     let event:Event
     let image:UIImage?
@@ -26,7 +26,7 @@ struct EventMainViewModel {
 }
 
 
-extension EventMainViewModel {
+extension EventViewModel {
     
     init?(with event:Event, image:UIImage?) {
         guard  let startDate = DateFormatter.formatter.date(from: event.startDateString),

@@ -279,6 +279,7 @@ extension UIColor {
     static let redColor = UIColor(named: "redColor")
     static let blueColor = UIColor(named: "blueColor")
     static let blackBackground = UIColor(named: "blackBackground")
+    static let mainTextColor = UIColor(red: 0.00, green: 0.42, blue: 0.46, alpha: 1.00)
 }
 
 extension UIColor {

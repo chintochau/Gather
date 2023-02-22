@@ -219,7 +219,6 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
         }
         
         var participants:[String:Participant]  = [user.username:Participant(with: user)]
-        var participantArray = [Participant(with: user)]
         
         var counter:Int = 1
         
@@ -240,12 +239,10 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             if participants[name] != nil {
                 let replacedName = name + "-" + String(counter)
                 
-                participants[replacedName] = Participant(name: replacedName, gender: gender)
-                participantArray.append(Participant(name: replacedName, username: nil, gender: gender, email: nil, profileUrlString: nil))
+                participants[replacedName] = Participant(name: replacedName, gender: gender, status: 0)
                 counter += 1
             }else {
-                participants[name] = Participant(name: name, gender: gender)
-                participantArray.append(Participant(name: name, username: nil, gender: gender, email: nil, profileUrlString: nil))
+                participants[name] = Participant(name: name, gender: gender, status: 0)
             }
             
         }

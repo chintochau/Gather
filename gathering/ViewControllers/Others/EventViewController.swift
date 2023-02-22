@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import Firebase
 
 class EventViewController: UIViewController {
+    
+    // MARK: - components
     
     private let image:UIImage?
     var headerImageView:EventHeaderView?
@@ -50,9 +53,11 @@ class EventViewController: UIViewController {
     
     private let event:Event
     
+    private var listener:ListenerRegistration?
+    
     
     // MARK: - Init
-    init(viewModel vm:EventMainViewModel){
+    init(viewModel vm:EventViewModel){
         event = vm.event
         image = vm.image
         infoViewModels = [
@@ -69,6 +74,11 @@ class EventViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit {
+        listener?.remove()
+        print("eventviewcontroller: released")
     }
     
     func configureBack(){
@@ -101,6 +111,11 @@ class EventViewController: UIViewController {
         configureCollectionView()
         configureCollectionViewLayout()
         configureNavBar(shouldBeTransparent: true)
+        listener = DatabaseManager.shared.listenForEventChanges(eventId: event.id, completion: {[weak self] event, error in
+            guard let event  = event else {return}
+            self?.bottomSheet.event = event
+        })
+        
     }
     
     override func viewDidLayoutSubviews() {

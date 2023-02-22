@@ -26,15 +26,23 @@ class EventHomeCellViewModel: HomeCellViewModel {
     let location:String
     let intro:String?
     let tag: [EventTagType]?
-    let isLiked: Bool
-    let isSeparated:Bool
-    let headcount:Headcount
-    let totalCapacity:Int
-    let participants:[String:String]
-    let peopleCount: (male:Int, female:Int)
-    let price:Double
-    let totalPeopleCount:Int
+    let participants:[Participant]
+    let price:String
     let organiser:User
+    
+    var isOrganiser:Bool = false
+    var isJoined:Bool = false
+    
+    let headcount:Headcount
+    
+    let maleString:String
+    let femaleString:String
+    let totalString:String
+    
+    let peopleCount: (male:Int, female:Int)
+    var totalPeopleCount:Int {
+        peopleCount.male + peopleCount.female
+    }
     
     
     init(event: Event) {
@@ -56,8 +64,24 @@ class EventHomeCellViewModel: HomeCellViewModel {
             default:
                 print("case not handled")
             }
-            
         }
+        let headcount = event.headcount
+        let total:String = headcount.max == 0 ? "" : "/\(headcount.max)"
+        let female:String = headcount.fMax == 0 ? "" : "/\(headcount.fMax)"
+        let male:String = headcount.mMax == 0 ? "" : "/\(headcount.mMax)"
+        
+        
+        self.totalString = "\(maleCount + femaleCount)\(total)"
+        self.maleString = "\(maleCount)\(male)"
+        self.femaleString = "\(femaleCount)\(female)"
+        
+        
+        if event.price == 0 {
+            self.price = "Free"
+        }else {
+            self.price = "CA$: \(event.price)"
+        }
+        
         
         let fullDateString = String.localeDate(from: event.startDateString, .enUS)
         self.dateString = fullDateString.date ?? ""
@@ -67,17 +91,23 @@ class EventHomeCellViewModel: HomeCellViewModel {
         self.title = event.title
         self.location = event.location.name
         self.tag = nil
-        self.isLiked = false
         self.headcount = event.headcount
-        self.isSeparated = event.headcount.isGenderSpecific
-        self.participants = [:]
+        self.participants = []
         self.peopleCount = (male:maleCount, female:femaleCount)
-        self.totalPeopleCount = peopleCount.male + peopleCount.female
-        self.price = event.price
-        self.totalCapacity = event.headcount.max ?? 0
+        
+        
+        
         self.emojiString = event.emojiTitle
         self.intro = event.introduction
         self.organiser = event.organisers.first!
+        
+        
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return}
+        
+        self.isOrganiser = self.organiser.username == username
+        
+        self.isJoined = event.participants.values.contains(where: {return $0.username == username
+        })
         
     }
     
@@ -94,78 +124,3 @@ class EventHomeCellViewModel: HomeCellViewModel {
 }
 
 
-
-struct EventCellViewModel {
-    let imageUrlString:String?
-    let emojiString:String?
-    let title:String
-    let dateString:String
-    let dayString:String
-    let timeString:String
-    let location:String
-    let intro:String?
-    let tag: [EventTagType]?
-    let isLiked: Bool
-    let isSeparated:Bool
-    let headcount:Headcount
-    let totalCapacity:Int
-    let participants:[String:String]
-    let peopleCount: (male:Int, female:Int)
-    let price:Double
-    let totalPeopleCount:Int
-    let organiser:User
-    
-    var priceString:String {
-        return price == 0 ? "Free" : "CA$: " + String(price)
-    }
-}
-
-
-extension EventCellViewModel {
-    
-    init(with event:Event) {
-        
-        var maleCount = 0
-        var femaleCount = 0
-        var nonBinaryCount = 0
-        
-        event.participants.forEach { key,value in
-        }
-        
-//        event.participants.forEach({
-//            switch $0.value{
-//            case "male":
-//                maleCount += 1
-//            case "female":
-//                femaleCount += 1
-//            case "non binary":
-//                nonBinaryCount += 1
-//            default :
-//                print("case no handled")
-//            }
-//
-//        })
-        
-        let fullDateString = String.localeDate(from: event.startDateString, .enUS)
-        
-        self.dateString = fullDateString.date ?? ""
-        self.dayString = fullDateString.dayOfWeek ?? ""
-        self.timeString = fullDateString.time ?? ""
-        
-        self.imageUrlString = event.imageUrlString.first
-        self.title = event.title
-        self.location = event.location.name
-        self.tag = nil
-        self.isLiked = false
-        self.headcount = event.headcount
-        self.isSeparated = event.headcount.isGenderSpecific
-        self.participants = [:]
-        self.peopleCount = (male:maleCount, female:femaleCount)
-        self.totalPeopleCount = peopleCount.male + peopleCount.female
-        self.price = event.price
-        self.totalCapacity = event.headcount.max ?? 0
-        self.emojiString = event.emojiTitle
-        self.intro = event.introduction
-        self.organiser = event.organisers.first!
-    }
-}

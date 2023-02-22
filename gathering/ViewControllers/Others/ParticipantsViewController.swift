@@ -11,6 +11,7 @@ import UIKit
 
 class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate {
     
+    // MARK: - Components
     private let tableView:UITableView = {
         let view = UITableView()
         view.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
@@ -19,8 +20,18 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     
     private var headerView:ParticipantsViewHeaderView?
     
+    // MARK: - Properties
     private let eventID:String
-    private let event:Event
+    var event:Event {
+        didSet {
+            headerView?.viewModel = .init(event: event)
+            self.models = event.participants.values.map({ participant in
+                return participant
+            })
+            tableView.reloadData()
+        }
+    }
+    private let headerHeight:CGFloat = 110
     
     var models:[Participant]
     var openProfile:(() -> Void)?
@@ -32,9 +43,6 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
         self.models = event.participants.values.map({ participant in
             return participant
         })
-        
-        print("Participants: ")
-        print(models)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -42,16 +50,16 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        
+    }
     
     // MARK: - Lifecycle
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 10
         view.clipsToBounds = true
-        view.frame = CGRect(x: 0, y: view.height-130, width: view.width, height: view.height)
-        print(models)
+        view.frame = CGRect(x: 0, y: view.height-headerHeight, width: view.width, height: view.height)
         configureHeaderView()
         setupTableView()
         addGesture()
@@ -75,12 +83,13 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     // MARK: - HeaderView
     fileprivate func configureHeaderView() {
         let header = ParticipantsViewHeaderView()
-        header.configure(with: EventCellViewModel(with: event))
+        header.viewModel = EventHomeCellViewModel(event: event)
         view.addSubview(header)
-        header.frame = CGRect(x: 0, y: 0, width: view.width, height: 130)
+        header.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight)
         header.delegate = self
         headerView = header
     }
+
     
     // MARK: - Background View
     func prepareBackgroundView(){
@@ -134,7 +143,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
                 height: view.height)
             sender.setTranslation(.zero, in: view)
         case .ended:
-            let initialY = view.height-130
+            let initialY = view.height-headerHeight
             var finalY:CGFloat
             
             if y < view.height/3.5 {
@@ -181,7 +190,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
         let direction = gesture.velocity(in: view).y
         
         let y = view.frame.minY
-        if (tableView.contentOffset.y == 0 && direction > 0 || y == view.height-100)  {
+        if (tableView.contentOffset.y == 0 && direction > 0 || y == view.height-headerHeight)  {
             tableView.isScrollEnabled = false
         } else {
             tableView.isScrollEnabled = true
@@ -210,7 +219,8 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
     
     // MARK: - Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let vm = models[indexPath.row]
+        let vm = models.sorted(by: { $0.status > $1.status
+        })[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as! UserTableViewCell
         cell.configure(with: vm)
@@ -235,8 +245,13 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
 }
 
 extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
+    func didTapEdit(_ view: ParticipantsViewHeaderView) {
+        print("Tapped Edit")
+    }
+    
     func didTapQuit(_ view: ParticipantsViewHeaderView) {
         DatabaseManager.shared.unregisterEvent(eventID: eventID) { success in
+            
         }
     }
     

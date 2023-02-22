@@ -193,7 +193,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         ].forEach({$0.isHidden = false})
     }
     
-    func configure(with vm:EventCellViewModel) {
+    func configure(with vm:EventHomeCellViewModel) {
         if let profileImage = vm.organiser.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
@@ -205,40 +205,32 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         introLabel.text = vm.intro
         profileTitleLabel.text = vm.organiser.name
 
-        if vm.isSeparated {
+        if vm.headcount.isGenderSpecific {
             [totalNumber,totalIconImageView
             ].forEach({$0.isHidden = true})
             
-            if let maleMax = vm.headcount.mMax,let femaleMax = vm.headcount.fMax{
-                if maleMax == 0 {
-                    maleNumber.text = "\(vm.peopleCount.male)"
-                }else {
-                    maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
-                }
-                if femaleMax == 0 {
-                    femaleNumber.text = "\(vm.peopleCount.female)"
-                }else {
-                    femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
-                }
+            let maleMax = vm.headcount.mMax
+            let femaleMax = vm.headcount.fMax
+            if maleMax == 0 {
+                maleNumber.text = "\(vm.peopleCount.male)"
+            }else {
+                maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
             }
+            if femaleMax == 0 {
+                femaleNumber.text = "\(vm.peopleCount.female)"
+            }else {
+                femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
+            }
+            
             
         }else {
             [maleNumber,femaleNumber,
              maleIconImageView,femaleIconImageView
             ].forEach({$0.isHidden = true})
-            
-            var totalNumberText = ""
-            if vm.totalCapacity == 0 {
-                totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female)"
-            }else {
-                totalNumberText = "\(vm.peopleCount.male+vm.peopleCount.female) / \(vm.totalCapacity)"
-            }
-            
-            
-            totalNumber.text = totalNumberText
+            totalNumber.text = vm.totalString
         }
         
-        priceLabel.text = vm.price == 0.0 ? "Free" : "CA$: \(String(vm.price))"
+        priceLabel.text = vm.price
         
     }
     

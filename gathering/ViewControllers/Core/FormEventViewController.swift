@@ -73,7 +73,7 @@ class FormEventViewController: UIViewController {
     
     private func initialUser(){
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
-        newEvent.participants = [user.username: Participant(with: user)]
+        newEvent.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
     }
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}

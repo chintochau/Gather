@@ -109,7 +109,7 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             case .formEvent:
                 let vc = FormEventViewController()
                 vc.completion = { [weak self] event in
-                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: nil)!)
+                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: nil)!)
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)
@@ -117,7 +117,7 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             case .newEvent:
                 let vc = NewEventViewController()
                 vc.completion = { [weak self] event,image in
-                    let vc = EventViewController(viewModel: EventMainViewModel(with: event, image: image)!)
+                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)

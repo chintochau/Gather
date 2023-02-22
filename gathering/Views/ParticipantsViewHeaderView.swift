@@ -10,40 +10,107 @@ import UIKit
 protocol ParticipantsViewHeaderViewDelegate:AnyObject {
     func didTapEnroll(_ view:ParticipantsViewHeaderView)
     func didTapQuit(_ view:ParticipantsViewHeaderView)
+    func didTapEdit(_ view:ParticipantsViewHeaderView)
 }
 
 class ParticipantsViewHeaderView: UIView {
     
     weak var delegate:ParticipantsViewHeaderViewDelegate?
     
+    
+    // MARK: - Components
     private let participantsLabel:UILabel = {
         let view = UILabel()
-        view.text = "Participants: "
+        view.text = "參加者: "
         view.sizeToFit()
         return view
     }()
-    private let genderLabel:UILabel = {
+    private let headCountLabel:UILabel = {
         let view = UILabel()
-        view.text = "M:- F:- O:-"
+        return view
+    }()
+    private let maleCountLabel:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    private let femaleCountLabel:UILabel = {
+        let view = UILabel()
         return view
     }()
     
     private let priceTitleLabel: UILabel = {
         let view = UILabel()
-        view.text = "Price: "
         view.font = .systemFont(ofSize: 20,weight: .bold)
         view.sizeToFit()
         return view
     }()
     private let priceValueLabel: UILabel = {
         let view = UILabel()
-        view.text = "CA$ -"
         return view
     }()
     
-    private let enrollButton = GAButton(title: "Enroll")
+    private let enrollButton = GAButton(title: "報名")
+    private let quitBUtton = GAButton(title: "退出")
+    private let editButton = GAButton(title: "編輯")
     
-    private let quitBUtton = GAButton(title: "Quit")
+    private let genderImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = .personIcon
+        view.tintColor = .mainColor
+        return view
+    }()
+    private let maleImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = .personIcon
+        view.tintColor = .blueColor
+        return view
+    }()
+    private let femaleImageView:UIImageView = {
+        let view = UIImageView()
+        view.image = .personIcon
+        view.tintColor = .redColor
+        return view
+    }()
+    
+    
+    // MARK: - Properties
+    
+    var viewModel:EventHomeCellViewModel? {
+        didSet{
+            guard let viewModel = viewModel else {return}
+            
+            headCountLabel.text = viewModel.totalString
+            maleCountLabel.text = viewModel.maleString
+            femaleCountLabel.text = viewModel.femaleString
+            
+            priceValueLabel.text = viewModel.price
+            
+            print(viewModel)
+            print("isOrganiser: \(viewModel.isOrganiser)")
+            print("isJoined: \(viewModel.isJoined)")
+            
+            isOrganiser = viewModel.isOrganiser
+            isJoined = viewModel.isJoined
+            
+        }
+    }
+    
+    var isOrganiser:Bool = false {
+        didSet {
+            quitBUtton.isHidden = isOrganiser
+            enrollButton.isHidden = isOrganiser
+            editButton.isHidden = !isOrganiser
+        }
+    }
+    
+    var isJoined:Bool = false {
+        didSet{
+            if isOrganiser { return }
+            enrollButton.isHidden = isJoined
+            quitBUtton.isHidden = !isJoined
+        }
+    }
+    
     
     
     override init(frame: CGRect) {
@@ -53,14 +120,21 @@ class ParticipantsViewHeaderView: UIView {
             priceTitleLabel,
             priceValueLabel,
             enrollButton,
-            genderLabel,
-            quitBUtton
+            headCountLabel,
+            quitBUtton,
+            editButton,
+            maleImageView,
+            femaleImageView,
+            genderImageView,
+            maleCountLabel,
+            femaleCountLabel
         ].forEach({addSubview($0)})
         backgroundColor = .systemBackground.withAlphaComponent(0.4)
         enrollButton.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
         quitBUtton.addTarget(self, action: #selector(didTapQuit), for: .touchUpInside)
+        editButton.addTarget(self, action: #selector(didTapEdit), for: .touchUpInside)
         
-        layer.cornerRadius = 20
+        layer.cornerRadius = 10
         layer.borderColor = UIColor.opaqueSeparator.cgColor
         layer.borderWidth = 0.5
         layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
@@ -72,33 +146,41 @@ class ParticipantsViewHeaderView: UIView {
     }
     
     
-    func configure(with vm: EventCellViewModel) {
-        priceValueLabel.text = vm.priceString
-        genderLabel.text = "\(vm.totalPeopleCount)/\(String(vm.totalCapacity))"
-    }
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         
         let padding:CGFloat = 30
-        
-        
         priceTitleLabel.frame = CGRect(x: padding, y: 20, width: priceTitleLabel.width, height: priceTitleLabel.height)
         
-        
         let buttonWidth:CGFloat = (width-40)/2
-        enrollButton.frame = CGRect(x: width-padding-buttonWidth, y: priceTitleLabel.top, width: buttonWidth, height: 50)
+        let buttonheight:CGFloat = 40
+        enrollButton.frame = CGRect(x: width-padding-buttonWidth, y: (height-buttonheight)/2-10, width: buttonWidth, height: buttonheight)
+        quitBUtton.frame = CGRect(x: width-padding-buttonWidth, y: (height-buttonheight)/2-10, width: buttonWidth, height: buttonheight)
+        editButton.frame = CGRect(x: width-padding-buttonWidth, y: (height-buttonheight)/2-10, width: buttonWidth, height: buttonheight)
         
         
-        priceValueLabel.sizeToFit()
-        priceValueLabel.frame = CGRect(x: priceTitleLabel.left, y: enrollButton.bottom-priceValueLabel.height, width: priceValueLabel.width, height: priceValueLabel.height)
+        participantsLabel.sizeToFit()
+        participantsLabel.frame = CGRect(x: padding, y: top+10, width: participantsLabel.width, height: participantsLabel.height)
         
-        participantsLabel.frame = CGRect(x: padding, y: priceValueLabel.bottom+20, width: participantsLabel.width, height: participantsLabel.height)
-        genderLabel.sizeToFit()
-        genderLabel.frame = CGRect(x: participantsLabel.right+5, y: participantsLabel.top, width: width-participantsLabel.width-padding, height: genderLabel.height)
         
-        quitBUtton.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+        let imageSize:CGFloat = 25
+        genderImageView.frame = CGRect(x: participantsLabel.left, y: participantsLabel.bottom+5, width: imageSize, height: imageSize)
+        genderImageView.isHidden = true
+        headCountLabel.sizeToFit()
+        headCountLabel.frame = CGRect(x: participantsLabel.right+5, y: participantsLabel.top, width: width-participantsLabel.width-padding, height: headCountLabel.height)
+        
+        
+        maleImageView.frame  = CGRect(x: participantsLabel.left, y: participantsLabel.bottom+5, width: imageSize, height: imageSize)
+        femaleImageView.frame  = CGRect(x: participantsLabel.left, y: maleImageView.bottom, width: imageSize, height: imageSize)
+        
+        
+        maleCountLabel.sizeToFit()
+        maleCountLabel.frame = CGRect(x: maleImageView.right+5, y: maleImageView.top, width: maleCountLabel.width, height: maleImageView.height)
+        
+        femaleCountLabel.sizeToFit()
+        femaleCountLabel.frame = CGRect(x: femaleImageView.right+5, y: femaleImageView.top, width: femaleCountLabel.width, height: femaleCountLabel.height)
+        
+        
         
     }
     @objc private func didTapEnroll(){
@@ -109,5 +191,8 @@ class ParticipantsViewHeaderView: UIView {
         delegate?.didTapQuit(self)
     }
     
+    @objc private func didTapEdit(){
+        delegate?.didTapEdit(self)
+    }
     
 }
