@@ -8,7 +8,7 @@
 import UIKit
 
 protocol EventOwnerCollectionViewCellDelegate:AnyObject {
-    func EventOwnerCollectionViewCellDidTapMessage(_ cell:EventOwnerCollectionViewCell, username:String)
+    func EventOwnerCollectionViewCellDidTapMessage(_ cell:EventOwnerCollectionViewCell, username:String?)
 }
 
 
@@ -80,10 +80,10 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with owner:User) {
+    func configure(with owner:User?) {
         
-        nameLabel.text = owner.name
-        if let urlString = owner.profileUrlString {
+        nameLabel.text = owner?.name
+        if let urlString = owner?.profileUrlString {
             imageView.sd_setImage(with: URL(string: urlString))
         }
         user = owner
@@ -96,7 +96,7 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func didTapMessage(){
-        delegate?.EventOwnerCollectionViewCellDidTapMessage(self, username: user!.username)
+        delegate?.EventOwnerCollectionViewCellDidTapMessage(self, username: user?.username)
     }
     
     

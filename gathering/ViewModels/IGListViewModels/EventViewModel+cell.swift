@@ -28,7 +28,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
     let tag: [EventTagType]?
     let participants:[Participant]
     let price:String
-    let organiser:User
+    let organiser:User?
     
     var isOrganiser:Bool = false
     var isJoined:Bool = false
@@ -99,12 +99,12 @@ class EventHomeCellViewModel: HomeCellViewModel {
         
         self.emojiString = event.emojiTitle
         self.intro = event.introduction
-        self.organiser = event.organisers.first!
+        self.organiser = event.organisers.first
         
         
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
         
-        self.isOrganiser = self.organiser.username == username
+        self.isOrganiser = self.organiser?.username == username
         
         self.isJoined = event.participants.values.contains(where: {return $0.username == username
         })

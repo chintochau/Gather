@@ -11,7 +11,7 @@ enum EventInfoCollectionViewCellViewModel {
     case title(title:String)
     case info (title:String,subTitle:String, type:InfoCardType)
     case extraInfo (title:String, info:String)
-    case owner(name:User)
+    case owner(name:User?)
 }
 
 enum InfoCardType {

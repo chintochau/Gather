@@ -8,7 +8,7 @@
 import UIKit
 
 struct EventViewModel {
-    let owner:User
+    let owner:User?
     let event:Event
     let image:UIImage?
     let title:String
@@ -51,7 +51,7 @@ extension EventViewModel {
         self.location = (area: event.location.name, address: event.location.address ?? "")
         self.refundPolicy = event.refundPolicy
         self.about = event.introduction ?? ""
-        self.owner = event.organisers[0]
+        self.owner = event.organisers.first
         
         self.price = event.price == 0.0 ? "Free" : "CA$: \(String(event.price))"
         

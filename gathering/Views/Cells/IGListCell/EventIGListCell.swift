@@ -96,7 +96,7 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventHomeCellViewModel else { return }
         // Update the cell with the event information
-        if let profileImage = vm.organiser.profileUrlString {
+        if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
         eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
@@ -105,7 +105,7 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         locationLabel.text = vm.location
         emojiStringView.text = vm.emojiString
         introLabel.text = vm.intro
-        profileTitleLabel.text = vm.organiser.name
+        profileTitleLabel.text = vm.organiser?.name
         
         if vm.headcount.isGenderSpecific {
             [totalNumber,totalIconImageView

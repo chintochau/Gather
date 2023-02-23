@@ -194,7 +194,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with vm:EventHomeCellViewModel) {
-        if let profileImage = vm.organiser.profileUrlString {
+        if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
         eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
@@ -203,7 +203,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         locationLabel.text = vm.location
         emojiStringView.text = vm.emojiString
         introLabel.text = vm.intro
-        profileTitleLabel.text = vm.organiser.name
+        profileTitleLabel.text = vm.organiser?.name
 
         if vm.headcount.isGenderSpecific {
             [totalNumber,totalIconImageView

@@ -353,7 +353,10 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
 
 extension EventViewController:EventOwnerCollectionViewCellDelegate {
     // MARK: - open message view
-    func EventOwnerCollectionViewCellDidTapMessage(_ cell: EventOwnerCollectionViewCell, username: String) {
+    func EventOwnerCollectionViewCellDidTapMessage(_ cell: EventOwnerCollectionViewCell, username: String?) {
+        
+        guard let username = username else {return}
+        
         let vc = ChatMessageViewController(targetUsername: username)
         vc.setupNavBar()
         let navVc = UINavigationController(rootViewController: vc)

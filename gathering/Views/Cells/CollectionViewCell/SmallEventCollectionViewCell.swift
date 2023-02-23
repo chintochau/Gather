@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import IGListKit
 
-final class SmallEventCollectionViewCell: BasicEventCollectionViewCell{
+final class SmallEventCollectionViewCell: BasicEventCollectionViewCell,ListBindable {
+    
     static let identifier = "EventSmallCollectionViewCell"
     
     override init(frame: CGRect) {
@@ -69,6 +71,50 @@ final class SmallEventCollectionViewCell: BasicEventCollectionViewCell{
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    func bindViewModel(_ viewModel: Any) {
+        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        
+        if let profileImage = vm.organiser?.profileUrlString {
+            profileImageview.sd_setImage(with: URL(string: profileImage))
+        }
+        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
+        dateLabel.text = vm.dateString + " - " + vm.dayString + "\n" + vm.timeString
+        titleLabel.text = vm.title
+        locationLabel.text = vm.location
+        emojiStringView.text = vm.emojiString
+        introLabel.text = vm.intro
+        profileTitleLabel.text = vm.organiser?.name
+        
+        if vm.headcount.isGenderSpecific {
+            [totalNumber,totalIconImageView
+            ].forEach({$0.isHidden = true})
+            
+            let maleMax = vm.headcount.mMax
+            let femaleMax = vm.headcount.fMax
+            if maleMax == 0 {
+                maleNumber.text = "\(vm.peopleCount.male)"
+            }else {
+                maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
+            }
+            if femaleMax == 0 {
+                femaleNumber.text = "\(vm.peopleCount.female)"
+            }else {
+                femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
+            }
+            
+            
+        }else {
+            [maleNumber,femaleNumber,
+             maleIconImageView,femaleIconImageView
+            ].forEach({$0.isHidden = true})
+            totalNumber.text = vm.totalString
+        }
+        
+        priceLabel.text = vm.price
+        
     }
     
 }
