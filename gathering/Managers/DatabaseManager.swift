@@ -111,7 +111,7 @@ final class DatabaseManager {
             else {return}
             transaction.setData(eventData, forDocument: eventRef)
             transaction.setData([
-                "month": event.startDate.getMonthInDate().timeIntervalSince1970,
+                "month": event.startDate.getMonthInDate(),
                 event.id: event.toUserEvent().asDictionary()!
             ], forDocument: userEventRef,merge: true)
             return nil
@@ -143,7 +143,45 @@ final class DatabaseManager {
                 return !excludedEventIDs.contains(event.id)
             }
             
+            
             completion(filterEvents)
+        }
+    }
+    
+    public func fetchAllEvents(page: Int, perPage: Int,startDate:Date = Date(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+        
+        print("start date: \(startDate)")
+        
+        let excludedEventIDs = excludeEvents.compactMap({$0.id})
+        
+        let ref = database.collection("events")
+            .order(by: "startDateTimestamp",descending: false)
+            .whereField("startDateTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
+            .limit(to: perPage)
+        
+        ref.getDocuments { snapshot, error in
+            guard let events = snapshot?.documents.compactMap({ Event(with: $0.data()) }) else {
+                completion(nil)
+                return
+            }
+            events.forEach { event in
+                print(event.title)
+            }
+            
+            print("returned event counts: \(events.count)")
+            
+            let filterEvents = events.filter { event in
+                return !excludedEventIDs.contains(event.id)
+            }
+            
+            
+            
+            completion(filterEvents)
+            
+//            let startIndex = min((page-1) * perPage, filterEvents.count)
+//            let endIndex = min((page) * perPage, filterEvents.count)
+//
+//            completion(Array(filterEvents[startIndex..<endIndex]))
         }
     }
     

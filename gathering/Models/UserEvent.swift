@@ -11,13 +11,13 @@ import Foundation
 struct UserEvent:Codable {
     let id:String
     let name:String
-    let date:Date
+    let dateTimeStamp:Double
     let location:Location
 }
 
 extension Event {
     func toUserEvent () -> UserEvent {
-        UserEvent(id: self.id, name: self.title, date: self.startDate, location: self.location)
+        UserEvent(id: self.id, name: self.title, dateTimeStamp: self.startDateTimestamp, location: self.location)
         
     }
 }

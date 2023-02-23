@@ -16,7 +16,7 @@ struct DummyDataManager {
     func generateDummyEvents() {
         let db = Firestore.firestore()
         
-        for i in 1...16 {
+        for i in 1...50 {
             // Generate a unique ID for the event
             let eventId = UUID().uuidString
             
@@ -40,8 +40,8 @@ struct DummyDataManager {
                 organisers: [user],
                 imageUrlString: i%4 == 0 ? ["https://picsum.photos/400/\(i%4)00"] : [],
                 price: Double(i),
-                startDate: Date(timeIntervalSinceNow: TimeInterval(i * 86400)),
-                endDate: Date(timeIntervalSinceNow: TimeInterval((i+1) * 86400)),
+                startDateTimestamp: Date(timeIntervalSinceNow: TimeInterval(i * 86400)).timeIntervalSince1970,
+                endDateTimestamp: Date(timeIntervalSinceNow: TimeInterval((i+1) * 86400)).timeIntervalSince1970,
                 location: Location(name: "Location \(i)", address: "Address \(i)", latitude: Double(i), longitude: Double(i+1)),
                 tag: [],
                 introduction: introduction,

@@ -14,8 +14,8 @@ struct Event:Codable {
     let organisers:[User]
     let imageUrlString:[String]
     let price: Double
-    let startDate:Date
-    let endDate:Date
+    let startDateTimestamp:Double
+    let endDateTimestamp:Double
     let location:Location
     let tag:[String]
     let introduction:String?
@@ -26,9 +26,17 @@ struct Event:Codable {
     let ownerFcmToken:String?
     
     
+    var startDate:Date {
+        return Date(timeIntervalSince1970: startDateTimestamp)
+    }
+    var endDate:Date {
+        return Date(timeIntervalSince1970: endDateTimestamp)
+    }
+    
     var date:Date {
         return DateFormatter.formatter.date(from: startDateString) ?? Date()
     }
+    
     var startDateString:String {
         return String.date(from: startDate) ?? "Now"
     }

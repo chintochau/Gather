@@ -11,13 +11,20 @@ import IGListKit
 
 class HomeViewController: UIViewController{
     
-    private var viewModel = HomeViewModel()
-    var currentCell:BasicEventCollectionViewCell?
-    private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
     
     // MARK: - Components
     private var collectionView:UICollectionView?
     private let refreshControl = UIRefreshControl()
+    
+    
+    
+    // MARK: - Properties
+    private var viewModel = HomeViewModel()
+    var currentCell:BasicEventCollectionViewCell?
+    private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
+    var currentPage = 1
+    let eventsPerPage = 7
+    
     
     // MARK: - LifeCycle
     
@@ -25,9 +32,7 @@ class HomeViewController: UIViewController{
         super.viewDidLoad()
         configureCollectionView()
         configureNavBar()
-        fetchData()
-        
-        
+        fetchMoreData()
     }
     
     private func configureCollectionView(){
@@ -82,11 +87,12 @@ class HomeViewController: UIViewController{
         adapter.dataSource = self
         adapter.viewController = self
         self.collectionView = collectionView
+        collectionView.delegate = self
     }
     
     
     @objc private func didPullToRefresh(){
-        fetchData {[weak self] in
+        initialFetchDate {[weak self] in
             self?.adapter.reloadData()
             self?.collectionView?.refreshControl?.endRefreshing()
         }
@@ -102,12 +108,25 @@ class HomeViewController: UIViewController{
     
     
     // MARK: - Fetch Data
-    private func fetchData(completion: (() -> (Void))? = nil ){
-        viewModel.fetchData {[weak self] in
+    private func initialFetchDate(completion: (() -> (Void))? = nil ){
+        currentPage = 1
+        viewModel.fetchData(page: currentPage, perPage: eventsPerPage) { [weak self] events in
             self?.adapter.performUpdates(animated: true)
+            /*
+             use the last event date as the starting point of next fetch, to avoid reading from the beginning
+             */
             completion?()
         }
     }
+    
+    private func fetchMoreData(completion: (() -> (Void))? = nil ){
+        viewModel.fetchMoreData(page: currentPage, perPage: eventsPerPage) {[weak self] events in
+            guard let self = self else { return }
+            self.adapter.performUpdates(animated: true)
+            completion?()
+        }
+    }
+    
 }
 
 extension HomeViewController: ListAdapterDataSource {
@@ -146,5 +165,16 @@ extension HomeViewController{
         navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         navVc.modalPresentationStyle = .fullScreen
         present(navVc, animated: true)
+    }
+}
+
+extension HomeViewController : UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        print("Section: \(indexPath.section) - items: \(viewModel.items.count + viewModel.ad.count)")
+        
+        if indexPath.section == viewModel.items.count - 1 {
+            currentPage += 1
+            fetchMoreData()
+        }
     }
 }
