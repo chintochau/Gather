@@ -16,7 +16,7 @@ struct DummyDataManager {
     func generateDummyEvents() {
         let db = Firestore.firestore()
         
-        for i in 1...50 {
+        for i in 1...12 {
             // Generate a unique ID for the event
             let eventId = UUID().uuidString
             

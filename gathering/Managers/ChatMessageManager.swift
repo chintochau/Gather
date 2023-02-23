@@ -155,20 +155,19 @@ struct ChatMessageManager {
     
     // MARK: - When receive message
     public func actionWhenReceiveMessage(_ PNmessage: PubNubMessage){
-        print(PNmessage)
         if let text = PNmessage.payload[rawValue: "text"] as? String,
            let sender = PNmessage.publisher{
             
             let message = MessageObject()
             
             let user = RealmManager.shared.createUserIfNotExist(username: sender)
-            print("create realm user \(user)")
+            
             
             message.sender = user
             message.text = text
             message.sentDate = PNmessage.published.timetokenDate
             message.channelId = PNmessage.channel
-            print("created message\(message)")
+            
             addMessage(message)
         }
     }
@@ -194,26 +193,27 @@ struct ChatMessageManager {
     // MARK: - Send message, create channel and add to groups
     public func sendMessageAndAddToChannelGroup(targetUsername:String, message:String){
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
-        print("receiver anme:\(targetUsername)")
-        print("sender name:\(username)")
+        
         let channelId = generateChannelIDFor(targetUsername: targetUsername)
         
-        print("Send message and add to channel: \(channelId)")
+        
         // Publish the message to the channel
         pubnub.publish(
             channel: channelId, message: ["text": message], completion: { result in
                 switch result {
                 case .success(_):
+                    
                     pubnub.add( channels: [channelId], to: username
                     ) { result in
                         switch result {
                         case let .success(response):
-                            print("Success \(response)")
+                            print("success\(response)")
                             pubnub.subscribe( to: [channelId],and: [username],withPresence: true)
                         case let .failure(error):
                             print("failed: \(error.localizedDescription)")
                         }
                     }
+                    
                     
                     pubnub.add(channels: [channelId], to: targetUsername) { result in
                         switch result {
@@ -223,6 +223,7 @@ struct ChatMessageManager {
                             print("Failed: \(error.localizedDescription)")
                         }
                     }
+                    
                 case let .failure(error):
                     print("Fail message: \(error)")
                 }
@@ -266,5 +267,7 @@ struct ChatMessageManager {
             }
         }
     }
+    
+    
     
 }

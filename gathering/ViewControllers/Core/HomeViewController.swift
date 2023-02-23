@@ -83,11 +83,11 @@ class HomeViewController: UIViewController{
         collectionView.refreshControl = refreshControl
         view.backgroundColor = .streamWhiteSnow
         collectionView.fillSuperview()
+        self.collectionView = collectionView
         adapter.collectionView = collectionView
         adapter.dataSource = self
+        adapter.delegate = self
         adapter.viewController = self
-        self.collectionView = collectionView
-        collectionView.delegate = self
     }
     
     
@@ -110,11 +110,8 @@ class HomeViewController: UIViewController{
     // MARK: - Fetch Data
     private func initialFetchDate(completion: (() -> (Void))? = nil ){
         currentPage = 1
-        viewModel.fetchData(page: currentPage, perPage: eventsPerPage) { [weak self] events in
+        viewModel.fetchInitialData(page: currentPage, perPage: eventsPerPage) { [weak self] events in
             self?.adapter.performUpdates(animated: true)
-            /*
-             use the last event date as the starting point of next fetch, to avoid reading from the beginning
-             */
             completion?()
         }
     }
@@ -129,7 +126,7 @@ class HomeViewController: UIViewController{
     
 }
 
-extension HomeViewController: ListAdapterDataSource {
+extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
         return viewModel.items
@@ -146,6 +143,22 @@ extension HomeViewController: ListAdapterDataSource {
     func emptyView(for listAdapter: ListAdapter) -> UIView? {
         return nil
     }
+    
+    
+    func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
+        
+            if index == viewModel.items.count - 1 {
+                currentPage += 1
+                fetchMoreData()
+            }
+    }
+    
+    func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
+    }
+    
+    
+    
+    
 }
 
 
@@ -165,16 +178,5 @@ extension HomeViewController{
         navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         navVc.modalPresentationStyle = .fullScreen
         present(navVc, animated: true)
-    }
-}
-
-extension HomeViewController : UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        print("Section: \(indexPath.section) - items: \(viewModel.items.count + viewModel.ad.count)")
-        
-        if indexPath.section == viewModel.items.count - 1 {
-            currentPage += 1
-            fetchMoreData()
-        }
     }
 }

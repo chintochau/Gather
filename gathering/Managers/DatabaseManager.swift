@@ -164,24 +164,12 @@ final class DatabaseManager {
                 completion(nil)
                 return
             }
-            events.forEach { event in
-                print(event.title)
-            }
-            
-            print("returned event counts: \(events.count)")
             
             let filterEvents = events.filter { event in
                 return !excludedEventIDs.contains(event.id)
             }
             
-            
-            
             completion(filterEvents)
-            
-//            let startIndex = min((page-1) * perPage, filterEvents.count)
-//            let endIndex = min((page) * perPage, filterEvents.count)
-//
-//            completion(Array(filterEvents[startIndex..<endIndex]))
         }
     }
     
