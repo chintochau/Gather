@@ -47,7 +47,7 @@ final class AuthManager {
                         completion(nil)
                         return
                     }
-                    ChatMessageManager.shared.ConnectToChatServer()
+                    ChatMessageManager.shared.connectToChatServer(true)
                     completion(newUser)
                 }
             }
@@ -67,7 +67,7 @@ final class AuthManager {
                     return}
                 
                 DefaultsManager.shared.updateUserProfile(with: user)
-                ChatMessageManager.shared.ConnectToChatServer()
+                ChatMessageManager.shared.connectToChatServer(true)
                 completion(user)
             }
         }
@@ -78,6 +78,7 @@ final class AuthManager {
             try auth.signOut()
             ChatMessageManager.shared.disconnectFromChatServer()
             RealmManager.shared.clearRealmDatabase()
+            DefaultsManager.shared.resetUserProfile()
             completion?(true)
         }catch{
             print(error)

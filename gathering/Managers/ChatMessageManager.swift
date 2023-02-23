@@ -9,17 +9,25 @@ import Foundation
 import PubNub
 import RealmSwift
 
+
+struct Message : JSONCodable {
+    let text:String
+}
+
 struct ChatMessageManager {
-    static let shared = ChatMessageManager()
+    static var shared = ChatMessageManager()
     
-    let pubnub:PubNub = {
-        let username = UserDefaults.standard.string(forKey: "username") ?? "guest"
-        let config = PubNubConfiguration(
-            publishKey: "pub-c-1e30f6e1-a29f-4a4d-ac62-01bf0a141150",
-            subscribeKey: "sub-c-bb25b314-3fc0-48d7-ae4a-5bd2ca17abf2",
-            userId: username)
-        return PubNub(configuration: config)
-    }()
+    var username = UserDefaults.standard.string(forKey: "username")
+    
+    var pubnub:PubNub?
+    //    = {
+    //        print("Current Pubnub User: \(username)")
+    //        let config = PubNubConfiguration(
+    //            publishKey: "pub-c-1e30f6e1-a29f-4a4d-ac62-01bf0a141150",
+    //            subscribeKey: "sub-c-bb25b314-3fc0-48d7-ae4a-5bd2ca17abf2",
+    //            userId: username)
+    //        return PubNub(configuration: config)
+    //    }()
     
     let listener:SubscriptionListener = {
         let listener = SubscriptionListener()
@@ -27,53 +35,107 @@ struct ChatMessageManager {
     }()
     
     
-    // MARK: - Fetch ChannelIDs
-    public func ConnectToChatServer(){
-        
+    // MARK: - Initial
+    public mutating func connectToChatServer(_ createChatGroup:Bool){
         guard let username = UserDefaults.standard.string(forKey: "username") else {
-            return
+            print("failed to connect to server")
+            return}
+        
+        let config = PubNubConfiguration(
+            publishKey: "pub-c-1e30f6e1-a29f-4a4d-ac62-01bf0a141150",
+            subscribeKey: "sub-c-bb25b314-3fc0-48d7-ae4a-5bd2ca17abf2",
+            userId: username)
+        
+        pubnub = PubNub(configuration: config)
+        guard let pubnub = pubnub else {return}
+        
+        if createChatGroup {
+            // create a creation channel and a channel group
+            let initialMessage = Message(text: "Welcome to Gather!")
+            sendMessageToChannel(channel: username, message: initialMessage) {[self] channel in
+                addChannelToGroup(channel: username, group: username) { channel in
+                    
+                    listener.didReceiveMessage  = { message in
+                        addPNMessageToRealm(message)
+                    }
+                    pubnub.add(listener)
+                    pubnub.subscribe(to: [],and: [channel])
+                }
+            }
+        }else {
+            // connect to existing channel group
+            listener.didReceiveMessage  = { [self] message in
+                addPNMessageToRealm(message)
+            }
+            pubnub.add(listener)
+            pubnub.subscribe(to: [],and: [username])
         }
         
-        pubnub.listChannels(for: username) { result in
+    }
+    
+    private func sendMessageToChannel(channel:String, message:Message, completion: ((_ channel:String) -> Void)? = nil){
+        guard let pubnub = pubnub else {return}
+        
+        pubnub.publish(channel: channel, message: message) { result in
             switch result {
-            case .success(( _, let channels)):
-                listenToChannels(channels: channels)
-                print("Connected to chatserver: \(username)")
-            case .failure(_): break
+            case .success(_):
+                completion?(channel)
+            case .failure(_):
+                print("Failed")
             }
         }
     }
     
+    private func addChannelToGroup( channel:String, group:String , completion: ((_ group:String) -> Void)? = nil) {
+        
+        guard let pubnub = pubnub else {return}
+        pubnub.add(channels: [channel], to: group) { result in
+            switch result {
+            case .success((let group, let channels)):
+                print("success add channel \(channels) to \(group)")
+                completion?(group)
+            case .failure(_):
+                print("Failed add channel to group")
+            }
+        }
+    }
+    
+    
+    // MARK: - Deinit
+    ///should call when user logout
     public func disconnectFromChatServer(){
+        guard let pubnub = pubnub else {return}
         pubnub.unsubscribeAll()
     }
     
-    // MARK: - Listen to Channels
-    public func listenToChannels(channels:[String]){
-        let messageQueue = DispatchQueue(label: "pubnub-message-queue")
-        
-        listener.didReceiveMessage = { message in
-            messageQueue.async {
-                actionWhenReceiveMessage(message)
-            }
-        }
-        
-        pubnub.add(listener)
-        pubnub.subscribe(to: channels, withPresence: true)
-    }
+    
+    // MARK: - Connect and Listen to Channel Group
+    //    public func ConnectToChatServer(){
+    //
+    //        guard let username = UserDefaults.standard.string(forKey: "username") else {
+    //            return
+    //        }
+    //
+    //        listener.didReceiveMessage = { message in
+    //            addPNMessageToRealm(message)
+    //        }
+    //
+    //        pubnub.add(listener)
+    //        pubnub.subscribe(to: [],and: [username])
+    //
+    //    }
     
     // MARK: - listen and Receive message
     public func listenToChannel(targetUsername:String) {
+        
+        guard let pubnub = pubnub else {return}
         
         let messageQueue = DispatchQueue(label: "pubnub-message-queue")
         
         let channelId = generateChannelIDFor(targetUsername: targetUsername)
         
         listener.didReceiveMessage = { message in
-            messageQueue.async {
-                
-                actionWhenReceiveMessage(message)
-            }
+            addPNMessageToRealm(message)
         }
         
         pubnub.add(listener)
@@ -81,156 +143,128 @@ struct ChatMessageManager {
     }
     
     
-    
-    // MARK: - Create Conversation
-    /// create and return conversation realm object, add target user and self to participants, also create channel id
-    public func createConversationIfNotExist(targetUsername:String) -> ConversationObject? {
-        print(1)
-        let realm = try! Realm()
-        guard let username = UserDefaults.standard.string(forKey: "username") else {
-            return nil}
-        let channelid = generateChannelIDFor(targetUsername: targetUsername)
+    // MARK: - + PN Message to Realm
+    public func addPNMessageToRealm(_ PNmessage: PubNubMessage){
         
-        if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid) {
-            
-            print(2)
-            return conversation
-        } else {
-            
-            print(3)
-            
-            let user1 = RealmManager.shared.createUserIfNotExist(username: username)
-            let user2 = RealmManager.shared.createUserIfNotExist(username: targetUsername)
-            
-            print(3.1)
-            let conversation = ConversationObject()
-            conversation.participants.append(objectsIn: [user1,user2])
-            conversation.channelId = channelid
-            
-            print(4)
-            try! realm.write({
-                realm.add(conversation)
-            })
-            
-            return realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid)
-            
-        }
-    }
-    
-    // when recive message
-    public func onReceiveAndCreateConversationIfNotExist(sender:String,channelid:String) -> ConversationObject? {
-        print(11)
-        let realm = try! Realm()
-        guard let username = UserDefaults.standard.string(forKey: "username") else {
-            return nil}
-        
-        
-        if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid),
-           sender == username {
-            print(21)
-            return conversation
-        } else if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid) {
-            print(22)
-            return conversation
-            
-        } else {
-            
-            print(31)
-            let user1 = RealmManager.shared.createUserIfNotExist(username: username)
-            let user2 = RealmManager.shared.createUserIfNotExist(username: sender)
-            print(31.1)
-            let conversation = ConversationObject()
-            conversation.participants.append(objectsIn: [user1,user2])
-            conversation.channelId = channelid
-            
-            print(41)
-            try! realm.write({
-                realm.add(conversation)
-            })
-            
-            return realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid)
-            
-        }
-    }
-    
-    // MARK: - When receive message
-    public func actionWhenReceiveMessage(_ PNmessage: PubNubMessage){
+        guard let pubnub = pubnub else {return}
         if let text = PNmessage.payload[rawValue: "text"] as? String,
            let sender = PNmessage.publisher{
-            
             let message = MessageObject()
-            
             let user = RealmManager.shared.createUserIfNotExist(username: sender)
-            
-            
             message.sender = user
             message.text = text
             message.sentDate = PNmessage.published.timetokenDate
             message.channelId = PNmessage.channel
             
-            addMessage(message)
+            
+            let realm = try! Realm()
+            // Check if a conversation with the given ID already exists
+            guard let senderUsername = message.sender?.username else {return}
+            if let conversation = getConversationWithMessage(sender: senderUsername, channelid: message.channelId) {
+                try! realm.write({
+                    conversation.messages.append(message)
+                })
+                triggerInAppNotification(message: message)
+            }
+            
+            
         }
     }
     
-    // MARK: - Add message Conversations
-    func addMessage(_ message: MessageObject) {
+    // MARK: - Create Conversation
+    /// get conversation with username
+    public func getInitialConversationWithUsername(targetUsername:String) -> ConversationObject? {
         let realm = try! Realm()
-        // Check if a conversation with the given ID already exists
-        guard let senderUsername = message.sender?.username else {return}
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return nil}
         
-        if let conversation = onReceiveAndCreateConversationIfNotExist(sender: senderUsername, channelid: message.channelId) {
+        let channelid = generateChannelIDFor(targetUsername: targetUsername)
+        
+        if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid) {
+            return conversation
+        } else {
+            let user1 = RealmManager.shared.createUserIfNotExist(username: username)
+            let user2 = RealmManager.shared.createUserIfNotExist(username: targetUsername)
             
-            print(5)
+            let conversation = ConversationObject()
+            conversation.participants.append(objectsIn: [user1,user2])
+            conversation.channelId = channelid
+            
             try! realm.write({
-                conversation.messages.append(message)
+                realm.add(conversation)
             })
             
-            triggerInAppNotification(message: message)
+            return realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid)
+        }
+    }
+    
+    /// get conversation with PN Message
+    public func getConversationWithMessage(sender:String,channelid:String) -> ConversationObject? {
+        
+        let realm = try! Realm()
+        guard let username = UserDefaults.standard.string(forKey: "username") else { return nil}
+        
+        if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid),
+           sender == username { return conversation
+        } else if let conversation = realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid) {
+            return conversation
+        } else {
+            let user1 = RealmManager.shared.createUserIfNotExist(username: username)
+            let user2 = RealmManager.shared.createUserIfNotExist(username: sender)
+            
+            let conversation = ConversationObject()
+            conversation.participants.append(objectsIn: [user1,user2])
+            conversation.channelId = channelid
+            
+            try! realm.write({
+                realm.add(conversation)
+            })
+            
+            return realm.object(ofType: ConversationObject.self, forPrimaryKey: channelid)
         }
     }
     
     
-    // MARK: - Send message, create channel and add to groups
-    public func sendMessageAndAddToChannelGroup(targetUsername:String, message:String){
+    
+    // MARK: - Send message
+    public func sendMessageToUser(targetUsername:String, text:String){
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
         
         let channelId = generateChannelIDFor(targetUsername: targetUsername)
+        let message = Message(text: text)
+        
+        sendMessageToChannel(channel: channelId, message: message) { channel in
+            addChannelToGroup(channel: channel, group:targetUsername)
+            addChannelToGroup(channel: channel, group: username)
+        }
         
         
         // Publish the message to the channel
-        pubnub.publish(
-            channel: channelId, message: ["text": message], completion: { result in
-                switch result {
-                case .success(_):
-                    
-                    pubnub.add( channels: [channelId], to: username
-                    ) { result in
-                        switch result {
-                        case let .success(response):
-                            print("success\(response)")
-                            pubnub.subscribe( to: [channelId],and: [username],withPresence: true)
-                        case let .failure(error):
-                            print("failed: \(error.localizedDescription)")
-                        }
-                    }
-                    
-                    
-                    pubnub.add(channels: [channelId], to: targetUsername) { result in
-                        switch result {
-                        case let .success(response):
-                            print("success\(response)")
-                        case let .failure(error):
-                            print("Failed: \(error.localizedDescription)")
-                        }
-                    }
-                    
-                case let .failure(error):
-                    print("Fail message: \(error)")
-                }
-            })
-        
-        
-        
+        //        pubnub.publish(
+        //            channel: channelId, message: Message(text: text), completion: { result in
+        //                switch result {
+        //                case .success(_):
+        //                    pubnub.add( channels: [channelId], to: username
+        //                    ) { result in
+        //                        switch result {
+        //                        case let .success(response):
+        //                            print("success\(response)")
+        //                            pubnub.subscribe( to: [channelId],and: [username],withPresence: true)
+        //                        case let .failure(error):
+        //                            print("failed: \(error.localizedDescription)")
+        //                        }
+        //                    }
+        //                    pubnub.add(channels: [channelId], to: targetUsername) { result in
+        //                        switch result {
+        //                        case let .success(response):
+        //                            print("success\(response)")
+        //                        case let .failure(error):
+        //                            print("Failed: \(error.localizedDescription)")
+        //                        }
+        //                    }
+        //                case let .failure(error):
+        //                    print("Fail message: \(error)")
+        //                }
+        //            })
     }
     
     
@@ -257,9 +291,9 @@ struct ChatMessageManager {
         content.body = message.text
         content.sound = UNNotificationSound.default
         content.userInfo = ["view": "MyViewController"]
-
+        
         let request = UNNotificationRequest(identifier: "myNotification", content: content, trigger: nil)
-
+        
         let center = UNUserNotificationCenter.current()
         center.add(request) { (error) in
             if let error = error {

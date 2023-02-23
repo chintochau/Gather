@@ -230,22 +230,26 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
                 leading: buttonView.leadingAnchor,
                 bottom: buttonView.bottomAnchor,
                 trailing: nil,
-                padding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+                padding: UIEdgeInsets(top: 20, left: 20, bottom: 0, right: 20)
             )
+            
             previewButton.addTarget(self, action: #selector(didTapPreview), for: .touchUpInside)
             previewButton.setTitle("Preview", for: .normal)
             previewButton.backgroundColor = .lightGray
+            previewButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
             
             publishButton.anchor(
                 top: buttonView.topAnchor,
                 leading: previewButton.trailingAnchor,
-                bottom: nil,
+                bottom: buttonView.bottomAnchor,
                 trailing: buttonView.trailingAnchor,
                 padding: UIEdgeInsets(top: 20, left: 20, bottom: 0, right: 20)
             )
+            
             publishButton.widthAnchor.constraint(equalTo: previewButton.widthAnchor, multiplier: 1).isActive = true
             publishButton.addTarget(self, action: #selector(didTapSubmit), for: .touchUpInside)
             publishButton.setTitle("publish", for: .normal)
+            publishButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
             
             activatyIndicator.anchor(top: publishButton.topAnchor, leading: publishButton.leadingAnchor, bottom: publishButton.bottomAnchor, trailing: publishButton.trailingAnchor)
             

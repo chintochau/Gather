@@ -57,7 +57,7 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
     
     init(targetUsername:String) {
         self.targetUsername = targetUsername
-        self.conversation = ChatMessageManager.shared.createConversationIfNotExist(targetUsername: targetUsername)!
+        self.conversation = ChatMessageManager.shared.getInitialConversationWithUsername(targetUsername: targetUsername)!
         self.messages = conversation.messages.sorted(byKeyPath: "sentDate")
         
         super.init(nibName: nil, bundle: nil)
@@ -170,7 +170,7 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
     @objc private func didTapSend(){
         
         if let text = textView.text {
-            ChatMessageManager.shared.sendMessageAndAddToChannelGroup(targetUsername: targetUsername, message: text)
+            ChatMessageManager.shared.sendMessageToUser(targetUsername: targetUsername, text: text)
             textView.text = nil
         }
     }

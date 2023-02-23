@@ -235,42 +235,43 @@ extension EventViewController {
             isFavourited = DefaultsManager.shared.isEventFavourited(eventID: event.id)
         }
         
+        // MARK: - NavBarappearance
         
-        let transparentAppearance = UINavigationBarAppearance()
-        transparentAppearance.configureWithTransparentBackground()
-        
-        
-        let normalAppearance = UINavigationBarAppearance(idiom: .phone)
-        
-        // Apply white color to all the nav bar buttons.
-        let barButtonItemAppearance = UIBarButtonItemAppearance(style: .plain)
-        barButtonItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        barButtonItemAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.white]
-        barButtonItemAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.white]
-        barButtonItemAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        transparentAppearance.buttonAppearance = barButtonItemAppearance
-        transparentAppearance.backButtonAppearance = barButtonItemAppearance
-        transparentAppearance.doneButtonAppearance = barButtonItemAppearance
-        normalAppearance.buttonAppearance = barButtonItemAppearance
-        normalAppearance.backButtonAppearance = barButtonItemAppearance
-        normalAppearance.doneButtonAppearance = barButtonItemAppearance
-        
-        
-        
-        if shouldBeTransparent {
-            navBar.standardAppearance = transparentAppearance
-            navBar.compactAppearance = transparentAppearance
-            navBar.scrollEdgeAppearance = transparentAppearance
-            LikeButton?.tintColor = isFavourited ? .red: .white
-            shareButton?.tintColor = .white
-        }else {
-            navBar.standardAppearance = normalAppearance
-            navBar.compactAppearance = normalAppearance
-            navBar.scrollEdgeAppearance = normalAppearance
-            LikeButton?.tintColor = isFavourited ? .red: .label
-            shareButton?.tintColor = .label
-        }
+//        let transparentAppearance = UINavigationBarAppearance()
+//        transparentAppearance.configureWithTransparentBackground()
+//
+//
+//        let normalAppearance = UINavigationBarAppearance(idiom: .phone)
+//
+//        // Apply white color to all the nav bar buttons.
+//        let barButtonItemAppearance = UIBarButtonItemAppearance(style: .plain)
+//        barButtonItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        barButtonItemAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        barButtonItemAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.white]
+//        barButtonItemAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
+//
+//        transparentAppearance.buttonAppearance = barButtonItemAppearance
+//        transparentAppearance.backButtonAppearance = barButtonItemAppearance
+//        transparentAppearance.doneButtonAppearance = barButtonItemAppearance
+//        normalAppearance.buttonAppearance = barButtonItemAppearance
+//        normalAppearance.backButtonAppearance = barButtonItemAppearance
+//        normalAppearance.doneButtonAppearance = barButtonItemAppearance
+//
+//
+//
+//        if shouldBeTransparent {
+//            navBar.standardAppearance = transparentAppearance
+//            navBar.compactAppearance = transparentAppearance
+//            navBar.scrollEdgeAppearance = transparentAppearance
+//            LikeButton?.tintColor = isFavourited ? .red: .white
+//            shareButton?.tintColor = .white
+//        }else {
+//            navBar.standardAppearance = normalAppearance
+//            navBar.compactAppearance = normalAppearance
+//            navBar.scrollEdgeAppearance = normalAppearance
+//            LikeButton?.tintColor = isFavourited ? .red: .label
+//            shareButton?.tintColor = .label
+//        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

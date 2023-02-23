@@ -49,7 +49,7 @@ class WelcomeViewController: UIViewController {
     
     fileprivate func appInitialListener() {
         guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
-        ChatMessageManager.shared.ConnectToChatServer()
+        ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
         
 //        DummyDataManager.shared.generateDummyEvents()

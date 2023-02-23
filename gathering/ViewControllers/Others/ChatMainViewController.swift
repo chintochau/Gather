@@ -49,7 +49,7 @@ class ChatMainViewController: UIViewController {
         setUpPanGesture()
         observeConversationsFromRealm()
         
-        ChatMessageManager.shared.ConnectToChatServer()
+//        ChatMessageManager.shared.ConnectToChatServer()
         
         signinMessage.isHidden = AuthManager.shared.isSignedIn
         signinMessage.sizeToFit()
