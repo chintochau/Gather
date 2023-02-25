@@ -25,7 +25,7 @@ class ChatMessageTableViewCell: UITableViewCell {
         return view
     }()
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     var leadingLayoutConstraint:NSLayoutConstraint!
     var trailingLayoutConstraint:NSLayoutConstraint!

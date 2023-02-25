@@ -27,7 +27,7 @@ class ChatMainViewController: UIViewController {
         return view
     }()
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     private let pubnub = ChatMessageManager.shared.pubnub
     private var conversations:Results<ConversationObject>?

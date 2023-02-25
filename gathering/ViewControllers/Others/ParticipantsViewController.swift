@@ -20,7 +20,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     
     private var headerView:ParticipantsViewHeaderView?
     
-    // MARK: - Properties
+    // MARK: - Class members
     private let eventID:String
     var event:Event {
         didSet {

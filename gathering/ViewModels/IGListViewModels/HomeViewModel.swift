@@ -18,7 +18,9 @@ class HomeViewModel {
     
     func fetchInitialData(page: Int, perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchAllEvents(page: page, perPage: perPage) { [weak self] events in
-            guard let events = events, let newDate = events.last?.startDateTimestamp else {return}
+            guard let events = events, let newDate = events.last?.endDateTimestamp else {
+                completion([])
+                return}
             self?.startDate = Date(timeIntervalSince1970: newDate)
             self?.events = events
             self?.createViewModels()
@@ -29,7 +31,7 @@ class HomeViewModel {
     func fetchMoreData(page: Int, perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchAllEvents(page: page, perPage: perPage, startDate:startDate) { [weak self] events in
             
-            guard let events = events, let newDate = events.last?.startDateTimestamp else {
+            guard let events = events, let newDate = events.last?.endDateTimestamp else {
                 completion([])
                 return}
             
@@ -45,7 +47,15 @@ class HomeViewModel {
     }
     
     private func insertViewModels(with events:[Event]) {
-        var newVM:[HomeCellViewModel] = events.compactMap({EventHomeCellViewModel(event: $0)})
+        var newVM:[HomeCellViewModel] = events.compactMap({
+            
+            if let _ = $0.emojiTitle {
+                return PostViewModel(event: $0)
+            }else {
+                return EventHomeCellViewModel(event: $0)}
+            }
+                                                          
+        )
         
         [0,5].forEach({
             guard newVM.count > 4 else {return}
@@ -59,7 +69,14 @@ class HomeViewModel {
     }
     
     private func createViewModels(){
-        items = events.map({ EventHomeCellViewModel(event: $0) })
+        items = events.map({
+            
+            if let _ = $0.emojiTitle {
+                return PostViewModel(event: $0)
+            }else {
+                return EventHomeCellViewModel(event: $0)}
+            }
+               )
         for (index,_) in items.enumerated() {
             if index % 4 == 3 {
                 let ad = Ad(id: UUID().uuidString)

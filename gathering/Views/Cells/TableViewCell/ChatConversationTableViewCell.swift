@@ -32,7 +32,7 @@ class ChatConversationTableViewCell: UITableViewCell {
         return view
     }()
     
-    // MARK: - Properties
+    // MARK: - Class members
     var conversation:ConversationObject?{
         didSet{
             guard let users = conversation?.participants,

@@ -22,14 +22,23 @@ class HeadcountTableViewCell: UITableViewCell {
     
     private let headcountLabel:UILabel = {
         let view = UILabel()
-        view.text = "Headcount: "
+        view.text = "預計人數: "
         return view
     }()
     
     private let genderLabel:UILabel = {
         let view = UILabel()
-        view.text = "(By Gender)"
+        view.text = "(按性別)"
         
+        return view
+    }()
+    
+    let optionalLabel:UILabel = {
+        let view = UILabel()
+        view.textColor = .secondaryLabel
+        view.font = .systemFont(ofSize: 14)
+        view.text = "(選填)"
+        view.isHidden = true
         return view
     }()
     
@@ -59,36 +68,42 @@ class HeadcountTableViewCell: UITableViewCell {
         let view = UITextField()
         view.placeholder = "Min"
         view.tag = 0
+        view.keyboardType = .numberPad
         return view
     }()
     private let maxTextField:UITextField = {
         let view = UITextField()
         view.placeholder = "Max"
         view.tag = 1
+        view.keyboardType = .numberPad
         return view
     }()
     private let maleMinField:UITextField = {
         let view = UITextField()
         view.placeholder = "Min"
         view.tag = 2
+        view.keyboardType = .numberPad
         return view
     }()
     private let maleMaxField:UITextField = {
         let view = UITextField()
         view.placeholder = "Max"
         view.tag = 3
+        view.keyboardType = .numberPad
         return view
     }()
     private let femaleMinField:UITextField = {
         let view = UITextField()
         view.placeholder = "Min"
         view.tag = 4
+        view.keyboardType = .numberPad
         return view
     }()
     private let femaleMaxField:UITextField = {
         let view = UITextField()
         view.placeholder = "Max"
         view.tag = 5
+        view.keyboardType = .numberPad
         return view
     }()
     
@@ -104,13 +119,19 @@ class HeadcountTableViewCell: UITableViewCell {
         fMax:0
     )
     
+    var isOptional:Bool = false {
+        didSet {
+            optionalLabel.isHidden = !isOptional
+        }
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         
         selectionStyle = .none
         [headcountLabel,genderLabel,maleIcon,femaleIcon,expandButton,
-         miniumTextField,maxTextField,maleMinField,maleMaxField,femaleMinField,femaleMaxField
+         miniumTextField,maxTextField,maleMinField,maleMaxField,femaleMinField,femaleMaxField,optionalLabel
         ].forEach{
             contentView.addSubview($0)
             if let field = $0 as? UITextField {
@@ -121,6 +142,8 @@ class HeadcountTableViewCell: UITableViewCell {
         headcountLabel.sizeToFit()
         headcountLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,
                               padding: .init(top: 10, left: 20, bottom: 0, right: 0),size: CGSize(width: headcountLabel.width, height: 0))
+        
+        optionalLabel.anchor(top: nil, leading: headcountLabel.trailingAnchor, bottom: headcountLabel.bottomAnchor, trailing: nil)
         
         miniumTextField.anchor(top: headcountLabel.topAnchor, leading: nil, bottom: nil, trailing: nil,
                                padding: .init(top: 0, left: 0, bottom: 0, right: 0))

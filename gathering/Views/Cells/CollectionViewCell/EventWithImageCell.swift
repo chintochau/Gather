@@ -1,56 +1,41 @@
 //
-//  EventIGListCell.swift
-//  Gather Pool
+//  EventSmallCollectionViewCell.swift
+//  gathering
 //
-//  Created by Jason Chau on 2023-02-20.
+//  Created by Jason Chau on 2023-01-11.
 //
 
 import UIKit
 import IGListKit
 
-
-
-class EventCell: BasicEventCollectionViewCell, ListBindable {
+final class EventWithImageCell: BasicEventCollectionViewCell,ListBindable {
     
-    static let identifier = "EventCellIdentifier"
-    
-    private let nameLabel:UILabel = {
-        let view = UILabel()
-        return view
-    }()
-    
+    static let identifier = "EventSmallCollectionViewCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         [ locationLabel, dateLabel].forEach({addSubview($0)})
         
         
         let emojiSize:CGFloat = 35
         
-        
-        profileImageview.anchor(
-            top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,
-            padding: .init(top: 5, left: 10, bottom: 0, right: 0),
-            size: CGSize(width: emojiSize, height: emojiSize))
+        profileImageview.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 10, bottom: 0, right: 0),size: CGSize(width: emojiSize, height: emojiSize))
+        profileImageview.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor,constant: 0).isActive = true
         profileImageview.layer.cornerRadius = emojiSize/2
         
-        profileTitleLabel.anchor(
-            top: profileImageview.topAnchor, leading: profileImageview.trailingAnchor, bottom: profileImageview.bottomAnchor, trailing: nil,
-            padding: .init(top: 0, left: 5, bottom: 0, right: 0))
+        eventImageView.anchor(top: profileImageview.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 5, left: 0, bottom: 0, right: 0), size: CGSize(width: width/3.5, height: width/3.5))
+        
+        profileTitleLabel.anchor(top: profileImageview.topAnchor, leading: profileImageview.trailingAnchor, bottom: profileImageview.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
         
         
-        titleLabel.anchor(
-            top: profileImageview.bottomAnchor, leading: profileImageview.leadingAnchor, bottom: nil, trailing: trailingAnchor,
-            padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
+        titleLabel.anchor(top: profileImageview.bottomAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing: nil,
+                          padding: .init(top: 5, left: 5, bottom: 0, right: 0))
         
-        dateLabel.anchor(
-            top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor)
+        dateLabel.anchor(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil)
         
-        locationLabel.anchor(top: dateLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: nil)
-        
-        introLabel.anchor(top: locationLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,
-                          padding: .init(top: 0, left: 0, bottom: 10, right: 10))
+        locationLabel.anchor(top: dateLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil)
         
         
         // MARK: - Gender separated
@@ -76,13 +61,12 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         totalIconImageView.anchor(top: profileImageview.topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,
                                   padding: .init(top: 0, left: 0, bottom: 0, right: 10),
                                   size: CGSize(width: totalImageSize, height: totalImageSize))
-        
+
         totalNumber.sizeToFit()
         totalNumber.anchor(top: totalIconImageView.topAnchor, leading: nil, bottom: totalIconImageView.bottomAnchor, trailing: totalIconImageView.leadingAnchor
                            ,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
+
         
-        
-        backgroundShade.anchor(top: titleLabel.topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
         
     }
     
@@ -90,14 +74,10 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        nameLabel.text = nil
-    }
     
     func bindViewModel(_ viewModel: Any) {
-        guard let vm = viewModel as? EventHomeCellViewModel else { return }
-        // Update the cell with the event information
+        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        
         if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
@@ -115,13 +95,11 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
             
             let maleMax = vm.headcount.mMax
             let femaleMax = vm.headcount.fMax
-            
             if maleMax == 0 {
                 maleNumber.text = "\(vm.peopleCount.male)"
             }else {
                 maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
             }
-            
             if femaleMax == 0 {
                 femaleNumber.text = "\(vm.peopleCount.female)"
             }else {
@@ -133,7 +111,6 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
             [maleNumber,femaleNumber,
              maleIconImageView,femaleIconImageView
             ].forEach({$0.isHidden = true})
-            
             totalNumber.text = vm.totalString
         }
         
@@ -141,32 +118,13 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         
     }
     
-    
-    
-}
-
-
-
-
-class PeopleCell: UICollectionViewCell, ListBindable {
-    func bindViewModel(_ viewModel: Any) {
-        guard let event = viewModel as? EventHomeCellViewModel else { return }
-        // Update the cell with the event information
-    }
-}
-
-class PlaceCell: UICollectionViewCell, ListBindable {
-    func bindViewModel(_ viewModel: Any) {
-        guard let event = viewModel as? EventHomeCellViewModel else { return }
-        // Update the cell with the event information
-    }
 }
 
 #if DEBUG
 import SwiftUI
 
 @available(iOS 13, *)
-struct PreviewHOME: PreviewProvider {
+struct PreviewHOMEVIEW: PreviewProvider {
     
     static var previews: some View {
         // view controller using programmatic UI

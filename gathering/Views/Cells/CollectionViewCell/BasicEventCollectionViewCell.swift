@@ -32,7 +32,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
-    let emojiStringView:UILabel = {
+    let emojiIconLabel:UILabel = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 30)
         return view
@@ -56,6 +56,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 2
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -63,6 +64,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 1
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -141,9 +143,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             backgroundShade,
             profileImageview,
             eventImageView,
-            dateLabel,
             titleLabel,
-            locationLabel,
             likeButton,
             shareButton,
             maleIconImageView,
@@ -153,7 +153,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             totalIconImageView,
             totalNumber,
             priceLabel,
-            emojiStringView,
+            emojiIconLabel,
             introLabel,
             profileTitleLabel
         ].forEach({addSubview($0)})
@@ -184,7 +184,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         locationLabel.text = nil
         likeButton.setImage(UIImage(systemName:  "heart"), for: .normal)
         likeButton.tintColor = .label
-        emojiStringView.text = nil
+        emojiIconLabel.text = nil
         introLabel.text = nil
         profileTitleLabel.text = nil
         
@@ -201,7 +201,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         dateLabel.text = vm.dateString + " - " + vm.dayString + "\n" + vm.timeString
         titleLabel.text = vm.title
         locationLabel.text = vm.location
-        emojiStringView.text = vm.emojiString
+        emojiIconLabel.text = vm.emojiString
         introLabel.text = vm.intro
         profileTitleLabel.text = vm.organiser?.name
 

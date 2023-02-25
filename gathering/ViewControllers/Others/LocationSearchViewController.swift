@@ -46,7 +46,6 @@ class LocationSearchViewController: UIViewController {
         let resultVC = searchController.searchResultsController as! LocationSearchResultTableVC
         resultVC.delegate = self
         resultVC.mapView = mapView
-//        print(mapView.region)
         
     }
     

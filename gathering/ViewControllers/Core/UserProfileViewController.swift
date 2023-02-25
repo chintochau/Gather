@@ -14,7 +14,7 @@ class UserProfileViewController: UIViewController {
     private var collectionView:UICollectionView?
     
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     private let user:User
     
@@ -65,7 +65,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(EmojiEventCollectionViewCell.self, forCellWithReuseIdentifier: EmojiEventCollectionViewCell.identifier)
+        collectionView.register(PostCollectionViewCell.self, forCellWithReuseIdentifier: PostCollectionViewCell.identifier)
         collectionView.register(UserProfileHeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeaderReusableView.identifier)
         self.collectionView = collectionView
     }
@@ -105,8 +105,8 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let model = events[indexPath.row]
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmojiEventCollectionViewCell.identifier, for: indexPath) as! EmojiEventCollectionViewCell
-        cell.configure(with: EventHomeCellViewModel(event: model))
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostCollectionViewCell.identifier, for: indexPath) as! PostCollectionViewCell
+        cell.bindViewModel(EventHomeCellViewModel(event: model))
         cell.widthAnchor.constraint(equalToConstant: view.width-20).isActive = true
         return cell
     }

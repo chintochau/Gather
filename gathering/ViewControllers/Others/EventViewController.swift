@@ -210,7 +210,7 @@ extension EventViewController {
     
     @objc private func didTapShare(){
         
-        let string = event.toString()
+        let string = event.toString(includeTime: true)
         
         let activityVC = UIActivityViewController(activityItems: [string], applicationActivities: nil)
         present(activityVC, animated: true, completion: nil)

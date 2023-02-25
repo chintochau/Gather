@@ -29,6 +29,7 @@ class TitleWithImageTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
         contentView.addSubview(emojiButton)
         contentView.addSubview(titleField)
         let imageSize:CGFloat = 40

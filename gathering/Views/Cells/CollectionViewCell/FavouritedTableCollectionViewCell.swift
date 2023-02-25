@@ -35,7 +35,7 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
     }()
     
     
-    // MARK: - Properties
+    // MARK: - Class members
     private var viewModels:[SearchResult] = []
     
     private var relationships:Results<RelationshipObject>

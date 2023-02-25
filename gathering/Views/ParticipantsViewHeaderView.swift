@@ -73,7 +73,7 @@ class ParticipantsViewHeaderView: UIView {
     }()
     
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     var viewModel:EventHomeCellViewModel? {
         didSet{

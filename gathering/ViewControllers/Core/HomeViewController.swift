@@ -18,7 +18,7 @@ class HomeViewController: UIViewController{
     
     
     
-    // MARK: - Properties
+    // MARK: - Class members
     private var viewModel = HomeViewModel()
     var currentCell:BasicEventCollectionViewCell?
     private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
@@ -133,11 +133,15 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     }
     
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-        if object is EventHomeCellViewModel {
+        switch object {
+        case _ as EventHomeCellViewModel:
             return EventSectionController()
-        } else {
+        case _ as PostViewModel:
+            return PostSectionController()
+        default:
             return HomeSectionController()
         }
+        
     }
     
     func emptyView(for listAdapter: ListAdapter) -> UIView? {

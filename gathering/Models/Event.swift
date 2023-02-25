@@ -114,24 +114,55 @@ enum hobbyType:String,CaseIterable {
 
 
 extension Event {
-    func toString () -> String {
+    func toString (includeTime:Bool) -> String {
         let event = self
         
-        let emojiTitle:String = event.emojiTitle ?? ""
         
-        let title:String = emojiTitle + " " + event.title
         
-        let startString:String = {
-            return "\nTime: " + event.startDateString
+        let emojiString:String = {
+            if let emojiString = event.emojiTitle {
+                return emojiString + " "
+            }else {
+                return ""
+            }
+        }()
+        
+        let title:String = "\(event.title) \n"
+        
+        let intro:String = {
+            if let intro = event.introduction {
+                return "\(intro)\n"
+            }else {
+                return ""
+            }
+        }()
+        
+        let localeDate = String.localeDate(from: event.startDateString, .zhHantTW)
+        
+        let date = localeDate.date
+        let dayOfWeek = localeDate.dayOfWeek
+        let time = localeDate.time
+        
+        let dateString:String = {
+            return "\n日期: \(date!) (\(dayOfWeek!))"
+        }()
+        
+        let timeString:String = {
+            if includeTime {
+                return "\n時間: \(time!)"
+                
+            } else {
+                return ""
+            }
         }()
         
         let location:String = {
-            return "\nLocation: " + event.location.name
+            return "\n地點: " + event.location.name
         }()
         
         let address:String = {
             if let address = event.location.address {
-                return "\nAddress: " + address
+                return ", " + address
             }
             return ""
         }()
@@ -144,14 +175,14 @@ extension Event {
             
             var counter:Int = 1
         
-            var namelist = "\nNamelist: "
+            var namelist = "\n接龍: "
             for participant in event.participants {
                 namelist += "\n\(counter). " + (participant.key == currentUsername ? currentName ?? "Not Valid" : participant.key)
                 counter += 1
             }
             return namelist
         }()
-        let string = title + startString + location + address + participants
+        let string = emojiString + title + intro + dateString +  timeString + location + address + participants
         return string
     }
 }

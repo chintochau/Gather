@@ -1,58 +1,35 @@
 //
-//  FormEventViewController.swift
-//  gathering
+//  NewPostViewController.swift
+//  Gather Pool
 //
-//  Created by Jason Chau on 2023-01-30.
-//
+//  Created by Jason Chau on 2023-02-24.
+
 
 import UIKit
 import EmojiPicker
 
 
-enum InputFieldType {
-    case textField(title:String, placeholder:String,text:String = "")
-    case textView(title:String, text:String?,tag:Int = 0)
-    case value(title:String, value:String)
-    case userField(username:String,name:String?, profileUrl:String?)
-    case textLabel(text:String)
-    case datePicker
-    case headCount
-    case participants
-    case titleField(placeholder:String? = nil)
-    case horizentalPicker(title:String,selectedObject:Any,objects:[Any])
-}
 
-
-class FormEventViewController: UIViewController {
+class NewPostViewController: UIViewController {
     
+    
+    // MARK: - Components
     private let tableView:UITableView = {
         let view =  UITableView(frame: .zero, style: .grouped)
         return view
     }()
     
-    private var viewModels = [[InputFieldType]()]
-    
     private var emojiButton:UIButton?
     
     
+    // MARK: - Class members
+    private var viewModels = [[InputFieldType]()]
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
     var completion: ((_ event:Event) -> Void)?
     
-    var newEvent = NewEvent()
+    var newPost = NewPost()
     
-//    var tempEvent = (
-//        title:"",
-//        emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
-//        startTimestamp:Date(),
-//        endTimestamp:Date(),
-//        location:Location.toronto,
-//        detail:"",
-//        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
-//        participants:["":""],
-//        participantsArray:[Participant](),
-//        addDetail:""
-//    )
     
     // MARK: - LifeCycle
     
@@ -74,27 +51,27 @@ class FormEventViewController: UIViewController {
     
     private func initialUser(){
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
-        newEvent.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
+        newPost.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
     }
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
-        var location = newEvent.location.name
-        if let address = newEvent.location.address {
+        var location = newPost.location.name
+        if let address = newPost.location.address {
             location = location + "\n" + address
         }
         
         viewModels = [
             [
-                .titleField(),
-                .textView(title: "Intro: ", text: newEvent.intro,tag: 0)
+                .titleField(placeholder: "例： 滑雪/食日本野/周末聚下..."),
+                .textView(title: "簡介:", text: newPost.intro,tag: 0)
             ],[
                 .datePicker,
-                .value(title: "Location: ", value: location),
-                .textView(title: "Additional details: ", text: "Not yeat imple.",tag: 1)
+                .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray)
             ],[
                 .headCount,
                 .participants
+                    
             ]
         ]
         
@@ -103,7 +80,7 @@ class FormEventViewController: UIViewController {
     
     // MARK: - Nav Bar
     private func setupNavBar(){
-        navigationItem.title = "Form an Event"
+        navigationItem.title = "組團"
         let postButton = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapPost))
         let previewButton = UIBarButtonItem(image: UIImage(systemName: "doc.text.magnifyingglass"), style: .done, target: self, action:#selector(didTapPreview))
         navigationItem.rightBarButtonItems = [postButton,previewButton]
@@ -124,7 +101,8 @@ class FormEventViewController: UIViewController {
         }
     }
 }
-extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
+
+extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     // MARK: - TableView
     fileprivate func configureTableView() {
         view.addSubview(tableView)
@@ -142,6 +120,7 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(HeadcountTableViewCell.self, forCellReuseIdentifier: HeadcountTableViewCell.identifier)
         tableView.register(ParticipantsTableViewCell.self, forCellReuseIdentifier: ParticipantsTableViewCell.identifier)
         tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
+        tableView.register(HorizontalCollectionView.self, forCellReuseIdentifier: HorizontalCollectionView.identifier)
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -174,6 +153,7 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         case .textView(title: let title, text: let text,tag: let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             cell.configure(withTitle: title, placeholder: text,tag: tag)
+            cell.isOptional = true
             cell.textView.delegate = self
             return cell
         case .value(title: let title, value: let value):
@@ -188,21 +168,28 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         case .datePicker:
             let cell = tableView.dequeueReusableCell(withIdentifier: DatePickerTableViewCell.identifier, for: indexPath) as! DatePickerTableViewCell
             cell.delegate = self
-            cell.configure(mode: .dateAndTime)
             return cell
         case .headCount:
             let cell = tableView.dequeueReusableCell(withIdentifier: HeadcountTableViewCell.identifier, for: indexPath) as! HeadcountTableViewCell
+            cell.isOptional = true
             cell.delegate = self
             return cell
         case .participants:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
             return cell
-        case .titleField:
+        case .titleField(placeholder: let placeholder):
             let cell = tableView.dequeueReusableCell(withIdentifier: TitleWithImageTableViewCell.identifier, for: indexPath) as! TitleWithImageTableViewCell
             cell.emojiButton.addTarget(self, action: #selector(openEmojiPickerModule), for: .touchUpInside)
             cell.titleField.delegate = self
+            cell.titleField.placeholder = placeholder
             emojiButton = cell.emojiButton
+            return cell
+        case .horizentalPicker(title: let title,selectedObject: let selectedObject, objects: let objects):
+            let cell = tableView.dequeueReusableCell(withIdentifier: HorizontalCollectionView.identifier, for: indexPath) as! HorizontalCollectionView
+            cell.configure(title: title, selectedObject: selectedObject, with: objects)
+            cell.isOptional = true
+            cell.delegate  = self
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
@@ -227,51 +214,52 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Current User: "
+            return "有無人想: "
         case 1:
-            return "Event Details: "
+            return "時間/地點: "
         case 2:
-            return "Participants"
+            return "現有參加者:"
         default:
             return nil
         }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 20
+        return 30
     }
     
 }
 
-extension FormEventViewController {
+extension NewPostViewController {
     // MARK: - Handle Preview/ Post
     
-    private func createEventFromTempEvent() -> Event?{
-        newEvent.toEvent()
+    private func createPostFromNewPost() -> Event?{
+        newPost.toEvent()
     }
     
     @objc private func didTapPreview(){
         view.endEditing(true)
         
-        guard let event = createEventFromTempEvent() else {return}
+        guard let event = createPostFromNewPost(), event.title.count > 1 else {
+            AlertManager.shared.showAlert(title: "Oops~", message: "請輸入最少兩個字的標題", from: self)
+            return
+        }
         
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))
-        
-        
         vc.modalPresentationStyle = .overCurrentContext
         vc.modalTransitionStyle = .crossDissolve
         vc.action = didTapPost
-        
         present(vc, animated: true)
-        
-        
     }
     
     @objc private func didTapPost(){
         view.endEditing(true)
         
-        guard let event = createEventFromTempEvent() else {return}
+        guard let event = createPostFromNewPost(), event.title.count > 1 else {
+            AlertManager.shared.showAlert(title: "Oops~", message: "請輸入最少兩個字的標題", from: self)
+            return
+        }
         DatabaseManager.shared.createEvent(with: event) { [weak self] success in
             self?.navigationController?.popToRootViewController(animated: false)
             self?.completion?(event)
@@ -280,19 +268,23 @@ extension FormEventViewController {
     }
 }
 
-extension FormEventViewController: LocationSerchViewControllerDelegate {
+extension NewPostViewController: LocationSerchViewControllerDelegate {
     // MARK: - Handle Location
     func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
-        newEvent.location = location
+        newPost.location = location
         configureViewModels()
     }
 }
 
-extension FormEventViewController:DatePickerTableViewCellDelegate {
+extension NewPostViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        newEvent.startDate = startDate
-        newEvent.endDate = endDate
+        
+        print(startDate)
+        print(endDate)
+        
+        newPost.startDate = startDate
+        newPost.endDate = endDate
     }
     
     func DatePickerDidTapAddEndTime(_ cell: DatePickerTableViewCell) {
@@ -302,35 +294,35 @@ extension FormEventViewController:DatePickerTableViewCellDelegate {
     
 }
 
-extension FormEventViewController:HeadcountTableViewCellDelegate {
+extension NewPostViewController:HeadcountTableViewCellDelegate {
     // MARK: - handle Headcount
     func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
-        newEvent.headcount = headcount
+        newPost.headcount = headcount
     }
     
     
     func HeadcountTableViewCellDidTapExpand(_ cell: HeadcountTableViewCell, headcount: Headcount) {
-        newEvent.headcount = headcount
+        newPost.headcount = headcount
         tableView.beginUpdates()
         tableView.endUpdates()
     }
     
 }
-extension FormEventViewController:UITextFieldDelegate {
+extension NewPostViewController:UITextFieldDelegate {
     // MARK: - Handle TextField
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text, !text.isEmpty else {return}
-        newEvent.title = text
+        newPost.title = text
     }
 }
 
-extension FormEventViewController:UITextViewDelegate {
+extension NewPostViewController:UITextViewDelegate {
     // MARK: - Handle TextView
     func textViewDidChange(_ textView: UITextView) {
         switch textView.tag {
         case 0:
             // Intro View
-            newEvent.intro = textView.text
+            newPost.intro = textView.text
         case 1:
             // addDetail View
             print("add info not yet implemented")
@@ -343,10 +335,10 @@ extension FormEventViewController:UITextViewDelegate {
     }
 }
 
-extension FormEventViewController:ParticipantsTableViewCellDelegate {
+extension NewPostViewController:ParticipantsTableViewCellDelegate {
     // MARK: - Handle Participants
     func ParticipantsTableViewCellTextViewDidEndEditing(_ cell: ParticipantsTableViewCell, _ textView: UITextView, participants: [String : Participant]) {
-        newEvent.participants = participants
+        newPost.participants = participants
         tableView.beginUpdates()
         tableView.endUpdates()
     }
@@ -360,7 +352,7 @@ extension FormEventViewController:ParticipantsTableViewCellDelegate {
     
 }
 
-extension FormEventViewController:EmojiPickerDelegate {
+extension NewPostViewController:EmojiPickerDelegate {
     // MARK: - Pick Emoji
     
     @objc private func openEmojiPickerModule(sender: UIButton) {
@@ -374,8 +366,20 @@ extension FormEventViewController:EmojiPickerDelegate {
     
     func didGetEmoji(emoji: String) {
         UserDefaults.standard.setValue(emoji, forKey: "selectedEmoji")
-        newEvent.emojiTitle = emoji
+        newPost.emojiTitle = emoji
         emojiButton?.setTitle(emoji, for: .normal)
     }
+    
+}
+
+extension NewPostViewController:HorizontalCollectionViewCellDelegate {
+    func horizontalCollectionViewCell(_ cell: HorizontalCollectionView, didSelectObject object: Any) {
+        if let object = object as? Location {
+            newPost.location = object
+        }
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+    
     
 }

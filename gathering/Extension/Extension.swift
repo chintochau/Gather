@@ -146,8 +146,53 @@ extension DateFormatter {
     }()
 }
 
+
 extension Date {
+    static func todayAtMidnight() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
+        let dateString = dateFormatter.string(from: Date())
+        let todayAtMidnight = dateFormatter.date(from: dateString)
+        
+        return todayAtMidnight!
+    }
     
+    static func tomorrowAtMidnight() -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
+        let currentDate = Date()
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!
+        let dateString = dateFormatter.string(from: tomorrow)
+        let tomorrowAtMidnight = dateFormatter.date(from: dateString)
+        return tomorrowAtMidnight!
+    }
+    
+    static func startOfThisWeek() -> Date {
+        let calendar = Calendar.current
+        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: calendar.startOfDay(for: Date())))!
+        return startOfWeek
+    }
+    
+    static func startOfNextWeek() -> Date {
+        let calendar = Calendar.current
+        let startOfNextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: startOfThisWeek())!
+        return startOfNextWeek
+    }
+    
+    static func startOfTwoWeeksAfter() -> Date {
+        let calendar = Calendar.current
+        let startOfTwoWeeksAfter = calendar.date(byAdding: .weekOfYear, value: 2, to: startOfThisWeek())!
+        return startOfTwoWeeksAfter
+    }
+    
+    func adding(days: Int) -> Date {
+        return Calendar.current.date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func subtract(days: Int) -> Date {
+        let secondsInDay: TimeInterval = Double(days) * 86400
+        return self.addingTimeInterval(-secondsInDay)
+    }
     /// return String in format yyyyMM, i.e. 202312
     func getYearMonth () -> String {
         let dateFormatter = DateFormatter()
@@ -185,15 +230,15 @@ extension String {
         
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: identifier.rawValue)
-
+        
         // Date
-        dateFormatter.dateFormat = "d MMM"
+        dateFormatter.dateFormat = "M月 d日"
         let dateString = dateFormatter.string(from: date)
-
+        
         // Day of the week
         dateFormatter.dateFormat = "EEEE"
         let dayString = dateFormatter.string(from: date)
-
+        
         // Time
         dateFormatter.dateFormat = "HH:mm a"
         let timeString = dateFormatter.string(from: date)
@@ -248,7 +293,7 @@ extension RangeReplaceableCollection where Element: Equatable {
 
 extension UIColor {
     convenience init(rgb: UInt) {
-       self.init(red: CGFloat((rgb & 0xFF0000) >> 16) / 255.0, green: CGFloat((rgb & 0x00FF00) >> 8) / 255.0, blue: CGFloat(rgb & 0x0000FF) / 255.0, alpha: CGFloat(1.0))
+        self.init(red: CGFloat((rgb & 0xFF0000) >> 16) / 255.0, green: CGFloat((rgb & 0x00FF00) >> 8) / 255.0, blue: CGFloat(rgb & 0x0000FF) / 255.0, alpha: CGFloat(1.0))
     }
     
     convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
@@ -259,7 +304,7 @@ extension UIColor {
             alpha: 1
         )
     }
-
+    
     convenience init(red: Int, green: Int, blue: Int) {
         self.init(
             r: CGFloat(red),
@@ -267,7 +312,7 @@ extension UIColor {
             b: CGFloat(blue)
         )
     }
-
+    
     convenience init(rgb: Int) {
         self.init(
             red: (rgb >> 16) & 0xff,
@@ -305,21 +350,21 @@ extension UIColor {
     // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.
     // So we apply a light gray color to fake the transparency.
     static let streamModalShadow = mode(0xd6d6d6, lightAlpha: 1, 0, darkAlpha: 1)
-
+    
     static let streamWhiteStatic = mode(0xffffff, 0xffffff)
-
+    
     static let streamBGGradientFrom = mode(0xf7f7f7, 0x101214)
     static let streamBGGradientTo = mode(0xfcfcfc, 0x070a0d)
     static let streamOverlay = mode(0x000000, lightAlpha: 0.2, 0x000000, darkAlpha: 0.4)
     static let streamOverlayDark = mode(0x000000, lightAlpha: 0.6, 0xffffff, darkAlpha: 0.8)
     static let streamOverlayDarkStatic = mode(0x000000, lightAlpha: 0.6, 0x000000, darkAlpha: 0.6)
-
+    
     static func mode(_ light: Int, lightAlpha: CGFloat = 1.0, _ dark: Int, darkAlpha: CGFloat = 1.0) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { traitCollection in
                 traitCollection.userInterfaceStyle == .dark
-                    ? UIColor(rgb: dark).withAlphaComponent(darkAlpha)
-                    : UIColor(rgb: light).withAlphaComponent(lightAlpha)
+                ? UIColor(rgb: dark).withAlphaComponent(darkAlpha)
+                : UIColor(rgb: light).withAlphaComponent(lightAlpha)
             }
         } else {
             return UIColor(rgb: light).withAlphaComponent(lightAlpha)
@@ -346,9 +391,9 @@ extension UILabel {
 }
 
 extension UITableViewCell {
-  func separator(hide: Bool) {
-    separatorInset.left = hide ? bounds.size.width : 0
-  }
+    func separator(hide: Bool) {
+        separatorInset.left = hide ? bounds.size.width : 0
+    }
 }
 
 
@@ -384,7 +429,7 @@ extension UIViewController {
             break
         }
     }
-
+    
 }
 
 
@@ -397,15 +442,15 @@ extension UIViewController {
     private struct Preview: UIViewControllerRepresentable {
         // this variable is used for injecting the current view controller
         let viewController: UIViewController
-
+        
         func makeUIViewController(context: Context) -> UIViewController {
             return viewController
         }
-
+        
         func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         }
     }
-
+    
     func toPreview() -> some View {
         // inject self (the current view controller) for the preview
         Preview(viewController: self)

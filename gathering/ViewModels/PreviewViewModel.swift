@@ -11,7 +11,7 @@ struct PreviewViewModel{
     let event:Event
     
     var eventString:String {
-        event.toString()
+        event.toString(includeTime: false)
     }
     
 }

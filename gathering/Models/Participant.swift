@@ -18,8 +18,8 @@ struct Participant:Codable {
     var status:Int
     
     enum participantStatus:Int {
-        case interested = 0
-        case going = 1
+        case going = 0
+        case host = 1
         case waitList = 2
     }
     

@@ -11,6 +11,8 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "FilterButtonCollectionViewCell"
     
+    private let normalTextColor:UIColor = .secondaryLabel
+    
     override var isSelected: Bool{
         willSet{
                 super.isSelected = newValue
@@ -19,17 +21,20 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
                     self.layer.borderWidth = 1.0
                     self.layer.borderColor = UIColor.mainColor?.cgColor
                     self.backgroundColor = .mainColor
+                    self.filterTextLabel.textColor = .streamWhiteSnow
                 }
                 else
                 {
                     self.layer.borderWidth = 0
-                    self.backgroundColor = .secondarySystemBackground
+                    self.backgroundColor = .streamWhiteSnow
+                    self.filterTextLabel.textColor = normalTextColor
                 }
             }
     }
     
     private let filterTextLabel:UILabel = {
         let view = UILabel()
+        view.textAlignment = .center
         return view
     }()
     
@@ -37,8 +42,9 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(filterTextLabel)
-        backgroundColor = .secondarySystemBackground
+        backgroundColor = .streamWhiteSnow
         layer.cornerRadius = 13
+        filterTextLabel.textColor = normalTextColor
         filterTextLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,
                                padding: .init(top: 5, left: 10, bottom: 5, right: 10))
     }
@@ -54,6 +60,19 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
     
     func configure(with filterText:String){
         filterTextLabel.text = filterText
+    }
+    
+    func configure(with object:Any){
+        var title = ""
+        switch object {
+        case let location as Location:
+            title = location.name
+        case let eventDate as EventDate:
+            title = eventDate.name
+        default:
+            break
+        }
+        filterTextLabel.text = title
     }
     
     

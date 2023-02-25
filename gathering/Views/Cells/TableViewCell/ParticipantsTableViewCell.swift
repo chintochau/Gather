@@ -29,13 +29,22 @@ class ParticipantsTableViewCell:UITableViewCell {
     
     let titleLabel:UILabel = {
         let view = UILabel()
-        view.text = "Participants: "
+        view.text = "接龍:"
         return view
     }()
     
     let countLabel:UILabel = {
         let view = UILabel()
-        view.text = "Total: 1"
+        view.text = "人數: 1"
+        return view
+    }()
+    
+    
+    let optionalLabel:UILabel = {
+        let view = UILabel()
+        view.textColor = .secondaryLabel
+        view.font = .systemFont(ofSize: 14)
+        view.text = "(選填)"
         return view
     }()
     
@@ -89,7 +98,11 @@ class ParticipantsTableViewCell:UITableViewCell {
     
     
     var buttons = [UIButton]()
-    
+    var isOptional:Bool = false {
+        didSet {
+            optionalLabel.isHidden = !isOptional
+        }
+    }
    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -102,13 +115,18 @@ class ParticipantsTableViewCell:UITableViewCell {
          redIcon,
          blueIcon,
          blueNumber,
-         redNumber].forEach({contentView.addSubview($0)})
+         redNumber,
+        optionalLabel].forEach({contentView.addSubview($0)})
         [titleLabel,
          countLabel].forEach({$0.sizeToFit()})
         textView.delegate = self
         selectionStyle = .none
         
+        
         titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 20, bottom: 0, right: 0))
+        
+        optionalLabel.anchor(top: nil, leading: titleLabel.trailingAnchor, bottom: titleLabel.bottomAnchor, trailing: nil)
+        
         userLabel.anchor(top: titleLabel.bottomAnchor, leading: textView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
         userImageView.anchor(top: userLabel.topAnchor, leading: stackView.leadingAnchor, bottom: userLabel.bottomAnchor, trailing: stackView.trailingAnchor)
         
@@ -180,7 +198,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
         guard let text = textView.text else {return}
         
         let names = text.split(separator: "\n")
-        countLabel.text = "Total: \(String(names.count+1))"
+        countLabel.text = "人數: \(String(names.count+1))"
         
         let lines = text.filter({ $0 == "\n"}).count
         while buttons.count > lines+1 {

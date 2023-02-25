@@ -44,7 +44,7 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
         return view
     }()
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     let maxNumberOfLines = 5
     let targetUsername:String

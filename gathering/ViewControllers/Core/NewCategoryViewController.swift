@@ -9,7 +9,8 @@ import UIKit
 
 
 enum categoryType:String,CaseIterable {
-    case formEvent = "Form an Event"
+    case post = "組團"
+//    case formEvent = "Form an Event"
     case newEvent = "Post an Event"
     case newGroup = "Create a new Group"
 }
@@ -81,8 +82,10 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
         
         let vm = viewModels[indexPath.row]
         switch vm {
-        case .formEvent:
+        case .post:
             cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
+//        case .formEvent:
+//            cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
         case .newEvent:
             cell.configure(withImage: UIImage(named: "post.event"), text: vm.rawValue)
         default:
@@ -106,13 +109,21 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             
             let vm = viewModels[indexPath.row]
             switch vm {
-            case .formEvent:
-                let vc = FormEventViewController()
-                vc.completion = { [weak self] event in
-                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: nil)!)
+            case .post:
+                let vc = NewPostViewController()
+                vc.completion = { [weak self] post in
+                    let vc = EventViewController(viewModel: EventViewModel(with: post, image: nil)!)
                     self?.navigationController?.pushViewController(vc, animated: true)
+                    
                 }
                 navigationController?.pushViewController(vc, animated: true)
+//            case .formEvent:
+//                let vc = FormEventViewController()
+//                vc.completion = { [weak self] event in
+//                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: nil)!)
+//                    self?.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                navigationController?.pushViewController(vc, animated: true)
                 
             case .newEvent:
                 let vc = NewEventViewController()

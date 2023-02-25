@@ -148,15 +148,15 @@ final class DatabaseManager {
         }
     }
     
-    public func fetchAllEvents(page: Int, perPage: Int,startDate:Date = Date(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+    public func fetchAllEvents(page: Int, perPage: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
         
         print("start date: \(startDate)")
         
         let excludedEventIDs = excludeEvents.compactMap({$0.id})
         
         let ref = database.collection("events")
-            .order(by: "startDateTimestamp",descending: false)
-            .whereField("startDateTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
+            .order(by: "endDateTimestamp",descending: false)
+            .whereField("endDateTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
             .limit(to: perPage)
         
         ref.getDocuments { snapshot, error in

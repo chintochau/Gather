@@ -24,17 +24,7 @@ class NewEventViewController: UIViewController{
         print("released")
     }
     
-    private var tempEvent = (
-        title:"",
-        description:"",
-        location:Location.toronto,
-        price:0.0,
-        refund:"",
-        endTimestamp:Date(),
-        startTimestamp:Date(),
-        headcount:Headcount()
-    )
-    
+    private var tempEvent = NewEvent()
     
     private let picker = UIImagePickerController()
     
@@ -189,8 +179,8 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
             
             
             let cell = tableView.dequeueReusableCell(withIdentifier: DatePickerTableViewCell.identifier, for: indexPath) as! DatePickerTableViewCell
-
             cell.delegate = self
+            cell.configure(mode: .dateAndTime)
             
             return cell
         case .priceField:
@@ -322,8 +312,6 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
             switch name {
             case newEventPageType.desctiptionField.rawValue:
                 tempEvent.description = text
-            case newEventPageType.refundField.rawValue:
-                tempEvent.refund = text
             default:
                 print("please check type")
             }
@@ -341,7 +329,6 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
             case newEventPageType.priceField.rawValue:
                 guard let price = Double(text) else {
                     fatalError("cannot change price to type double")}
-                tempEvent.price = price
             default:
                 print("please check type")
             }
@@ -350,8 +337,8 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
     
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        tempEvent.startTimestamp = startDate
-        tempEvent.endTimestamp = endDate
+        tempEvent.startDate = startDate
+        tempEvent.endDate = endDate
         
     }
     
@@ -465,14 +452,14 @@ extension NewEventViewController {
             title: tempEvent.title,
             organisers: [user],
             imageUrlString: urlStrings,
-            price: tempEvent.price,
-            startDateTimestamp: tempEvent.startTimestamp.timeIntervalSince1970,
-            endDateTimestamp: tempEvent.endTimestamp.timeIntervalSince1970,
+            price: 0,
+            startDateTimestamp: tempEvent.startDate.timeIntervalSince1970,
+            endDateTimestamp: tempEvent.endDate.timeIntervalSince1970,
             location: tempEvent.location,
             tag: [],
             introduction: tempEvent.description,
             additionalDetail: "",
-            refundPolicy: tempEvent.refund,
+            refundPolicy: "",
             participants: [:],
             headcount: tempEvent.headcount,
             ownerFcmToken: user.fcmToken

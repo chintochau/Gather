@@ -31,7 +31,7 @@ class EventSectionController: ListSectionController {
         
         if let _ = vm.imageUrlString {
             
-            let cell = collectionContext?.dequeueReusableCell(of: SmallEventCollectionViewCell.self, for: self, at: index) as! SmallEventCollectionViewCell
+            let cell = collectionContext?.dequeueReusableCell(of: EventWithImageCell.self, for: self, at: index) as! EventWithImageCell
             cell.bindViewModel(vm)
             return cell
             

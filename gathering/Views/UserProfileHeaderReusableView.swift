@@ -72,7 +72,7 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
     }()
     
     
-    // MARK: - Properties
+    // MARK: - Class members
     
     var user:User? {
         didSet {
