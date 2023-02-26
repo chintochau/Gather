@@ -22,7 +22,6 @@ class HomeViewController: UIViewController{
     private var viewModel = HomeViewModel()
     var currentCell:BasicEventCollectionViewCell?
     private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
-    var currentPage = 1
     let eventsPerPage = 7
     
     
@@ -119,15 +118,14 @@ class HomeViewController: UIViewController{
     
     // MARK: - Fetch Data
     private func initialFetchDate(completion: (() -> (Void))? = nil ){
-        currentPage = 1
-        viewModel.fetchInitialData(page: currentPage, perPage: eventsPerPage) { [weak self] events in
+        viewModel.fetchInitialData(perPage: eventsPerPage) { [weak self] events in
             self?.adapter.performUpdates(animated: true)
             completion?()
         }
     }
     
     private func fetchMoreData(completion: (() -> (Void))? = nil ){
-        viewModel.fetchMoreData(page: currentPage, perPage: eventsPerPage) {[weak self] events in
+        viewModel.fetchMoreData(perPage: eventsPerPage) {[weak self] events in
             guard let self = self else { return }
             self.adapter.performUpdates(animated: true)
             completion?()
@@ -162,7 +160,6 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
         
             if index == viewModel.items.count - 1 {
-                currentPage += 1
                 fetchMoreData()
             }
     }

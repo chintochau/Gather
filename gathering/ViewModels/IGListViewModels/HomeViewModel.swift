@@ -17,26 +17,26 @@ class HomeViewModel {
     var items:[HomeCellViewModel] = []
     
     
-    func fetchInitialData(page: Int, perPage: Int,completion:@escaping ([Event]) -> Void) {
-        DatabaseManager.shared.fetchAllEvents(page: page, perPage: perPage) { [weak self] events in
-            guard let events = events, let newDate = events.last?.endDateTimestamp else {
+    func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {
+        DatabaseManager.shared.fetchAllEvents(perPage: perPage) { [weak self] events in
+            guard let events = events, let newDate = events.last?.endDate else {
                 completion([])
                 return}
-            self?.startDate = Date(timeIntervalSince1970: newDate)
+            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
             self?.events = events
             self?.createViewModels()
             completion(events)
         }
     }
     
-    func fetchMoreData(page: Int, perPage: Int,completion:@escaping ([Event]) -> Void) {
-        DatabaseManager.shared.fetchAllEvents(page: page, perPage: perPage, startDate:startDate) { [weak self] events in
-            
-            guard let events = events, let newDate = events.last?.endDateTimestamp else {
+    func fetchMoreData(perPage: Int,completion:@escaping ([Event]) -> Void) {
+        DatabaseManager.shared.fetchAllEvents(perPage: perPage, startDate:startDate) { [weak self] events in
+            guard let events = events, let newDate = events.last?.endDate else {
+                
+                
                 completion([])
                 return}
-            
-            self?.startDate = Date(timeIntervalSince1970: newDate)
+            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
             self?.insertViewModels(with: events)
             completion(events)
         }
@@ -58,11 +58,19 @@ class HomeViewModel {
                                                           
         )
         
-        [0,5].forEach({
+        
+        var adArray = [Int]()
+        if events.count > 4 {
+            for i in 1...events.count/4 {
+                adArray.append(i*4)
+            }
+            
+        }
+        
+        adArray.forEach({
             guard newVM.count > 4 else {return}
             let ad = AdViewModel(ad: Ad(id: UUID().uuidString))
-            print("Inserted AD ID: \(ad.id)")
-            newVM.insert(ad, at: newVM.count - $0)
+            newVM.insert(ad, at: $0)
         })
         
         items.append(contentsOf: newVM)

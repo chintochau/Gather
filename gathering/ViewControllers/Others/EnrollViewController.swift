@@ -14,16 +14,19 @@ struct EnrollViewModel {
     let email:String
     let eventTitle:String
     let dateString:String
-    let startTimestamp:Date
+    let startDate:Date
+    let endDate:Date
     let location:String
     let price:String
     let eventID:String
     let gender:String
+    let event:Event
     
     init?(with event:Event) {
         guard let email = UserDefaults.standard.string(forKey: "email") else {return nil}
         let name = UserDefaults.standard.string(forKey: "name") ?? ""
         let gender = UserDefaults.standard.string(forKey: "gender") ?? "male"
+        self.event = event
         self.gender = gender
         self.name = name
         self.email = email
@@ -32,7 +35,8 @@ struct EnrollViewModel {
         self.location = event.location.name
         self.price = event.priceString
         self.eventID = event.id
-        self.startTimestamp = event.startDate
+        self.startDate = event.startDate
+        self.endDate = event.endDate
     }
 }
 
@@ -117,7 +121,7 @@ class EnrollViewController: UIViewController {
     }()
     
     private let eventID:String
-    private let startTimestamp:Date
+    private let event:Event
     var completion: (() -> Void)?
     
     // MARK: - Init
@@ -131,7 +135,7 @@ class EnrollViewController: UIViewController {
         locationLabel.text = vm.location
         eventID = vm.eventID
         genderButton.setTitle(vm.gender, for: .normal)
-        startTimestamp = vm.startTimestamp
+        event = vm.event
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -220,6 +224,8 @@ class EnrollViewController: UIViewController {
         
     }
     
+    // MARK: - Register Event
+    
     @objc func didTapConfirm(){
         
         guard let user = DefaultsManager.shared.getCurrentUser() else {
@@ -228,7 +234,7 @@ class EnrollViewController: UIViewController {
         }
         
         DatabaseManager.shared.registerEvent(
-            participant:user, eventID: eventID, eventStarttimestamp: startTimestamp) {[weak self] success in
+            participant:user, eventID: eventID, event:event) {[weak self] success in
                          self?.completion?()
                          self?.dismiss(animated: true)
         }

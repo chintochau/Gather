@@ -25,6 +25,11 @@ struct Event:Codable {
     let headcount:Headcount
     let ownerFcmToken:String?
     
+    /// "events/{YearWeek}"
+    var referencePath:String? = nil
+    /// "{YearMonth}"
+    var referencePathForUser:String? = nil
+    
     
     var startDate:Date {
         return Date(timeIntervalSince1970: startDateTimestamp)

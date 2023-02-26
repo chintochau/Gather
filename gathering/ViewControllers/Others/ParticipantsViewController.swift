@@ -250,7 +250,7 @@ extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
     }
     
     func didTapQuit(_ view: ParticipantsViewHeaderView) {
-        DatabaseManager.shared.unregisterEvent(eventID: eventID) { success in
+        DatabaseManager.shared.unregisterEvent(event: event) { success in
             
         }
     }

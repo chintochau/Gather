@@ -101,18 +101,32 @@ final class DatabaseManager {
         
     }
     
+    
     // MARK: - Create Event
+    
     public func createEvent (with event:Event, completion: @escaping (Bool) -> Void) {
         database.runTransaction {[weak self] transaction, error in
-            guard let eventRef = self?.database.collection("events").document(event.id),
-                  let eventData = event.asDictionary(),
+            guard let eventRef = self?.database.collection("events").document(event.endDate.getYearWeek()),
                   let user = DefaultsManager.shared.getCurrentUser(),
                   let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(event.startDate.getYearMonth())
             else {return}
-            transaction.setData(eventData, forDocument: eventRef)
+            
+            var eventWithReferencePath = event
+            eventWithReferencePath.referencePath = eventRef.path
+            eventWithReferencePath.referencePathForUser = event.endDate.getYearMonth()
+            
+            guard let eventData = eventWithReferencePath.asDictionary(),
+                  let userEventData = eventWithReferencePath.toUserEvent().asDictionary() else {return}
+            
             transaction.setData([
-                "month": event.startDate.getMonthInDate(),
-                event.id: event.toUserEvent().asDictionary()!
+                event.id : eventData,
+                "_startTimestamp":event.endDate.firstDayOfWeekTimestamp(),
+                "_endTimestamp":event.endDate.lastDayOfWeekTimestamp() - 1
+            ], forDocument: eventRef,merge: true)
+            transaction.setData([
+                "_monthStartTimestamp": event.endDate.getMonthInDate().timeIntervalSince1970,
+                "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
+                event.id: userEventData
             ], forDocument: userEventRef,merge: true)
             return nil
         } completion: { (_,error) in
@@ -127,51 +141,55 @@ final class DatabaseManager {
     }
     
     // MARK: - Read Event
-    public func fetchAllEvents(exclude excludeEvents:[Event] = [],completion: @escaping ([Event]?) -> Void) {
+    
+    public func fetchAllEvents(perPage: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+        
+        print("start fetching from date: \(startDate)")
         
         let excludedEventIDs = excludeEvents.compactMap({$0.id})
         
         let ref = database.collection("events")
+            .order(by: "_endTimestamp", descending: false)
+            .whereField("_endTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
+            .limit(to: 1)
+        
         ref.getDocuments { snapshot, error in
             
-            guard let events = snapshot?.documents.compactMap({ Event(with: $0.data()) }) else {
+            guard let documentData = snapshot?.documents.first?.data() else {
+                print("no more event fetched")
                 completion(nil)
                 return
             }
             
-            let filterEvents = events.filter { event in
-                return !excludedEventIDs.contains(event.id)
+            var events = [Event]()
+            let _ = documentData["_startTimestamp"] as? Double ?? 0.0
+            let endTimestamp = documentData["_endTimestamp"] as? Double ?? 0.0
+            
+            for (key, value) in documentData {
+                if key != "_startTimestamp" && key != "_endTimestamp" {
+                    if let event = Event(with: value as! [String : Any]) {
+                        events.append(event)
+                    }
+                }
             }
             
-            
-            completion(filterEvents)
+            if events.count >= perPage {
+                print("Events >= 7 :  events fetched: \(events.count)")
+                completion(events)
+            }else {
+                print("Events < 7 : events fetched: \(events.count)")
+                self.fetchAllEvents(perPage: perPage - events.count,startDate: Date(timeIntervalSince1970: endTimestamp)) { extraEvents in
+                    guard let extraEvents = extraEvents else {
+                        completion(events)
+                        return}
+                    events.append(contentsOf: extraEvents)
+                    completion(events)
+                    
+                }
+            }
         }
     }
     
-    public func fetchAllEvents(page: Int, perPage: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
-        
-        print("start date: \(startDate)")
-        
-        let excludedEventIDs = excludeEvents.compactMap({$0.id})
-        
-        let ref = database.collection("events")
-            .order(by: "endDateTimestamp",descending: false)
-            .whereField("endDateTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
-            .limit(to: perPage)
-        
-        ref.getDocuments { snapshot, error in
-            guard let events = snapshot?.documents.compactMap({ Event(with: $0.data()) }) else {
-                completion(nil)
-                return
-            }
-            
-            let filterEvents = events.filter { event in
-                return !excludedEventIDs.contains(event.id)
-            }
-            
-            completion(filterEvents)
-        }
-    }
     
     public func fetchParticipants(with eventID:String, completion:@escaping ([Participant]?) -> Void ) {
         let ref = database.collection("events").document(eventID).collection("participants")
@@ -214,10 +232,11 @@ final class DatabaseManager {
     
     // MARK: - UpdateEvents
     
-    public func registerEvent(participant: User,eventID:String,eventStarttimestamp:Date,completion:@escaping (Bool) -> Void){
-        
+    public func registerEvent(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
         guard let participant = Participant(with: participant).asDictionary(),
-              let username = UserDefaults.standard.string(forKey: "username")
+              let username = UserDefaults.standard.string(forKey: "username"),
+              let referencePath = event.referencePath,
+              let referencePathForUser = event.referencePathForUser
         else {
             completion(false)
             print("Failed to register event")
@@ -225,16 +244,23 @@ final class DatabaseManager {
         
         database.runTransaction {[weak self] transaction, error in
             
-            guard let eventRef = self?.database.collection("events").document(eventID),
-                  let userEventRef = self?.database.collection("users").document(username).collection("events").document(eventStarttimestamp.getYearMonth())
+            guard let eventRef = self?.database.document(referencePath),
+                  let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)/")
             else {return}
             
-            transaction.setData(["participants":[username:participant]],
-                                forDocument: eventRef,merge: true)
+            // Update event reference
+            transaction.setData(
+                [event.id:[
+                    "participants":[
+                        username:participant
+                    ]]],
+                forDocument: eventRef,merge: true)
             
+            // Update user reference
             transaction.setData([
-                "month": eventStarttimestamp.getMonthInDate().timeIntervalSince1970,
-                eventID: "event.toUserEvent().asDictionary()!"
+                "_monthStartTimestamp": event.endDate.getMonthInDate().timeIntervalSince1970,
+                "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
+                event.id: event.toUserEvent().asDictionary()!
             ], forDocument: userEventRef,merge: true)
             
             return nil
@@ -251,22 +277,46 @@ final class DatabaseManager {
     }
     
     // MARK: - Delete Events
-    public func unregisterEvent(eventID:String, completion:@escaping (Bool) -> Void) {
+    public func unregisterEvent(event:Event, completion:@escaping (Bool) -> Void) {
         
-        guard let username = UserDefaults.standard.string(forKey: "username")
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let referencePath = event.referencePath,
+              let referencePathForUser = event.referencePathForUser
         else {
             completion(false)
             print("Failed to retrive username")
             return}
         
-        let ref = database.collection("events").document(eventID)
-        ref.collection("participants").document(username).delete()
-        
-        ref.setData([
-            "participants" : [username:FieldValue.delete()]
-        ], merge: true)
-        
-        
+        database.runTransaction {[weak self] transaction, error in
+            
+            guard let eventRef = self?.database.document(referencePath),
+                  let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)")
+            else {return}
+            
+            // Update event reference
+            transaction.setData([
+                event.id: [
+                    "participants": [
+                        username: FieldValue.delete()
+                    ]
+                ]
+            ],forDocument: eventRef,merge: true)
+            
+            // Update user reference
+            transaction.setData([
+                event.id: FieldValue.delete()
+            ], forDocument: userEventRef,merge: true)
+            
+            return nil
+            
+        } completion: { (_,error) in
+            if let error = error {
+                print("Transaction failed: \(error)")
+            } else {
+                completion(true)
+                print("Event Unregistered!")
+            }
+        }
     }
     
     

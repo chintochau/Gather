@@ -13,11 +13,18 @@ struct UserEvent:Codable {
     let name:String
     let dateTimeStamp:Double
     let location:Location
+    var referencePath:String? = nil
 }
 
 extension Event {
     func toUserEvent () -> UserEvent {
-        UserEvent(id: self.id, name: self.title, dateTimeStamp: self.startDateTimestamp, location: self.location)
+        UserEvent(
+            id: self.id,
+            name: self.title,
+            dateTimeStamp: self.startDateTimestamp,
+            location: self.location,
+            referencePath:self.referencePath
+        )
         
     }
 }
