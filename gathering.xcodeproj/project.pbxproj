@@ -80,6 +80,7 @@
 		47BE57882972135500EDA791 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47BE57872972135500EDA791 /* AuthManager.swift */; };
 		47C939CC299C1045002917CE /* CustomNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47C939CB299C1045002917CE /* CustomNotificationManager.swift */; };
 		47CC052F299038EC00E97C1F /* PostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47CC052E299038EC00E97C1F /* PostCollectionViewCell.swift */; };
+		47CF718729AB1C74000ABE6F /* Date+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47CF718629AB1C74000ABE6F /* Date+extension.swift */; };
 		47D33ACC298336E800D9A205 /* EnrollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D33ACB298336E800D9A205 /* EnrollViewController.swift */; };
 		47D3DAD8298DB43300F9A3F3 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D3DAD7298DB43300F9A3F3 /* PreviewViewController.swift */; };
 		47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47D44EF7298831A600DEB3B4 /* GenderSelectionView.swift */; };
@@ -196,6 +197,7 @@
 		47BE57872972135500EDA791 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		47C939CB299C1045002917CE /* CustomNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotificationManager.swift; sourceTree = "<group>"; };
 		47CC052E299038EC00E97C1F /* PostCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCollectionViewCell.swift; sourceTree = "<group>"; };
+		47CF718629AB1C74000ABE6F /* Date+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+extension.swift"; sourceTree = "<group>"; };
 		47D33ACB298336E800D9A205 /* EnrollViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollViewController.swift; sourceTree = "<group>"; };
 		47D3DAD7298DB43300F9A3F3 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		47D44EF7298831A600DEB3B4 /* GenderSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderSelectionView.swift; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 			isa = PBXGroup;
 			children = (
 				47FD6EF2296F34F5001AF255 /* Extension.swift */,
+				47CF718629AB1C74000ABE6F /* Date+extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -733,6 +736,7 @@
 				476F995129A68490007CA9A4 /* UserEvent.swift in Sources */,
 				47F0CD0329760AC4003B22EB /* IdManager.swift in Sources */,
 				47E7DD78298A124B000C1FFC /* LocationSearchViewController.swift in Sources */,
+				47CF718729AB1C74000ABE6F /* Date+extension.swift in Sources */,
 				472997072985AC4400543FF6 /* DefaultsManager.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
 				476F995329A68856007CA9A4 /* NewEvent.swift in Sources */,

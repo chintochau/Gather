@@ -75,6 +75,27 @@ class PlaceViewModel: HomeCellViewModel {
     // Additional properties and methods for the place view model
 }
 
+class HeaderViewModel:HomeCellViewModel {
+    let id: String
+    let header: Header
+    
+    init(header: Header) {
+        self.id = "header_\(header.id)"
+        self.header = header
+    }
+    
+    func diffIdentifier() -> NSObjectProtocol {
+        return id as NSObjectProtocol
+    }
+    
+    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let other = object as? HeaderViewModel else { return false }
+        return header.id == other.header.id
+    }
+    
+    
+}
+
 struct Place {
     let id:String
 }
@@ -85,4 +106,9 @@ struct Person {
 
 struct Ad {
     let id:String
+}
+
+struct Header {
+    let id:String
+    let title:String
 }

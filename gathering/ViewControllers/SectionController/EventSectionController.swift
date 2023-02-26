@@ -15,6 +15,8 @@ class EventSectionController: ListSectionController {
     override init() {
         super.init()
         inset = .init(top: 2, left: 0, bottom: 2, right: 0)
+        supplementaryViewSource = self
+        
     }
     
     override func didUpdate(to object: Any) {
@@ -25,9 +27,9 @@ class EventSectionController: ListSectionController {
         return 1
     }
     
-    
     override func cellForItem(at index: Int) -> UICollectionViewCell {
         let vm = viewModel as! EventHomeCellViewModel
+        
         
         if let _ = vm.imageUrlString {
             
@@ -47,10 +49,29 @@ class EventSectionController: ListSectionController {
     
     override func didSelectItem(at index: Int) {
         let viewModel = viewModel as! EventHomeCellViewModel
-//        let vc = DemoViewController()
         
         let vc = EventViewController(viewModel: EventViewModel(with: viewModel.event, image: nil)!)
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }
+    
+}
+
+extension EventSectionController:ListSupplementaryViewSource {
+    func supportedElementKinds() -> [String] {
+        [UICollectionView.elementKindSectionHeader]
+    }
+    
+    func viewForSupplementaryElement(ofKind elementKind: String, at index: Int) -> UICollectionReusableView {
+        let view = collectionContext?.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, for: self, class: HomeSectionHeaderReusableView.self, at: index) as! HomeSectionHeaderReusableView
+        view.configure(with: SectionHeaderViewModel(title: "Not Configured", buttonText: nil))
+        return view
+    }
+    
+    func sizeForSupplementaryView(ofKind elementKind: String, at index: Int) -> CGSize {
+        
+        return .zero
+    }
+    
+    
     
 }

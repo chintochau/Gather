@@ -70,7 +70,16 @@ class HomeViewController: UIViewController{
             )
             sectionHeader.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
             
+            
+            
             let section = NSCollectionLayoutSection(group: group1)
+            
+            // MARK: - add header to first section if needed
+            let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
+            let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+            section.boundarySupplementaryItems = index == 0 ? [] : []
+            section.orthogonalScrollingBehavior = .groupPagingCentered
+            
             return section
         }))
         
@@ -88,6 +97,7 @@ class HomeViewController: UIViewController{
         adapter.dataSource = self
         adapter.delegate = self
         adapter.viewController = self
+
     }
     
     

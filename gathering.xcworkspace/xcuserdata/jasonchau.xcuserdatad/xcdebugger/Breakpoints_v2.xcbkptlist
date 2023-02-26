@@ -20,53 +20,5 @@
             landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "95770DFD-3C5E-4D39-B485-A8E654279508"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "gathering/Managers/DatabaseManager.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
-            landmarkName = "fetchAllEvents(exclude:completion:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "95770DFD-3C5E-4D39-B485-A8E654279508 - 38de37dad21bb153"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Optional&lt;__C.FIRQuerySnapshot&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Gather_Pool.DatabaseManager.fetchAllEvents(exclude: Swift.Array&lt;Gather_Pool.Event&gt;, completion: (Swift.Optional&lt;Swift.Array&lt;Gather_Pool.Event&gt;&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Gather Pool"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jasonchau/Documents/Development/iOS/gathering/gathering/Managers/DatabaseManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "137"
-                  endingLineNumber = "137"
-                  offsetFromSymbolStart = "92">
-               </Location>
-               <Location
-                  uuid = "95770DFD-3C5E-4D39-B485-A8E654279508 - c4c27864ce5bfdbc"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__C.FIRQueryDocumentSnapshot) -&gt; Swift.Optional&lt;Gather_Pool.Event&gt; in closure #2 (Swift.Optional&lt;__C.FIRQuerySnapshot&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Gather_Pool.DatabaseManager.fetchAllEvents(exclude: Swift.Array&lt;Gather_Pool.Event&gt;, completion: (Swift.Optional&lt;Swift.Array&lt;Gather_Pool.Event&gt;&gt;) -&gt; ()) -&gt; ()"
-                  moduleName = "Gather Pool"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/jasonchau/Documents/Development/iOS/gathering/gathering/Managers/DatabaseManager.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "137"
-                  endingLineNumber = "137"
-                  offsetFromSymbolStart = "40">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

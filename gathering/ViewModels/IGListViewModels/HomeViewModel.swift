@@ -11,6 +11,7 @@ class HomeViewModel {
     var events = [Event]()
     var users = [User]()
     var ad = [Ad]()
+    var header = [Header]()
     var startDate:Date = Double.todayAtMidnightTimestamp() // Start with today at midnight
     
     var items:[HomeCellViewModel] = []
@@ -86,7 +87,4 @@ class HomeViewModel {
         
     }
     
-    private func createEndMessage(){
-        
-    }
 }
