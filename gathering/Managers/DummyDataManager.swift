@@ -16,9 +16,23 @@ struct DummyDataManager {
     func generateDummyEvents() {
         let db = Firestore.firestore()
         
-        for i in 13...22 {
+        for i in 1...5 {
             // Generate a unique ID for the event
             let eventId = UUID().uuidString
+            
+            let randomValue = Int.random(in: 0...2)
+                let emoji: String?
+                
+                switch randomValue {
+                case 0:
+                    emoji = "😀"
+                case 1:
+                    emoji = "🤔"
+                case 2:
+                    emoji = "😍"
+                default:
+                    emoji = nil
+                }
             
             // Generate a random introduction for the event
             let introduction = "Join us for the \(hobbyType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement!"
@@ -35,7 +49,7 @@ struct DummyDataManager {
             // Generate dummy data for the event
             let event = Event(
                 id: eventId,
-                emojiTitle: nil,
+                emojiTitle: emoji,
                 title: "Event \(i)",
                 organisers: [user],
                 imageUrlString: i%4 == 0 ? ["https://picsum.photos/400/\(i%4)00"] : [],
@@ -59,12 +73,8 @@ struct DummyDataManager {
             }
             
             // Upload the event data to Firestore
-            db.collection("events").document(eventId).setData(eventData) { (error) in
-                if let error = error {
-                    print("Error writing event \(eventId) to Firestore: \(error.localizedDescription)")
-                    return
-                }
-                print("Successfully wrote event \(eventId) to Firestore")
+            DatabaseManager.shared.createEvent(with: event) { success in
+                print("Event created with event ID: \(event.id)")
             }
         }
     }

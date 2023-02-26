@@ -142,7 +142,7 @@ final class DatabaseManager {
     
     // MARK: - Read Event
     
-    public func fetchAllEvents(perPage: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+    public func fetchEvents(numberOfResults: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
         
         print("start fetching from date: \(startDate)")
         
@@ -153,6 +153,8 @@ final class DatabaseManager {
             .whereField("_endTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
             .limit(to: 1)
         
+        
+        
         ref.getDocuments { snapshot, error in
             
             guard let documentData = snapshot?.documents.first?.data() else {
@@ -160,7 +162,6 @@ final class DatabaseManager {
                 completion(nil)
                 return
             }
-            
             var events = [Event]()
             let _ = documentData["_startTimestamp"] as? Double ?? 0.0
             let endTimestamp = documentData["_endTimestamp"] as? Double ?? 0.0
@@ -173,12 +174,12 @@ final class DatabaseManager {
                 }
             }
             
-            if events.count >= perPage {
+            if events.count >= numberOfResults {
                 print("Events >= 7 :  events fetched: \(events.count)")
                 completion(events)
             }else {
                 print("Events < 7 : events fetched: \(events.count)")
-                self.fetchAllEvents(perPage: perPage - events.count,startDate: Date(timeIntervalSince1970: endTimestamp)) { extraEvents in
+                self.fetchEvents(numberOfResults: numberOfResults - events.count,startDate: Date(timeIntervalSince1970: endTimestamp)) { extraEvents in
                     guard let extraEvents = extraEvents else {
                         completion(events)
                         return}

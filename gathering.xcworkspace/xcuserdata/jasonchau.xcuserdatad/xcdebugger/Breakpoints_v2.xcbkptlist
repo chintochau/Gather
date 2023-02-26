@@ -7,17 +7,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7CCE09AB-CF63-4259-B74C-0911AB890887"
+            uuid = "E12D8268-F232-43C0-839D-7B334FB530E8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "gathering/Managers/DummyDataManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "15"
-            endingLineNumber = "15"
-            landmarkName = "DummyDataManager"
-            landmarkType = "14">
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "generateDummyEvents()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

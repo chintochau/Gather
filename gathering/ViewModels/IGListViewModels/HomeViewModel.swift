@@ -18,7 +18,7 @@ class HomeViewModel {
     
     
     func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {
-        DatabaseManager.shared.fetchAllEvents(perPage: perPage) { [weak self] events in
+        DatabaseManager.shared.fetchEvents(numberOfResults: perPage) { [weak self] events in
             guard let events = events, let newDate = events.last?.endDate else {
                 completion([])
                 return}
@@ -30,7 +30,7 @@ class HomeViewModel {
     }
     
     func fetchMoreData(perPage: Int,completion:@escaping ([Event]) -> Void) {
-        DatabaseManager.shared.fetchAllEvents(perPage: perPage, startDate:startDate) { [weak self] events in
+        DatabaseManager.shared.fetchEvents(numberOfResults: perPage, startDate:startDate) { [weak self] events in
             guard let events = events, let newDate = events.last?.endDate else {
                 
                 
