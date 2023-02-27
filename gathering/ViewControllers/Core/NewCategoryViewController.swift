@@ -10,9 +10,9 @@ import UIKit
 
 enum categoryType:String,CaseIterable {
     case post = "組團"
-//    case formEvent = "Form an Event"
-    case newEvent = "Post an Event"
-    case newGroup = "Create a new Group"
+    case formEvent = "刊登活動"
+//    case newEvent = "Post an Event"
+//    case newGroup = "Create a new Group"
 }
 
 
@@ -84,10 +84,10 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
         switch vm {
         case .post:
             cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
-//        case .formEvent:
-//            cell.configure(withImage: UIImage(named: "form.event"), text: vm.rawValue)
-        case .newEvent:
+        case .formEvent:
             cell.configure(withImage: UIImage(named: "post.event"), text: vm.rawValue)
+//        case .newEvent:
+//            cell.configure(withImage: UIImage(named: "post.event"), text: vm.rawValue)
         default:
             cell.configure(withImage: UIImage(named: "create.group"), text: vm.rawValue)
         }
@@ -117,21 +117,21 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
                     
                 }
                 navigationController?.pushViewController(vc, animated: true)
-//            case .formEvent:
-//                let vc = FormEventViewController()
-//                vc.completion = { [weak self] event in
-//                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: nil)!)
-//                    self?.navigationController?.pushViewController(vc, animated: true)
-//                }
-//                navigationController?.pushViewController(vc, animated: true)
-                
-            case .newEvent:
-                let vc = NewEventViewController()
-                vc.completion = { [weak self] event,image in
+            case .formEvent:
+                let vc = CreateNewEventViewController()
+                vc.completion = { [weak self] event, image in
                     let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)
+                
+//            case .newEvent:
+//                let vc = NewEventViewController()
+//                vc.completion = { [weak self] event,image in
+//                    let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
+//                    self?.navigationController?.pushViewController(vc, animated: true)
+//                }
+//                navigationController?.pushViewController(vc, animated: true)
             default:
                 print("Not yet implemented")
             }

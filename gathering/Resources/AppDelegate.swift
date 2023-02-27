@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        application.clearLaunchScreenCache()
+        
         // Get the URL of the default Realm file
         if let defaultRealmURL = Realm.Configuration.defaultConfiguration.fileURL {
             print("Default Realm file URL: \(defaultRealmURL)")
@@ -58,4 +60,17 @@ extension AppDelegate:MessagingDelegate,UNUserNotificationCenterDelegate {
         completionHandler([.alert, .badge])
     }
     
+}
+
+
+public extension UIApplication {
+
+    func clearLaunchScreenCache() {
+        do {
+            try FileManager.default.removeItem(atPath: NSHomeDirectory()+"/Library/SplashBoard")
+        } catch {
+            print("Failed to delete launch screen cache: \(error)")
+        }
+    }
+
 }

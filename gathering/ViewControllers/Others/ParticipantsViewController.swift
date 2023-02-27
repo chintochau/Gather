@@ -245,6 +245,7 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
 }
 
 extension ParticipantsViewController:ParticipantsViewHeaderViewDelegate {
+    // MARK: - Enroll Event
     func didTapEdit(_ view: ParticipantsViewHeaderView) {
         print("Tapped Edit")
     }

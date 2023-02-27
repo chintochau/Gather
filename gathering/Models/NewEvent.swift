@@ -23,14 +23,14 @@ struct NewEvent {
 
 extension NewEvent {
     
-    func toEvent () -> Event? {
+    func toEvent (_ urlStrings:[String] = []) -> Event? {
         guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
         
         return Event(id: self.id,
                      emojiTitle: self.emojiTitle,
                      title: self.title,
                      organisers: [user],
-                     imageUrlString: [],
+                     imageUrlString: urlStrings,
                      price: 0,
                      startDateTimestamp: self.startDate.timeIntervalSince1970,
                      endDateTimestamp: self.endDate.timeIntervalSince1970,
@@ -72,14 +72,14 @@ struct NewPost {
 }
 
 extension NewPost {
-    func toEvent () -> Event? {
+    func toEvent (_ urlStrings:[String] = []) -> Event? {
         guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
         
         return Event(id: self.id,
                      emojiTitle: self.emojiTitle,
                      title: self.title,
                      organisers: [user],
-                     imageUrlString: [],
+                     imageUrlString: urlStrings,
                      price: 0,
                      startDateTimestamp: self.startDate.timeIntervalSince1970,
                      endDateTimestamp: self.endDate.timeIntervalSince1970,
@@ -92,4 +92,5 @@ extension NewPost {
                      headcount: self.headcount,
                      ownerFcmToken: user.fcmToken)
     }
+    
 }

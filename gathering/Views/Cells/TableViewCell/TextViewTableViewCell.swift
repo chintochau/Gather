@@ -79,11 +79,11 @@ class TextViewTableViewCell: UITableViewCell {
     }
     
     
-    func configure(withTitle title: String, placeholder:String?,tag:Int = 0) {
+    func configure(withTitle title: String, placeholder:String?,tag:Int = 0,_ isOptional:Bool = false) {
         titleLabel.text = title
         textView.text = placeholder
         textView.tag = tag
-        
+        self.isOptional = isOptional
     }
 }
 

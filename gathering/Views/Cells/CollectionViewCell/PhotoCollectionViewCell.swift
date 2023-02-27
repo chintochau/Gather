@@ -11,6 +11,13 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PhotoCollectionViewCell"
     
+    var image:UIImage? {
+        didSet{
+            guard let image  = image else {return}
+            imageView.image = image
+        }
+    }
+    
     let imageView:UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit

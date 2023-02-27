@@ -16,7 +16,13 @@ class PhotoGridTableViewCell: UITableViewCell {
     
     weak var delegate: PhotoGridTableViewCellDelegate?
     
-    var imageCount:Int = 0
+    var images:[UIImage] = [] {
+        didSet {
+            let imageCount = min(images.count,3)
+            
+            collectionView.reloadData()
+        }
+    }
     
     var cells = [UICollectionViewCell]()
     
@@ -50,17 +56,19 @@ class PhotoGridTableViewCell: UITableViewCell {
         collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.identifier)
     }
     
+    
+    
 }
 
 extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageCount
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.identifier, for: indexPath) as! PhotoCollectionViewCell
-        cells.append(cell)
+        cell.image = images.first
         return cell
     }
     
@@ -71,7 +79,6 @@ extension PhotoGridTableViewCell:UICollectionViewDelegate,UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! PhotoCollectionViewCell
-        
         delegate?.PhotoGridTableViewCellSelectImage(self, cell: cell, index: indexPath.row)
         
     }

@@ -96,6 +96,20 @@ struct Headcount:Codable {
     var mMax:Int = 0
     var fMin:Int = 0
     var fMax:Int = 0
+    
+    func isEmpty () -> Bool {
+        return [min,mMin,fMin].allSatisfy({$0 == 0})
+    }
+    
+    var range:String {
+        "\(min) ~ \(max)"
+    }
+    var maleRange:String {
+        "\(mMin) ~ \(mMax)"
+    }
+    var femaleRange:String {
+        "\(fMin) ~ \(fMax)"
+    }
 }
 
 

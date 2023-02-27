@@ -22,8 +22,6 @@ class EventViewController: UIViewController {
         return view
     }()
     
-    
-    
     private let priceLabel: UILabel = {
         let view = UILabel()
         view.text = "Price"

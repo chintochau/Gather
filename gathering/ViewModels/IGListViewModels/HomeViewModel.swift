@@ -19,11 +19,12 @@ class HomeViewModel {
     
     func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchEvents(numberOfResults: perPage) { [weak self] events in
-            guard let events = events, let newDate = events.last?.endDate else {
+            guard let events = events else {
                 completion([])
                 return}
-            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
-            self?.events = events
+            self?.startDate = Date(timeIntervalSince1970: Date().lastDayOfWeekTimestamp())
+            self?.events = events.sorted(by: { $0.startDateTimestamp < $1.startDateTimestamp
+            })
             self?.createViewModels()
             completion(events)
         }
@@ -32,12 +33,11 @@ class HomeViewModel {
     func fetchMoreData(perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchEvents(numberOfResults: perPage, startDate:startDate) { [weak self] events in
             guard let events = events, let newDate = events.last?.endDate else {
-                
-                
                 completion([])
                 return}
             self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
-            self?.insertViewModels(with: events)
+            self?.insertViewModels(with: events.sorted(by: { $0.startDateTimestamp < $1.startDateTimestamp
+            }))
             completion(events)
         }
     }

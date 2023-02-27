@@ -8,7 +8,6 @@
 import UIKit
 import EmojiPicker
 
-
 enum InputFieldType {
     case textField(title:String, placeholder:String,text:String = "")
     case textView(title:String, text:String?,tag:Int = 0)
@@ -20,10 +19,12 @@ enum InputFieldType {
     case participants
     case titleField(placeholder:String? = nil)
     case horizentalPicker(title:String,selectedObject:Any,objects:[Any])
+    case imagePicker
 }
 
 
-class FormEventViewController: UIViewController {
+class CreateNewEventViewController: UIViewController {
+    
     
     private let tableView:UITableView = {
         let view =  UITableView(frame: .zero, style: .grouped)
@@ -31,29 +32,16 @@ class FormEventViewController: UIViewController {
     }()
     
     private var viewModels = [[InputFieldType]()]
-    
     private var emojiButton:UIButton?
     
+    // MARK: - Class members
+    
+    var newEvent = NewEvent()
+    var selectedImage:UIImage?
     
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
-    var completion: ((_ event:Event) -> Void)?
-    
-    var newEvent = NewEvent()
-    
-//    var tempEvent = (
-//        title:"",
-//        emojiTitle: UserDefaults.standard.string(forKey: "selectedEmoji") ?? "😃",
-//        startTimestamp:Date(),
-//        endTimestamp:Date(),
-//        location:Location.toronto,
-//        detail:"",
-//        headcount:Headcount(isGenderSpecific: false, min: nil, max: nil, mMin: nil, mMax: nil, fMin: nil, fMax: nil),
-//        participants:["":""],
-//        participantsArray:[Participant](),
-//        addDetail:""
-//    )
-    
+    var completion: ((_ event:Event, _ image:UIImage?) -> Void)?
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -86,12 +74,13 @@ class FormEventViewController: UIViewController {
         
         viewModels = [
             [
+                .imagePicker,
                 .titleField(),
-                .textView(title: "Intro: ", text: newEvent.intro,tag: 0)
+                .textView(title: "活動詳情: ", text: newEvent.intro,tag: 0)
             ],[
                 .datePicker,
-                .value(title: "Location: ", value: location),
-                .textView(title: "Additional details: ", text: "Not yeat imple.",tag: 1)
+                .value(title: "地點: ", value: location),
+//                .textView(title: "Additional details: ", text: "Not yeat imple.",tag: 1)
             ],[
                 .headCount,
                 .participants
@@ -103,7 +92,7 @@ class FormEventViewController: UIViewController {
     
     // MARK: - Nav Bar
     private func setupNavBar(){
-        navigationItem.title = "Form an Event"
+        navigationItem.title = "刊登活動"
         let postButton = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapPost))
         let previewButton = UIBarButtonItem(image: UIImage(systemName: "doc.text.magnifyingglass"), style: .done, target: self, action:#selector(didTapPreview))
         navigationItem.rightBarButtonItems = [postButton,previewButton]
@@ -124,7 +113,7 @@ class FormEventViewController: UIViewController {
         }
     }
 }
-extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
+extension CreateNewEventViewController:UITableViewDelegate,UITableViewDataSource {
     // MARK: - TableView
     fileprivate func configureTableView() {
         view.addSubview(tableView)
@@ -142,6 +131,7 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(HeadcountTableViewCell.self, forCellReuseIdentifier: HeadcountTableViewCell.identifier)
         tableView.register(ParticipantsTableViewCell.self, forCellReuseIdentifier: ParticipantsTableViewCell.identifier)
         tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
+        tableView.register(PhotoGridTableViewCell.self, forCellReuseIdentifier: PhotoGridTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -155,7 +145,6 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let vm = viewModels[indexPath.section][indexPath.row]
-//        let cell = UITableViewCell()
         
         switch vm {
         case .userField:
@@ -192,6 +181,8 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
             return cell
         case .headCount:
             let cell = tableView.dequeueReusableCell(withIdentifier: HeadcountTableViewCell.identifier, for: indexPath) as! HeadcountTableViewCell
+            cell.configureForNewEvent()
+            cell.isOptional = true
             cell.delegate = self
             return cell
         case .participants:
@@ -204,6 +195,12 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
             cell.titleField.delegate = self
             emojiButton = cell.emojiButton
             return cell
+        case .imagePicker:
+            let cell = tableView.dequeueReusableCell(withIdentifier: PhotoGridTableViewCell.identifier, for: indexPath) as! PhotoGridTableViewCell
+            
+            cell.delegate = self
+            return cell
+            
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
@@ -227,11 +224,11 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "Current User: "
+            return "活動: "
         case 1:
-            return "Event Details: "
+            return "時間/地點: "
         case 2:
-            return "Participants"
+            return "參加者: "
         default:
             return nil
         }
@@ -243,22 +240,17 @@ extension FormEventViewController:UITableViewDelegate,UITableViewDataSource {
     
 }
 
-extension FormEventViewController {
+extension CreateNewEventViewController {
     // MARK: - Handle Preview/ Post
     
-    private func createEventFromTempEvent() -> Event?{
-        newEvent.toEvent()
-    }
     
     @objc private func didTapPreview(){
         view.endEditing(true)
         
-        guard let event = createEventFromTempEvent() else {return}
+        guard let event = newEvent.toEvent() else {return}
         
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))
-        
-        
         vc.modalPresentationStyle = .overCurrentContext
         vc.modalTransitionStyle = .crossDissolve
         vc.action = didTapPost
@@ -271,16 +263,49 @@ extension FormEventViewController {
     @objc private func didTapPost(){
         view.endEditing(true)
         
-        guard let event = createEventFromTempEvent() else {return}
-        DatabaseManager.shared.createEvent(with: event) { [weak self] success in
-            self?.navigationController?.popToRootViewController(animated: false)
-            self?.completion?(event)
+        guard let event = newEvent.toEvent() else {return}
+        
+        if let selectedImage = selectedImage {
+            publishPostWithImage { [weak self] event in
+                self?.navigationController?.popToRootViewController(animated: false)
+                self?.completion?(event, selectedImage)
+            }
+        }else {
+            DatabaseManager.shared.createEvent(with: event) { [weak self] success in
+                self?.navigationController?.popToRootViewController(animated: false)
+                self?.completion?(event, nil)
+            }
+        }
+    }
+    
+    
+    private func publishPostWithImage(completion: @escaping (Event) -> Void){
+        
+        var imagesData = [Data?]()
+        
+        for img in [selectedImage] {
+            guard let image = img?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
+                  let data = image.jpegData(compressionQuality: 0.5)
+            else {break}
+            
+            imagesData.append(data)
         }
         
+        
+        StorageManager.shared.uploadEventImage(id: newEvent.id, data: imagesData) {[weak self] urlStrings in
+            
+            guard let event = self?.newEvent.toEvent(urlStrings),
+                  let _ = DefaultsManager.shared.getCurrentUser()
+            else {return}
+            
+            DatabaseManager.shared.createEvent(with: event) { done in
+                completion(event)
+            }
+        }
     }
 }
 
-extension FormEventViewController: LocationSerchViewControllerDelegate {
+extension CreateNewEventViewController: LocationSerchViewControllerDelegate {
     // MARK: - Handle Location
     func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
         newEvent.location = location
@@ -288,7 +313,7 @@ extension FormEventViewController: LocationSerchViewControllerDelegate {
     }
 }
 
-extension FormEventViewController:DatePickerTableViewCellDelegate {
+extension CreateNewEventViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
         newEvent.startDate = startDate
@@ -302,7 +327,7 @@ extension FormEventViewController:DatePickerTableViewCellDelegate {
     
 }
 
-extension FormEventViewController:HeadcountTableViewCellDelegate {
+extension CreateNewEventViewController:HeadcountTableViewCellDelegate {
     // MARK: - handle Headcount
     func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
         newEvent.headcount = headcount
@@ -316,7 +341,7 @@ extension FormEventViewController:HeadcountTableViewCellDelegate {
     }
     
 }
-extension FormEventViewController:UITextFieldDelegate {
+extension CreateNewEventViewController:UITextFieldDelegate {
     // MARK: - Handle TextField
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text, !text.isEmpty else {return}
@@ -324,7 +349,7 @@ extension FormEventViewController:UITextFieldDelegate {
     }
 }
 
-extension FormEventViewController:UITextViewDelegate {
+extension CreateNewEventViewController:UITextViewDelegate {
     // MARK: - Handle TextView
     func textViewDidChange(_ textView: UITextView) {
         switch textView.tag {
@@ -343,7 +368,7 @@ extension FormEventViewController:UITextViewDelegate {
     }
 }
 
-extension FormEventViewController:ParticipantsTableViewCellDelegate {
+extension CreateNewEventViewController:ParticipantsTableViewCellDelegate {
     // MARK: - Handle Participants
     func ParticipantsTableViewCellTextViewDidEndEditing(_ cell: ParticipantsTableViewCell, _ textView: UITextView, participants: [String : Participant]) {
         newEvent.participants = participants
@@ -360,7 +385,7 @@ extension FormEventViewController:ParticipantsTableViewCellDelegate {
     
 }
 
-extension FormEventViewController:EmojiPickerDelegate {
+extension CreateNewEventViewController:EmojiPickerDelegate {
     // MARK: - Pick Emoji
     
     @objc private func openEmojiPickerModule(sender: UIButton) {
@@ -376,6 +401,31 @@ extension FormEventViewController:EmojiPickerDelegate {
         UserDefaults.standard.setValue(emoji, forKey: "selectedEmoji")
         newEvent.emojiTitle = emoji
         emojiButton?.setTitle(emoji, for: .normal)
+    }
+    
+}
+
+extension CreateNewEventViewController:PhotoGridTableViewCellDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    
+    func PhotoGridTableViewCellSelectImage(_ view: PhotoGridTableViewCell, cell: PhotoCollectionViewCell, index:Int) {
+        let picker = UIImagePickerController()
+        
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        guard let tempImage:UIImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage,
+              let cell = tableView.cellForRow(at: .init(row: 0, section: 0)) as? PhotoGridTableViewCell else {return}
+        
+        selectedImage = tempImage
+        cell.images = [tempImage]
+        tableView.reloadData()
+        
+        picker.dismiss(animated: true)
+        
     }
     
 }

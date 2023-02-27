@@ -23,6 +23,8 @@ struct EventViewModel {
     let refundPolicy:String
     let about:String
     let price:String
+    
+    let dateString:String
 }
 
 
@@ -43,6 +45,43 @@ extension EventViewModel {
         }
         dateFormatter.dateFormat = "dd MMM yyyy"
         let date = dateFormatter.string(from: startDate)
+        
+        // MARK: - Date
+        var finalDateString:String = ""
+        var startString:String = ""
+        var endString:String = ""
+        let startDateString = String.localeDate(from: event.startDateString, .zhHantTW)
+        let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
+        
+        switch event.date {
+        case ..<Date.tomorrowAtMidnight():
+            startString = "今天"
+        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+            startString = "明天"
+        default:
+            startString = startDateString.date ?? ""
+        }
+        
+        switch event.endDate {
+        case ..<Date.tomorrowAtMidnight():
+            endString = "今天"
+        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+            endString = "明天"
+        default:
+            endString = endDateString.date ?? ""
+        }
+        
+        
+        if startDateString.date == endDateString.date {
+            finalDateString = "\(startString) (\(startDateString.dayOfWeek ?? ""))"
+        } else {
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) - \(endString)(\(endDateString.dayOfWeek ?? ""))"
+        }
+        
+        
+        self.dateString = finalDateString
+        
+        
         
         self.event = event
         self.image = image

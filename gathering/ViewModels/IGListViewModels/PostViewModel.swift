@@ -27,6 +27,8 @@ class PostViewModel: HomeCellViewModel {
     var isJoined:Bool = false
     
     let headcount:Headcount
+    let headcountString:String
+    
     
     let maleString:String
     let femaleString:String
@@ -42,6 +44,9 @@ class PostViewModel: HomeCellViewModel {
         self.id = event.id
         self.event = event
         
+        
+        
+        // MARK: - HeadCount
         var maleCount = 0
         var femaleCount = 0
         var nonBinaryCount = 0
@@ -58,15 +63,29 @@ class PostViewModel: HomeCellViewModel {
                 print("case not handled")
             }
         }
+        
         let headcount = event.headcount
         let total:String = headcount.max == 0 ? "" : "/\(headcount.max)"
         let female:String = headcount.fMax == 0 ? "" : "/\(headcount.fMax)"
         let male:String = headcount.mMax == 0 ? "" : "/\(headcount.mMax)"
         
-        
         self.totalString = "\(maleCount + femaleCount)\(total)"
         self.maleString = "\(maleCount)\(male)"
         self.femaleString = "\(femaleCount)\(female)"
+        
+        var headCountString = "成團人數\n"
+        
+        if headcount.isEmpty() {
+            headCountString += "任意"
+        }else if event.headcount.isGenderSpecific {
+            let maleString:String = headcount.mMin == 0 ? "" : "\(headcount.mMin)男"
+            let femaleString:String = headcount.fMin == 0 ? "" : "\(headcount.fMin)女"
+            headCountString += "\(maleString) \(femaleString)"
+        } else {
+            headCountString += headcount.min == 0 ? "任意" : "\(headcount.min)人"
+        }
+        
+        self.headcountString = headCountString
         
         
         if event.price == 0 {
@@ -105,7 +124,7 @@ class PostViewModel: HomeCellViewModel {
         if startDateString.date == endDateString.date {
             finalDateString = "\(startString) (\(startDateString.dayOfWeek ?? ""))"
         } else {
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? ""))\n - \(endString)(\(endDateString.dayOfWeek ?? ""))"
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) - \(endString)(\(endDateString.dayOfWeek ?? ""))"
         }
         
         

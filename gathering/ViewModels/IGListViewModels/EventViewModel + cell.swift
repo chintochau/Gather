@@ -21,8 +21,6 @@ class EventHomeCellViewModel: HomeCellViewModel {
     let emojiString:String?
     let title:String
     let dateString:String
-    let dayString:String
-    let timeString:String
     let location:String
     let intro:String?
     let tag: [EventTagType]?
@@ -83,10 +81,46 @@ class EventHomeCellViewModel: HomeCellViewModel {
         }
         
         
-        let fullDateString = String.localeDate(from: event.startDateString, .enUS)
-        self.dateString = fullDateString.date ?? ""
-        self.dayString = fullDateString.dayOfWeek ?? ""
-        self.timeString = fullDateString.time ?? ""
+        
+        // MARK: - Date
+        var finalDateString:String = ""
+        var startString:String = ""
+        var endString:String = ""
+        let startDateString = String.localeDate(from: event.startDateString, .zhHantTW)
+        let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
+        
+        switch event.date {
+        case ..<Date.tomorrowAtMidnight():
+            startString = "今天"
+        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+            startString = "明天"
+        default:
+            startString = startDateString.date ?? ""
+        }
+        
+        switch event.endDate {
+        case ..<Date.tomorrowAtMidnight():
+            endString = "今天"
+        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+            endString = "明天"
+        default:
+            endString = endDateString.date ?? ""
+        }
+        
+        
+        if startDateString == endDateString {
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")"
+        }else if startDateString.date == endDateString.date {
+            finalDateString = "\(startString) \(startDateString.time ?? "") - \(endDateString.time ?? "")"
+        }else {
+            finalDateString = "\(startString) \(startDateString.time ?? "") - \(endString) \(endDateString.time ?? "")"
+        }
+        
+        
+        self.dateString = finalDateString
+        
+        
+        
         self.imageUrlString = event.imageUrlString.first
         self.title = event.title
         self.location = event.location.name

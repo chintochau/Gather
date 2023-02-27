@@ -10,11 +10,23 @@ import Hero
 import IGListKit
 
 class HomeViewController: UIViewController{
-    
-    
     // MARK: - Components
     private var collectionView:UICollectionView?
     private let refreshControl = UIRefreshControl()
+    
+    
+    private let titleLabel : UILabel = {
+        let view = UILabel()
+        view.text = "GaTher"
+        view.font = .righteousFont(ofSize: 24)
+        view.textColor = .label
+        return view
+    }()
+    
+    private let headerView :UIView = {
+        let view = UIView()
+        return view
+    }()
     
     
     
@@ -29,10 +41,16 @@ class HomeViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureCollectionView()
         configureNavBar()
+        configureCollectionView()
         fetchMoreData()
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        resetNavBarPosition()
+    }
+    
     
     private func configureCollectionView(){
         
@@ -45,8 +63,6 @@ class HomeViewController: UIViewController{
                         widthDimension: .fractionalWidth(1),
                         heightDimension: .estimated(10))
             )
-            
-            
             // group
             let group1 = NSCollectionLayoutGroup.horizontal(
                 layoutSize:
@@ -96,12 +112,13 @@ class HomeViewController: UIViewController{
         adapter.dataSource = self
         adapter.delegate = self
         adapter.viewController = self
+        adapter.scrollViewDelegate = self
 
     }
     
     
     @objc private func didPullToRefresh(){
-        initialFetchDate {[weak self] in
+        fetchInitialDataAndRefresh {[weak self] in
             self?.adapter.reloadData()
             self?.collectionView?.refreshControl?.endRefreshing()
         }
@@ -117,7 +134,7 @@ class HomeViewController: UIViewController{
     
     
     // MARK: - Fetch Data
-    private func initialFetchDate(completion: (() -> (Void))? = nil ){
+    private func fetchInitialDataAndRefresh(completion: (() -> (Void))? = nil ){
         viewModel.fetchInitialData(perPage: eventsPerPage) { [weak self] events in
             self?.adapter.performUpdates(animated: true)
             completion?()
@@ -173,11 +190,40 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
 }
 
 
-extension HomeViewController{
+extension HomeViewController:UIScrollViewDelegate  {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let magicalSafeAreaTop:CGFloat = 88
+        let offset = scrollView.contentOffset.y + magicalSafeAreaTop
+        let translation = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
+        let cap = max(-44,-offset)
+        let realOffset = max(cap,cap + translation.y)
+        let alpha:CGFloat = 1 + realOffset/magicalSafeAreaTop*2
+        navigationController?.navigationBar.transform = .init(
+            translationX: 0,
+            y: min(0,realOffset))
+        titleLabel.alpha = alpha
+        navigationController?.navigationBar.tintColor = .label.withAlphaComponent(alpha)
+    }
+    
+    private func resetNavBarPosition(){
+        titleLabel.alpha = 1
+        navigationController?.navigationBar.tintColor = .label
+        navigationController?.navigationBar.transform = .init(translationX: 0, y: 0)
+        
+    }
+    
     // MARK: - NavBar
     
     fileprivate func configureNavBar() {
-        navigationItem.title = "Home"
+        
+        headerView.addSubview(titleLabel)
+        navigationItem.titleView = headerView
+        titleLabel.sizeToFit()
+        titleLabel.frame = CGRect(x: 0, y: 0, width: titleLabel.width, height: 50)
+        headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 50)
+        
+        
         navigationItem.rightBarButtonItem = .init(image: UIImage(systemName: "message"), style: .done, target: self, action: #selector(didTapChat))
     }
     
@@ -190,4 +236,20 @@ extension HomeViewController{
         navVc.modalPresentationStyle = .fullScreen
         present(navVc, animated: true)
     }
+    
+    
 }
+
+#if DEBUG
+import SwiftUI
+
+@available(iOS 13, *)
+struct Home: PreviewProvider {
+    
+    static var previews: some View {
+        // view controller using programmatic UI
+        UINavigationController(rootViewController: HomeViewController()).toPreview()
+    }
+}
+#endif
+

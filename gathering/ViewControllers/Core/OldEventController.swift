@@ -18,7 +18,7 @@ enum newEventPageType:String {
     case headCount
 }
 
-class NewEventViewController: UIViewController{
+class OldEventController: UIViewController{
     
     deinit{
         print("released")
@@ -125,7 +125,7 @@ class NewEventViewController: UIViewController{
 }
 
 // MARK: - Delegate / DataSource
-extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
+extension OldEventController: UITableViewDataSource,UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return viewModels.count
@@ -154,7 +154,6 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
         case .photoField:
             
             let cell = tableView.dequeueReusableCell(withIdentifier: PhotoGridTableViewCell.identifier, for: indexPath) as! PhotoGridTableViewCell
-            cell.imageCount = NewEventViewController.imageCount
             cell.delegate = self
             
             return cell
@@ -259,7 +258,7 @@ extension NewEventViewController: UITableViewDataSource,UITableViewDelegate {
  
 }
 
-extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
+extension OldEventController:PhotoGridTableViewCellDelegate, UIImagePickerControllerDelegate & UINavigationControllerDelegate  {
     // MARK: - Image
     
     func PhotoGridTableViewCellSelectImage(_ view: PhotoGridTableViewCell, cell: PhotoCollectionViewCell, index:Int) {
@@ -287,7 +286,7 @@ extension NewEventViewController:PhotoGridTableViewCellDelegate, UIImagePickerCo
 }
 
 
-extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,DatePickerTableViewCellDelegate,HeadcountTableViewCellDelegate {
+extension  OldEventController:  UITextViewDelegate, UITextFieldDelegate,DatePickerTableViewCellDelegate,HeadcountTableViewCellDelegate {
     
     // MARK: - Input Data
     
@@ -388,7 +387,7 @@ extension  NewEventViewController:  UITextViewDelegate, UITextFieldDelegate,Date
     
 }
 
-extension NewEventViewController {
+extension OldEventController {
     // MARK: - Preview/Submit
     
     @objc private func didTapSubmit (){
@@ -478,7 +477,6 @@ extension NewEventViewController {
             imagesData.append(data)
         }
         
-//
 //        guard let image = images[0]?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
 //              let data = image.jpegData(compressionQuality: 0.5)
 //        else {return}
@@ -486,7 +484,7 @@ extension NewEventViewController {
         StorageManager.shared.uploadEventImage(id: previewEvent.id, data: imagesData) {[weak self] urlStrings in
             
             guard let event = self?.configurePreviewEvent(urlStrings: urlStrings),
-                  let user = DefaultsManager.shared.getCurrentUser()
+                  let _ = DefaultsManager.shared.getCurrentUser()
             else {return}
             
             DatabaseManager.shared.createEvent(with: event) { done in

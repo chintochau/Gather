@@ -73,7 +73,13 @@ class TabBarViewController: UITabBarController {
         }
         
         // set controllers
-        self.setViewControllers([nav1,nav2,nav3,nav4,nav5], animated: false)
+        self.setViewControllers([
+            nav1,
+//            nav2,
+            nav3,
+//            nav4,
+            nav5
+        ], animated: false)
         
     }
     

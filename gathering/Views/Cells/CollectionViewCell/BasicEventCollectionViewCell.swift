@@ -9,6 +9,11 @@ import UIKit
 import SDWebImage
 
 class BasicEventCollectionViewCell: UICollectionViewCell {
+    static let titleTextSize:CGFloat = 20
+    static let subTextSize:CGFloat = 12
+    static let introTextSize:CGFloat = 0
+    static let iconSize:CGFloat = 20
+    static let generalIconSize:CGFloat = 40
     
     let profileImageview:UIImageView = {
         let view = UIImageView()
@@ -20,8 +25,9 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let profileTitleLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+//        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.numberOfLines = 1
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -34,39 +40,51 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let emojiIconLabel:UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 30)
+        view.font = .systemFont(ofSize: generalIconSize)
         return view
     }()
     
     let titleLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.numberOfLines = 1
+        label.font = .systemFont(ofSize: titleTextSize,weight: .semibold)
+        label.numberOfLines = 2
         return label
     }()
     
     let introLabel:UILabel = {
         let view = UILabel()
-        view.numberOfLines = 4
+        view.numberOfLines = 3
         view.lineBreakMode = .byTruncatingTail
+        view.font = .preferredFont(forTextStyle: .body)
         return view
     }()
     
     let dateLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        label.numberOfLines = 2
+        label.font = .systemFont(ofSize: subTextSize)
+        label.numberOfLines = 1
         label.textColor = .secondaryLabel
         return label
     }()
     
     let locationLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: subTextSize)
         label.numberOfLines = 1
         label.textColor = .secondaryLabel
         return label
     }()
+    
+    
+    let headCountLabel:UILabel = {
+        let view = UILabel()
+        view.font = .systemFont(ofSize: subTextSize)
+        view.numberOfLines = 2
+        view.textColor = .secondaryLabel
+        view.textAlignment = .right
+        return view
+    }()
+    
     
     let likeButton:UIButton = {
         let button = UIButton()
@@ -198,7 +216,6 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
         eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
-        dateLabel.text = vm.dateString + " - " + vm.dayString + "\n" + vm.timeString
         titleLabel.text = vm.title
         locationLabel.text = vm.location
         emojiIconLabel.text = vm.emojiString

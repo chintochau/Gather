@@ -113,6 +113,17 @@ extension UIView {
     }
     
     
+    func createAttributedText(with text: String, imageName: String) -> NSAttributedString {
+        let fullString = NSMutableAttributedString(string: "  \(text)")
+        let imageAttachment = NSTextAttachment()
+        let image = UIImage(systemName: imageName)?.withTintColor(.secondaryLabel)
+        imageAttachment.image = image
+        let imageString = NSAttributedString(attachment: imageAttachment)
+        fullString.replaceCharacters(in: NSRange(location: 0, length: 1), with: imageString)
+        return fullString
+    }
+    
+    
 }
 
 
@@ -231,7 +242,7 @@ extension String {
         let dayString = dateFormatter.string(from: date)
         
         // Time
-        dateFormatter.dateFormat = "HH:mm a"
+        dateFormatter.dateFormat = "HH:mm"
         let timeString = dateFormatter.string(from: date)
         
         return (dateString,dayString,timeString)

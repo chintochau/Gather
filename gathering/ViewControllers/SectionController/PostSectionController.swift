@@ -28,7 +28,7 @@ class PostSectionController: ListSectionController {
     
     override func cellForItem(at index: Int) -> UICollectionViewCell {
         let vm = viewModel as! PostViewModel
-        let cell = collectionContext?.dequeueReusableCell(of: PostCollectionViewCell.self, for: self, at: index) as! PostCollectionViewCell
+        let cell = collectionContext?.dequeueReusableCell(of: PostCell.self, for: self, at: index) as! PostCell
         cell.bindViewModel(vm)
         return cell
         

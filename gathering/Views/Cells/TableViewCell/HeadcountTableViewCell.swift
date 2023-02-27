@@ -22,7 +22,7 @@ class HeadcountTableViewCell: UITableViewCell {
     
     private let headcountLabel:UILabel = {
         let view = UILabel()
-        view.text = "預計人數: "
+        view.text = "成團人數: "
         return view
     }()
     
@@ -66,42 +66,42 @@ class HeadcountTableViewCell: UITableViewCell {
     
     private let miniumTextField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Min"
+        view.placeholder = "最少"
         view.tag = 0
         view.keyboardType = .numberPad
         return view
     }()
     private let maxTextField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Max"
+        view.placeholder = "最多"
         view.tag = 1
         view.keyboardType = .numberPad
         return view
     }()
     private let maleMinField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Min"
+        view.placeholder = "最少"
         view.tag = 2
         view.keyboardType = .numberPad
         return view
     }()
     private let maleMaxField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Max"
+        view.placeholder = "最多"
         view.tag = 3
         view.keyboardType = .numberPad
         return view
     }()
     private let femaleMinField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Min"
+        view.placeholder = "最少"
         view.tag = 4
         view.keyboardType = .numberPad
         return view
     }()
     private let femaleMaxField:UITextField = {
         let view = UITextField()
-        view.placeholder = "Max"
+        view.placeholder = "最多"
         view.tag = 5
         view.keyboardType = .numberPad
         return view
@@ -109,15 +109,8 @@ class HeadcountTableViewCell: UITableViewCell {
     
     var cellHeightAnchor:NSLayoutConstraint!
     
-    var tempHeadcount = (
-        isGenderSpecific:false,
-        min:0,
-        max:0,
-        mMin:0,
-        mMax:0,
-        fMin:0,
-        fMax:0
-    )
+    var tempHeadcount = Headcount()
+    var hideMinimum:Bool = false
     
     var isOptional:Bool = false {
         didSet {
@@ -149,10 +142,10 @@ class HeadcountTableViewCell: UITableViewCell {
                                padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         maxTextField.anchor(top: headcountLabel.topAnchor, leading: miniumTextField.trailingAnchor, bottom: nil, trailing: expandButton.leadingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
         
-        maleIcon.anchor(top: headcountLabel.topAnchor, leading: nil, bottom: nil, trailing: miniumTextField.leadingAnchor,
-                         padding: .init(top: 0, left: 10, bottom: 0, right: 20))
-        femaleIcon.anchor(top: nil, leading: nil, bottom: contentView.bottomAnchor, trailing: miniumTextField.leadingAnchor,
-                           padding: .init(top: 0, left: 0, bottom: 10, right: 20))
+        maleIcon.anchor(top: headcountLabel.topAnchor, leading: nil, bottom: nil, trailing: maxTextField.leadingAnchor,
+                         padding: .init(top: 0, left: 10, bottom: 0, right: 70))
+        femaleIcon.anchor(top: nil, leading: nil, bottom: contentView.bottomAnchor, trailing: femaleMaxField.leadingAnchor,
+                           padding: .init(top: 0, left: 0, bottom: 10, right: 70))
         
         genderLabel.anchor(top: nil, leading: headcountLabel.leadingAnchor, bottom: contentView.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 10, right: 0))
         
@@ -188,6 +181,11 @@ class HeadcountTableViewCell: UITableViewCell {
         fatalError()
     }
     
+    public func configureForNewEvent(){
+        headcountLabel.text = "人數上限: "
+        [miniumTextField,maleMinField,femaleMinField].forEach({$0.removeFromSuperview()})
+    }
+    
     @objc private func didTapExpand(){
         
         
@@ -218,12 +216,12 @@ class HeadcountTableViewCell: UITableViewCell {
             }
         }
         layoutIfNeeded()
-        let headcount = Headcount(isGenderSpecific: tempHeadcount.isGenderSpecific, min: tempHeadcount.min, max: tempHeadcount.max, mMin: tempHeadcount.mMax, mMax: tempHeadcount.mMax, fMin: tempHeadcount.fMin, fMax: tempHeadcount.fMax)
-        delegate?.HeadcountTableViewCellDidTapExpand(self, headcount: headcount)
+        delegate?.HeadcountTableViewCellDidTapExpand(self, headcount: tempHeadcount)
     }
 }
 
 extension HeadcountTableViewCell:UITextFieldDelegate {
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = Int(textField.text ?? "") else {return}
         
@@ -244,9 +242,6 @@ extension HeadcountTableViewCell:UITextFieldDelegate {
             print("invalud tag")
         }
         
-        let headcount = Headcount(isGenderSpecific: tempHeadcount.isGenderSpecific, min: tempHeadcount.min, max: tempHeadcount.max, mMin: tempHeadcount.mMax, mMax: tempHeadcount.mMax, fMin: tempHeadcount.fMin, fMax: tempHeadcount.fMax)
-        
-        delegate?.HeadcountTableViewCellDidEndEditing(self, headcount: headcount)
-        print(headcount)
+        delegate?.HeadcountTableViewCellDidEndEditing(self, headcount: tempHeadcount)
     }
 }
