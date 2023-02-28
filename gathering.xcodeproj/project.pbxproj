@@ -20,6 +20,10 @@
 		474065B22980DF9D00504422 /* PhotoLabelCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */; };
 		474639D329AD2D13003E82B5 /* Righteous-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 474639D229AD2D13003E82B5 /* Righteous-Regular.ttf */; };
 		474639D529AD2D2A003E82B5 /* RobotoMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 474639D429AD2D2A003E82B5 /* RobotoMono-Regular.ttf */; };
+		474639D729AD47D8003E82B5 /* EventDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639D629AD47D8003E82B5 /* EventDetailViewController.swift */; };
+		474639D929AD70A6003E82B5 /* EventDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639D829AD70A6003E82B5 /* EventDetailCell.swift */; };
+		474639DB29AD7161003E82B5 /* EventDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639DA29AD7161003E82B5 /* EventDetailsViewModel.swift */; };
+		474639FF29ADA5A0003E82B5 /* GradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639FE29ADA5A0003E82B5 /* GradientButton.swift */; };
 		4748FEAC299AA75C000E408E /* AIAssistantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */; };
 		474A2F6429A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */; };
 		474A2F6629A1E46100ADE1B6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6529A1E46100ADE1B6 /* RealmManager.swift */; };
@@ -138,6 +142,10 @@
 		474065B12980DF9D00504422 /* PhotoLabelCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLabelCollectionViewCell.swift; sourceTree = "<group>"; };
 		474639D229AD2D13003E82B5 /* Righteous-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Righteous-Regular.ttf"; sourceTree = "<group>"; };
 		474639D429AD2D2A003E82B5 /* RobotoMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RobotoMono-Regular.ttf"; sourceTree = "<group>"; };
+		474639D629AD47D8003E82B5 /* EventDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailViewController.swift; sourceTree = "<group>"; };
+		474639D829AD70A6003E82B5 /* EventDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCell.swift; sourceTree = "<group>"; };
+		474639DA29AD7161003E82B5 /* EventDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailsViewModel.swift; sourceTree = "<group>"; };
+		474639FE29ADA5A0003E82B5 /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
 		4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistantViewController.swift; sourceTree = "<group>"; };
 		474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationTableViewCell.swift; sourceTree = "<group>"; };
 		474A2F6529A1E46100ADE1B6 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
@@ -345,6 +353,7 @@
 			children = (
 				47BCF57529A39AEB00F82FB4 /* EventCell.swift */,
 				47BCF58329A3DBA700F82FB4 /* AdCollectionViewCell.swift */,
+				474639D829AD70A6003E82B5 /* EventDetailCell.swift */,
 			);
 			path = IGListCell;
 			sourceTree = "<group>";
@@ -366,6 +375,7 @@
 				47BCF57D29A3BD1B00F82FB4 /* HomeViewModel.swift */,
 				47BCF57F29A3C42900F82FB4 /* EventViewModel + cell.swift */,
 				4777854A29AA489F00C52DC5 /* PostViewModel.swift */,
+				474639DA29AD7161003E82B5 /* EventDetailsViewModel.swift */,
 			);
 			path = IGListViewModels;
 			sourceTree = "<group>";
@@ -431,6 +441,7 @@
 				47FD6EDD296F2B05001AF255 /* Core */,
 				47FD6EEB296F2F7E001AF255 /* Others */,
 				47BCF58529A3E7EC00F82FB4 /* DemoViewController.swift */,
+				474639D629AD47D8003E82B5 /* EventDetailViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -480,6 +491,7 @@
 				47F38E30299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift */,
 				471302E429960E81006D23B1 /* SegmentedButtonsView.swift */,
 				478E6F0B29A9803B00270C4F /* FilterBarCollectionView.swift */,
+				474639FE29ADA5A0003E82B5 /* GradientButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -716,6 +728,7 @@
 				47FD6F00296F60B9001AF255 /* LargeEventCollectionViewCell.swift in Sources */,
 				47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */,
 				47FD6EF5296F36F8001AF255 /* Event.swift in Sources */,
+				474639D929AD70A6003E82B5 /* EventDetailCell.swift in Sources */,
 				47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */,
 				479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */,
 				47A35966297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift in Sources */,
@@ -737,6 +750,7 @@
 				47FD6EEF296F2FEA001AF255 /* OldEventController.swift in Sources */,
 				474A2F6429A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift in Sources */,
 				476F995729A69C1B007CA9A4 /* EventViewModel.swift in Sources */,
+				474639DB29AD7161003E82B5 /* EventDetailsViewModel.swift in Sources */,
 				47595193296DF24300C40741 /* SceneDelegate.swift in Sources */,
 				47DC14C42978B5470006D4F4 /* StretchyHeaderLayout.swift in Sources */,
 				47BCF57929A39BFA00F82FB4 /* HomeSectionController.swift in Sources */,
@@ -786,10 +800,12 @@
 				47F912002991F59600DD5597 /* HomeSectionHeaderReusableView.swift in Sources */,
 				477C615B2990088500CDB241 /* TitleWithImageTableViewCell.swift in Sources */,
 				47F0CCFB2975B2A1003B22EB /* PhotoGridTableViewCell.swift in Sources */,
+				474639D729AD47D8003E82B5 /* EventDetailViewController.swift in Sources */,
 				470D58AC29A01FD80034293D /* ChatMessageViewController.swift in Sources */,
 				47E7DD7A298A23BE000C1FFC /* Location.swift in Sources */,
 				47AD2E0F298F78C200D42E45 /* PreviewViewModel.swift in Sources */,
 				47BCF57E29A3BD1B00F82FB4 /* HomeViewModel.swift in Sources */,
+				474639FF29ADA5A0003E82B5 /* GradientButton.swift in Sources */,
 				478B0C322971C36F000CECAB /* EventExtraInfoCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

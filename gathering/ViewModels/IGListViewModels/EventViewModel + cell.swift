@@ -27,6 +27,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
     let participants:[Participant]
     let price:String
     let organiser:User?
+    var image:UIImage? = nil
     
     var isOrganiser:Bool = false
     var isJoined:Bool = false
@@ -50,6 +51,8 @@ class EventHomeCellViewModel: HomeCellViewModel {
         var maleCount = 0
         var femaleCount = 0
         var nonBinaryCount = 0
+        
+        self.participants = event.participants.compactMap({$0.value})
         
         event.participants.forEach { key,value in
             switch value.gender {
@@ -126,7 +129,6 @@ class EventHomeCellViewModel: HomeCellViewModel {
         self.location = event.location.name
         self.tag = nil
         self.headcount = event.headcount
-        self.participants = []
         self.peopleCount = (male:maleCount, female:femaleCount)
         
         

@@ -50,7 +50,10 @@ class EventSectionController: ListSectionController {
     override func didSelectItem(at index: Int) {
         let viewModel = viewModel as! EventHomeCellViewModel
         
-        let vc = EventViewController(viewModel: EventViewModel(with: viewModel.event, image: nil)!)
+        let vc = EventDetailViewController()
+        let cell = collectionContext?.cellForItem(at: index, sectionController: self) as! BasicEventCollectionViewCell
+        viewModel.image = cell.eventImageView.image
+        vc.viewModel = viewModel
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }
     

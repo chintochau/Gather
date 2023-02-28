@@ -126,10 +126,10 @@ class HomeViewController: UIViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard var statusBarStyle = navigationController?.navigationBar.barStyle else {return}
-        statusBarStyle = .`default`
-        navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
-        navigationController?.navigationBar.barStyle = statusBarStyle
+//        guard var statusBarStyle = navigationController?.navigationBar.barStyle else {return}
+//        statusBarStyle = .`default`
+//        navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
+//        navigationController?.navigationBar.barStyle = statusBarStyle
     }
     
     

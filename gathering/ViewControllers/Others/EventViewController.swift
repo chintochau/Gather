@@ -330,7 +330,7 @@ extension EventViewController:UICollectionViewDelegateFlowLayout,UICollectionVie
     // MARK: - header, footer
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EventHeaderView.identifier, for: indexPath) as! EventHeaderView
-        header.configure(with: image)
+        header.image = image
         header.clipsToBounds = true
         headerImageView = header
         return header

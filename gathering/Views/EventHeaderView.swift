@@ -11,29 +11,30 @@ class EventHeaderView: UICollectionReusableView {
     
     static let identifier = "HeaderCollectionReusableView"
     
+    var image:UIImage? {
+        didSet {
+            imageView.image = image
+        }
+    }
+    
     private let imageView:UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
+        view.layer.masksToBounds = true
         return view
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(imageView)
+        imageView.fillSuperview()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with image:UIImage?) {
-        imageView.image = image
-    }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        imageView.fillSuperview()
-    }
     
         
 }

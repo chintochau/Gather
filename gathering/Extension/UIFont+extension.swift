@@ -9,7 +9,10 @@ import UIKit
 
 extension UIFont {
     static func righteousFont(ofSize size: CGFloat) -> UIFont {
-        
         return UIFont(name: "Righteous-Regular", size: size)!
+    }
+    
+    static func robotoRegularFont(ofSize size:CGFloat) -> UIFont {
+        return UIFont(name: "RobotoMono-Regular", size: size)!
     }
 }

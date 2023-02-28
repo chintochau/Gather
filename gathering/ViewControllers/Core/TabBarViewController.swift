@@ -38,11 +38,11 @@ class TabBarViewController: UITabBarController {
         
         
         // Define tab items
-        nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "house"), tag: 1)
+        nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "calendar"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "magnifyingglass"), tag: 2)
         nav3.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "plus.app"), tag: 3)
         nav4.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "heart"), tag: 4)
-        nav5.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "person"), tag: 5)
+        nav5.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "person.circle"), tag: 5)
         
         if #available(iOS 14.0, *) {
             home.navigationItem.backButtonDisplayMode = .minimal
