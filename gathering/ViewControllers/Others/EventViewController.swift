@@ -140,13 +140,17 @@ class EventViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         addBottomSheet()
-        tabBarController?.tabBar.isHidden = true
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         bottomSheet.removeFromParent()
-        tabBarController?.tabBar.isHidden = false
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
     }
     
     // MARK: - bottomSheet

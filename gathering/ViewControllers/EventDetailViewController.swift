@@ -31,6 +31,31 @@ class EventDetailViewController: UIViewController {
         
     }()
     
+    private let ownerView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let nameLabel:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    private let profileImageView:UIImageView = {
+        let view = UIImageView()
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let messageButton:UIButton = {
+        let view = UIButton()
+        view.backgroundColor = .systemBackground
+        view.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        view.tintColor = .label
+        return view
+    }()
+    
     private let enrollButton:GradientButton = {
         let view = GradientButton(type: .system)
         view.setTitle("我要參加", for: .normal)
@@ -50,12 +75,16 @@ class EventDetailViewController: UIViewController {
             guard let vm = viewModel else {return}
             if let image = vm.image {
                 headerView.image = image
-                headerHeight = 240
+                headerHeight = view.width
             }else {
                 headerHeight = 111
             }
-            
+            nameLabel.text = vm.organiser?.name
+            profileImageView.sd_setImage(with: URL(string: vm.organiser?.profileUrlString ?? ""))
+            navigationItem.title = vm.title
             headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight)
+            headerView.event = vm.event
+            
             VMs = [
                 EventDetails(event: vm.event),
                 EventParticipants(participants: vm.participants)
@@ -71,19 +100,37 @@ class EventDetailViewController: UIViewController {
         hero.isEnabled = true
         hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         view.backgroundColor = .systemBackground
+        view.addSubview(headerView)
         view.addSubview(collectionView)
         view.addSubview(enrollButton)
-        collectionView.addSubview(headerView)
+        view.addSubview(ownerView)
+        view.addSubview(messageButton)
+        ownerView.addSubview(nameLabel)
+        ownerView.addSubview(profileImageView)
+        
+        collectionView.backgroundColor = .clear
         collectionView.scrollIndicatorInsets = .init(top: -100, left: 0, bottom: 0, right: 0)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor)
         enrollButton.anchor(top: collectionView.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 30, bottom: 40, right: 30),size: .init(width: view.width-60, height: 50))
         enrollButton.layer.cornerRadius = 25
+        ownerView.anchor(top: nil, leading: view.leadingAnchor, bottom: headerView.bottomAnchor, trailing: nil,
+                         padding: .init(top: 0, left: 30, bottom: 20, right: 30),size: .init(width: 0, height: 50))
+        ownerView.layer.cornerRadius = 25
+        
+        messageButton.anchor(top: nil, leading: nil, bottom: headerView.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 20, right: 30),size: .init(width: 50, height: 50))
+        messageButton.layer.cornerRadius = 25
+        
+        let profileSize:CGFloat = 40
+        profileImageView.anchor(top: ownerView.topAnchor, leading: ownerView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 5, bottom: 0, right: 0),size: .init(width: profileSize, height: profileSize))
+        profileImageView.layer.cornerRadius = 20
+        nameLabel.anchor(top: ownerView.topAnchor, leading: profileImageView.trailingAnchor, bottom: ownerView.bottomAnchor, trailing: ownerView.trailingAnchor,
+                         padding: .init(top: 5, left: 10, bottom: 5, right: 10))
+        
         
         
         configureCollectionViewLayout()
-        
 
     }
     
@@ -102,16 +149,26 @@ class EventDetailViewController: UIViewController {
 
         // Set the navigation bar to be transparent
         navBarAppearance.configureWithTransparentBackground()
+        navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        navigationController?.tabBarController?.tabBar.isHidden = true
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
+//        navigationController?.tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.standardAppearance = UINavigationBarAppearance()
-        navigationController?.tabBarController?.tabBar.isHidden = false
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+//        navigationController?.tabBarController?.tabBar.isHidden = false
     }
+    
+    
 
 }
 
@@ -154,18 +211,22 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
         let headerBottom = headerHeight - 110
         headerView.alpha = 1.3 - offset/(headerHeight-200)
         
-        
         if offset < 0 { // pull to enlarge photo
-            headerView.frame = CGRect(x: 0, y: offset, width: view.width, height: headerHeight-offset)
+            headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight-offset)
+        }else {
+            headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight-offset)
         }
         
         
         if offset >= headerBottom {
             // The header is scrolled to the top of the navigation bar, so make the navigation bar solid
             navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         } else {
             // The header is still visible, so keep the navigation bar transparent
             navBarAppearance.configureWithTransparentBackground()
+            navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
+            
         }
 
         navigationController?.navigationBar.standardAppearance = navBarAppearance

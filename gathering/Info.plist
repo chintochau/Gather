@@ -10,6 +10,7 @@
 	<array>
 		<string>Righteous-Regular.ttf</string>
 		<string>RobotoMono-Regular.ttf</string>
+		<string>RobotoMono-SemiBold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

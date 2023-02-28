@@ -24,6 +24,7 @@
 		474639D929AD70A6003E82B5 /* EventDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639D829AD70A6003E82B5 /* EventDetailCell.swift */; };
 		474639DB29AD7161003E82B5 /* EventDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639DA29AD7161003E82B5 /* EventDetailsViewModel.swift */; };
 		474639FF29ADA5A0003E82B5 /* GradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474639FE29ADA5A0003E82B5 /* GradientButton.swift */; };
+		47463A0129ADBDB4003E82B5 /* RobotoMono-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 47463A0029ADBDB4003E82B5 /* RobotoMono-SemiBold.ttf */; };
 		4748FEAC299AA75C000E408E /* AIAssistantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */; };
 		474A2F6429A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */; };
 		474A2F6629A1E46100ADE1B6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6529A1E46100ADE1B6 /* RealmManager.swift */; };
@@ -146,6 +147,7 @@
 		474639D829AD70A6003E82B5 /* EventDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailCell.swift; sourceTree = "<group>"; };
 		474639DA29AD7161003E82B5 /* EventDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailsViewModel.swift; sourceTree = "<group>"; };
 		474639FE29ADA5A0003E82B5 /* GradientButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
+		47463A0029ADBDB4003E82B5 /* RobotoMono-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RobotoMono-SemiBold.ttf"; sourceTree = "<group>"; };
 		4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistantViewController.swift; sourceTree = "<group>"; };
 		474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationTableViewCell.swift; sourceTree = "<group>"; };
 		474A2F6529A1E46100ADE1B6 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 			children = (
 				474639D229AD2D13003E82B5 /* Righteous-Regular.ttf */,
 				474639D429AD2D2A003E82B5 /* RobotoMono-Regular.ttf */,
+				47463A0029ADBDB4003E82B5 /* RobotoMono-SemiBold.ttf */,
 			);
 			path = fonts;
 			sourceTree = "<group>";
@@ -642,6 +645,7 @@
 				4750020B29AD22C5004E7A6C /* launchScreen.jpeg in Resources */,
 				4759519D296DF24400C40741 /* LaunchScreen.storyboard in Resources */,
 				47835AAC299C9D6500E3764C /* GoogleService-Info.plist in Resources */,
+				47463A0129ADBDB4003E82B5 /* RobotoMono-SemiBold.ttf in Resources */,
 				4759519A296DF24400C40741 /* Assets.xcassets in Resources */,
 				47595198296DF24300C40741 /* Main.storyboard in Resources */,
 			);

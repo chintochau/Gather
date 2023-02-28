@@ -10,13 +10,14 @@ import Foundation
 
 class TabBarViewController: UITabBarController {
     
+    
+    let extraButton = GradientButton()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
-        
-        
-//        self.tabBar.isTranslucent = false
+        //        self.tabBar.isTranslucent = false
         self.tabBar.tintColor = .mainColor
         self.tabBar.unselectedItemTintColor = .gray.withAlphaComponent(0.5)
         self.tabBar.backgroundColor = .streamWhiteSnow
@@ -54,10 +55,10 @@ class TabBarViewController: UITabBarController {
             // Fallback on earlier versions
         }
         
-//        [nav1,nav2,nav4].forEach({
-//            $0.navigationBar.tintColor = .label
-//            $0.navigationBar.prefersLargeTitles = true
-//        })
+        //        [nav1,nav2,nav4].forEach({
+        //            $0.navigationBar.tintColor = .label
+        //            $0.navigationBar.prefersLargeTitles = true
+        //        })
         [nav1,nav2,nav3,nav4,nav5].forEach({
             $0.navigationBar.tintColor = .label
             $0.navigationBar.prefersLargeTitles = false
@@ -75,14 +76,45 @@ class TabBarViewController: UITabBarController {
         // set controllers
         self.setViewControllers([
             nav1,
-//            nav2,
+            //            nav2,
             nav3,
-//            nav4,
+            //            nav4,
             nav5
         ], animated: false)
         
+        
+        
+        addExtraButton()
     }
     
-
-
+    public func hideTabBar(){
+        tabBar.isHidden = true
+        extraButton.isHidden = true
+    }
+    
+    public func showTabBar() {
+        tabBar.isHidden = false
+        extraButton.isHidden = false
+    }
+    
+    
+    
+    private func addExtraButton(){
+        // Set up the extra button
+        let buttonSize:CGFloat = 60
+        extraButton.frame = CGRect(x: (view.bounds.width - buttonSize) / 2, y: view.height-tabBar.height-buttonSize, width: buttonSize, height: buttonSize)
+        extraButton.layer.cornerRadius = 20
+        extraButton.setGradient(colors: [.lightMainColor!,.darkSecondaryColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 1),image: UIImage(systemName: "plus"))
+        extraButton.addTarget(self, action: #selector(didSelectTap(_:)), for: .touchUpInside)
+        view.addSubview(extraButton)
+        
+        print(tabBar.frame)
+        
+    }
+    
+    @objc private func didSelectTap(_ sender:UIButton) {
+        selectedIndex = 1
+    }
+    
+    
 }

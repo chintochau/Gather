@@ -157,7 +157,7 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
                                padding: .init(top: 20, left: 0, bottom: 0, right: 0))
         
         let boxWidth:CGFloat = (width-90)/2
-        femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0),size: .init(width: boxWidth, height: 50))
+        femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0),size: .init(width: boxWidth, height: 50))
         maleBox.anchor(top: femaleBox.topAnchor, leading: nil, bottom: nil, trailing: currentPartLabel.trailingAnchor,size: .init(width: boxWidth, height: 50))
         
         femaleBox.addSubview(femaleIconView)
