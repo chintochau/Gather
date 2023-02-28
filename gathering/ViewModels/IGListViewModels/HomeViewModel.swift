@@ -49,13 +49,7 @@ class HomeViewModel {
     
     private func insertViewModels(with events:[Event]) {
         var newVM:[HomeCellViewModel] = events.compactMap({
-            
-            if let _ = $0.emojiTitle {
-                return PostViewModel(event: $0)
-            }else {
-                return EventHomeCellViewModel(event: $0)}
-            }
-                                                          
+                EventHomeCellViewModel(event: $0)}                                          
         )
         
         
@@ -78,14 +72,9 @@ class HomeViewModel {
     }
     
     private func createViewModels(){
-        items = events.map({
-            
-            if let _ = $0.emojiTitle {
-                return PostViewModel(event: $0)
-            }else {
-                return EventHomeCellViewModel(event: $0)}
-            }
-               )
+        
+        items = events.map({EventHomeCellViewModel(event: $0)})
+        
         for (index,_) in items.enumerated() {
             if index % 4 == 3 {
                 let ad = Ad(id: UUID().uuidString)

@@ -29,22 +29,10 @@ class EventSectionController: ListSectionController {
     
     override func cellForItem(at index: Int) -> UICollectionViewCell {
         let vm = viewModel as! EventHomeCellViewModel
+        let cell = collectionContext?.dequeueReusableCell(of: EventWithImageCell.self, for: self, at: index) as! EventWithImageCell
+        cell.bindViewModel(vm)
+        return cell
         
-        
-        if let _ = vm.imageUrlString {
-            
-            let cell = collectionContext?.dequeueReusableCell(of: EventWithImageCell.self, for: self, at: index) as! EventWithImageCell
-            cell.bindViewModel(vm)
-            return cell
-            
-        } else {
-            
-            let cell = collectionContext?.dequeueReusableCell(of: EventCell.self, for: self, at: index) as! EventCell
-            cell.bindViewModel(vm)
-            return cell
-            
-        }
-    
     }
     
     override func didSelectItem(at index: Int) {

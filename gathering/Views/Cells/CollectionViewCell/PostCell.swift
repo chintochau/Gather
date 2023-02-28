@@ -9,7 +9,7 @@
 import UIKit
 import IGListKit
 
-final class PostCell: BasicEventCollectionViewCell,ListBindable{
+final class PostCell: BasicEventCollectionViewCell{
     
     static let postTitleTextSize:CGFloat = 24
     
@@ -115,7 +115,7 @@ final class PostCell: BasicEventCollectionViewCell,ListBindable{
     }
     
     
-    func bindViewModel(_ viewModel: Any) {
+    override func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? PostViewModel else { return }
         
         if let profileImage = vm.organiser?.profileUrlString {

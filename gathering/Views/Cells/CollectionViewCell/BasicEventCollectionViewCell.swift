@@ -7,8 +7,11 @@
 
 import UIKit
 import SDWebImage
+import IGListKit
 
-class BasicEventCollectionViewCell: UICollectionViewCell {
+class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
+    
+    
     static let titleTextSize:CGFloat = 20
     static let subTextSize:CGFloat = 12
     static let introTextSize:CGFloat = 0
@@ -25,16 +28,19 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let profileTitleLabel:UILabel = {
         let label = UILabel()
-//        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.numberOfLines = 1
-        label.textColor = .secondaryLabel
+        label.font = .robotoRegularFont(ofSize: 14)
+        label.textColor = .darkGray
         return label
     }()
     
     let eventImageView:UIImageView = {
+        
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 5
+        
         return imageView
     }()
     
@@ -46,7 +52,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let titleLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: titleTextSize,weight: .semibold)
+        label.font = .robotoSemiBoldFont(ofSize: 24)
         label.numberOfLines = 2
         return label
     }()
@@ -61,17 +67,15 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     
     let dateLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: subTextSize)
+        label.font = .robotoRegularFont(ofSize: 14)
         label.numberOfLines = 1
-        label.textColor = .secondaryLabel
         return label
     }()
     
     let locationLabel:UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: subTextSize)
+        label.font = .robotoRegularFont(ofSize: 14)
         label.numberOfLines = 1
-        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -154,6 +158,33 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
     }()
     
     
+    let gradientLayer:CAGradientLayer = {
+        let view = CAGradientLayer()
+        view.colors = [UIColor.mainColor!.withAlphaComponent(0.5).cgColor, UIColor.darkMainColor!.withAlphaComponent(0.5).cgColor]
+        view.locations = [0.0, 1.0]
+        return view
+    }()
+    
+    let imageDefaultText:UILabel = {
+        
+        let textLabel = UILabel()
+        textLabel.numberOfLines = 2
+        textLabel.font = .righteousFont(ofSize: 28)
+        textLabel.text = "Ca-\nTher"
+        textLabel.textColor = .secondaryTextColor?.withAlphaComponent(0.7)
+        textLabel.textAlignment = .center
+        return textLabel
+    }()
+    
+    let friendsNumber:UILabel = {
+        let view = UILabel()
+        view.text = "你有100個朋友參加左"
+        view.textColor = .lightGray
+        view.font = .robotoRegularFont(ofSize: 12)
+        return view
+    }()
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -173,7 +204,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             priceLabel,
             emojiIconLabel,
             introLabel,
-            profileTitleLabel
+            profileTitleLabel,
+            dateLabel,
+            locationLabel,
+            friendsNumber
         ].forEach({addSubview($0)})
         
         
@@ -191,7 +225,14 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         titleLabel.sizeToFit()
         locationLabel.sizeToFit()
         
+        gradientLayer.frame = eventImageView.bounds
+        imageDefaultText.frame = eventImageView.bounds
+//        imageDefaultText.center = eventImageView.center
+        eventImageView.layer.addSublayer(gradientLayer)
+        eventImageView.addSubview(imageDefaultText)
     }
+    
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -211,18 +252,35 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
         ].forEach({$0.isHidden = false})
     }
     
-    func configure(with vm:EventHomeCellViewModel) {
+    func bindViewModel(_ viewModel: Any) {
+        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        
         if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
-        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? ""))
+        eventImageView.sd_setImage(with: URL(string: vm.imageUrlString ?? "")) { [weak self] image, _, _, _ in
+            self?.gradientLayer.isHidden = image != nil
+            self?.imageDefaultText.isHidden = image != nil
+        }
+        
+        
+        
+        
+        // Sub info label
+//        dateLabel.attributedText = createAttributedText(with: vm.dateString, imageName: "calendar")
+        dateLabel.text = vm.dateString
+        locationLabel.attributedText = createAttributedText(with: vm.location, imageName: "mappin.and.ellipse")
+        
+        
+        
+        let usernameText = NSMutableAttributedString(string: vm.organiser?.name ?? "",attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue])
+        profileTitleLabel.attributedText = usernameText
+        
         titleLabel.text = vm.title
-        locationLabel.text = vm.location
         emojiIconLabel.text = vm.emojiString
         introLabel.text = vm.intro
-        profileTitleLabel.text = vm.organiser?.name
-
-        if vm.headcount.isGenderSpecific {
+        
+//        if vm.headcount.isGenderSpecific {
             [totalNumber,totalIconImageView
             ].forEach({$0.isHidden = true})
             
@@ -240,12 +298,12 @@ class BasicEventCollectionViewCell: UICollectionViewCell {
             }
             
             
-        }else {
-            [maleNumber,femaleNumber,
-             maleIconImageView,femaleIconImageView
-            ].forEach({$0.isHidden = true})
-            totalNumber.text = vm.totalString
-        }
+//        }else {
+//            [maleNumber,femaleNumber,
+//             maleIconImageView,femaleIconImageView
+//            ].forEach({$0.isHidden = true})
+//            totalNumber.text = vm.totalString
+//        }
         
         priceLabel.text = vm.price
         

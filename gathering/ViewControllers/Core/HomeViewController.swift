@@ -41,9 +41,16 @@ class HomeViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureNavBar()
         configureCollectionView()
         fetchMoreData()
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,22 +64,23 @@ class HomeViewController: UIViewController{
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
             
             // item
-            let smallItem = NSCollectionLayoutItem(
+            let eventItem = NSCollectionLayoutItem(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
                         heightDimension: .estimated(10))
             )
+            
             // group
-            let group1 = NSCollectionLayoutGroup.horizontal(
+            let eventGroup = NSCollectionLayoutGroup.horizontal(
                 layoutSize:
                     NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1),
                         heightDimension: .estimated(30)),
-                subitem: smallItem,
+                subitem: eventItem,
                 count: 1
             )
-            
+            eventGroup.edgeSpacing = .init(leading: .fixed(0), top: .fixed(5), trailing: .fixed(0), bottom: .fixed(5))
             
             //Header
             let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
@@ -87,7 +95,7 @@ class HomeViewController: UIViewController{
             
             
             
-            let section = NSCollectionLayoutSection(group: group1)
+            let section = NSCollectionLayoutSection(group: eventGroup)
             
             // MARK: - add header to first section if needed
             let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
@@ -101,6 +109,7 @@ class HomeViewController: UIViewController{
         view.addSubview(collectionView)
         collectionView.alwaysBounceVertical = true
         collectionView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
+        collectionView.backgroundColor = .secondarySystemBackground
         
         view.addSubview(collectionView)
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)

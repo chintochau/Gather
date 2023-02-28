@@ -76,8 +76,9 @@ class EventDetailViewController: UIViewController {
             if let image = vm.image {
                 headerView.image = image
                 headerHeight = view.width
+                
             }else {
-                headerHeight = 111
+                headerHeight = 250
             }
             nameLabel.text = vm.organiser?.name
             profileImageView.sd_setImage(with: URL(string: vm.organiser?.profileUrlString ?? ""))

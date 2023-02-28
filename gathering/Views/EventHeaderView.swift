@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UIImageColors
 
 class EventHeaderView: UICollectionReusableView {
     
@@ -13,7 +14,17 @@ class EventHeaderView: UICollectionReusableView {
     
     var image:UIImage? {
         didSet {
+            titleLabel.alpha = 0
             imageView.image = image
+            
+            image?.getColors(quality: .lowest){[weak self] colorSet in
+                UIView.animate(withDuration: 1, delay: 0) {
+                    self?.titleLabel.textColor = colorSet?.primary
+                    self?.titleLabel.alpha = 1
+                }
+                
+            }
+            
         }
     }
     
@@ -45,6 +56,7 @@ class EventHeaderView: UICollectionReusableView {
         imageView.fillSuperview()
         titleLabel.anchor(top: nil, leading: imageView.leadingAnchor, bottom: nil, trailing: imageView.trailingAnchor,padding: .init(top: 0, left: 30, bottom: 0, right: 30))
         titleLabel.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        
         
     }
     

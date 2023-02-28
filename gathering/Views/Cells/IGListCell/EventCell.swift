@@ -10,7 +10,7 @@ import IGListKit
 
 
 
-class EventCell: BasicEventCollectionViewCell, ListBindable {
+class EventCell: BasicEventCollectionViewCell {
     
     static let identifier = "EventCellIdentifier"
     
@@ -100,7 +100,7 @@ class EventCell: BasicEventCollectionViewCell, ListBindable {
         nameLabel.text = nil
     }
     
-    func bindViewModel(_ viewModel: Any) {
+    override func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventHomeCellViewModel else { return }
         // Update the cell with the event information
         if let profileImage = vm.organiser?.profileUrlString {

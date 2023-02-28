@@ -30,6 +30,7 @@
 		474A2F6629A1E46100ADE1B6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6529A1E46100ADE1B6 /* RealmManager.swift */; };
 		4750020B29AD22C5004E7A6C /* launchScreen.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 4750020A29AD22C5004E7A6C /* launchScreen.jpeg */; };
 		4750020D29AD27C1004E7A6C /* UIFont+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4750020C29AD27C1004E7A6C /* UIFont+extension.swift */; };
+		4752036B29AE7DCF00284EB0 /* UIColor+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */; };
 		47595191296DF24300C40741 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595190296DF24300C40741 /* AppDelegate.swift */; };
 		47595193296DF24300C40741 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595192296DF24300C40741 /* SceneDelegate.swift */; };
 		47595195296DF24300C40741 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595194296DF24300C40741 /* WelcomeViewController.swift */; };
@@ -153,6 +154,7 @@
 		474A2F6529A1E46100ADE1B6 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		4750020A29AD22C5004E7A6C /* launchScreen.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launchScreen.jpeg; sourceTree = "<group>"; };
 		4750020C29AD27C1004E7A6C /* UIFont+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+extension.swift"; sourceTree = "<group>"; };
+		4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+extension.swift"; sourceTree = "<group>"; };
 		4759518D296DF24300C40741 /* Gather Pool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gather Pool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47595190296DF24300C40741 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		47595192296DF24300C40741 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				47FD6EF2296F34F5001AF255 /* Extension.swift */,
 				47CF718629AB1C74000ABE6F /* Date+extension.swift */,
 				4750020C29AD27C1004E7A6C /* UIFont+extension.swift */,
+				4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -787,6 +790,7 @@
 				474065B02980D67B00504422 /* NewCategoryViewController.swift in Sources */,
 				47BCF57C29A39D2C00F82FB4 /* HomeCellViewModel.swift in Sources */,
 				479C3B9229A1568E000D55BA /* ConversationObject.swift in Sources */,
+				4752036B29AE7DCF00284EB0 /* UIColor+extension.swift in Sources */,
 				47F0CD012975DDAB003B22EB /* GAButton.swift in Sources */,
 				478E6F0F29A9CBE300270C4F /* AlertManager.swift in Sources */,
 				47FD6EF1296F2FF6001AF255 /* User.swift in Sources */,
