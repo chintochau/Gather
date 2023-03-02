@@ -145,11 +145,24 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     }()
     
     
+    private let separatorView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .secondarySystemBackground
+        return view
+    }()
+    
+    private let friendText:UILabel = {
+        let view = UILabel()
+        return view
+    }()
+    
+    
+    
     static let identifier = "EventDetailParticipantsCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [currentPartLabel,genderTextLabel,femaleBox,maleBox].forEach({addSubview($0)})
+        [currentPartLabel,genderTextLabel,femaleBox,maleBox,separatorView,friendText].forEach({addSubview($0)})
         
         currentPartLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,
                                 padding: .init(top: 10, left: 30, bottom: 20, right: 30))
@@ -157,8 +170,14 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
                                padding: .init(top: 20, left: 0, bottom: 0, right: 0))
         
         let boxWidth:CGFloat = (width-90)/2
-        femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0),size: .init(width: boxWidth, height: 50))
+        femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 20, right: 0),size: .init(width: boxWidth, height: 50))
         maleBox.anchor(top: femaleBox.topAnchor, leading: nil, bottom: nil, trailing: currentPartLabel.trailingAnchor,size: .init(width: boxWidth, height: 50))
+        
+        separatorView.anchor(top: femaleBox.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: maleBox.trailingAnchor,
+                             padding: .init(top: 30, left: 0, bottom: 15, right: 0),size: .init(width: 0, height: 3))
+        
+        friendText.anchor(top: separatorView.bottomAnchor, leading: separatorView.leadingAnchor, bottom: bottomAnchor, trailing: separatorView.trailingAnchor,padding: .init(top: 15, left: 0, bottom: 20, right: 0))
+        
         
         femaleBox.addSubview(femaleIconView)
         femaleBox.addSubview(femaleNumber)
@@ -178,6 +197,7 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         maleNumber.anchor(top: maleIconView.topAnchor, leading: maleIconView.trailingAnchor, bottom: maleIconView.bottomAnchor, trailing: nil,
                           padding: .init(top: 0, left: 20, bottom: 0, right: 0))
         
+  
         
         
     }
@@ -200,6 +220,8 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         
         femaleNumber.text = vm.numberOfFemale
         maleNumber.text = vm.numberOfMale
+        
+        friendText.text = vm.numberOfFriends
     }
     
     

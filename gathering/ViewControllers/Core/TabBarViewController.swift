@@ -39,11 +39,15 @@ class TabBarViewController: UITabBarController {
         
         
         // Define tab items
-        nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "calendar"), tag: 1)
-        nav2.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "magnifyingglass"), tag: 2)
-        nav3.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "plus.app"), tag: 3)
-        nav4.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "heart"), tag: 4)
-        nav5.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "person.circle"), tag: 5)
+        
+        let tabIconSize:CGFloat = 22
+        
+        
+        nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 1)
+        nav2.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "magnifyingglass", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 2)
+        nav3.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "plus.app", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 3)
+        nav4.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 4)
+        nav5.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "person.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 5)
         
         if #available(iOS 14.0, *) {
             home.navigationItem.backButtonDisplayMode = .minimal
@@ -84,7 +88,7 @@ class TabBarViewController: UITabBarController {
         
         
         
-        addExtraButton()
+//        addExtraButton()
     }
     
     public func hideTabBar(){
@@ -107,8 +111,6 @@ class TabBarViewController: UITabBarController {
         extraButton.setGradient(colors: [.lightMainColor!,.darkSecondaryColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 1),image: UIImage(systemName: "plus"))
         extraButton.addTarget(self, action: #selector(didSelectTap(_:)), for: .touchUpInside)
         view.addSubview(extraButton)
-        
-        print(tabBar.frame)
         
     }
     

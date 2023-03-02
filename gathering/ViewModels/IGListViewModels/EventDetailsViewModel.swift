@@ -43,6 +43,10 @@ class EventParticipants :ListDiffable {
     var numberOfParticipants:String
     var numberOfMale:String
     var numberOfFemale:String
+    var friends:[Participant]
+    var numberOfFriends:String
+    var participants:[Participant]
+    
     
     init (participants: [Participant]) {
         var maleNumber = 0
@@ -58,9 +62,21 @@ class EventParticipants :ListDiffable {
             }
         }
         
+        
+        
+        
         self.numberOfMale = "\(maleNumber)"
         self.numberOfFemale = "\(femaleNumber)"
         self.numberOfParticipants = "\(maleNumber + femaleNumber)"
+        
+        
+        self.friends = RelationshipManager.shared.checkFriendList(with: participants)
+        
+        
+        self.numberOfFriends = friends.count > 0 ? "你有\(friends.count)個朋友參加左" : "參加者: "
+        
+        self.participants = participants
+        
     }
     
     func diffIdentifier() -> NSObjectProtocol {

@@ -14,6 +14,27 @@ class RelationshipManager {
     
     var listener:ListenerRegistration?
     
+    func checkFriendList(with participants:[Participant]) -> [Participant] {
+        
+        let realm = try! Realm()
+        
+        let friendsObjects = realm.objects(RelationshipObject.self)
+        
+        var friends = participants.filter { participant in
+            friendsObjects.contains { $0.targetUsername == participant.username }
+        }
+        
+        friends = friends.compactMap { participant in
+            var friend = participant
+            friend.isFriend  = true
+            return friend
+        }
+        
+        
+        return friends
+    }
+    
+    
     
     func listenToRelationshipData() {
         let realm = try! Realm()

@@ -46,15 +46,20 @@ class HomeViewController: UIViewController{
         configureCollectionView()
         fetchMoreData()
         
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .systemBackground
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+//        let appearance = UINavigationBarAppearance()
+//        appearance.configureWithOpaqueBackground()
+//        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
         resetNavBarPosition()
     }
     
@@ -132,15 +137,6 @@ class HomeViewController: UIViewController{
             self?.collectionView?.refreshControl?.endRefreshing()
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-//        guard var statusBarStyle = navigationController?.navigationBar.barStyle else {return}
-//        statusBarStyle = .`default`
-//        navigationController?.navigationBar.overrideUserInterfaceStyle = .unspecified
-//        navigationController?.navigationBar.barStyle = statusBarStyle
-    }
-    
     
     // MARK: - Fetch Data
     private func fetchInitialDataAndRefresh(completion: (() -> (Void))? = nil ){

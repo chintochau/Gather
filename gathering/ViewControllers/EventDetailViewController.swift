@@ -27,6 +27,7 @@ class EventDetailViewController: UIViewController {
         
         view.register(EventDetailInfoCell.self, forCellWithReuseIdentifier: EventDetailInfoCell.identifier)
         view.register(EventDetailParticipantsCell.self, forCellWithReuseIdentifier: EventDetailParticipantsCell.identifier)
+        view.register(UserCollectionViewCell.self, forCellWithReuseIdentifier: UserCollectionViewCell.identifier)
         return view
         
     }()
@@ -42,13 +43,23 @@ class EventDetailViewController: UIViewController {
         let view = UILabel()
         return view
     }()
-    private let profileImageView:UIImageView = {
-        let view = UIImageView()
-        view.clipsToBounds = true
+    
+    private let titleLabel:UILabel = {
+        let view = UILabel()
+        view.font = .robotoSemiBoldFont(ofSize: 30)
+        view.numberOfLines = 2
         return view
     }()
     
-    private let messageButton:UIButton = {
+    private let profileImageView:UIImageView = {
+        let view = UIImageView()
+        view.clipsToBounds = true
+        view.image = .personIcon
+        view.tintColor = .lightGray
+        return view
+    }()
+    
+    private lazy var messageButton:UIButton = {
         let view = UIButton()
         view.backgroundColor = .systemBackground
         view.setImage(UIImage(systemName: "text.bubble"), for: .normal)
@@ -56,7 +67,7 @@ class EventDetailViewController: UIViewController {
         return view
     }()
     
-    private let enrollButton:GradientButton = {
+    private lazy var enrollButton:GradientButton = {
         let view = GradientButton(type: .system)
         view.setTitle("我要參加", for: .normal)
         view.setTitleColor(.white, for: .normal)
@@ -66,6 +77,13 @@ class EventDetailViewController: UIViewController {
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
         view.layer.shadowRadius = 4
         view.setGradient(colors: [.lightMainColor!,.darkMainColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+        view.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
+        return view
+    }()
+    
+    private lazy var refreshControl:UIRefreshControl = {
+        let view = UIRefreshControl()
+        view.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         return view
     }()
     
@@ -80,19 +98,32 @@ class EventDetailViewController: UIViewController {
             }else {
                 headerHeight = 250
             }
+            
             nameLabel.text = vm.organiser?.name
-            profileImageView.sd_setImage(with: URL(string: vm.organiser?.profileUrlString ?? ""))
+            titleLabel.text = vm.title
+            if let profileUrlString = vm.organiser?.profileUrlString {
+                profileImageView.sd_setImage(with: URL(string: profileUrlString))
+                
+            }
             navigationItem.title = vm.title
             headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight)
-            headerView.event = vm.event
             
             VMs = [
                 EventDetails(event: vm.event),
                 EventParticipants(participants: vm.participants)
             ]
+            
+            participantsList = []
+            participantsList.append(contentsOf: vm.friends)
+            participantsList.append(contentsOf: vm.participantsExcludFriends)
+            
+            collectionView.reloadData()
+            
+            enrollButton.setTitle(vm.isJoined ? "己參加": "我要參加", for: .normal)
         }
     }
     
+    var participantsList:[Participant] = []
     var VMs:[ListDiffable] = []
     
     
@@ -106,13 +137,25 @@ class EventDetailViewController: UIViewController {
         view.addSubview(enrollButton)
         view.addSubview(ownerView)
         view.addSubview(messageButton)
+        view.addSubview(titleLabel)
         ownerView.addSubview(nameLabel)
         ownerView.addSubview(profileImageView)
+        
+        
         
         collectionView.backgroundColor = .clear
         collectionView.scrollIndicatorInsets = .init(top: -100, left: 0, bottom: 0, right: 0)
         collectionView.delegate = self
         collectionView.dataSource = self
+        
+        // Add the refresh control as a subview of the collection view layout
+        collectionView.addSubview(refreshControl)
+
+        // Adjust the refresh control position to be below the header view
+        refreshControl.anchor(top: headerView.bottomAnchor, leading: nil, bottom: nil, trailing: nil)
+        refreshControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor)
         enrollButton.anchor(top: collectionView.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 30, bottom: 40, right: 30),size: .init(width: view.width-60, height: 50))
         enrollButton.layer.cornerRadius = 25
@@ -120,8 +163,12 @@ class EventDetailViewController: UIViewController {
                          padding: .init(top: 0, left: 30, bottom: 20, right: 30),size: .init(width: 0, height: 50))
         ownerView.layer.cornerRadius = 25
         
+        
+        titleLabel.anchor(top: nil, leading: ownerView.leadingAnchor, bottom: ownerView.topAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 20, right: 30))
+        
         messageButton.anchor(top: nil, leading: nil, bottom: headerView.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 20, right: 30),size: .init(width: 50, height: 50))
         messageButton.layer.cornerRadius = 25
+        messageButton.addTarget(self, action: #selector(didTapChat), for: .touchUpInside)
         
         let profileSize:CGFloat = 40
         profileImageView.anchor(top: ownerView.topAnchor, leading: ownerView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 5, bottom: 0, right: 0),size: .init(width: profileSize, height: profileSize))
@@ -153,53 +200,144 @@ class EventDetailViewController: UIViewController {
         navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        
         if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
             tabBarController.hideTabBar()
         }
-//        navigationController?.tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.standardAppearance = UINavigationBarAppearance()
+        
         if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
             tabBarController.showTabBar()
         }
-//        navigationController?.tabBarController?.tabBar.isHidden = false
     }
     
+    @objc private func didTapEnroll(){
+        
+        if viewModel?.isJoined ?? false {
+            // if already joined, tap to unregister
+            unregisterEvent()
+            
+        }else {
+            // if not joined, tap to join
+            registerEvent()
+            
+        }
+        
+    }
     
-
+    @objc private func didTapChat(){
+        guard AuthManager.shared.isSignedIn else {
+            AlertManager.shared.showAlert(title: "Oops~", message: "Please login in to send message", from: self)
+            return
+        }
+        
+        guard let targetusername = viewModel?.organiser?.username else {return}
+        let vc = ChatMessageViewController(targetUsername: targetusername)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didPullToRefresh(){
+        refreshPage()
+    }
+    
+    private func registerEvent(){
+        if !AuthManager.shared.isSignedIn {
+            AlertManager.shared.showAlert(title: "Oops~", message: "Please login in to join events", from: self)
+        }
+        
+        guard let event = viewModel?.event,
+              let vm = EnrollViewModel(with: event) else {
+            print("Fail to create VM")
+            return}
+        
+        let vc = EnrollViewController(vm: vm)
+        vc.completion = {[weak self] in
+            self?.refreshPage()
+        }
+        present(vc, animated: true)
+    }
+    
+    private func unregisterEvent(){
+        AlertManager.shared.showAlert(title: "要退出嗎?", buttonText: "退出", from: self) {[weak self] in
+            // Perform the function here
+            guard let event = self?.viewModel?.event else {return}
+            DatabaseManager.shared.unregisterEvent(event: event) { bool in
+                self?.refreshPage()
+            }
+        }
+    }
+    
+    private func refreshPage(){
+        guard let event = viewModel?.event,
+              let vm = EnrollViewModel(with: event) else {
+            print("Fail to create VM")
+            return}
+        DatabaseManager.shared.fetchSingleEvent(event: vm.event) { [weak self] event in
+            guard let event = event else {return}
+            let viewModel = EventHomeCellViewModel(event: event)
+            viewModel.image = self?.viewModel?.image
+            self?.viewModel = viewModel
+            self?.collectionView.reloadSections(.init(integer: 0))
+            self?.refreshControl.endRefreshing()
+        }
+    }
+    
+    // MARK: - Open user profile
+    private func didTapUserProfile(participant:Participant){
+        guard let user = User(with: participant) else {return}
+        let vc = UserProfileViewController(user: user)
+        present(vc, animated: true)
+    }
+    
 }
 
 
 extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return VMs.count
+        return VMs.count + participantsList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let vm = VMs[indexPath.row]
-        
         switch indexPath.row {
         case 0:
+            let vm = VMs[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventDetailInfoCell.identifier, for: indexPath) as! EventDetailInfoCell
             cell.bindViewModel(vm)
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             return cell
             
         case 1:
+            let vm = VMs[indexPath.row]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventDetailParticipantsCell.identifier, for: indexPath) as! EventDetailParticipantsCell
             cell.bindViewModel(vm)
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             return cell
-            
+        case 2...participantsList.count+1:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCollectionViewCell.identifier, for: indexPath) as! UserCollectionViewCell
+            cell.bindViewModel(participantsList[indexPath.row-2])
+            cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+            cell.heightAnchor.constraint(equalToConstant: 60).isActive = true
+            return cell
         default:
             fatalError()
         }
         
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch indexPath.row {
+        case 2...participantsList.count+1:
+            didTapUserProfile(participant: participantsList[indexPath.row-2])
+        default:
+            break
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -220,19 +358,22 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
         
         
         if offset >= headerBottom {
-            // The header is scrolled to the top of the navigation bar, so make the navigation bar solid
+            // Run code in iOS 15 or later.
             navBarAppearance = UINavigationBarAppearance()
             navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         } else {
             // The header is still visible, so keep the navigation bar transparent
             navBarAppearance.configureWithTransparentBackground()
             navBarAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.clear]
-            
         }
-
+        
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        
+        
     }
+    
+    
     
 }
 

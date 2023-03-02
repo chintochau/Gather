@@ -29,6 +29,7 @@ class WelcomeViewController: UIViewController {
         let view = UILabel()
         view.font = .robotoRegularFont(ofSize: 14)
         view.text = "we’ve connected."
+        view.textColor = .white
         return view
     }()
     

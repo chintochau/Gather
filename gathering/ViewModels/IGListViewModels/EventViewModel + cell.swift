@@ -43,6 +43,22 @@ class EventHomeCellViewModel: HomeCellViewModel {
         peopleCount.male + peopleCount.female
     }
     
+    var friends:[Participant] {
+        RelationshipManager.shared.checkFriendList(with: participants)
+    }
+    
+    var participantsExcludFriends:[Participant] {
+        participants.filter { participant in
+            !friends.contains { friend in
+                participant.username == friend.username
+            }
+        }
+    }
+    
+    var numberOfFriends:Int {
+        friends.count
+    }
+    
     
     init(event: Event) {
         self.id = event.id

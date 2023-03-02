@@ -30,7 +30,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         let label = UILabel()
         label.numberOfLines = 1
         label.font = .robotoRegularFont(ofSize: 14)
-        label.textColor = .darkGray
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -169,8 +169,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         
         let textLabel = UILabel()
         textLabel.numberOfLines = 2
-        textLabel.font = .righteousFont(ofSize: 28)
-        textLabel.text = "Ca-\nTher"
+        textLabel.font = .righteousFont(ofSize: 50)
+//        textLabel.text = "Ca-\nTher"
         textLabel.textColor = .secondaryTextColor?.withAlphaComponent(0.7)
         textLabel.textAlignment = .center
         return textLabel
@@ -178,7 +178,6 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     
     let friendsNumber:UILabel = {
         let view = UILabel()
-        view.text = "你有100個朋友參加左"
         view.textColor = .lightGray
         view.font = .robotoRegularFont(ofSize: 12)
         return view
@@ -264,7 +263,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         }
         
         
-        
+        friendsNumber.text = vm.numberOfFriends > 0 ? "你有 \(vm.numberOfFriends) 個朋友參加左" : ""
         
         // Sub info label
 //        dateLabel.attributedText = createAttributedText(with: vm.dateString, imageName: "calendar")
@@ -277,7 +276,9 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         profileTitleLabel.attributedText = usernameText
         
         titleLabel.text = vm.title
-        emojiIconLabel.text = vm.emojiString
+        
+        imageDefaultText.text = vm.emojiString
+        
         introLabel.text = vm.intro
         
 //        if vm.headcount.isGenderSpecific {

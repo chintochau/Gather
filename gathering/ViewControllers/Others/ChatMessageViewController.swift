@@ -61,6 +61,7 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
         self.messages = conversation.messages.sorted(byKeyPath: "sentDate")
         
         super.init(nibName: nil, bundle: nil)
+        
         navigationItem.title = targetUsername
         observeConversationsFromRealm()
     }
@@ -89,6 +90,17 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         for recognizer in self.view.gestureRecognizers ?? [] {
             recognizer.delegate = self
+        }
+        
+        
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
         }
     }
     

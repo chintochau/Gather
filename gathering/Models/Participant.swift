@@ -16,6 +16,7 @@ struct Participant:Codable {
     var email:String? = nil
     var profileUrlString:String? = nil
     var status:Int
+    var isFriend:Bool? = false
     
     enum participantStatus:Int {
         case going = 0

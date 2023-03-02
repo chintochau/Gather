@@ -8,7 +8,6 @@
 import UIKit
 
 struct AlertManager {
-    
     // Singleton instance
     static let shared = AlertManager()
     
@@ -18,4 +17,23 @@ struct AlertManager {
         alert.addAction(dismissAction)
         viewController.present(alert, animated: true, completion: nil)
     }
+    
+    func showAlert(title: String, message: String = "", buttonText: String, cancelText: String? = "取消",from viewController: UIViewController, completion: @escaping () -> Void) {
+            
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            
+        if let cancelText = cancelText {
+            let cancelAction = UIAlertAction(title: cancelText, style: .cancel, handler: nil)
+            alertController.addAction(cancelAction)
+        }
+            
+        let buttonAction = UIAlertAction(title: buttonText, style: .default) { _ in
+            completion()
+        }
+        alertController.addAction(buttonAction)
+        
+        viewController.present(alertController, animated: true, completion: nil)
+        
+    }
+    
 }
