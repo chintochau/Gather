@@ -180,10 +180,9 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     
     func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        
-            if index == viewModel.items.count - 1 {
-                fetchMoreData()
-            }
+        if index == viewModel.items.count - 1 {
+            fetchMoreData()
+        }
     }
     
     func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {

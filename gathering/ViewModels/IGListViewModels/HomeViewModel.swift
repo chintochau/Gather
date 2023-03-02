@@ -19,10 +19,10 @@ class HomeViewModel {
     
     func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchEvents(numberOfResults: perPage) { [weak self] events in
-            guard let events = events else {
+            guard let events = events,let newDate = events.last?.endDate else {
                 completion([])
                 return}
-            self?.startDate = Date(timeIntervalSince1970: Date().lastDayOfWeekTimestamp())
+            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
             self?.events = events.sorted(by: { $0.startDateTimestamp < $1.startDateTimestamp
             })
             self?.createViewModels()
@@ -48,10 +48,10 @@ class HomeViewModel {
     }
     
     private func insertViewModels(with events:[Event]) {
+        
         var newVM:[HomeCellViewModel] = events.compactMap({
                 EventHomeCellViewModel(event: $0)}                                          
         )
-        
         
         var adArray = [Int]()
         if events.count > 4 {
