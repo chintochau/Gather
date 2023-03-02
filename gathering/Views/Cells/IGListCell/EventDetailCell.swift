@@ -74,9 +74,9 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventDetails else {return}
         
-        dateLabel.attributedText = createAttributedText(with: vm.dateString, imageName: "calendar")
-        timeLabel.attributedText = createAttributedText(with: vm.timeString, imageName: "clock")
-        locationLabel.attributedText = createAttributedText(with: vm.locationString, imageName: "mappin.and.ellipse")
+        dateLabel.attributedText = createAttributedText(with: vm.dateString, image: .dateIcon)
+        timeLabel.attributedText = createAttributedText(with: vm.timeString, image: .timeIcon)
+        locationLabel.attributedText = createAttributedText(with: vm.locationString, image: .locationIcon)
         detailTextView.text = vm.intro
     }
     
@@ -121,15 +121,15 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     
     private let femaleIconView:UIImageView = {
         let view = UIImageView()
-        view.image = .personIcon
-        view.tintColor = .redColor
+        view.image = .femaleIcon
+//        view.tintColor = .redColor
         view.contentMode  = .scaleAspectFit
         return view
     }()
     private let maleIconView:UIImageView = {
         let view = UIImageView()
-        view.image = .personIcon
-        view.tintColor = .blueColor
+        view.image = .maleIcon
+//        view.tintColor = .blueColor
         view.contentMode  = .scaleAspectFit
         return view
     }()
@@ -184,12 +184,13 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         maleBox.addSubview(maleIconView)
         maleBox.addSubview(maleNumber)
         
-        let iconSize:CGFloat = 40
+        let iconSize:CGFloat = 27
+        let padding:CGFloat = (50 - iconSize)/2
         femaleIconView.anchor(top: femaleBox.topAnchor, leading: femaleBox.leadingAnchor, bottom: nil, trailing: nil,
-                              padding: .init(top: 5, left: 5, bottom: 0, right: 0),
+                              padding: .init(top: padding, left: padding, bottom: 0, right: 0),
                               size: .init(width: iconSize, height: iconSize))
         maleIconView.anchor(top: maleBox.topAnchor, leading: maleBox.leadingAnchor, bottom: nil, trailing: nil,
-                            padding: .init(top: 5, left: 5, bottom: 0, right: 0),
+                            padding: .init(top: padding, left: padding, bottom: 0, right: 0),
                             size: .init(width: iconSize, height: iconSize))
         femaleNumber.anchor(top: femaleIconView.topAnchor, leading: femaleIconView.trailingAnchor, bottom: femaleIconView.bottomAnchor, trailing: nil,
                             padding: .init(top: 0, left: 20, bottom: 0, right: 0))
@@ -210,10 +211,12 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventParticipants else {return}
         let attributedText = NSMutableAttributedString(string: "")
-        let text:NSAttributedString = createAttributedText(with: "目前活動報名人數： ", imageName: "person.2.fill")
+        let text:NSAttributedString = createAttributedText(with: "目前活動報名人數： ", image: .participantsIcon )
         let number:NSAttributedString = NSAttributedString(string: vm.numberOfParticipants, attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue])
         attributedText.append(text)
         attributedText.append(number)
+        
+        
         currentPartLabel.attributedText = attributedText
         
         genderTextLabel.text = "活動參與者性別分佈: "

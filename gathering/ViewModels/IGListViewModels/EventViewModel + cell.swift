@@ -128,17 +128,21 @@ class EventHomeCellViewModel: HomeCellViewModel {
         
         
         if startDateString == endDateString {
+            // Same Day same time
             finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")"
         }else if startDateString.date == endDateString.date {
-            finalDateString = "\(startString) \(startDateString.time ?? "") - \(endDateString.time ?? "")"
+            // same day different time
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")-\(endDateString.time ?? "")"
         }else {
-            finalDateString = "\(startString) \(startDateString.time ?? "") - \(endString) \(endDateString.time ?? "")"
+            
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? ""))-\(endString)(\(endDateString.dayOfWeek ?? ""))"
         }
         
         
         self.dateString = finalDateString
         
         
+        // MARK: - Others
         
         self.imageUrlString = event.imageUrlString.first
         self.title = event.title
@@ -146,8 +150,6 @@ class EventHomeCellViewModel: HomeCellViewModel {
         self.tag = nil
         self.headcount = event.headcount
         self.peopleCount = (male:maleCount, female:femaleCount)
-        
-        
         
         self.emojiString = event.emojiTitle
         self.intro = event.introduction

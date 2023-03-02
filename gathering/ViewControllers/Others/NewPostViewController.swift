@@ -19,6 +19,13 @@ class NewPostViewController: UIViewController {
         return view
     }()
     
+    private let tempButton:UIButton = {
+        let view = UIButton()
+        view.setTitle("Submit", for: .normal)
+        view.setTitleColor(.label, for: .normal)
+        return view
+    }()
+    
     private var emojiButton:UIButton?
     
     
@@ -41,6 +48,12 @@ class NewPostViewController: UIViewController {
         configureTableView()
         setupNavBar()
         observeKeyboardChange()
+        
+        view.addSubview(tempButton)
+        
+        tempButton.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 30, right: 0))
+        tempButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        tempButton.addTarget(self, action: #selector(didTapPost), for: .touchUpInside)
     }
     
     override func viewDidLayoutSubviews() {

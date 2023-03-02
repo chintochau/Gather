@@ -113,16 +113,6 @@ extension UIView {
     }
     
     
-    func createAttributedText(with text: String, imageName: String) -> NSAttributedString {
-        let fullString = NSMutableAttributedString(string: "  \(text)")
-        let imageAttachment = NSTextAttachment()
-        let image = UIImage(systemName: imageName)?.withTintColor(.mainColor!)
-        imageAttachment.image = image
-        let imageString = NSAttributedString(attachment: imageAttachment)
-        fullString.replaceCharacters(in: NSRange(location: 0, length: 1), with: imageString)
-        return fullString
-    }
-    
     
 }
 
@@ -234,7 +224,7 @@ extension String {
         dateFormatter.locale = Locale(identifier: identifier.rawValue)
         
         // Date
-        dateFormatter.dateFormat = "M月 d日"
+        dateFormatter.dateFormat = "M月d日"
         let dateString = dateFormatter.string(from: date)
         
         // Day of the week
@@ -294,9 +284,6 @@ extension RangeReplaceableCollection where Element: Equatable {
 }
 
 
-extension UIImage {
-    static let personIcon = UIImage(systemName: "person.circle")
-}
 
 extension UILabel {
     /// count lines that get drawn

@@ -62,8 +62,7 @@ class EventDetailViewController: UIViewController {
     private lazy var messageButton:UIButton = {
         let view = UIButton()
         view.backgroundColor = .systemBackground
-        view.setImage(UIImage(systemName: "text.bubble"), for: .normal)
-        view.tintColor = .label
+        view.setImage(.messageIcon, for: .normal)
         return view
     }()
     
@@ -117,15 +116,19 @@ class EventDetailViewController: UIViewController {
             participantsList.append(contentsOf: vm.friends)
             participantsList.append(contentsOf: vm.participantsExcludFriends)
             
-            collectionView.reloadData()
-            
             enrollButton.setTitle(vm.isJoined ? "己參加": "我要參加", for: .normal)
+            
+            collectionView.reloadData()
         }
     }
     
     var participantsList:[Participant] = []
     var VMs:[ListDiffable] = []
     
+    
+    deinit {
+        print("EventViewController: released")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,9 +138,9 @@ class EventDetailViewController: UIViewController {
         view.addSubview(headerView)
         view.addSubview(collectionView)
         view.addSubview(enrollButton)
-        view.addSubview(ownerView)
-        view.addSubview(messageButton)
         view.addSubview(titleLabel)
+        view.addSubview(messageButton)
+        view.addSubview(ownerView)
         ownerView.addSubview(nameLabel)
         ownerView.addSubview(profileImageView)
         
@@ -282,7 +285,7 @@ class EventDetailViewController: UIViewController {
             let viewModel = EventHomeCellViewModel(event: event)
             viewModel.image = self?.viewModel?.image
             self?.viewModel = viewModel
-            self?.collectionView.reloadSections(.init(integer: 0))
+            self?.collectionView.reloadData()
             self?.refreshControl.endRefreshing()
         }
     }
@@ -292,6 +295,17 @@ class EventDetailViewController: UIViewController {
         guard let user = User(with: participant) else {return}
         let vc = UserProfileViewController(user: user)
         present(vc, animated: true)
+    }
+    
+    public func configureCloseButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
+        
+        
+    }
+    
+    @objc private func didTapClose(){
+        print(123)
+        dismiss(animated: true)
     }
     
 }

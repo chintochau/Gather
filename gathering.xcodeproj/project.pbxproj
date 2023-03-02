@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		470D319429B1034A004998E0 /* UIImage+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D319329B1034A004998E0 /* UIImage+extension.swift */; };
+		470D319629B131D0004998E0 /* CustomModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D319529B131D0004998E0 /* CustomModalViewController.swift */; };
+		470D319829B13B5C004998E0 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D319729B13B5C004998E0 /* CategoryViewController.swift */; };
+		470D319A29B13D32004998E0 /* GradianBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D319929B13D32004998E0 /* GradianBorderButton.swift */; };
 		470D58A8299FDF800034293D /* ChatMessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58A7299FDF800034293D /* ChatMessageManager.swift */; };
 		470D58AA299FE3360034293D /* ChatMainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58A9299FE3360034293D /* ChatMainViewController.swift */; };
 		470D58AC29A01FD80034293D /* ChatMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 470D58AB29A01FD80034293D /* ChatMessageViewController.swift */; };
@@ -132,6 +136,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		470D319329B1034A004998E0 /* UIImage+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+extension.swift"; sourceTree = "<group>"; };
+		470D319529B131D0004998E0 /* CustomModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomModalViewController.swift; sourceTree = "<group>"; };
+		470D319729B13B5C004998E0 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		470D319929B13D32004998E0 /* GradianBorderButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradianBorderButton.swift; sourceTree = "<group>"; };
 		470D58A7299FDF800034293D /* ChatMessageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageManager.swift; sourceTree = "<group>"; };
 		470D58A9299FE3360034293D /* ChatMainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMainViewController.swift; sourceTree = "<group>"; };
 		470D58AB29A01FD80034293D /* ChatMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageViewController.swift; sourceTree = "<group>"; };
@@ -340,6 +348,7 @@
 				47CF718629AB1C74000ABE6F /* Date+extension.swift */,
 				4750020C29AD27C1004E7A6C /* UIFont+extension.swift */,
 				4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */,
+				470D319329B1034A004998E0 /* UIImage+extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -501,6 +510,7 @@
 				471302E429960E81006D23B1 /* SegmentedButtonsView.swift */,
 				478E6F0B29A9803B00270C4F /* FilterBarCollectionView.swift */,
 				474639FE29ADA5A0003E82B5 /* GradientButton.swift */,
+				470D319929B13D32004998E0 /* GradianBorderButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -536,6 +546,8 @@
 				470D58A9299FE3360034293D /* ChatMainViewController.swift */,
 				470D58AB29A01FD80034293D /* ChatMessageViewController.swift */,
 				478E6F0529A9242200270C4F /* NewPostViewController.swift */,
+				470D319529B131D0004998E0 /* CustomModalViewController.swift */,
+				470D319729B13B5C004998E0 /* CategoryViewController.swift */,
 			);
 			path = Others;
 			sourceTree = "<group>";
@@ -723,6 +735,7 @@
 				47D44EFA298851C500DEB3B4 /* Participant.swift in Sources */,
 				47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
+				470D319A29B13D32004998E0 /* GradianBorderButton.swift in Sources */,
 				47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */,
 				47BCF58A29A41F5D00F82FB4 /* RelationshipObject.swift in Sources */,
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
@@ -730,6 +743,7 @@
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FC52AC29996B5900B0C25D /* Policy.swift in Sources */,
 				478E6F0C29A9803B00270C4F /* FilterBarCollectionView.swift in Sources */,
+				470D319829B13B5C004998E0 /* CategoryViewController.swift in Sources */,
 				470D58A8299FDF800034293D /* ChatMessageManager.swift in Sources */,
 				473B8E8D29989C6000992C15 /* Constant.swift in Sources */,
 				47D44EF8298831A600DEB3B4 /* GenderSelectionView.swift in Sources */,
@@ -739,6 +753,7 @@
 				47F0CCFF2975BA60003B22EB /* PhotoCollectionViewCell.swift in Sources */,
 				47FD6EF5296F36F8001AF255 /* Event.swift in Sources */,
 				474639D929AD70A6003E82B5 /* EventDetailCell.swift in Sources */,
+				470D319429B1034A004998E0 /* UIImage+extension.swift in Sources */,
 				47FD6F02296F623A001AF255 /* BasicEventCollectionViewCell.swift in Sources */,
 				479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */,
 				47A35966297AF4BE007E7C2D /* EventOwnerCollectionViewCell.swift in Sources */,
@@ -753,6 +768,7 @@
 				4770E37129AF1DB600138FFF /* UserCollectionViewCell.swift in Sources */,
 				4796DC122995A66F005802E2 /* GeneralSearchResultViewController.swift in Sources */,
 				479C3B9029A1561D000D55BA /* UserObject+Extensions.swift in Sources */,
+				470D319629B131D0004998E0 /* CustomModalViewController.swift in Sources */,
 				478E6F0829A9377A00270C4F /* HorizontalCollectionView.swift in Sources */,
 				47F38E31299423FB00F3ADF0 /* UserProfileHeaderReusableView.swift in Sources */,
 				474065B22980DF9D00504422 /* PhotoLabelCollectionViewCell.swift in Sources */,

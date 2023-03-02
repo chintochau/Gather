@@ -8,7 +8,7 @@
 import UIKit
 import Foundation
 
-class TabBarViewController: UITabBarController {
+class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     
     let extraButton = GradientButton()
@@ -16,6 +16,7 @@ class TabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.delegate = self
         
         //        self.tabBar.isTranslucent = false
         self.tabBar.tintColor = .mainColor
@@ -116,6 +117,62 @@ class TabBarViewController: UITabBarController {
     
     @objc private func didSelectTap(_ sender:UIButton) {
         selectedIndex = 1
+    }
+    
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+
+        // Check if the second tab (index 1) is clicked
+        if let viewController = viewController as? UINavigationController {
+            if viewController.topViewController is NewCategoryViewController {
+                let vc = CategoryViewController()
+                
+                vc.modalPresentationStyle = .overCurrentContext
+                vc.modalTransitionStyle = .crossDissolve
+                
+                vc.firstAction = {[weak self] in
+                    self?.openCreateNewPost()
+                }
+                
+                vc.secondAction = {[weak self] in
+                    self?.openCreateNewEvent()
+                }
+                
+                
+                present(vc, animated: true)
+                return false
+            }
+        }
+        
+        return true
+    }
+    
+    private func openCreateNewPost () {
+        
+        dismiss(animated: false)
+        
+        let vc = NewPostViewController()
+        vc.completion = { [weak self] post in
+            self?.dismiss(animated: false)
+            let vc = EventDetailViewController()
+            vc.viewModel = .init(event: post)
+            vc.configureCloseButton()
+            let navVc = UINavigationController(rootViewController: vc)
+            navVc.modalPresentationStyle = .fullScreen
+            self?.present(navVc, animated: true)
+        }
+        present(vc, animated: true)
+    }
+    
+    
+    private func openCreateNewEvent () {
+        dismiss(animated: false)
+        let vc = CreateNewEventViewController()
+        vc.completion = { [weak self] event, image in
+            let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }
+        present(vc, animated: true)
     }
     
     

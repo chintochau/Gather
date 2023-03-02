@@ -106,17 +106,15 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     
     let maleIconImageView:UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(systemName:  "person.crop.circle")
         view.contentMode = .scaleAspectFit
-        view.tintColor = UIColor(named: "blueColor")
+        view.image = .maleIcon
         return view
     }()
     
     let femaleIconImageView:UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(systemName:  "person.crop.circle")
         view.contentMode = .scaleAspectFit
-        view.tintColor = UIColor(named: "redColor")
+        view.image = .femaleIcon
         return view
     }()
     
@@ -265,10 +263,9 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         
         friendsNumber.text = vm.numberOfFriends > 0 ? "你有 \(vm.numberOfFriends) 個朋友參加左" : ""
         
-        // Sub info label
-//        dateLabel.attributedText = createAttributedText(with: vm.dateString, imageName: "calendar")
+        
         dateLabel.text = vm.dateString
-        locationLabel.attributedText = createAttributedText(with: vm.location, imageName: "mappin.and.ellipse")
+        locationLabel.attributedText = createAttributedText(with: vm.location, image: .locationIcon)
         
         
         
@@ -281,30 +278,22 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         
         introLabel.text = vm.intro
         
-//        if vm.headcount.isGenderSpecific {
-            [totalNumber,totalIconImageView
-            ].forEach({$0.isHidden = true})
-            
-            let maleMax = vm.headcount.mMax
-            let femaleMax = vm.headcount.fMax
-            if maleMax == 0 {
-                maleNumber.text = "\(vm.peopleCount.male)"
-            }else {
-                maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
-            }
-            if femaleMax == 0 {
-                femaleNumber.text = "\(vm.peopleCount.female)"
-            }else {
-                femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
-            }
-            
-            
-//        }else {
-//            [maleNumber,femaleNumber,
-//             maleIconImageView,femaleIconImageView
-//            ].forEach({$0.isHidden = true})
-//            totalNumber.text = vm.totalString
-//        }
+        [totalNumber,totalIconImageView
+        ].forEach({$0.isHidden = true})
+        
+        let maleMax = vm.headcount.mMax
+        let femaleMax = vm.headcount.fMax
+        if maleMax == 0 {
+            maleNumber.text = "\(vm.peopleCount.male)"
+        }else {
+            maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
+        }
+        if femaleMax == 0 {
+            femaleNumber.text = "\(vm.peopleCount.female)"
+        }else {
+            femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
+        }
+        
         
         priceLabel.text = vm.price
         

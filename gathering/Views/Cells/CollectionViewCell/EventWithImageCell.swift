@@ -59,19 +59,19 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
                             padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         
         // MARK: - Gender Icons
-        let smallIconSize:CGFloat = 25
+        let smallIconSize:CGFloat = 17
         femaleIconImageView.anchor(top: eventImageView.topAnchor, leading: nil, bottom: nil, trailing: nil,
                                    padding: .init(top: 0, left: 5, bottom: 0, right: 5),
                                    size: .init(width: smallIconSize, height: smallIconSize))
         
-        femaleNumber.anchor(top: femaleIconImageView.topAnchor, leading: femaleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: nil)
+        femaleNumber.anchor(top: femaleIconImageView.topAnchor, leading: femaleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 6, bottom: 0, right: 0))
         
         genderSeparatorView.anchor(top: femaleIconImageView.topAnchor, leading: femaleNumber.trailingAnchor, bottom: maleIconImageView.bottomAnchor, trailing: maleIconImageView.leadingAnchor, padding: .init(top:  0, left: 7, bottom: 0, right: 7),size: .init(width: 2, height: 0))
         
         maleIconImageView.anchor(top: femaleIconImageView.topAnchor, leading: nil, bottom: nil, trailing: nil,
-                                 padding: .init(top: 0, left: 0, bottom: 0, right: 5),
+                                 padding: .init(top: 2, left: 0, bottom: 0, right: 5),
                                  size: .init(width: smallIconSize, height: smallIconSize))
-        maleNumber.anchor(top: femaleIconImageView.topAnchor, leading: maleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 20))
+        maleNumber.anchor(top: femaleIconImageView.topAnchor, leading: maleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 6, bottom: 0, right: 20))
         
         
         // MARK: - Info Text
