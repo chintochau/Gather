@@ -258,8 +258,10 @@ final class DatabaseManager {
         
         database.runTransaction {[weak self] transaction, error in
             
+            
             guard let eventRef = self?.database.document(referencePath),
-                  let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)/")
+                  let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)/"),
+                  let notificationRef = self?.database.document("notifications/\(event.organisers.first?.username ?? "admin")/\(Date().getYearWeek())/\(Date().getYearWeek())")
             else {return}
             
             // Update event reference
@@ -276,6 +278,20 @@ final class DatabaseManager {
                 "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
                 event.id: event.toUserEvent().asDictionary()!
             ], forDocument: userEventRef,merge: true)
+            
+            if username != event.organisers.first?.username {
+                let notification = Notification(
+                    type: .eventJoin,
+                    sender: username,
+                    friendRequest: nil,
+                    event: event.toUserEvent())
+                if let notificationData = notification.asDictionary() {
+                    transaction.setData([
+                        "fcmToken":event.ownerFcmToken,
+                        notification.id : notificationData
+                    ], forDocument: notificationRef,merge: true)
+                }
+            }
             
             return nil
             

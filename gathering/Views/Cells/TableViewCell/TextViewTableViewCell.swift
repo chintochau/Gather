@@ -14,6 +14,7 @@ class TextViewTableViewCell: UITableViewCell {
     
     let titleLabel:UILabel = {
         let view = UILabel()
+        view.font = .robotoMedium(ofSize: 16)
         return view
     }()
     
@@ -29,9 +30,12 @@ class TextViewTableViewCell: UITableViewCell {
         let view = UITextView()
         view.textColor = .label
         view.backgroundColor = .clear
-        view.textContainerInset = UIEdgeInsets(top: 20, left: 15, bottom: 20, right: 20)
+        view.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         view.isScrollEnabled = false
         view.font = .preferredFont(forTextStyle: .body)
+        view.layer.borderColor = UIColor.darkMainColor?.cgColor
+        view.layer.borderWidth = 1
+        view.layer.cornerRadius = 5
         return view
     }()
     
@@ -40,19 +44,30 @@ class TextViewTableViewCell: UITableViewCell {
             optionalLabel.isHidden = !isOptional
         }
     }
+    
+    private let separatorView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .secondarySystemBackground
+        return view
+    }()
    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(textView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(optionalLabel)
+        contentView.addSubview(separatorView)
         selectionStyle = .none
         
-        titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,
-                          padding: .init(top: 5, left: 20, bottom: 0, right: 0))
-        textView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
+        titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 25, left: 30, bottom: 0, right: 0))
+        
+        textView.anchor(top: titleLabel.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 30, bottom: 0, right: 30))
+        textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
         
         optionalLabel.anchor(top: nil, leading: titleLabel.trailingAnchor, bottom: titleLabel.bottomAnchor, trailing: nil)
+        
+        separatorView.anchor(top: textView.bottomAnchor, leading: textView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: textView.trailingAnchor,padding: .init(top: 30, left: 0, bottom: 0, right: 0) , size: .init(width: 0, height: 5))
+        
         
     }
     

@@ -266,10 +266,6 @@ enum LocaleIdentifier: String {
     case hiIN = "hi_IN"
 }
 
-extension Notification.Name {
-    static let didPostNotification = Notification.Name("didPostNotification")
-}
-
 
 extension RangeReplaceableCollection where Element: Equatable {
     @discardableResult

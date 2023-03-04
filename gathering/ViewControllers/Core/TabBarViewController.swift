@@ -135,7 +135,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 }
                 
                 vc.secondAction = {[weak self] in
-                    self?.openCreateNewEvent()
+                    self?.openNewCreateNewEvent()
                 }
                 
                 
@@ -151,7 +151,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         dismiss(animated: false)
         
-        let vc = NewPostViewController()
+        let vc = NewEventViewController()
         vc.completion = { [weak self] post in
             self?.dismiss(animated: false)
             let vc = EventDetailViewController()
@@ -172,6 +172,13 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
             let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
             self?.navigationController?.pushViewController(vc, animated: true)
         }
+        present(vc, animated: true)
+    }
+    
+    private func openNewCreateNewEvent(){
+        dismiss(animated: false)
+        let vc = NewEventViewController()
+        
         present(vc, animated: true)
     }
     

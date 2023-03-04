@@ -46,6 +46,7 @@ extension UIColor {
     static let darkMainColor = UIColor(named: "darkMainColor")
     static let darkSecondaryColor = UIColor(named: "darkSecondaryColor")
     static let secondaryTextColor = UIColor(named: "secondaryTextColor")
+    static let lightFillColor = UIColor(named: "lightFillColor")!
     static let mainTextColor = UIColor(red: 0.00, green: 0.42, blue: 0.46, alpha: 1.00)
     
 }

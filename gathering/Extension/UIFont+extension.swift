@@ -19,6 +19,10 @@ extension UIFont {
         return UIFont(name: "RobotoMono-SemiBold", size: size)!
     }
     
+    static func robotoMedium(ofSize size:CGFloat) -> UIFont {
+        return UIFont(name: "RobotoMono-Medium", size: size)!
+    }
+    
     
     
 }

@@ -191,7 +191,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
             return cell
-        case .titleField(placeholder: let placeholder):
+        case .titleField(title:_,placeholder: let placeholder):
             let cell = tableView.dequeueReusableCell(withIdentifier: TitleWithImageTableViewCell.identifier, for: indexPath) as! TitleWithImageTableViewCell
             cell.emojiButton.addTarget(self, action: #selector(openEmojiPickerModule), for: .touchUpInside)
             cell.titleField.delegate = self

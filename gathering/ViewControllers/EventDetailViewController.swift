@@ -304,7 +304,6 @@ class EventDetailViewController: UIViewController {
     }
     
     @objc private func didTapClose(){
-        print(123)
         dismiss(animated: true)
     }
     
