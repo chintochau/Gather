@@ -284,14 +284,20 @@ extension Event {
             
             var counter:Int = 1
         
-            var namelist = "\n接龍: "
+            var namelist = "\n報名: "
             for participant in event.participants {
                 namelist += "\n\(counter). " + (participant.key == currentUsername ? currentName ?? "Not Valid" : participant.key)
                 counter += 1
             }
             return namelist
         }()
-        let string = emojiString + title + intro + dateString +  timeString + location + address + participants
+        
+        let deekLink:String = {
+            return "\n\n\(EventDeeplinkHandler.generateEventDeepLink(with: event))"
+        }()
+        
+        
+        let string = emojiString + title + intro + deekLink + dateString +  timeString + location + address + participants
         return string
     }
 }

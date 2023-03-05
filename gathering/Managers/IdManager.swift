@@ -11,10 +11,10 @@ final class IdManager  {
     static let shared = IdManager()
     
     public func createEventId () -> String {
-        guard let username = UserDefaults.standard.value(forKey: "username") else {return ""}
-        let dateString = Date().timeIntervalSince1970
+        let id = UUID().uuidString.prefix(8)
+        let dateString = Int(Date().timeIntervalSince1970)/5000
         let randomNumber = Int.random(in: 1...1000)
-        return "\(username)_\(dateString)_\(randomNumber)"
+        return "\(id)_\(dateString)"
     }
     
     // MARK: - Channel ID

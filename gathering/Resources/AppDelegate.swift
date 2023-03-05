@@ -13,10 +13,11 @@ import RealmSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-//        application.clearLaunchScreenCache()
+        //        application.clearLaunchScreenCache()
+        
         
         // Get the URL of the default Realm file
         if let defaultRealmURL = Realm.Configuration.defaultConfiguration.fileURL {
@@ -31,9 +32,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
+    // MARK: - Handle Deek Link
+    
+    
+    func handleDeepLink(_ url: URL) {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let queryItems = components.queryItems,
+              let eventId = queryItems.first(where: { $0.name == "eventId" })?.value,
+              let eventRef = queryItems.first(where: {$0.name == "Ref"})?.value
+        else {
+            return
+        }
+        // Show the event with the given ID
+        let eventViewController = EventDetailViewController()
+        eventViewController.configureWithID(eventID: eventId, eventReferencePath: eventRef)
+        
+        // Get the window instance
+        guard let window = UIApplication.shared.windows.first else { return }
+        
+        if let mainTabBarVC = window.rootViewController as? TabBarViewController {
+            mainTabBarVC.selectedIndex = 0
+            if let homeNavVC = mainTabBarVC.viewControllers?.first as? UINavigationController {
+                homeNavVC.pushViewController(eventViewController, animated: true)
+            }
+        }
+        
+    }
     
     // MARK: UISceneSession Lifecycle
-
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
@@ -69,6 +96,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = windowScene?.windows.first
         return window
     }
+    
+    
+    
 }
 
 

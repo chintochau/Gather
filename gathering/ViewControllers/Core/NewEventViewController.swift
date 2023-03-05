@@ -297,9 +297,9 @@ extension NewEventViewController {
             AlertManager.shared.showAlert(title: "Oops~", message: "請輸入最少兩個字的標題", from: self)
             return
         }
-        DatabaseManager.shared.createEvent(with: event) { [weak self] success in
+        DatabaseManager.shared.createEvent(with: event) { [weak self] finalEvent in
             self?.navigationController?.popToRootViewController(animated: false)
-            self?.completion?(event)
+            self?.completion?(finalEvent)
         }
         
     }

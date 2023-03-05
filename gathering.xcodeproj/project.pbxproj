@@ -32,6 +32,7 @@
 		4748FEAC299AA75C000E408E /* AIAssistantViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */; };
 		474A2F6429A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */; };
 		474A2F6629A1E46100ADE1B6 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474A2F6529A1E46100ADE1B6 /* RealmManager.swift */; };
+		474D524329B4471A00E64224 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474D524229B4471A00E64224 /* DeepLinkHandler.swift */; };
 		4750020B29AD22C5004E7A6C /* launchScreen.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 4750020A29AD22C5004E7A6C /* launchScreen.jpeg */; };
 		4750020D29AD27C1004E7A6C /* UIFont+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4750020C29AD27C1004E7A6C /* UIFont+extension.swift */; };
 		4752036B29AE7DCF00284EB0 /* UIColor+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */; };
@@ -165,6 +166,7 @@
 		4748FEAB299AA75C000E408E /* AIAssistantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistantViewController.swift; sourceTree = "<group>"; };
 		474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConversationTableViewCell.swift; sourceTree = "<group>"; };
 		474A2F6529A1E46100ADE1B6 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		474D524229B4471A00E64224 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		4750020A29AD22C5004E7A6C /* launchScreen.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launchScreen.jpeg; sourceTree = "<group>"; };
 		4750020C29AD27C1004E7A6C /* UIFont+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+extension.swift"; sourceTree = "<group>"; };
 		4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+extension.swift"; sourceTree = "<group>"; };
@@ -598,6 +600,7 @@
 				47E76C2729A55B540039E12C /* RelationshipManager.swift */,
 				476F995829A71B95007CA9A4 /* DummyDataManager.swift */,
 				478E6F0E29A9CBE300270C4F /* AlertManager.swift */,
+				474D524229B4471A00E64224 /* DeepLinkHandler.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -753,6 +756,7 @@
 				47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */,
 				47BCF58A29A41F5D00F82FB4 /* RelationshipObject.swift in Sources */,
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,
+				474D524329B4471A00E64224 /* DeepLinkHandler.swift in Sources */,
 				47FD6EE4296F2C5C001AF255 /* ExploreViewController.swift in Sources */,
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FC52AC29996B5900B0C25D /* Policy.swift in Sources */,

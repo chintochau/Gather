@@ -11,6 +11,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
+    lazy var deeplinkCoordinator: DeeplinkCoordinatorProtocol = {
+            return DeeplinkCoordinator(handlers: [
+                EventDeeplinkHandler(rootViewController: self.rootViewController)
+//               , VideoDeeplinkHandler(rootViewController: self.rootViewController)
+            ])
+        }()
+    
+    var rootViewController: UIViewController? {
+            return window?.rootViewController
+        }
     
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -25,6 +35,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = rootVC
         window.makeKeyAndVisible()
         self.window = window
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let firstUrl = URLContexts.first?.url else {
+            return
+        }
+        deeplinkCoordinator.handleURL(firstUrl)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

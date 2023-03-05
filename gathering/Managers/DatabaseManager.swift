@@ -104,19 +104,20 @@ final class DatabaseManager {
     
     // MARK: - Create Event
     
-    public func createEvent (with event:Event, completion: @escaping (Bool) -> Void) {
+    public func createEvent (with event:Event, completion: @escaping (Event) -> Void) {
+        var finalEvent:Event = event
+        
         database.runTransaction {[weak self] transaction, error in
             guard let eventRef = self?.database.collection("events").document(event.endDate.getYearWeek()),
                   let user = DefaultsManager.shared.getCurrentUser(),
                   let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(event.startDate.getYearMonth())
             else {return}
             
-            var eventWithReferencePath = event
-            eventWithReferencePath.referencePath = eventRef.path
-            eventWithReferencePath.referencePathForUser = event.endDate.getYearMonth()
+            finalEvent.referencePath = eventRef.path
+            finalEvent.referencePathForUser = event.endDate.getYearMonth()
             
-            guard let eventData = eventWithReferencePath.asDictionary(),
-                  let userEventData = eventWithReferencePath.toUserEvent().asDictionary() else {return}
+            guard let eventData = finalEvent.asDictionary(),
+                  let userEventData = finalEvent.toUserEvent().asDictionary() else {return}
             
             transaction.setData([
                 event.id : eventData,
@@ -128,12 +129,14 @@ final class DatabaseManager {
                 "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
                 event.id: userEventData
             ], forDocument: userEventRef,merge: true)
+            
             return nil
+            
         } completion: { (_,error) in
             if let error = error {
                 print("Transaction failed: \(error)")
             } else {
-                completion(true)
+                completion(finalEvent)
                 print("Transaction successfully committed!")
             }
         }

@@ -124,6 +124,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
 
         // Check if the second tab (index 1) is clicked
+        
         if let viewController = viewController as? UINavigationController {
             if viewController.topViewController is NewCategoryViewController {
                 let vc = CategoryViewController()
@@ -149,6 +150,12 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     private func openCreateNewPost () {
+        if !AuthManager.shared.isSignedIn {
+            dismiss(animated: false)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
+            selectedIndex = 2
+            return
+        }
         
         dismiss(animated: false)
         
@@ -167,6 +174,12 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     
     private func openCreateNewEvent () {
+        if !AuthManager.shared.isSignedIn {
+            dismiss(animated: false)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
+            selectedIndex = 2
+            return
+        }
         dismiss(animated: false)
         let vc = CreateNewEventViewController()
         vc.completion = { [weak self] event, image in
@@ -177,9 +190,14 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     private func openNewCreateNewEvent(){
+        if !AuthManager.shared.isSignedIn {
+            dismiss(animated: false)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
+            selectedIndex = 2
+            return
+        }
         dismiss(animated: false)
         let vc = NewEventViewController()
-        
         present(vc, animated: true)
     }
     
@@ -190,7 +208,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
         
-//        DummyDataManager.shared.generateDummyEvents()
+        //        DummyDataManager.shared.generateDummyEvents()
     }
     
 }
