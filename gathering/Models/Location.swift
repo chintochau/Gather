@@ -23,7 +23,7 @@ struct Location:Codable {
 
 extension Location {
     
-    static let toBeConfirmed = Location(name: "待定", address: nil, latitude: nil, longitude: nil)
+    static let toBeConfirmed = Location(name: "成咗團再決定", address: nil, latitude: nil, longitude: nil)
     static let toronto = Location(name: "Toronto", address: "ON, Canada", latitude: 43.780918, longitude: -79.421371)
     static let markham = Location(name: "Markham", address: "ON, Canada", latitude: 43.8561, longitude: -79.3370)
     static let northYork = Location(name: "North York", address: "ON, Canada", latitude: 43.7694, longitude: -79.4139)
@@ -50,14 +50,51 @@ extension Location {
     
     init(with mapItem:MKMapItem){
         let item = mapItem.placemark
-        self.name = item.name ?? "Unknown Place"
         
-        let address = "\(item.thoroughfare ?? ""), \(item.locality ?? ""), \(item.subLocality ?? ""), \(item.administrativeArea ?? ""), \(item.postalCode ?? ""), \(item.country ?? "")"
-        self.address = address
+        self.name = mapItem.formattedLocation().locationName
+        self.address = mapItem.formattedLocation().address
         
         self.latitude = item.coordinate.latitude
         self.longitude = item.coordinate.longitude
         
     }
     
+}
+
+extension MKMapItem {
+    func formattedLocation() -> (locationName: String, address: String) {
+        let locationName = self.name ?? ""
+        let placemark = self.placemark
+        var address = ""
+
+        if let streetNumber = placemark.subThoroughfare,
+           let streetName = placemark.thoroughfare {
+            address += "\(streetNumber) \(streetName)"
+        } else if let streetName = placemark.thoroughfare {
+            address += "\(streetName)"
+        }
+
+        if let city = placemark.locality {
+            if !address.isEmpty {
+                address += ", "
+            }
+            address += "\(city)"
+        }
+
+        if let state = placemark.administrativeArea {
+            if !address.isEmpty {
+                address += ", "
+            }
+            address += "\(state)"
+        }
+
+        if let postalCode = placemark.postalCode {
+            if !address.isEmpty {
+                address += " "
+            }
+            address += "\(postalCode)"
+        }
+
+        return (locationName, address)
+    }
 }

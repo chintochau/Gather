@@ -33,6 +33,8 @@ class WelcomeViewController: UIViewController {
         return view
     }()
     
+    var completionHandler: (() -> Void)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(backGroundImageView)
@@ -56,13 +58,15 @@ class WelcomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        
+        
         UIView.animate(withDuration: 0.5, delay: 0) {
             self.logo.transform = CGAffineTransform(scaleX: 3, y: 3)
             self.logo.alpha = 0
         }completion: { [weak self] _ in
-            let vc = TabBarViewController()
-            vc.modalPresentationStyle = .fullScreen
-            self?.present(vc, animated: false)
+            self?.dismiss(animated: true,completion: { [weak self] in
+                self?.completionHandler!()
+            })
         }
     }
     

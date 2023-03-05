@@ -18,7 +18,7 @@ class LocationSearchViewController: UIViewController {
     private let searchController:UISearchController = {
         let view = UISearchController(searchResultsController: LocationSearchResultTableVC())
         view.searchBar.placeholder = "Search location/area/district/country..."
-        view.obscuresBackgroundDuringPresentation = true
+        view.obscuresBackgroundDuringPresentation = false
         return view
     }()
     
@@ -37,6 +37,12 @@ class LocationSearchViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureNavBar()
     }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        DispatchQueue.main.async {  // must call from main thread
+            self.searchController.searchBar.becomeFirstResponder()
+        }
+    }
     
     private func configureNavBar() {
         navigationItem.title = "Search location"
@@ -46,7 +52,6 @@ class LocationSearchViewController: UIViewController {
         let resultVC = searchController.searchResultsController as! LocationSearchResultTableVC
         resultVC.delegate = self
         resultVC.mapView = mapView
-        
     }
     
     @objc private func didTapClose(){

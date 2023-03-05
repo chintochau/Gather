@@ -35,6 +35,7 @@
 		4750020B29AD22C5004E7A6C /* launchScreen.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 4750020A29AD22C5004E7A6C /* launchScreen.jpeg */; };
 		4750020D29AD27C1004E7A6C /* UIFont+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4750020C29AD27C1004E7A6C /* UIFont+extension.swift */; };
 		4752036B29AE7DCF00284EB0 /* UIColor+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */; };
+		4758AD5829B30D3B002F9BE1 /* LocationPickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */; };
 		47595191296DF24300C40741 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595190296DF24300C40741 /* AppDelegate.swift */; };
 		47595193296DF24300C40741 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595192296DF24300C40741 /* SceneDelegate.swift */; };
 		47595195296DF24300C40741 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595194296DF24300C40741 /* WelcomeViewController.swift */; };
@@ -167,6 +168,7 @@
 		4750020A29AD22C5004E7A6C /* launchScreen.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launchScreen.jpeg; sourceTree = "<group>"; };
 		4750020C29AD27C1004E7A6C /* UIFont+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+extension.swift"; sourceTree = "<group>"; };
 		4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+extension.swift"; sourceTree = "<group>"; };
+		4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerTableViewCell.swift; sourceTree = "<group>"; };
 		4759518D296DF24300C40741 /* Gather Pool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gather Pool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47595190296DF24300C40741 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		47595192296DF24300C40741 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -439,6 +441,7 @@
 				479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */,
 				474A2F6329A1D3FD00ADE1B6 /* ChatConversationTableViewCell.swift */,
 				478E6F0729A9377A00270C4F /* HorizontalCollectionView.swift */,
+				4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -746,6 +749,7 @@
 				47FC52AA2999686900B0C25D /* PolicyViewController.swift in Sources */,
 				47595191296DF24300C40741 /* AppDelegate.swift in Sources */,
 				470D319A29B13D32004998E0 /* GradianBorderButton.swift in Sources */,
+				4758AD5829B30D3B002F9BE1 /* LocationPickerTableViewCell.swift in Sources */,
 				47685DFA298B445B00B50DEC /* HeadcountTableViewCell.swift in Sources */,
 				47BCF58A29A41F5D00F82FB4 /* RelationshipObject.swift in Sources */,
 				47F1204A29872FD800C5CAF6 /* ParticipantsViewController.swift in Sources */,

@@ -176,17 +176,3 @@ extension ExploreViewController:MKMapViewDelegate {
     
 }
 
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct PreviewExplore: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        ExploreViewController().toPreview()
-    }
-}
-#endif
-

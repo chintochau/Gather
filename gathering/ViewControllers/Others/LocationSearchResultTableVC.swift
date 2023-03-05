@@ -81,12 +81,50 @@ extension LocationSearchResultTableVC:UITableViewDelegate,UITableViewDataSource 
         }
         
         let vm = matchingItems[indexPath.row]
-        let selectedItem = vm.placemark
-        cell.textLabel?.text = selectedItem.name
-        let address = "\(selectedItem.thoroughfare ?? ""), \(selectedItem.locality ?? ""), \(selectedItem.subLocality ?? ""), \(selectedItem.administrativeArea ?? ""), \(selectedItem.postalCode ?? ""), \(selectedItem.country ?? "")"
-        cell.detailTextLabel?.text = address
+        let address = formatMapItem(vm)
+        
+        cell.textLabel?.text = address.locationName
+        cell.detailTextLabel?.text = address.address
+        
         return cell
     }
+    
+    private func formatMapItem(_ mapItem: MKMapItem) -> (locationName: String, address: String) {
+        let locationName = mapItem.name ?? ""
+        let placemark = mapItem.placemark
+        var address = ""
+        
+        if let streetNumber = placemark.subThoroughfare,
+           let streetName = placemark.thoroughfare {
+            address += "\(streetNumber) \(streetName)"
+        } else if let streetName = placemark.thoroughfare {
+            address += "\(streetName)"
+        }
+        
+        if let city = placemark.locality {
+            if !address.isEmpty {
+                address += ", "
+            }
+            address += "\(city)"
+        }
+        
+        if let state = placemark.administrativeArea {
+            if !address.isEmpty {
+                address += ", "
+            }
+            address += "\(state)"
+        }
+        
+        if let postalCode = placemark.postalCode {
+            if !address.isEmpty {
+                address += " "
+            }
+            address += "\(postalCode)"
+        }
+        
+        return (locationName, address)
+    }
+
     
 }
 

@@ -23,7 +23,6 @@ class NewEventViewController: UIViewController {
         let view = UIButton()
         view.setTitle("Submit", for: .normal)
         view.setTitleColor(.label, for: .normal)
-        
         return view
     }()
     
@@ -94,16 +93,11 @@ class NewEventViewController: UIViewController {
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
-        var location = newPost.location.name
-        if let address = newPost.location.address {
-            location = location + "\n" + address
-        }
         
         viewModels = [
             [
                 .titleField(title: "活動名稱" ,placeholder: "例： 滑雪/食日本野/周末聚下..."),
-                .textView(title: "活動簡介:", text: newPost.intro,tag: 0)
-            ],[
+                .textView(title: "活動簡介:", text: newPost.intro,tag: 0),
                 .datePicker,
                 .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray)
             ],[
@@ -143,11 +137,13 @@ class NewEventViewController: UIViewController {
 extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
     // MARK: - TableView
     fileprivate func configureTableView() {
+        
         view.addSubview(tableView)
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = .clear
         tableView.frame = view.bounds
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
+        tableView.backgroundView = nil
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
         tableView.register(TextFieldTableViewCell.self, forCellReuseIdentifier: TextFieldTableViewCell.identifier)
         tableView.register(TextViewTableViewCell.self, forCellReuseIdentifier: TextViewTableViewCell.identifier)
@@ -158,6 +154,7 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(ParticipantsTableViewCell.self, forCellReuseIdentifier: ParticipantsTableViewCell.identifier)
         tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
         tableView.register(HorizontalCollectionView.self, forCellReuseIdentifier: HorizontalCollectionView.identifier)
+        tableView.register(LocationPickerTableViewCell.self, forCellReuseIdentifier: LocationPickerTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -187,34 +184,41 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: TextFieldTableViewCell.identifier, for: indexPath) as! TextFieldTableViewCell
             cell.configure(withTitle: title, placeholder: placeholder,text: text)
             cell.textField.delegate = self
+            cell.backgroundColor = .clear
             return cell
         case .textView(title: let title, text: let text,tag: let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             cell.configure(withTitle: title, placeholder: text,tag: tag)
             cell.isOptional = true
             cell.textView.delegate = self
+            cell.backgroundColor = .clear
             return cell
         case .value(title: let title, value: let value):
             let cell = tableView.dequeueReusableCell(withIdentifier: ValueTableViewCell.identifier, for: indexPath) as! ValueTableViewCell
             cell.configure(withTitle: title, value: value)
+            cell.backgroundColor = .clear
             return cell
         case .textLabel(text: let text):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextLabelTableViewCell.identifier, for: indexPath) as! TextLabelTableViewCell
             cell.configure(with: text)
             cell.separator(hide: true)
+            cell.backgroundColor = .clear
             return cell
         case .datePicker:
             let cell = tableView.dequeueReusableCell(withIdentifier: DatePickerTableViewCell.identifier, for: indexPath) as! DatePickerTableViewCell
             cell.delegate = self
+            cell.backgroundColor = .clear
             return cell
         case .headCount:
             let cell = tableView.dequeueReusableCell(withIdentifier: HeadcountTableViewCell.identifier, for: indexPath) as! HeadcountTableViewCell
             cell.isOptional = true
             cell.delegate = self
+            cell.backgroundColor = .clear
             return cell
         case .participants:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
+            cell.backgroundColor = .clear
             return cell
         case .titleField(title: let title,placeholder: let placeholder):
             let cell = tableView.dequeueReusableCell(withIdentifier: TitleWithImageTableViewCell.identifier, for: indexPath) as! TitleWithImageTableViewCell
@@ -223,16 +227,20 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
             cell.titleField.placeholder = placeholder
             cell.titleLabel.text = title
             emojiButton = cell.emojiButton
+            cell.backgroundColor = .clear
             return cell
         case .horizentalPicker(title: let title,selectedObject: let selectedObject, objects: let objects):
-            let cell = tableView.dequeueReusableCell(withIdentifier: HorizontalCollectionView.identifier, for: indexPath) as! HorizontalCollectionView
+            let cell = tableView.dequeueReusableCell(withIdentifier: LocationPickerTableViewCell.identifier, for: indexPath) as! LocationPickerTableViewCell
             cell.configure(title: title, selectedObject: selectedObject, with: objects)
+            cell.selectInitialCell()
             cell.isOptional = true
             cell.delegate  = self
+            cell.backgroundColor = .clear
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
             cell.delegate = self
+            cell.backgroundColor = .clear
             return cell
         }
     }
@@ -241,12 +249,6 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 1 && indexPath.section == 1 {
-            let vc = LocationSearchViewController()
-            vc.delegate = self
-            let navVc = UINavigationController(rootViewController: vc)
-            present(navVc, animated: true)
-        }
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -303,13 +305,6 @@ extension NewEventViewController {
     }
 }
 
-extension NewEventViewController: LocationSerchViewControllerDelegate {
-    // MARK: - Handle Location
-    func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
-        newPost.location = location
-        configureViewModels()
-    }
-}
 
 extension NewEventViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
@@ -407,14 +402,39 @@ extension NewEventViewController:EmojiPickerDelegate {
     
 }
 
-extension NewEventViewController:HorizontalCollectionViewCellDelegate {
-    func horizontalCollectionViewCell(_ cell: HorizontalCollectionView, didSelectObject object: Any) {
+
+
+// MARK: - Handle Location
+extension NewEventViewController:LocationPickerTableViewCellDelegate {
+    func didStartEditing(_ cell: LocationPickerTableViewCell, textField: UITextField) {
+        textField.resignFirstResponder()
+        let vc = LocationSearchViewController()
+        vc.delegate = self
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+    }
+    
+    func didChangeText(_ cell: LocationPickerTableViewCell, textField: UITextField) {
+        
+    }
+    
+    func didEndEditing(_ cell: LocationPickerTableViewCell, textField: UITextField) {
+        
+    }
+    
+    func didSelectLocation(_ cell: LocationPickerTableViewCell, didSelectObject object: Any) {
         if let object = object as? Location {
             newPost.location = object
         }
         tableView.beginUpdates()
         tableView.endUpdates()
     }
-    
-    
 }
+
+extension NewEventViewController: LocationSerchViewControllerDelegate {
+    func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
+        newPost.location = location
+        configureViewModels()
+    }
+}
+

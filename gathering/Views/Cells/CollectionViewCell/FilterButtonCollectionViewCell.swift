@@ -18,16 +18,24 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
                 super.isSelected = newValue
                 if newValue
                 {
-                    self.layer.borderWidth = 1.0
-                    self.layer.borderColor = UIColor.mainColor?.cgColor
-                    self.backgroundColor = .mainColor
-                    self.filterTextLabel.textColor = .streamWhiteSnow
+                    // Selected
+                    layer.borderWidth = 1.0
+                    layer.borderColor = UIColor.mainColor!.cgColor
+                    
+                    let gradientLayer = CAGradientLayer()
+                    gradientLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
+                    gradientLayer.colors = [UIColor.lightMainColor!.cgColor, UIColor.darkMainColor!.cgColor]
+                    layer.insertSublayer(gradientLayer, at: 0)
+                    
+                    filterTextLabel.textColor = .streamWhiteSnow
                 }
                 else
                 {
-                    self.layer.borderWidth = 0
-                    self.backgroundColor = .streamWhiteSnow
-                    self.filterTextLabel.textColor = normalTextColor
+                    // Not selected
+                    layer.borderWidth = 1
+                    layer.borderColor = UIColor.extraLightGray.cgColor
+                    layer.sublayers?.removeAll(where: { $0 is CAGradientLayer })
+                    filterTextLabel.textColor = normalTextColor
                 }
             }
     }
@@ -42,8 +50,10 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubview(filterTextLabel)
-        backgroundColor = .streamWhiteSnow
         layer.cornerRadius = 13
+        layer.masksToBounds = true
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.extraLightGray.cgColor
         filterTextLabel.textColor = normalTextColor
         filterTextLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,
                                padding: .init(top: 5, left: 10, bottom: 5, right: 10))

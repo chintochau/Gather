@@ -132,8 +132,6 @@ class EventDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        hero.isEnabled = true
-        hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         view.backgroundColor = .systemBackground
         view.addSubview(headerView)
         view.addSubview(collectionView)
@@ -144,6 +142,7 @@ class EventDetailViewController: UIViewController {
         ownerView.addSubview(nameLabel)
         ownerView.addSubview(profileImageView)
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(didTapShare))
         
         
         collectionView.backgroundColor = .clear
@@ -186,15 +185,6 @@ class EventDetailViewController: UIViewController {
     }
     
     
-    
-    fileprivate func configureCollectionViewLayout() {
-        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.estimatedItemSize = CGSize(width: view.width, height: 200)
-            layout.itemSize = UICollectionViewFlowLayout.automaticSize
-            
-        }
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -219,6 +209,46 @@ class EventDetailViewController: UIViewController {
         }
     }
     
+    // MARK: - Public Functions
+    
+    public func configureWithID(eventID:String, eventReferencePath:String) {
+        DatabaseManager.shared.fetchSingleEvent(eventID: eventID, eventReferencePath: eventReferencePath) {[weak self] event in
+            guard let event = event else {
+                self?.eventDoesNotExist()
+                return}
+            self?.viewModel = .init(event: event)
+        }
+    }
+    
+    public func configureCloseButton(){
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
+    }
+    
+    
+    // MARK: - Private Functions
+    
+    
+    private func eventDoesNotExist (){
+        AlertManager.shared.showAlert(title: "Oops~",message: "活動不存在或者己取消", buttonText: "Dismiss",cancelText: nil, from: self) {[weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    @objc private func didTapShare(){
+        guard let string = viewModel?.event.toString(includeTime: true) else {return}
+        let activityVC = UIActivityViewController(activityItems: [string], applicationActivities: nil)
+        present(activityVC, animated: true, completion: nil)
+    }
+    
+    
+    
+    fileprivate func configureCollectionViewLayout() {
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = CGSize(width: view.width, height: 200)
+            layout.itemSize = UICollectionViewFlowLayout.automaticSize
+            
+        }
+    }
     @objc private func didTapEnroll(){
         
         if viewModel?.isJoined ?? false {
@@ -297,11 +327,6 @@ class EventDetailViewController: UIViewController {
         present(vc, animated: true)
     }
     
-    public func configureCloseButton(){
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
-        
-        
-    }
     
     @objc private func didTapClose(){
         dismiss(animated: true)

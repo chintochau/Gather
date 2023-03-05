@@ -88,9 +88,10 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         ], animated: false)
         
         
-        
-//        addExtraButton()
+        appInitialListener()
     }
+    
+    
     
     public func hideTabBar(){
         tabBar.isHidden = true
@@ -182,5 +183,14 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         present(vc, animated: true)
     }
     
+    // MARK: - Initial Listener
+    
+    fileprivate func appInitialListener() {
+        guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
+        ChatMessageManager.shared.connectToChatServer(true)
+        RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
+        
+//        DummyDataManager.shared.generateDummyEvents()
+    }
     
 }

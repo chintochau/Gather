@@ -42,6 +42,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let userInfo = response.notification.request.content.userInfo
+        
+        if let eventId = userInfo["eventId"] as? String,
+           let eventReference = userInfo["referencePath"] as? String {
+            
+            // Get the window instance
+            guard let window = UIApplication.shared.windows.first else { return }
+            
+            let vc = EventDetailViewController()
+            vc.configureWithID(eventID: eventId, eventReferencePath: eventReference)
+            if let mainTabBarVC = window.rootViewController as? TabBarViewController {
+                mainTabBarVC.selectedIndex = 0
+                if let homeNavVC = mainTabBarVC.viewControllers?.first as? UINavigationController {
+                    homeNavVC.pushViewController(vc, animated: true)
+                }
+            }
+        }
+    }
+    
+    // This function can be called from any part of your app to get the window instance.
+    func getWindow() -> UIWindow? {
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let window = windowScene?.windows.first
+        return window
+    }
 }
 
 

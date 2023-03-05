@@ -218,6 +218,22 @@ final class DatabaseManager {
             completion(event)
         }
     }
+    public func fetchSingleEvent(eventID:String, eventReferencePath:String?, completion:@escaping(Event?) -> Void ){
+        guard let refPath = eventReferencePath else {
+            completion(nil)
+            return
+        }
+        let ref = database.document(refPath)
+        ref.getDocument { snapshot, error in
+            guard let documentData = snapshot?.data(),
+            let data = documentData[eventID] as? [String: Any] else {
+                completion(nil)
+                return
+            }
+            let event = Event(with: data)
+            completion(event)
+        }
+    }
     
     public func listenForEventChanges(eventId: String, completion: @escaping (Event?, Error?) -> Void) -> ListenerRegistration {
         let db = Firestore.firestore()
