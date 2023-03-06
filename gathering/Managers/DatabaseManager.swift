@@ -146,11 +146,7 @@ final class DatabaseManager {
     // MARK: - Read Event
     
     public func fetchEvents(numberOfResults: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
-        
         print("start fetching from date: \(startDate)")
-        
-        let excludedEventIDs = excludeEvents.compactMap({$0.id})
-        
         let ref = database.collection("events")
             .order(by: "_endTimestamp", descending: false)
             .whereField("_endTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
@@ -159,12 +155,12 @@ final class DatabaseManager {
         
         
         ref.getDocuments { snapshot, error in
-            
             guard let documentData = snapshot?.documents.first?.data() else {
                 print("no more event fetched")
                 completion(nil)
                 return
             }
+            
             var events = [Event]()
             let _ = documentData["_startTimestamp"] as? Double ?? 0.0
             let endTimestamp = documentData["_endTimestamp"] as? Double ?? 0.0
@@ -210,6 +206,7 @@ final class DatabaseManager {
     }
     
     public func fetchSingleEvent(event:Event, completion:@escaping(Event?) -> Void ){
+        
         guard let refPath = event.referencePath else {
             completion(nil)
             return
@@ -222,6 +219,7 @@ final class DatabaseManager {
         }
     }
     public func fetchSingleEvent(eventID:String, eventReferencePath:String?, completion:@escaping(Event?) -> Void ){
+        
         guard let refPath = eventReferencePath else {
             completion(nil)
             return
@@ -239,6 +237,7 @@ final class DatabaseManager {
     }
     
     public func listenForEventChanges(eventId: String, completion: @escaping (Event?, Error?) -> Void) -> ListenerRegistration {
+        
         let db = Firestore.firestore()
         let eventRef = db.collection("events").document(eventId)
         
@@ -266,6 +265,7 @@ final class DatabaseManager {
     // MARK: - UpdateEvents
     
     public func registerEvent(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
+        
         guard let participant = Participant(with: participant).asDictionary(),
               let username = UserDefaults.standard.string(forKey: "username"),
               let referencePath = event.referencePath,

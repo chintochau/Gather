@@ -20,7 +20,7 @@ struct DummyDataManager {
             // Generate a unique ID for the event
             let eventId = UUID().uuidString
             
-            let randomValue = Int.random(in: 0...2)
+            let randomValue = Int.random(in: 0...4)
                 let emoji: String?
                 
                 switch randomValue {
@@ -30,6 +30,10 @@ struct DummyDataManager {
                     emoji = "🤔"
                 case 2:
                     emoji = "😍"
+                case 3:
+                    emoji = "😈"
+                case 4:
+                    emoji = "🤡"
                 default:
                     emoji = nil
                 }

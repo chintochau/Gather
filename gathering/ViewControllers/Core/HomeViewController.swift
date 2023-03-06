@@ -41,16 +41,13 @@ class HomeViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureNavBar()
         configureCollectionView()
-        fetchMoreData()
-        
+        fetchInitialDataAndRefresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
 //        let appearance = UINavigationBarAppearance()
 //        appearance.configureWithOpaqueBackground()
 //        navigationController?.navigationBar.scrollEdgeAppearance = appearance
@@ -133,7 +130,6 @@ class HomeViewController: UIViewController{
     
     @objc private func didPullToRefresh(){
         fetchInitialDataAndRefresh {[weak self] in
-            self?.adapter.reloadData()
             self?.collectionView?.refreshControl?.endRefreshing()
         }
     }
@@ -155,7 +151,7 @@ class HomeViewController: UIViewController{
     }
     
 }
-
+ // MARK: - List Adapter
 extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func objects(for listAdapter: ListAdapter) -> [ListDiffable] {

@@ -68,7 +68,6 @@ class EventDetailViewController: UIViewController {
     
     private lazy var enrollButton:GradientButton = {
         let view = GradientButton(type: .system)
-        view.setTitle("我要參加", for: .normal)
         view.setTitleColor(.white, for: .normal)
         view.layer.cornerRadius = 8
         view.layer.shadowColor = UIColor.lightGray.cgColor
@@ -76,7 +75,7 @@ class EventDetailViewController: UIViewController {
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
         view.layer.shadowRadius = 4
         view.setGradient(colors: [.lightMainColor!,.darkMainColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
-        view.addTarget(self, action: #selector(didTapEnroll), for: .touchUpInside)
+        view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
         return view
     }()
     
@@ -116,7 +115,11 @@ class EventDetailViewController: UIViewController {
             participantsList.append(contentsOf: vm.friends)
             participantsList.append(contentsOf: vm.participantsExcludFriends)
             
-            enrollButton.setTitle(vm.isJoined ? "己參加": "我要參加", for: .normal)
+            if vm.isOrganiser {
+                enrollButton.setTitle("輯編活動", for: .normal)
+            }else {
+                enrollButton.setTitle(vm.isJoined ? "己參加": "我要參加", for: .normal)
+            }
             
             collectionView.reloadData()
         }
@@ -249,18 +252,21 @@ class EventDetailViewController: UIViewController {
             
         }
     }
-    @objc private func didTapEnroll(){
+    
+    
+    @objc private func didTapEnrollButton(){
         
-        if viewModel?.isJoined ?? false {
-            // if already joined, tap to unregister
-            unregisterEvent()
-            
+        if viewModel?.isOrganiser ?? false {
+            editEvent()
         }else {
-            // if not joined, tap to join
-            registerEvent()
-            
+            if viewModel?.isJoined ?? false {
+                // if already joined, tap to unregister
+                unregisterEvent()
+            }else {
+                // if not joined, tap to join
+                registerEvent()
+            }
         }
-        
     }
     
     @objc private func didTapChat(){
@@ -276,6 +282,11 @@ class EventDetailViewController: UIViewController {
     
     @objc private func didPullToRefresh(){
         refreshPage()
+    }
+    
+    private func editEvent(){
+        let vc = NewEventViewController()
+        present(vc, animated: true)
     }
     
     private func registerEvent(){

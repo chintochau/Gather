@@ -34,6 +34,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         view.isScrollEnabled = false
         view.backgroundColor = .secondarySystemBackground
         view.layer.cornerRadius = 5
+        view.contentInset = .init(top: 5, left: 5, bottom: 5, right: 5)
         return view
     }()
     
@@ -77,7 +78,27 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         dateLabel.attributedText = createAttributedText(with: vm.dateString, image: .dateIcon)
         timeLabel.attributedText = createAttributedText(with: vm.timeString, image: .timeIcon)
         locationLabel.attributedText = createAttributedText(with: vm.locationString, image: .locationIcon)
-        detailTextView.text = vm.intro
+        
+        // Create an attributed string with the same text as the text view
+        let attributedString = NSMutableAttributedString(string: vm.intro ?? "",attributes: [
+            NSAttributedString.Key.font: UIFont.robotoRegularFont(ofSize: 16),
+            NSAttributedString.Key.foregroundColor: UIColor.label
+        ])
+
+        // Detect any URLs in the attributed string and add a link attribute to them
+        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        let matches = detector.matches(in: attributedString.string, options: [], range: NSRange(location: 0, length: attributedString.length))
+
+        for match in matches {
+            guard let url = match.url else { continue }
+            attributedString.addAttribute(.link, value: url, range: match.range)
+        }
+        
+        // Set the attributed string as the text view's attributed text
+        detailTextView.attributedText = attributedString
+        // Set the data detector types of the text view to .link to make the links clickable
+        detailTextView.dataDetectorTypes = .link
+        
     }
     
 }
@@ -216,14 +237,10 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         attributedText.append(text)
         attributedText.append(number)
         
-        
         currentPartLabel.attributedText = attributedText
-        
         genderTextLabel.text = "活動參與者性別分佈: "
-        
         femaleNumber.text = vm.numberOfFemale
         maleNumber.text = vm.numberOfMale
-        
         friendText.text = vm.numberOfFriends
     }
     
