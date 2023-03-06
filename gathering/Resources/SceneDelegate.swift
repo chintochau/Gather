@@ -22,6 +22,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return window?.rootViewController
         }
     
+    func show(_ url: URL) {
+        let alert = UIAlertController(title: "Got one!", message: url.path, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.window?.rootViewController?.present(alert, animated: true)
+    }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
@@ -35,12 +40,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = rootVC
         window.makeKeyAndVisible()
         self.window = window
+        
+        
+        if let url = connectionOptions.urlContexts.first?.url {
+            self.deeplinkCoordinator.handleURL(url)
+        }
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        
         guard let firstUrl = URLContexts.first?.url else {
             return
         }
+        
         deeplinkCoordinator.handleURL(firstUrl)
     }
 

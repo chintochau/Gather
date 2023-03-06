@@ -19,13 +19,10 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     private let viewModels:[InputFieldType] = [
         .textField(title: "Name", placeholder: "Enter Name"),
         .value(title: "Gender", value: ""),
-        .value(title: "Age (only visible to yourself)", value: "")
+//        .value(title: "Age (only visible to yourself)", value: "")
     ]
-    private var tempField = (
-        name:"",
-        bio:"",
-        gender:""
-    )
+    
+    private var tempField = TempProfile()
     
     private var headerViewViewModel:ProfileHeaderViewViewModel?
     private let genderSelectionView = GenderSelectionView()
@@ -166,11 +163,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             
-            if title == "Bio" {
-                cell.configure(withTitle: title, placeholder: tempField.bio)
-            }else {
-                cell.configure(withTitle: title, placeholder: text)
-            }
+            cell.configure(withTitle: title, placeholder: text)
             cell.textView.delegate = self
             return cell
             
@@ -238,10 +231,8 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
     func textViewDidChange(_ textView: UITextView) {
         tableView.beginUpdates()
         tableView.endUpdates()
-        if let text = textView.text {
-            tempField.bio = text
-        }
     }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text {
             tempField.name = text

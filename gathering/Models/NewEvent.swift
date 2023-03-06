@@ -19,6 +19,7 @@ struct NewEvent {
     var imageUrlString:String?
     var headcount:Headcount = .init()
     var participants:[String:Participant] = [:]
+    var eventRef:String? = nil
 }
 
 extension NewEvent {
@@ -69,6 +70,7 @@ struct NewPost {
         }
         return [user.username:Participant(with: user)]
     }()
+    var eventRef:String? = nil
 }
 
 extension NewPost {
@@ -93,4 +95,24 @@ extension NewPost {
                      ownerFcmToken: user.fcmToken)
     }
     
+}
+
+extension Event {
+    func toNewPost()-> NewPost {
+        return NewPost(
+            id: self.id,
+            emojiTitle: self.emojiTitle ?? "🤗",
+            intro: self.introduction,
+            imageUrlString: self.imageUrlString.first,
+            headcount: self.headcount,
+            title:self.title,
+            addInfo:nil,
+            startDate:self.startDate,
+            endDate:self.endDate,
+            headCount:self.headcount,
+            location:self.location,
+            participants:self.participants,
+            eventRef: self.referencePath
+        )
+    }
 }

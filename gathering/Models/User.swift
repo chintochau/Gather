@@ -32,7 +32,11 @@ extension User {
         self.gender = participant.gender
     }
     
-    
+}
+
+struct TempProfile {
+    var name:String = ""
+    var gender:String = genderType.male.rawValue
 }
 
 enum personalityType:String {
@@ -44,7 +48,7 @@ enum personalityType:String {
 }
 
 enum genderType:String,CaseIterable {
-    case male = "male"
-    case female = "female"
-    case nonBinary = "non binary"
+    case male
+    case female
+    case nonBinary
 }

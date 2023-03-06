@@ -74,8 +74,8 @@ class ProfileViewController: UIViewController {
             // events
             [],
             // setting
-            [.value(title: "Location", value: "Toronto"),
-             .value(title: "Language", value: "English")],
+            [.value(title: "Location", value: "多倫多"),
+             .value(title: "Language", value: "中文")],
             // support
             [.value(title: "Suggestions", value: "")],
             // about
@@ -142,6 +142,7 @@ class ProfileViewController: UIViewController {
         vc.completion = {[weak self] in
             self?.configureViewModels()
             self?.configureProfileView()
+            self?.didTapEditProfile()
         }
         present(UINavigationController(rootViewController: vc),animated: true)
     }
@@ -211,15 +212,15 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             return headerView
         case 1:
             let view = SectionHeaderView()
-            view.configure(with: "Setting")
+            view.configure(with: "設定")
             return view
         case 2:
             let view = SectionHeaderView()
-            view.configure(with: "Support")
+            view.configure(with: "支援")
             return view
         case 3:
             let view = SectionHeaderView()
-            view.configure(with: "About")
+            view.configure(with: "關於")
             return view
         default: return nil
         }

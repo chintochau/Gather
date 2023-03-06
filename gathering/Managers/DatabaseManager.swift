@@ -213,8 +213,11 @@ final class DatabaseManager {
         }
         let ref = database.document(refPath)
         ref.getDocument { snapshot, error in
-            guard let documentData = snapshot?.data() else {return}
-            let event = Event(with: documentData[event.id] as! [String : Any])
+            guard let documentData = snapshot?.data() ,
+            let data = documentData[event.id] as? [String: Any] else {
+                completion(nil)
+                return}
+            let event = Event(with: data)
             completion(event)
         }
     }
@@ -326,6 +329,16 @@ final class DatabaseManager {
     }
     
     // MARK: - Delete Events
+    public func deleteEvent(eventID:String, eventRef:String, completion:@escaping (Bool) -> Void){
+        
+        let ref = database.document(eventRef)
+        
+        ref.setData([eventID:FieldValue.delete()], merge: true) { error in
+            completion(error == nil)
+        }
+    }
+    
+    
     public func unregisterEvent(event:Event, completion:@escaping (Bool) -> Void) {
         
         guard let username = UserDefaults.standard.string(forKey: "username"),

@@ -211,8 +211,8 @@ class RegisterViewController: UIViewController {
             }
             
             DefaultsManager.shared.updateUserProfile(with: user)
+            self?.dismiss(animated: false)
             self?.completion?()
-            self?.dismiss(animated: true)
             CustomNotificationManager.shared.requestForNotification()
         }
     }

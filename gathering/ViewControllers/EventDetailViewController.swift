@@ -258,6 +258,7 @@ class EventDetailViewController: UIViewController {
         
         if viewModel?.isOrganiser ?? false {
             editEvent()
+            
         }else {
             if viewModel?.isJoined ?? false {
                 // if already joined, tap to unregister
@@ -285,7 +286,18 @@ class EventDetailViewController: UIViewController {
     }
     
     private func editEvent(){
+        // MARK: - Edit Event (need modify)
+        // edit event does not have event ref, changing date will create another event, need to modify
         let vc = NewEventViewController()
+        if let editPost = viewModel?.event.toNewPost() {
+            vc.newPost = editPost
+            vc.isEditMode = true
+        }
+        vc.completion = {[weak self] event in
+            self?.dismiss(animated: true)
+            self?.refreshPage()
+        }
+        
         present(vc, animated: true)
     }
     
@@ -322,7 +334,10 @@ class EventDetailViewController: UIViewController {
             print("Fail to create VM")
             return}
         DatabaseManager.shared.fetchSingleEvent(event: vm.event) { [weak self] event in
-            guard let event = event else {return}
+            guard let event = event else {
+                self?.dismiss(animated: true)
+                return
+            }
             let viewModel = EventHomeCellViewModel(event: event)
             viewModel.image = self?.viewModel?.image
             self?.viewModel = viewModel

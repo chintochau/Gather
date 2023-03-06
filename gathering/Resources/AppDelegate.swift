@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //        application.clearLaunchScreenCache()
         
         
+        
         // Get the URL of the default Realm file
         if let defaultRealmURL = Realm.Configuration.defaultConfiguration.fileURL {
             print("Default Realm file URL: \(defaultRealmURL)")
@@ -58,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
     }
+    
     
     // MARK: UISceneSession Lifecycle
     

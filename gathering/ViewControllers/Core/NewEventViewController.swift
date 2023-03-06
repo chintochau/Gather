@@ -19,12 +19,6 @@ class NewEventViewController: UIViewController {
         return view
     }()
     
-    private let tempButton:UIButton = {
-        let view = UIButton()
-        view.setTitle("Submit", for: .normal)
-        view.setTitleColor(.label, for: .normal)
-        return view
-    }()
     
     private var emojiButton:UIButton?
     
@@ -53,14 +47,36 @@ class NewEventViewController: UIViewController {
         return view
     }()
     
+    
+    private let tempButton:UIButton = {
+        let view = UIButton()
+        view.setTitle("提交", for: .normal)
+        view.setTitleColor(.label, for: .normal)
+        return view
+    }()
+    
+    private let deleteButton:UIButton = {
+        let view = UIButton()
+        view.setTitle("刪除", for: .normal)
+        view.setTitleColor(.red, for: .normal)
+        view.isHidden = true
+        return view
+    }()
+    
     // MARK: - Class members
     private var viewModels = [[InputFieldType]()]
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
     var completion: ((_ event:Event) -> Void)?
     
-    var newPost = NewPost()
     
+    private let bottomOffset:CGFloat = 150
+    var newPost = NewPost()
+    var isEditMode:Bool = false {
+        didSet {
+            deleteButton.isHidden = !isEditMode
+        }
+    }
     
     // MARK: - LifeCycle
     
@@ -75,9 +91,13 @@ class NewEventViewController: UIViewController {
         
         view.addSubview(tempButton)
         
-        tempButton.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 30, right: 0))
-        tempButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        tempButton.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 30, right: 60))
         tempButton.addTarget(self, action: #selector(didTapPost), for: .touchUpInside)
+        
+        view.addSubview(deleteButton)
+        deleteButton.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: nil, padding: .init(top: 0, left: 60, bottom: 30, right: 0))
+        deleteButton.addTarget(self, action: #selector(didTapDeleteEvent), for: .touchUpInside)
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -123,13 +143,13 @@ class NewEventViewController: UIViewController {
         
         observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) {[weak self] notification in
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height+100, right: 0)
+                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height + self!.bottomOffset, right: 0)
                 }
             
         }
         
         hideObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
-                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0)
+            self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self!.bottomOffset, right: 0)
         }
     }
 }
@@ -140,7 +160,7 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
         
         view.addSubview(tableView)
         tableView.backgroundColor = .clear
-        tableView.frame = view.bounds
+        tableView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 65, right: 0))
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         tableView.backgroundView = nil
@@ -157,6 +177,7 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(LocationPickerTableViewCell.self, forCellReuseIdentifier: LocationPickerTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.contentInset = .init(top: 0, left: 0, bottom: bottomOffset, right: 0)
         
     }
     
@@ -226,7 +247,9 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
             cell.titleField.delegate = self
             cell.titleField.placeholder = placeholder
             cell.titleLabel.text = title
+            cell.titleField.text = newPost.title
             emojiButton = cell.emojiButton
+            cell.emojiButton.setTitle(newPost.emojiTitle, for: .normal)
             cell.backgroundColor = .clear
             return cell
         case .horizentalPicker(title: let title,selectedObject: let selectedObject, objects: let objects):
@@ -300,6 +323,16 @@ extension NewEventViewController {
         DatabaseManager.shared.createEvent(with: event) { [weak self] finalEvent in
             self?.navigationController?.popToRootViewController(animated: false)
             self?.completion?(finalEvent)
+        }
+        
+    }
+    
+    @objc private func didTapDeleteEvent(){
+        view.endEditing(true)
+        guard let eventRef = newPost.eventRef else {return}
+        DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
+            // need to modify, should return success instead of an event
+            self?.completion?((self?.newPost.toEvent())!)
         }
         
     }
