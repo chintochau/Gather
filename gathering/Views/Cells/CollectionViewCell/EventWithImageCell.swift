@@ -19,10 +19,11 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
     
     private let tagStackView:UIStackView = {
         let view = UIStackView()
-        view.axis = .horizontal
-        view.distribution = .fillProportionally
-        view.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 5)
+        view.axis = .vertical
+        view.distribution = .fill
         view.isLayoutMarginsRelativeArrangement = true
+        view.alignment = .top
+        view.spacing = 1
         return view
     }()
     
@@ -55,8 +56,10 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
                               padding: .init(top: 15, left: 20, bottom: 0, right: 0),
                               size: .init(width: eventImageSize, height: eventImageHeight))
         
-        tagStackView.anchor(top: eventImageView.topAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing: femaleIconImageView.leadingAnchor,
+        tagStackView.anchor(top: eventImageView.topAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing:nil,
                             padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        tagStackView.trailingAnchor.constraint(lessThanOrEqualTo:  femaleIconImageView.leadingAnchor,constant: -10).isActive = true
+        
         
         // MARK: - Gender Icons
         let smallIconSize:CGFloat = 17
@@ -102,7 +105,8 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
         friendsNumber.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
-        
+        totalNumber.anchor(top: femaleNumber.topAnchor, leading: nil, bottom: nil, trailing: femaleIconImageView.leadingAnchor,
+                           padding: .init(top: 0, left: 0, bottom: 0, right: 5))
         
     }
     
@@ -113,12 +117,62 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         nameLabel.text = nil
+        tagStackView.arrangedSubviews.forEach({$0.removeFromSuperview()})
     }
     
     
     
     override func bindViewModel(_ viewModel: Any) {
         super.bindViewModel(viewModel)
+        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        
+        
+        vm.tag.prefix(2).forEach { tag in
+            let tagLabel = TagLabel()
+            tagLabel.eventTag = tag
+            tagStackView.addArrangedSubview(tagLabel)
+        }
+        
+
     }
+    
+}
+
+class TagLabel:UILabel {
+    
+    private let tagLabel:UILabel = {
+        let view = UILabel()
+        view.font = .robotoRegularFont(ofSize: 14)
+        return view
+    }()
+    
+    private let backgroundView:UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    var eventTag:Tag? {
+        didSet{
+            guard let eventTag = eventTag else {return}
+            tagLabel.text = eventTag.tagString
+            backgroundColor = eventTag.color
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(tagLabel)
+        
+        layer.cornerRadius = 7
+        layer.masksToBounds = true
+        
+        tagLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 5, bottom: 0, right: 5))
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
 }

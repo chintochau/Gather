@@ -455,7 +455,7 @@ extension OldEventController {
             startDateTimestamp: tempEvent.startDate.timeIntervalSince1970,
             endDateTimestamp: tempEvent.endDate.timeIntervalSince1970,
             location: tempEvent.location,
-            tag: [],
+            presetTags: [],
             introduction: tempEvent.description,
             additionalDetail: "",
             refundPolicy: "",

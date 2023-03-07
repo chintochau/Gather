@@ -38,16 +38,19 @@ extension UIColor {
         )
     }
     
-    static let mainColor = UIColor(named: "mainColor")
-    static let redColor = UIColor(named: "redColor")
-    static let blueColor = UIColor(named: "blueColor")
-    static let blackBackground = UIColor(named: "blackBackground")
-    static let lightMainColor = UIColor(named: "lightMainColor")
-    static let darkMainColor = UIColor(named: "darkMainColor")
-    static let darkSecondaryColor = UIColor(named: "darkSecondaryColor")
-    static let secondaryTextColor = UIColor(named: "secondaryTextColor")
+    static let mainColor = UIColor(named: "mainColor")!
+    static let redColor = UIColor(named: "redColor")!
+    static let blueColor = UIColor(named: "blueColor")!
+    static let blackBackground = UIColor(named: "blackBackground")!
+    static let lightMainColor = UIColor(named: "lightMainColor")!
+    static let darkMainColor = UIColor(named: "darkMainColor")!
+    static let darkSecondaryColor = UIColor(named: "darkSecondaryColor")!
+    static let secondaryTextColor = UIColor(named: "secondaryTextColor")!
     static let lightFillColor = UIColor(named: "lightFillColor")!
     static let extraLightGray = UIColor(named: "extraLightGray")!
+    static let tiffBlueColor = UIColor(named: "tiffBlueColor")!
+    
+    
     
     static let mainTextColor = UIColor(red: 0.00, green: 0.42, blue: 0.46, alpha: 1.00)
     

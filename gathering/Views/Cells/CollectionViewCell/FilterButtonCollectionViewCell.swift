@@ -20,11 +20,11 @@ class FilterButtonCollectionViewCell: UICollectionViewCell {
                 {
                     // Selected
                     layer.borderWidth = 1.0
-                    layer.borderColor = UIColor.mainColor!.cgColor
+                    layer.borderColor = UIColor.mainColor.cgColor
                     
                     let gradientLayer = CAGradientLayer()
                     gradientLayer.frame = CGRect(x: 0, y: 0, width: 300, height: 50)
-                    gradientLayer.colors = [UIColor.lightMainColor!.cgColor, UIColor.darkMainColor!.cgColor]
+                    gradientLayer.colors = [UIColor.lightMainColor.cgColor, UIColor.darkMainColor.cgColor]
                     layer.insertSublayer(gradientLayer, at: 0)
                     
                     filterTextLabel.textColor = .streamWhiteSnow

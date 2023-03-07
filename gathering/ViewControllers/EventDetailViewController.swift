@@ -7,6 +7,7 @@
 
 import UIKit
 import IGListKit
+import SwipeCellKit
 
 class EventDetailViewController: UIViewController {
     
@@ -74,7 +75,7 @@ class EventDetailViewController: UIViewController {
         view.layer.shadowOpacity = 0.2
         view.layer.shadowOffset = CGSize(width: 0, height: 4)
         view.layer.shadowRadius = 4
-        view.setGradient(colors: [.lightMainColor!,.darkMainColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+        view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
         view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
         return view
     }()
@@ -288,14 +289,23 @@ class EventDetailViewController: UIViewController {
     private func editEvent(){
         // MARK: - Edit Event (need modify)
         // edit event does not have event ref, changing date will create another event, need to modify
-        let vc = NewEventViewController()
+        let vc = NewPostViewController()
         if let editPost = viewModel?.event.toNewPost() {
             vc.newPost = editPost
             vc.isEditMode = true
         }
+        
         vc.completion = {[weak self] event in
-            self?.dismiss(animated: true)
-            self?.refreshPage()
+            if let _ = event {
+                // event modified
+                self?.dismiss(animated: true)
+                self?.refreshPage()
+                
+            }else {
+                // event deleted
+                self?.dismiss(animated: false)
+                self?.navigationController?.popViewController(animated: true)
+            }
         }
         
         present(vc, animated: true)
@@ -333,8 +343,10 @@ class EventDetailViewController: UIViewController {
               let vm = EnrollViewModel(with: event) else {
             print("Fail to create VM")
             return}
+        
         DatabaseManager.shared.fetchSingleEvent(event: vm.event) { [weak self] event in
             guard let event = event else {
+                
                 self?.dismiss(animated: true)
                 return
             }
@@ -388,6 +400,7 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
             cell.bindViewModel(participantsList[indexPath.row-2])
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             cell.heightAnchor.constraint(equalToConstant: 60).isActive = true
+            cell.delegate = self
             return cell
         default:
             fatalError()
@@ -437,7 +450,22 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
         
     }
     
+}
+
+extension EventDetailViewController:SwipeCollectionViewCellDelegate {
+    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "移除") { action, indexPath in
+            // handle action by updating model with deletion
+            print("Delete tapped")
+        }
+
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete")
+
+        return [deleteAction]
+    }
     
     
 }
-

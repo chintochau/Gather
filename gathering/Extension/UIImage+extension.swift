@@ -11,7 +11,7 @@ extension UIView {
     func createAttributedText(with text: String, imageName: String) -> NSAttributedString {
         let fullString = NSMutableAttributedString(string: "  \(text)")
         let imageAttachment = NSTextAttachment()
-        let image = UIImage(systemName: imageName)!.withTintColor(.mainColor!)
+        let image = UIImage(systemName: imageName)!.withTintColor(.mainColor)
         imageAttachment.image = image
         
         let font = UIFont.systemFont(ofSize: 17) // adjust to the font size you are using

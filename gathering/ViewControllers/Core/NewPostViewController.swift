@@ -10,7 +10,7 @@ import EmojiPicker
 
 
 
-class NewEventViewController: UIViewController {
+class NewPostViewController: UIViewController {
     
     
     // MARK: - Components
@@ -67,7 +67,7 @@ class NewEventViewController: UIViewController {
     private var viewModels = [[InputFieldType]()]
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
-    var completion: ((_ event:Event) -> Void)?
+    var completion: ((_ event:Event?) -> Void)?
     
     
     private let bottomOffset:CGFloat = 150
@@ -154,7 +154,7 @@ class NewEventViewController: UIViewController {
     }
 }
 
-extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
+extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     // MARK: - TableView
     fileprivate func configureTableView() {
         
@@ -227,6 +227,7 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
             return cell
         case .datePicker:
             let cell = tableView.dequeueReusableCell(withIdentifier: DatePickerTableViewCell.identifier, for: indexPath) as! DatePickerTableViewCell
+            
             cell.delegate = self
             cell.backgroundColor = .clear
             return cell
@@ -290,7 +291,7 @@ extension NewEventViewController:UITableViewDelegate,UITableViewDataSource {
     
 }
 
-extension NewEventViewController {
+extension NewPostViewController {
     // MARK: - Handle Preview/ Post
     
     private func createPostFromNewPost() -> Event?{
@@ -332,20 +333,16 @@ extension NewEventViewController {
         guard let eventRef = newPost.eventRef else {return}
         DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
             // need to modify, should return success instead of an event
-            self?.completion?((self?.newPost.toEvent())!)
+            self?.completion?(nil)
         }
         
     }
 }
 
 
-extension NewEventViewController:DatePickerTableViewCellDelegate {
+extension NewPostViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
     func DatePickerTableViewCellDelegateOnDateChanged(_ cell: DatePickerTableViewCell, startDate: Date, endDate: Date) {
-        
-        print(startDate)
-        print(endDate)
-        
         newPost.startDate = startDate
         newPost.endDate = endDate
     }
@@ -357,7 +354,7 @@ extension NewEventViewController:DatePickerTableViewCellDelegate {
     
 }
 
-extension NewEventViewController:HeadcountTableViewCellDelegate {
+extension NewPostViewController:HeadcountTableViewCellDelegate {
     // MARK: - handle Headcount
     func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
         newPost.headcount = headcount
@@ -371,7 +368,7 @@ extension NewEventViewController:HeadcountTableViewCellDelegate {
     }
     
 }
-extension NewEventViewController:UITextFieldDelegate {
+extension NewPostViewController:UITextFieldDelegate {
     // MARK: - Handle TextField
     func textFieldDidEndEditing(_ textField: UITextField) {
         guard let text = textField.text, !text.isEmpty else {return}
@@ -379,7 +376,7 @@ extension NewEventViewController:UITextFieldDelegate {
     }
 }
 
-extension NewEventViewController:UITextViewDelegate {
+extension NewPostViewController:UITextViewDelegate {
     // MARK: - Handle TextView
     func textViewDidChange(_ textView: UITextView) {
         switch textView.tag {
@@ -398,7 +395,7 @@ extension NewEventViewController:UITextViewDelegate {
     }
 }
 
-extension NewEventViewController:ParticipantsTableViewCellDelegate {
+extension NewPostViewController:ParticipantsTableViewCellDelegate {
     // MARK: - Handle Participants
     func ParticipantsTableViewCellTextViewDidEndEditing(_ cell: ParticipantsTableViewCell, _ textView: UITextView, participants: [String : Participant]) {
         newPost.participants = participants
@@ -415,7 +412,7 @@ extension NewEventViewController:ParticipantsTableViewCellDelegate {
     
 }
 
-extension NewEventViewController:EmojiPickerDelegate {
+extension NewPostViewController:EmojiPickerDelegate {
     // MARK: - Pick Emoji
     
     @objc private func openEmojiPickerModule(sender: UIButton) {
@@ -438,7 +435,7 @@ extension NewEventViewController:EmojiPickerDelegate {
 
 
 // MARK: - Handle Location
-extension NewEventViewController:LocationPickerTableViewCellDelegate {
+extension NewPostViewController:LocationPickerTableViewCellDelegate {
     func didStartEditing(_ cell: LocationPickerTableViewCell, textField: UITextField) {
         textField.resignFirstResponder()
         let vc = LocationSearchViewController()
@@ -464,7 +461,7 @@ extension NewEventViewController:LocationPickerTableViewCellDelegate {
     }
 }
 
-extension NewEventViewController: LocationSerchViewControllerDelegate {
+extension NewPostViewController: LocationSerchViewControllerDelegate {
     func didChooseLocation(_ VC: LocationSearchViewController, location: Location) {
         newPost.location = location
         configureViewModels()

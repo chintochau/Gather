@@ -22,7 +22,8 @@ target 'Gather Pool' do
   pod 'RealmSwift', '~>10'
   pod 'IGListKit', '~> 4.0.0'
   pod 'UIImageColors'
-
+  pod 'SwipeCellKit'
+  
     # Pods for Instagram
 
     post_install do |installer|

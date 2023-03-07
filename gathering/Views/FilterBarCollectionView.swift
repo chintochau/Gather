@@ -23,9 +23,9 @@ class FilterBarCollectionView: UICollectionView {
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         let layout  = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 3
-        layout.minimumInteritemSpacing = 3
+        layout.sectionInset = .init(top: 0, left: 30, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
         layout.estimatedItemSize = CGSize(width: 50, height: 30)
         layout.itemSize = UICollectionViewFlowLayout.automaticSize
         super.init(frame: .zero, collectionViewLayout: layout)
@@ -48,6 +48,7 @@ extension FilterBarCollectionView:UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterButtonCollectionViewCell.identifier, for: indexPath) as! FilterButtonCollectionViewCell
         
         let object = objects[indexPath.row]

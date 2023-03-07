@@ -137,7 +137,7 @@ class HomeViewController: UIViewController{
     // MARK: - Fetch Data
     private func fetchInitialDataAndRefresh(completion: (() -> (Void))? = nil ){
         viewModel.fetchInitialData(perPage: eventsPerPage) { [weak self] events in
-            self?.adapter.performUpdates(animated: true)
+            self?.adapter.reloadData()
             completion?()
         }
     }
@@ -160,10 +160,11 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
-        case _ as EventHomeCellViewModel:
+        case let vm as EventHomeCellViewModel:
+            print(vm.event.tags)
+            
+            
             return EventSectionController()
-        case _ as PostViewModel:
-            return PostSectionController()
         default:
             return HomeSectionController()
         }

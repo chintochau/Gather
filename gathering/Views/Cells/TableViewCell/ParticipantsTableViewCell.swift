@@ -243,10 +243,10 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
         for (index,item) in text.split(separator: "\n").enumerated() {
             var gender:String
             
-            switch buttons[index].tintColor {
-            case .blueColor!:
+            switch buttons[index].tintColor! {
+            case .blueColor:
                 gender = genderType.male.rawValue
-            case .redColor!:
+            case .redColor:
                 gender = genderType.female.rawValue
             default:
                 gender = genderType.nonBinary.rawValue
@@ -281,6 +281,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
                 color = .mainColor
             }
         }
+        
         let button:UIButton = {
             let view = UIButton()
             view.setImage(UIImage(systemName: "person.circle"), for: .normal)
@@ -288,6 +289,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             view.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
             return view
         }()
+        
         buttons.append(button)
         guard let lastButton = buttons.last else {return}
         stackView.addArrangedSubview(lastButton)
@@ -317,18 +319,18 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
         var redNumber = 0
         buttons.forEach({
             switch $0.tintColor! {
-            case .blueColor!:
+            case .blueColor:
                 blueNumber += 1
-            case .redColor!:
+            case .redColor:
                 redNumber += 1
             default:
                 break
             }
         })
         switch userImageView.tintColor! {
-        case .blueColor!:
+        case .blueColor:
             blueNumber += 1
-        case .redColor!:
+        case .redColor:
             redNumber += 1
         default:
             break

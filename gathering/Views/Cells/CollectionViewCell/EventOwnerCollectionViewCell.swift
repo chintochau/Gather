@@ -24,7 +24,7 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         view.contentMode = .scaleAspectFit
         view.backgroundColor = .secondarySystemBackground
         view.image = .personIcon
-        view.layer.borderColor = UIColor.mainColor!.withAlphaComponent(0.5).cgColor
+        view.layer.borderColor = UIColor.mainColor.withAlphaComponent(0.5).cgColor
         view.tintColor = .lightGray
         view.layer.borderWidth = 1
         return view

@@ -202,17 +202,31 @@ class HeadcountTableViewCell: UITableViewCell {
         
         let isHidden = maleMinField.isHidden
         
-        
         UIView.animate(withDuration: 0.3) {[weak self] in
             if isHidden {
+                // not gender specific
+                
                 self?.cellHeightAnchor.constant = 44
                 self?.expandButton.transform = .identity
                 self?.tempHeadcount.isGenderSpecific = false
+                self?.tempHeadcount.fMin = nil
+                self?.tempHeadcount.fMax = nil
+                self?.tempHeadcount.mMin = nil
+                self?.tempHeadcount.mMax = nil
+                self?.maleMinField.text = nil
+                self?.maleMaxField.text = nil
+                self?.femaleMinField.text = nil
+                self?.femaleMaxField.text = nil
+                
             }else {
+                // gender specific
                 self?.cellHeightAnchor.constant = 70
                 self?.expandButton.transform = .init(rotationAngle: .pi*3/2)
                 self?.tempHeadcount.isGenderSpecific = true
-                
+                self?.tempHeadcount.max = nil
+                self?.tempHeadcount.min = nil
+                self?.maxTextField.text = nil
+                self?.miniumTextField.text = nil
             }
         }
         layoutIfNeeded()
@@ -223,7 +237,7 @@ class HeadcountTableViewCell: UITableViewCell {
 extension HeadcountTableViewCell:UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let text = Int(textField.text ?? "") else {return}
+        let text:Int? = Int(textField.text ?? "")
         
         switch textField.tag {
         case 0:
@@ -244,4 +258,5 @@ extension HeadcountTableViewCell:UITextFieldDelegate {
         
         delegate?.HeadcountTableViewCellDidEndEditing(self, headcount: tempHeadcount)
     }
+    
 }

@@ -60,7 +60,7 @@ class GradianBorderButton: UIView {
         // Create a CAGradientLayer instance and set its properties
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = bounds
-        gradientLayer.colors = [UIColor.lightMainColor!.cgColor, UIColor.darkMainColor!.cgColor]
+        gradientLayer.colors = [UIColor.lightMainColor.cgColor, UIColor.darkMainColor.cgColor]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0)
         gradientLayer.endPoint = CGPoint(x: 1, y: 1)
         gradientLayer.cornerRadius = 10

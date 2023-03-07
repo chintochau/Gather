@@ -110,7 +110,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         let buttonSize:CGFloat = 60
         extraButton.frame = CGRect(x: (view.bounds.width - buttonSize) / 2, y: view.height-tabBar.height-buttonSize, width: buttonSize, height: buttonSize)
         extraButton.layer.cornerRadius = 20
-        extraButton.setGradient(colors: [.lightMainColor!,.darkSecondaryColor!], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 1),image: UIImage(systemName: "plus"))
+        extraButton.setGradient(colors: [.lightMainColor,.darkSecondaryColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 1),image: UIImage(systemName: "plus"))
         extraButton.addTarget(self, action: #selector(didSelectTap(_:)), for: .touchUpInside)
         view.addSubview(extraButton)
         
@@ -137,7 +137,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
                 }
                 
                 vc.secondAction = {[weak self] in
-                    self?.openNewCreateNewEvent()
+                    self?.openCreateNewEvent()
                 }
                 
                 
@@ -159,15 +159,22 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         dismiss(animated: false)
         
-        let vc = NewEventViewController()
+        let vc = NewPostViewController()
         vc.completion = { [weak self] post in
+            guard let post = post else {return}
             self?.dismiss(animated: false)
             let vc = EventDetailViewController()
             vc.viewModel = .init(event: post)
-            vc.configureCloseButton()
-            let navVc = UINavigationController(rootViewController: vc)
-            navVc.modalPresentationStyle = .fullScreen
-            self?.present(navVc, animated: true)
+            
+            if let firstTab = self?.viewControllers?.first as? UINavigationController {
+                firstTab.pushViewController(vc, animated: true)
+            }else {
+                let navVc = UINavigationController(rootViewController: vc)
+                navVc.modalPresentationStyle = .fullScreen
+                self?.present(navVc, animated: true)
+                
+            }
+            
         }
         present(vc, animated: true)
     }
@@ -186,19 +193,8 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
             let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
             self?.navigationController?.pushViewController(vc, animated: true)
         }
-        present(vc, animated: true)
-    }
-    
-    private func openNewCreateNewEvent(){
-        if !AuthManager.shared.isSignedIn {
-            dismiss(animated: false)
-            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
-            selectedIndex = 2
-            return
-        }
-        dismiss(animated: false)
-        let vc = NewEventViewController()
-        present(vc, animated: true)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
     }
     
     // MARK: - Initial Listener

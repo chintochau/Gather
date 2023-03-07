@@ -46,19 +46,19 @@ class LocationPickerTableViewCell: UITableViewCell {
     private let searchTextField:UITextField = {
         let view = UITextField()
         view.placeholder = "搜尋其他地點"
-        view.layer.borderColor = UIColor.darkMainColor?.cgColor
+        view.layer.borderColor = UIColor.darkMainColor.cgColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 5
         view.layer.masksToBounds = true
         
         let searchIcon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
-        searchIcon.tintColor = .darkMainColor!
+        searchIcon.tintColor = .darkMainColor
         searchIcon.frame = CGRect(x: 12, y: 12, width: 25, height: 25)
         searchIcon.contentMode = .scaleAspectFit
         
         let  leftView = UIView()
         leftView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
-        leftView.layer.borderColor = UIColor.darkMainColor?.cgColor
+        leftView.layer.borderColor = UIColor.darkMainColor.cgColor
         leftView.layer.borderWidth = 1
         leftView.addSubview(searchIcon)
         leftView.backgroundColor = .lightFillColor

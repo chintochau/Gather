@@ -26,13 +26,13 @@ class TitleWithImageTableViewCell: UITableViewCell {
         let view = PaddedTextField()
         view.placeholder = "Title"
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.darkMainColor?.cgColor
+        view.layer.borderColor = UIColor.darkMainColor.cgColor
         view.layer.cornerRadius = 5
         
         let leftView = UIView()
         leftView.backgroundColor = .lightFillColor
         leftView.layer.borderWidth = 1
-        leftView.layer.borderColor = UIColor.darkMainColor?.cgColor
+        leftView.layer.borderColor = UIColor.darkMainColor.cgColor
         leftView.frame = CGRect(x: 0, y: 0, width: 80, height: 50)
         
         let arrowImageView = UIImageView()

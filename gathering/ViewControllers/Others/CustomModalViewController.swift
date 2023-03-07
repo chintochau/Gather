@@ -75,7 +75,7 @@ class CustomModalViewController: UIViewController {
         closeButton.addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.anchor(top: closeButton.topAnchor, leading: closeButton.leadingAnchor, bottom: closeButton.bottomAnchor, trailing: closeButton.trailingAnchor,padding: .init(top: padding, left: padding, bottom: padding, right: padding))
-        imageView.tintColor = .darkSecondaryColor!
+        imageView.tintColor = .darkSecondaryColor
     }
     
     

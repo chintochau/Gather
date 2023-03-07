@@ -74,16 +74,14 @@ class DatePickerTableViewCell: UITableViewCell {
     
     let startDatePicker:UIDatePicker = {
         let view = UIDatePicker()
-        view.minimumDate = Date()
+        view.minimumDate = Date().firstDayOfWeek()
         view.minuteInterval = 15
-        view.datePickerMode = .date
         return view
     }()
     
     let endDatePicker:UIDatePicker = {
         let view = UIDatePicker()
-        view.datePickerMode = .date
-        view.minimumDate = Date()
+        view.minimumDate = Date().firstDayOfWeek()
         view.minuteInterval = 15
         return view
     }()
@@ -139,7 +137,7 @@ class DatePickerTableViewCell: UITableViewCell {
         
         startDate.anchor(
             top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,
-            padding: UIEdgeInsets(top: 5, left: 20, bottom: 0, right: 0))
+            padding: UIEdgeInsets(top: 5, left: 30, bottom: 0, right: 0))
 
         startDatePicker.anchor(
             top: startDate.topAnchor, leading: nil, bottom: startDate.bottomAnchor,
@@ -154,7 +152,7 @@ class DatePickerTableViewCell: UITableViewCell {
         
         endDate.anchor(
             top: nil, leading: contentView.leadingAnchor, bottom: filterBar.topAnchor, trailing: nil,
-            padding: .init(top: 0, left: 20, bottom: 5, right: 0))
+            padding: .init(top: 0, left: 30, bottom: 5, right: 0))
 
         endDatePicker.anchor(
             top: endDate.topAnchor, leading: nil, bottom: endDate.bottomAnchor, trailing: startDatePicker.trailingAnchor,
@@ -228,12 +226,19 @@ extension DatePickerTableViewCell : UICollectionViewDelegate {
     // MARK: - Filter Delegate
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         guard let eventDate = filterBar.objects[indexPath.row] as? EventDate else { return}
-        shouldExpand()
+        
+        if endDatePicker.isHidden {
+            shouldExpand()
+        }
+        
         startDatePicker.setDate(eventDate.startDate + 1, animated: true)
         endDatePicker.setDate(eventDate.endDate-1, animated: true)
+        
         startDay.text = String.localeDate(from: startDatePicker.date, .zhHantTW).dayOfWeek
         endDay.text = String.localeDate(from: endDatePicker.date, .zhHantTW).dayOfWeek
+        
         delegate?.DatePickerTableViewCellDelegateOnDateChanged(self, startDate: startDatePicker.date, endDate: endDatePicker.date)
     }
     

@@ -8,10 +8,6 @@
 import UIKit
 import IGListKit
 
-enum EventTagType {
-    case new
-    case featured
-}
 
 class EventHomeCellViewModel: HomeCellViewModel {
     // Basic
@@ -23,7 +19,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
     let dateString:String
     let location:String
     let intro:String?
-    let tag: [EventTagType]?
+    let tag: [Tag]
     let participants:[Participant]
     let price:String
     let organiser:User?
@@ -82,15 +78,10 @@ class EventHomeCellViewModel: HomeCellViewModel {
                 print("case not handled")
             }
         }
-        let headcount = event.headcount
-        let total:String = headcount.max == 0 ? "" : "/\(headcount.max)"
-        let female:String = headcount.fMax == 0 ? "" : "/\(headcount.fMax)"
-        let male:String = headcount.mMax == 0 ? "" : "/\(headcount.mMax)"
         
-        
-        self.totalString = "\(maleCount + femaleCount)\(total)"
-        self.maleString = "\(maleCount)\(male)"
-        self.femaleString = "\(femaleCount)\(female)"
+        self.totalString = event.headCountString().total
+        self.maleString = event.headCountString().male
+        self.femaleString = event.headCountString().female
         
         
         if event.price == 0 {
@@ -147,7 +138,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
         self.imageUrlString = event.imageUrlString.first
         self.title = event.title
         self.location = event.location.name
-        self.tag = nil
+        self.tag = event.tags
         self.headcount = event.headcount
         self.peopleCount = (male:maleCount, female:femaleCount)
         
@@ -160,8 +151,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
         
         self.isOrganiser = self.organiser?.username == username
         
-        self.isJoined = event.participants.values.contains(where: {return $0.username == username
-        })
+        self.isJoined = event.isJoined
         
     }
     

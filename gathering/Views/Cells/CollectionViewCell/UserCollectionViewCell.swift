@@ -7,9 +7,9 @@
 
 import UIKit
 import IGListKit
+import SwipeCellKit
 
-class UserCollectionViewCell: UICollectionViewCell,ListBindable {
-    
+class UserCollectionViewCell: SwipeCollectionViewCell,ListBindable {
     
     static let identifier = "UserCollectionViewCell"
     
@@ -67,7 +67,6 @@ class UserCollectionViewCell: UICollectionViewCell,ListBindable {
         usernameLabel.anchor(top: profileImageView.centerYAnchor, leading: nameLabel.leadingAnchor, bottom: nil, trailing: nil)
         valuelabel.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 30))
         valuelabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        
     }
     
     

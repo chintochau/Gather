@@ -61,7 +61,7 @@ struct DummyDataManager {
                 startDateTimestamp: Date(timeIntervalSinceNow: TimeInterval(i * 86400)).timeIntervalSince1970,
                 endDateTimestamp: Date(timeIntervalSinceNow: TimeInterval((i+1) * 86400)).timeIntervalSince1970,
                 location: Location(name: "Location \(i)", address: "Address \(i)", latitude: Double(i), longitude: Double(i+1)),
-                tag: [],
+                presetTags: [],
                 introduction: introduction,
                 additionalDetail: nil,
                 refundPolicy: "",

@@ -808,6 +808,7 @@ PODS:
   - SDWebImage (5.14.3):
     - SDWebImage/Core (= 5.14.3)
   - SDWebImage/Core (5.14.3)
+  - SwipeCellKit (2.7.1)
   - UIImageColors (2.1.0)
 
 DEPENDENCIES:
@@ -823,6 +824,7 @@ DEPENDENCIES:
   - PubNubSwift (~> 6.0.3)
   - RealmSwift (~> 10)
   - SDWebImage
+  - SwipeCellKit
   - UIImageColors
 
 SPEC REPOS:
@@ -859,6 +861,7 @@ SPEC REPOS:
     - Realm
     - RealmSwift
     - SDWebImage
+    - SwipeCellKit
     - UIImageColors
 
 EXTERNAL SOURCES:
@@ -904,8 +907,9 @@ SPEC CHECKSUMS:
   Realm: 3fd136cb4c83a927482a7f1612496d37beed3cf5
   RealmSwift: 513d4dcbf5bfc4d573454088b592685fc48dd716
   SDWebImage: 9c36e66c8ce4620b41a7407698dda44211a96764
+  SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
   UIImageColors: d2ef3b0877d203cbb06489eeb78ea8b7788caabe
 
-PODFILE CHECKSUM: 24d8b7565bbce1aed8bcaa39b58730cc1762f150
+PODFILE CHECKSUM: d8a58f495ff39c2fb74569d6f6058f679ae1a597
 
 COCOAPODS: 1.11.3

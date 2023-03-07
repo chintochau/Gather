@@ -139,6 +139,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     
     let totalNumber:UILabel = {
         let view = UILabel()
+        view.textAlignment = .right
         return view
     }()
     
@@ -158,7 +159,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     
     let gradientLayer:CAGradientLayer = {
         let view = CAGradientLayer()
-        view.colors = [UIColor.mainColor!.withAlphaComponent(0.5).cgColor, UIColor.darkMainColor!.withAlphaComponent(0.5).cgColor]
+        view.colors = [UIColor.mainColor.withAlphaComponent(0.5).cgColor, UIColor.darkMainColor.withAlphaComponent(0.5).cgColor]
         view.locations = [0.0, 1.0]
         return view
     }()
@@ -169,7 +170,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         textLabel.numberOfLines = 2
         textLabel.font = .righteousFont(ofSize: 50)
 //        textLabel.text = "Ca-\nTher"
-        textLabel.textColor = .secondaryTextColor?.withAlphaComponent(0.7)
+        textLabel.textColor = .secondaryTextColor.withAlphaComponent(0.7)
         textLabel.textAlignment = .center
         return textLabel
     }()
@@ -243,6 +244,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         emojiIconLabel.text = nil
         introLabel.text = nil
         profileTitleLabel.text = nil
+        maleNumber.textColor = .label
+        femaleNumber.textColor = .label
+        totalNumber.text = nil
+        totalNumber.textColor = .label
         
         [
             totalNumber,totalIconImageView,maleIconImageView,maleNumber,femaleNumber,femaleIconImageView
@@ -278,29 +283,32 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         
         introLabel.text = vm.intro
         
-        [totalNumber,totalIconImageView
-        ].forEach({$0.isHidden = true})
-        
-        let maleMax = vm.headcount.mMax
-        let femaleMax = vm.headcount.fMax
-        if maleMax == 0 {
-            maleNumber.text = "\(vm.peopleCount.male)"
-        }else {
-            maleNumber.text = "\(vm.peopleCount.male) / \(maleMax)"
-        }
-        if femaleMax == 0 {
-            femaleNumber.text = "\(vm.peopleCount.female)"
-        }else {
-            femaleNumber.text = "\(vm.peopleCount.female) / \(femaleMax)"
+        if !vm.headcount.isGenderSpecific {
+            totalNumber.text = vm.totalString
+            totalNumber.isHidden = false
         }
         
-        
+        maleNumber.text = vm.maleString
+        femaleNumber.text = vm.femaleString
         priceLabel.text = vm.price
+        
+        if vm.event.headCountString().isMaleFull {
+            maleNumber.textColor = .darkGray
+        }
+        if vm.event.headCountString().isFemaleFull {
+            femaleNumber.textColor = .darkGray
+        }
+        if vm.event.headCountString().isFull {
+            totalNumber.textColor = .darkGray
+        }
+        
         
     }
     
     @objc private func didTapLike (){
         print("LIKE")
     }
+    
+    
     
 }

@@ -29,15 +29,19 @@ extension Date {
     
     
     func firstDayOfWeekTimestamp() -> Double {
-        let calendar = Calendar.current
-        let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
-        return weekStart.timeIntervalSince1970
+        return firstDayOfWeek().timeIntervalSince1970
     }
     
     func lastDayOfWeekTimestamp() -> Double {
         let calendar = Calendar.current
         let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
         return weekStart.adding(days: 7).timeIntervalSince1970
+    }
+    
+    func firstDayOfWeek() -> Date{
+        let calendar = Calendar.current
+        let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
+        return weekStart
     }
     
     

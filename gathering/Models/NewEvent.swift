@@ -36,7 +36,7 @@ extension NewEvent {
                      startDateTimestamp: self.startDate.timeIntervalSince1970,
                      endDateTimestamp: self.endDate.timeIntervalSince1970,
                      location: self.location,
-                     tag: [],
+                     presetTags: [],
                      introduction: self.intro,
                      additionalDetail: nil,
                      refundPolicy: "",
@@ -77,16 +77,21 @@ extension NewPost {
     func toEvent (_ urlStrings:[String] = []) -> Event? {
         guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
         
+        var urls = [String]()
+        if let url = self.imageUrlString {
+            urls.append(url)
+        }
+        
         return Event(id: self.id,
                      emojiTitle: self.emojiTitle,
                      title: self.title,
                      organisers: [user],
-                     imageUrlString: urlStrings,
+                     imageUrlString: urls,
                      price: 0,
                      startDateTimestamp: self.startDate.timeIntervalSince1970,
                      endDateTimestamp: self.endDate.timeIntervalSince1970,
                      location: self.location,
-                     tag: [],
+                     presetTags: [],
                      introduction: self.intro,
                      additionalDetail: nil,
                      refundPolicy: "",

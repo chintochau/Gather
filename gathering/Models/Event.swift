@@ -17,7 +17,7 @@ struct Event:Codable {
     let startDateTimestamp:Double
     let endDateTimestamp:Double
     let location:Location
-    let tag:[String]
+    let presetTags:[TagType]
     let introduction:String?
     let additionalDetail:String?
     let refundPolicy:String
@@ -30,6 +30,52 @@ struct Event:Codable {
     /// "{YearMonth}"
     var referencePathForUser:String? = nil
     
+}
+
+extension Event {
+    // MARK: - Computed properties
+    
+    var tags:[Tag] {
+        var displayTags = [Tag]()
+        for tagType in presetTags {
+            displayTags.append(Tag(type: tagType))
+        }
+        
+        if isJoined {
+            displayTags.append(Tag(type: .joined))
+        }
+        
+        if headcount.isGenderSpecific {
+            let minMale: Int? = headcount.mMin ?? 0 > 0 ? headcount.mMin : nil
+            let minFemale: Int? = headcount.fMin ?? 0 > 0 ? headcount.fMin : nil
+            
+            if minMale != nil || minFemale != nil {
+                displayTags.append(Tag(type: .peoplCount,minMale: minMale,minFemale: minFemale,genderSpecific: headcount.isGenderSpecific))
+                return displayTags
+            }
+            return displayTags
+            
+        } else {
+            let minHeadcount:Int? = headcount.min ?? 0 > 0 ? headcount.min : nil
+            
+            if minHeadcount != nil {
+                displayTags.append(Tag(type: .peoplCount,minHeadcount: minHeadcount,genderSpecific: headcount.isGenderSpecific))
+                return displayTags
+            }
+            
+            return displayTags
+        }
+        
+        
+        
+    }
+    
+    var isJoined:Bool {
+        guard let username = UserDefaults.standard.string(forKey: "username") else {return false}
+        
+        return participants.values.contains(where: {return $0.username == username
+        })
+    }
     
     var startDate:Date {
         return Date(timeIntervalSince1970: startDateTimestamp)
@@ -53,12 +99,13 @@ struct Event:Codable {
     var priceString:String {
         return String(price)
     }
+    
 }
 
 extension Event {
     // MARK: - Public functions
     
-    public func headCountString () -> (total:String,male:String,female:String) {
+    public func headCountString () -> (total:String,male:String,female:String, isMaleFull:Bool, isFemaleFull:Bool,isFull:Bool) {
         var maleCount = 0
         var femaleCount = 0
         var nonBinaryCount = 0
@@ -77,15 +124,79 @@ extension Event {
         }
         
         let headcount = self.headcount
-        let total:String = headcount.max == 0 ? "" : "/\(headcount.max)"
-        let female:String = headcount.fMax == 0 ? "" : "/\(headcount.fMax)"
-        let male:String = headcount.mMax == 0 ? "" : "/\(headcount.mMax)"
         
-        let totalString = "\(maleCount + femaleCount)\(total)"
-        let maleString = "\(maleCount)\(male)"
-        let femaleString = "\(femaleCount)\(female)"
         
-        return (totalString,maleString,femaleString)
+        
+        let total:String = {
+            switch headcount.max {
+            case nil:
+                return ""
+            case 0:
+                return "hide"
+            case let x where x! > 0:
+                return "/\(x!)"
+            default:
+                fatalError()
+            }
+        }()
+
+        let female:String = {
+            switch headcount.fMax {
+            case nil:
+                return ""
+            case 0:
+                return "hide"
+            case let x where x! > 0:
+                return "/\(x!)"
+            default:
+                fatalError()
+            }
+        }()
+
+        let male:String = {
+            switch headcount.mMax {
+            case nil:
+                return ""
+            case 0:
+                return "hide"
+            case let x where x! > 0:
+                return "/\(x!)"
+            default:
+                fatalError()
+            }
+        }()
+        
+        var maleString = ""
+        var femaleString = ""
+        var totalString = ""
+        
+        let isMaleFull = maleCount >= headcount.mMax ?? 9999
+        let isFemaleFull = femaleCount >= headcount.fMax ?? 9999
+        let isFull = femaleCount >= headcount.max ?? 9999
+        
+        
+        
+        if headcount.mMax == 0 {
+            maleString = "-"
+        }else {
+            maleString = "\(maleCount)\(male)"
+        }
+        
+        
+        if headcount.fMax == 0 {
+            femaleString = "-"
+        }else {
+            femaleString = "\(femaleCount)\(female)"
+        }
+        
+        if headcount.isGenderSpecific {
+            
+        }else {
+            totalString = headcount.max == nil || headcount.max == 0 ? "" : "\(maleCount + femaleCount)\(total) "
+        }
+        
+        
+        return (totalString,maleString,femaleString,isMaleFull,isFemaleFull,isFull)
         
     }
     
@@ -180,26 +291,17 @@ extension Event {
 
 struct Headcount:Codable {
     var isGenderSpecific:Bool = false
-    var min:Int = 0
-    var max:Int = 0
-    var mMin:Int = 0
-    var mMax:Int = 0
-    var fMin:Int = 0
-    var fMax:Int = 0
+    var min:Int? = nil
+    var max:Int? = nil
+    var mMin:Int? = nil
+    var mMax:Int? = nil
+    var fMin:Int? = nil
+    var fMax:Int? = nil
     
     func isEmpty () -> Bool {
         return [min,mMin,fMin].allSatisfy({$0 == 0})
     }
     
-    var range:String {
-        "\(min) ~ \(max)"
-    }
-    var maleRange:String {
-        "\(mMin) ~ \(mMax)"
-    }
-    var femaleRange:String {
-        "\(fMin) ~ \(fMax)"
-    }
 }
 
 

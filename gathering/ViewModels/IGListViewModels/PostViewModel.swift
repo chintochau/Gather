@@ -18,7 +18,7 @@ class PostViewModel: HomeCellViewModel {
     let dateString:String
     let location:String
     let intro:String?
-    let tag: [EventTagType]?
+    let tag: [Tag]
     let participants:[Participant]
     let price:String
     let organiser:User?
@@ -140,7 +140,7 @@ class PostViewModel: HomeCellViewModel {
         
         self.imageUrlString = event.imageUrlString.first
         self.location = event.location.name
-        self.tag = nil
+        self.tag = event.tags
         self.headcount = event.headcount
         self.participants = []
         self.peopleCount = (male:maleCount, female:femaleCount)

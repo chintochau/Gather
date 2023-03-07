@@ -33,7 +33,7 @@ class TextViewTableViewCell: UITableViewCell {
         view.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         view.isScrollEnabled = false
         view.font = .preferredFont(forTextStyle: .body)
-        view.layer.borderColor = UIColor.darkMainColor?.cgColor
+        view.layer.borderColor = UIColor.darkMainColor.cgColor
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 5
         return view
