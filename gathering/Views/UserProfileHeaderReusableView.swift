@@ -135,6 +135,8 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
         
         let imageSize:CGFloat = 80
         
+        backgroundColor = .systemBackground
+        
         profileImageView.anchor(
             top: topAnchor,
             leading: nil,

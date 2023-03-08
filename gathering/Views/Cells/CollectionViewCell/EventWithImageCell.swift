@@ -80,9 +80,9 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         // MARK: - Info Text
         titleLabel.topAnchor.constraint(greaterThanOrEqualTo: femaleIconImageView.bottomAnchor).isActive = true
         titleLabel.anchor(top: tagStackView.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
-        dateLabel.anchor(top: titleLabel.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 7, left: 0, bottom: 0, right: 0))
+        dateLabel.anchor(top: titleLabel.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
         locationLabel.anchor(top: dateLabel.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,
-                             padding: .init(top: 15, left: 0, bottom: 0, right: 0))
+                             padding: .init(top: 10, left: 0, bottom: 0, right: 20))
         
         separatorView.anchor(top: nil, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,
                              padding: .init(top: 0, left: 20, bottom: 0, right: 20),size: .init(width: 0, height: 2))
@@ -105,9 +105,6 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
         friendsNumber.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
-        totalNumber.anchor(top: femaleNumber.topAnchor, leading: nil, bottom: nil, trailing: femaleIconImageView.leadingAnchor,
-                           padding: .init(top: 0, left: 0, bottom: 0, right: 5))
-        
     }
     
     required init?(coder: NSCoder) {
@@ -128,51 +125,10 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         
         
         vm.tag.prefix(2).forEach { tag in
-            let tagLabel = TagLabel()
-            tagLabel.eventTag = tag
-            tagStackView.addArrangedSubview(tagLabel)
+            tagStackView.addArrangedSubview(tag.getLabel())
         }
         
 
     }
-    
-}
-
-class TagLabel:UILabel {
-    
-    private let tagLabel:UILabel = {
-        let view = UILabel()
-        view.font = .robotoRegularFont(ofSize: 14)
-        return view
-    }()
-    
-    private let backgroundView:UIView = {
-        let view = UIView()
-        return view
-    }()
-    
-    var eventTag:Tag? {
-        didSet{
-            guard let eventTag = eventTag else {return}
-            tagLabel.text = eventTag.tagString
-            backgroundColor = eventTag.color
-        }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        addSubview(tagLabel)
-        
-        layer.cornerRadius = 7
-        layer.masksToBounds = true
-        
-        tagLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 5, bottom: 0, right: 5))
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     
 }

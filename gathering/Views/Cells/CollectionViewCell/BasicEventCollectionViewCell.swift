@@ -69,13 +69,15 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         let label = UILabel()
         label.font = .robotoRegularFont(ofSize: 14)
         label.numberOfLines = 1
+        label.textColor = .secondaryLabel
         return label
     }()
     
     let locationLabel:UILabel = {
         let label = UILabel()
         label.font = .robotoRegularFont(ofSize: 14)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -124,6 +126,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         view.image = UIImage(systemName:  "person.crop.circle")
         view.contentMode = .scaleAspectFit
         view.tintColor = .mainColor
+        view.isHidden = true
         return view
     }()
     

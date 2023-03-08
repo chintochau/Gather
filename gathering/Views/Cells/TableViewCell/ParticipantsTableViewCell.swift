@@ -123,7 +123,7 @@ class ParticipantsTableViewCell:UITableViewCell {
         selectionStyle = .none
         
         
-        titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 20, bottom: 0, right: 0))
+        titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 5, left: 30, bottom: 0, right: 0))
         
         optionalLabel.anchor(top: nil, leading: titleLabel.trailingAnchor, bottom: titleLabel.bottomAnchor, trailing: nil)
         
@@ -140,7 +140,7 @@ class ParticipantsTableViewCell:UITableViewCell {
                          leading: contentView.leadingAnchor,
                          bottom: textView.bottomAnchor,
                          trailing: nil,
-                         padding: .init(top: 20, left: 20, bottom: 20, right: 0),size: CGSize(width: 30, height: 0))
+                         padding: .init(top: 20, left: 30, bottom: 20, right: 0),size: CGSize(width: 30, height: 0))
         
         blueIcon.anchor(top: titleLabel.topAnchor, leading: nil, bottom: titleLabel.bottomAnchor, trailing: nil,padding: .init(top: 0, left: 30, bottom: 0, right: 0))
         blueNumber.anchor(top: blueIcon.topAnchor, leading: blueIcon.trailingAnchor, bottom: blueIcon.bottomAnchor, trailing: nil)

@@ -36,7 +36,7 @@ class CreateNewEventViewController: UIViewController {
     
     // MARK: - Class members
     
-    var newEvent = NewEvent()
+    var newEvent = NewPost()
     var selectedImage:UIImage?
     
     private var observer: NSObjectProtocol?
@@ -93,6 +93,7 @@ class CreateNewEventViewController: UIViewController {
     // MARK: - Nav Bar
     private func setupNavBar(){
         navigationItem.title = "刊登活動"
+        navigationController?.navigationBar.tintColor = .label
         let postButton = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapPost))
         let previewButton = UIBarButtonItem(image: UIImage(systemName: "doc.text.magnifyingglass"), style: .done, target: self, action:#selector(didTapPreview))
         navigationItem.rightBarButtonItems = [postButton,previewButton]
@@ -247,7 +248,9 @@ extension CreateNewEventViewController {
     @objc private func didTapPreview(){
         view.endEditing(true)
         
-        guard let event = newEvent.toEvent() else {return}
+        guard var event = newEvent.toEvent() else {return}
+        
+        event.referencePath = "events/\(event.endDate.getYearWeek())"
         
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))
@@ -267,12 +270,15 @@ extension CreateNewEventViewController {
         
         if let selectedImage = selectedImage {
             publishPostWithImage { [weak self] event in
-                self?.navigationController?.popToRootViewController(animated: false)
+                
+                self?.dismiss(animated: false)
                 self?.completion?(event, selectedImage)
             }
         }else {
             DatabaseManager.shared.createEvent(with: event) { [weak self] success in
-                self?.navigationController?.popToRootViewController(animated: false)
+                
+                
+                self?.dismiss(animated: false)
                 self?.completion?(event, nil)
             }
         }

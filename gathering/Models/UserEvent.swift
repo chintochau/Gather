@@ -14,9 +14,32 @@ struct UserEvent:Codable {
     let dateTimeStamp:Double
     let location:Location
     var referencePath:String? = nil
+    
+    
+    var dateString:String {
+        let date = Date(timeIntervalSince1970: dateTimeStamp)
+        
+        let dateString = String.localeDate(from: date, .zhHantTW)
+        
+        return dateString.date ?? "NOW"
+    }
+}
+
+extension UserEvent {
+    public func toViewModel() -> UserEventViewModel {
+        
+        return UserEventViewModel(title: "活動: \(self.name)", location: "地點: \(self.location.name)", date: "日期: \(self.dateString)")
+    }
+}
+
+struct UserEventViewModel {
+    let title:String
+    let location:String
+    let date:String
 }
 
 extension Event {
+    // MARK: - public functions
     func toUserEvent () -> UserEvent {
         UserEvent(
             id: self.id,

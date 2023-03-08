@@ -79,4 +79,52 @@ struct Tag : Codable{
             return .darkSecondaryColor
         }
     }
+    
+    func getLabel() -> TagLabel {
+        let tag = TagLabel()
+        tag.eventTag = self
+        return tag
+    }
+}
+
+
+
+class TagLabel:UILabel {
+    
+    private let tagLabel:UILabel = {
+        let view = UILabel()
+        view.font = .robotoRegularFont(ofSize: 14)
+        return view
+    }()
+    
+    private let backgroundView:UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    var eventTag:Tag? {
+        didSet{
+            guard let eventTag = eventTag else {return}
+            tagLabel.text = eventTag.tagString
+            tagLabel.textColor = .white
+            backgroundColor = eventTag.color
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        addSubview(tagLabel)
+        
+        layer.cornerRadius = 7
+        layer.masksToBounds = true
+        
+        tagLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 5, bottom: 0, right: 5))
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
 }

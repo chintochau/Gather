@@ -239,6 +239,7 @@ final class DatabaseManager {
         }
     }
     
+    // should be stop using already
     public func listenForEventChanges(eventId: String, completion: @escaping (Event?, Error?) -> Void) -> ListenerRegistration {
         
         let db = Firestore.firestore()
@@ -260,6 +261,59 @@ final class DatabaseManager {
         }
         
         return listener
+    }
+    
+    public func getUserEvents(username:String, startDate:Date = Date.todayAtMidnight(),numberOfResults:Int = 7, completion:@escaping ([UserEvent]?) -> Void){
+        
+        let startDateReference:String = "_monthStartTimestamp"
+        let endDateReference:String = "_monthEndTimestamp"
+        
+        
+        print("start fetching userEvnets from date: \(startDate)")
+        
+        let ref = database.collection("users/\(username)/events")
+            .order(by: endDateReference, descending: false)
+            .whereField(endDateReference, isGreaterThan: startDate.timeIntervalSince1970)
+            .limit(to: 1)
+
+        
+        
+        ref.getDocuments { snapshot, error in
+            guard let documentData = snapshot?.documents.first?.data() else {
+                print("no more event fetched")
+                completion(nil)
+                return
+            }
+            
+            var events = [UserEvent]()
+            let _ = documentData[startDateReference] as? Double ?? 0.0
+            let endTimestamp = documentData[endDateReference] as? Double ?? 0.0
+            
+            for (key, value) in documentData {
+                
+                if key != startDateReference && key != endDateReference {
+                    if let event = UserEvent(with: value as! [String : Any]) {
+                        events.append(event)
+                    }
+                }
+            }
+            
+            if events.count >= numberOfResults {
+                print("Events >= 7 :  events fetched: \(events.count)")
+                completion(events)
+            }else {
+                print("Events < 7 : events fetched: \(events.count)")
+                self.getUserEvents(username: username, startDate: Date(timeIntervalSince1970: endTimestamp), numberOfResults: numberOfResults - events.count) { extraEvents in
+                    guard let extraEvents = extraEvents else {
+                        completion(events)
+                        return}
+                    events.append(contentsOf: extraEvents)
+                    completion(events)
+                    
+                }
+            }
+        }
+        
     }
     
     

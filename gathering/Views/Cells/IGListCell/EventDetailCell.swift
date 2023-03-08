@@ -25,6 +25,8 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
     private let locationLabel:UILabel = {
         let view = UILabel()
         view.font = .robotoRegularFont(ofSize: 16)
+        view.numberOfLines = 4
+        view.lineBreakMode = .byClipping
         return view
     }()
     private let detailTextView:UITextView = {
@@ -38,16 +40,26 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         return view
     }()
     
-    private let separatorView:UIView = {
-        let view = UIView()
-        view.backgroundColor = .secondarySystemBackground
-        
+    private let mapButton:UIButton = {
+        let view = UIButton(type: .system)
+        view.setTitleColor(.link, for: .normal)
+        view.setTitle("地圖", for: .normal)
+        view.titleLabel?.font = .robotoRegularFont(ofSize: 14)
+        view.isHidden = true
         return view
     }()
     
+    private let separatorView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .secondarySystemBackground
+        return view
+    }()
+    
+    var location:Location?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [dateLabel,timeLabel,locationLabel,detailTextView,separatorView].forEach({addSubview($0)})
+        [dateLabel,timeLabel,locationLabel,detailTextView,separatorView,mapButton].forEach({addSubview($0)})
         
         let padding:CGFloat = 30
         detailTextView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 20, left: padding, bottom: padding, right: padding))
@@ -59,12 +71,15 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
                          padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
         timeLabel.anchor(top: dateLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor,
                          padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
-        locationLabel.anchor(top: timeLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor,
+        locationLabel.anchor(top: timeLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing:nil,
                              padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
+        locationLabel.trailingAnchor.constraint(lessThanOrEqualTo: mapButton.leadingAnchor, constant: 0).isActive = true
+        
         separatorView.anchor(top: locationLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: bottomAnchor, trailing: detailTextView.trailingAnchor,
                              padding: .init(top: 10, left: 0, bottom: 0, right: 0),
                              size: .init(width: 0, height: 3))
         
+        mapButton.anchor(top: locationLabel.topAnchor, leading: nil, bottom: locationLabel.bottomAnchor, trailing: detailTextView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: .init(width: 40, height: 0))
     }
     
     required init?(coder: NSCoder) {
@@ -99,6 +114,35 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         // Set the data detector types of the text view to .link to make the links clickable
         detailTextView.dataDetectorTypes = .link
         
+        mapButton.addTarget(self, action: #selector(openGoogleMap), for: .touchUpInside)
+        
+        location = vm.location
+        
+        if location?.latitude != nil, location?.longitude != nil {
+            mapButton.isHidden = false
+        }
+    }
+    
+    @objc private func openGoogleMap(){
+        guard let long = location?.longitude,
+              let lat = location?.latitude,
+              let name = location?.name else {return}
+        
+        var locationName = name.replacingOccurrences(of: " ", with: "+")
+        
+        if let address = location?.address {
+            locationName += address.replacingOccurrences(of: " ", with: "+")
+        }
+        
+        let encodedString = locationName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        
+        // Construct the Google Maps URL with the latitude and longitude as parameters
+        if let  url = URL(string: "comgooglemaps://?center=\(lat),\(long)&zoom=20&q=\(encodedString)&views=map") {
+            
+            // Open the Google Maps URL
+            UIApplication.shared.open(url)
+        }
+
     }
     
 }

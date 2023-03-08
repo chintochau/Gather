@@ -134,7 +134,7 @@ class HeadcountTableViewCell: UITableViewCell {
         
         headcountLabel.sizeToFit()
         headcountLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,
-                              padding: .init(top: 10, left: 20, bottom: 0, right: 0),size: CGSize(width: headcountLabel.width, height: 0))
+                              padding: .init(top: 10, left: 30, bottom: 0, right: 0),size: CGSize(width: headcountLabel.width, height: 0))
         
         optionalLabel.anchor(top: nil, leading: headcountLabel.trailingAnchor, bottom: headcountLabel.bottomAnchor, trailing: nil)
         

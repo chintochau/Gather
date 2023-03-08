@@ -24,7 +24,6 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.tabBar.backgroundColor = .streamWhiteSnow
         self.tabBar.barTintColor = .streamWhiteSnow
         
-        
         //Define VC
         let home = HomeViewController()
         let explore = ExploreViewController()
@@ -38,11 +37,9 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         let nav4 = UINavigationController(rootViewController: tickets)
         let nav5 = UINavigationController(rootViewController: profile)
         
-        
         // Define tab items
         
         let tabIconSize:CGFloat = 22
-        
         
         nav1.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "calendar", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "", image: UIImage(systemName: "magnifyingglass", withConfiguration: UIImage.SymbolConfiguration(pointSize: tabIconSize, weight: .regular)), tag: 2)
@@ -64,12 +61,11 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         //            $0.navigationBar.tintColor = .label
         //            $0.navigationBar.prefersLargeTitles = true
         //        })
+        
         [nav1,nav2,nav3,nav4,nav5].forEach({
             $0.navigationBar.tintColor = .label
             $0.navigationBar.prefersLargeTitles = false
         })
-        
-        
         
         if #available(iOS 14.0, *) {
             nav3.navigationItem.backButtonDisplayMode = .minimal
@@ -81,16 +77,14 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         // set controllers
         self.setViewControllers([
             nav1,
-            //            nav2,
+            nav2,
             nav3,
-            //            nav4,
+            nav4,
             nav5
         ], animated: false)
         
-        
         appInitialListener()
     }
-    
     
     
     public func hideTabBar(){
@@ -102,8 +96,6 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         tabBar.isHidden = false
         extraButton.isHidden = false
     }
-    
-    
     
     private func addExtraButton(){
         // Set up the extra button
@@ -190,8 +182,20 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         dismiss(animated: false)
         let vc = CreateNewEventViewController()
         vc.completion = { [weak self] event, image in
-            let vc = EventViewController(viewModel: EventViewModel(with: event, image: image)!)
-            self?.navigationController?.pushViewController(vc, animated: true)
+            let vc = EventDetailViewController()
+            let vm = EventHomeCellViewModel(event: event)
+            vm.image = image
+            
+            vc.viewModel = vm
+            
+            if let firstTab = self?.viewControllers?.first as? UINavigationController {
+                firstTab.pushViewController(vc, animated: true)
+            }else {
+                let navVc = UINavigationController(rootViewController: vc)
+                navVc.modalPresentationStyle = .fullScreen
+                self?.present(navVc, animated: true)
+                
+            }
         }
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
@@ -203,7 +207,6 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
         //ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
-        
         //DummyDataManager.shared.generateDummyEvents()
     }
     

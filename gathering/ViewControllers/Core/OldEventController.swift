@@ -24,7 +24,7 @@ class OldEventController: UIViewController{
         print("released")
     }
     
-    private var tempEvent = NewEvent()
+    private var tempEvent = NewPost()
     
     private let picker = UIImagePickerController()
     

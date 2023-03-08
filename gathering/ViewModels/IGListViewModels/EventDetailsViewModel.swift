@@ -16,6 +16,7 @@ class EventDetails: ListDiffable {
     var timeString:String
     var locationString:String
     var intro:String?
+    var location:Location
     
     init (event:Event) {
         self.id = event.id
@@ -23,8 +24,15 @@ class EventDetails: ListDiffable {
         self.owner = event.organisers.first
         self.dateString = event.getDateString()
         self.timeString = event.getTimeString()
-        self.locationString = event.location.name
+        
+        var addressString = event.location.name
+        if let address = event.location.address {
+            addressString += "\n\(address)"
+        }
+        
+        self.locationString = addressString
         self.intro = event.introduction
+        self.location = event.location
     }
     
     func diffIdentifier() -> NSObjectProtocol {

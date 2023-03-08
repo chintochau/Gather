@@ -18,7 +18,7 @@ class UserProfileViewController: UIViewController {
     
     private let user:User
     
-    private var events:[Event] = [] {
+    private var userEvents:[UserEvent] = [] {
         didSet{
             collectionView?.reloadData()
         }
@@ -47,7 +47,10 @@ class UserProfileViewController: UIViewController {
     
     private func fetchData() {
         
-        print("Fetch user events not implemented")
+        DatabaseManager.shared.getUserEvents(username: user.username) { [weak self] userEvents in
+            guard let userEvents = userEvents else {return}
+            self?.userEvents = userEvents
+        }
     }
 }
 
@@ -59,14 +62,18 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.headerReferenceSize = UICollectionViewFlowLayout.automaticSize
+        layout.sectionInset = .init(top: 0, left: 0, bottom: 1, right: 0)
+        layout.minimumLineSpacing = 5
+        layout.minimumInteritemSpacing = 5
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.addSubview(collectionView)
         collectionView.fillSuperview()
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = .secondarySystemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(PostCell.self, forCellWithReuseIdentifier: PostCell.identifier)
+        collectionView.register(UserEventCell.self, forCellWithReuseIdentifier: UserEventCell.identifier)
         collectionView.register(UserProfileHeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeaderReusableView.identifier)
+        
         self.collectionView = collectionView
     }
     
@@ -74,7 +81,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         if section == 0 {
             return 0
         }
-        return events.count
+        return userEvents.count
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 2
@@ -103,12 +110,29 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let model = events[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostCell.identifier, for: indexPath) as! PostCell
-        cell.bindViewModel(EventHomeCellViewModel(event: model))
-        cell.widthAnchor.constraint(equalToConstant: view.width-20).isActive = true
+        let model = userEvents[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserEventCell.identifier, for: indexPath) as! UserEventCell
+        cell.userEvent = model
+        cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let model = userEvents[indexPath.row]
+        
+        guard let referencePath = model.referencePath else {return}
+        
+        let vc = EventDetailViewController()
+        vc.configureWithID(eventID: model.id, eventReferencePath: referencePath)
+        vc.configureCloseButton()
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .fullScreen
+        navVC.hero.isEnabled = true
+        navVC.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        
+        present(navVC, animated: true)
+        
     }
     
 }
