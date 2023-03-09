@@ -83,7 +83,7 @@ class ParticipantsViewController: UIViewController, UIGestureRecognizerDelegate 
     // MARK: - HeaderView
     fileprivate func configureHeaderView() {
         let header = ParticipantsViewHeaderView()
-        header.viewModel = EventHomeCellViewModel(event: event)
+        header.viewModel = EventCellViewModel(event: event)
         view.addSubview(header)
         header.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight)
         header.delegate = self

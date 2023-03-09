@@ -6,18 +6,21 @@
 //
 
 import UIKit
+import SwiftDate
 
 struct EventDate {
     let name:String
     let startDate:Date
     let endDate:Date
     
+    static let now = DateInRegion(Date(),region: .current)
+    
     static let today = EventDate(name: "今天", startDate: Date.todayAtMidnight(), endDate: Date.tomorrowAtMidnight())
     static let tomorrow = EventDate(name: "明天", startDate: Date.tomorrowAtMidnight(), endDate: Date.tomorrowAtMidnight().adding(days: 1))
     static let thisWeek = EventDate(name: "今星期", startDate: Date.startOfThisWeek(), endDate: Date.startOfNextWeek())
     static let nextWeek = EventDate(name: "下星期", startDate: Date.startOfNextWeek(), endDate: Date.startOfTwoWeeksAfter())
-    static let friday = EventDate(name: "星期五", startDate: Date.startOfNextWeek().subtract(days: 2), endDate: Date.startOfNextWeek().subtract(days: 1))
-    static let weekend = EventDate(name: "週末", startDate: Date.startOfNextWeek().subtract(days: 1), endDate: Date.startOfNextWeek().adding(days: 1))
+    static let friday = EventDate(name: "星期五", startDate: now.dateAt(.nextWeekday(.friday)).date, endDate:now.dateAt(.nextWeekday(.saturday)).date - 1 )
+    static let weekend = EventDate(name: "週末", startDate: now.dateAt(.nextWeekday(.saturday)).date, endDate:now.dateAt(.nextWeekday(.sunday)).date.adding(days: 1) - 1 )
     
     static let dateArray:[EventDate] = [
         .today,
@@ -52,13 +55,13 @@ class DatePickerTableViewCell: UITableViewCell {
         return view
     }()
     
-    private let startDay:UILabel = {
+    let startDay:UILabel = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 14)
         view.textColor = .secondaryLabel
         return view
     }()
-    private let endDay:UILabel = {
+    let endDay:UILabel = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 14)
         view.textColor = .secondaryLabel
@@ -75,14 +78,12 @@ class DatePickerTableViewCell: UITableViewCell {
     let startDatePicker:UIDatePicker = {
         let view = UIDatePicker()
         view.minimumDate = Date().firstDayOfWeek()
-        view.minuteInterval = 15
         return view
     }()
     
     let endDatePicker:UIDatePicker = {
         let view = UIDatePicker()
         view.minimumDate = Date().firstDayOfWeek()
-        view.minuteInterval = 15
         return view
     }()
     
@@ -106,8 +107,25 @@ class DatePickerTableViewCell: UITableViewCell {
     private var initialHeight:CGFloat = 44 + 45
     private var expandedHeight:CGFloat = 80 + 45
     
-    private var startingDate:Date = Date.tomorrowAtMidnight()
+    var isExpanded:Bool = false {
+        didSet {
+            if isExpanded {
+                didTapAddEndTime()
+            }
+        }
+    }
     
+    // used for edit mode
+    var newPost:NewPost? {
+        didSet {
+            if let newPost = newPost {
+                startDatePicker.date = newPost.startDate
+                endDatePicker.date = newPost.endDate
+                startDay.text = newPost.startDate.weekdayName(.short)
+                endDay.text = newPost.endDate.weekdayName(.short)
+            }
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -120,11 +138,6 @@ class DatePickerTableViewCell: UITableViewCell {
         startDatePicker.addTarget(self, action: #selector(onDateChanged(_:)), for: .valueChanged)
         endDatePicker.addTarget(self, action: #selector(onDateChanged(_:)), for: .valueChanged)
         switchButton.addTarget(self, action: #selector(didTapAddEndTime), for: .touchUpInside)
-        
-        startDatePicker.date = startingDate
-        endDatePicker.date = startingDate.adding(days: 1)
-        startDay.text = String.localeDate(from: startDatePicker.date, .zhHantTW).dayOfWeek
-        endDay.text = String.localeDate(from: endDatePicker.date, .zhHantTW).dayOfWeek
         
         
         switchButton.anchor(
@@ -218,6 +231,7 @@ class DatePickerTableViewCell: UITableViewCell {
         
         startDay.text = String.localeDate(from: startDatePicker.date, .zhHantTW).dayOfWeek
         endDay.text = String.localeDate(from: endDatePicker.date, .zhHantTW).dayOfWeek
+        
         delegate?.DatePickerTableViewCellDelegateOnDateChanged(self, startDate: startDatePicker.date, endDate: endDatePicker.date)
     }
 }
@@ -233,8 +247,8 @@ extension DatePickerTableViewCell : UICollectionViewDelegate {
             shouldExpand()
         }
         
-        startDatePicker.setDate(eventDate.startDate + 1, animated: true)
-        endDatePicker.setDate(eventDate.endDate-1, animated: true)
+        startDatePicker.setDate(eventDate.startDate, animated: true)
+        endDatePicker.setDate(eventDate.endDate - 1, animated: true)
         
         startDay.text = String.localeDate(from: startDatePicker.date, .zhHantTW).dayOfWeek
         endDay.text = String.localeDate(from: endDatePicker.date, .zhHantTW).dayOfWeek

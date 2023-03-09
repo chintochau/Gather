@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftDate
 
 extension Date {
     
@@ -120,34 +121,40 @@ extension String {
         return string
     }
     
-    static func localeDate(from date:String,_ identifier: LocaleIdentifier) -> (date:String?,dayOfWeek:String?,time:String?) {
-        
+    static func localeDate(from date:String,_ identifier: LocaleIdentifier) -> (date:String,dayOfWeek:String,time:String,relative:String) {
         let formatter = DateFormatter.formatter
-        guard let date = formatter.date(from: date) else {return (nil,nil,nil)}
+        guard let date = formatter.date(from: date) else {return ("nil","nil","nil","nil")}
         
         let fullDateString = localeDate(from: date, identifier)
         
-        return (fullDateString.date,fullDateString.dayOfWeek,fullDateString.time)
+        return (fullDateString.date,fullDateString.dayOfWeek,fullDateString.time,fullDateString.relative)
     }
     
-    static func localeDate(from date:Date,_ identifier: LocaleIdentifier) -> (date:String?,dayOfWeek:String?,time:String?) {
+    static func localeDate(from date:Date,_ identifier: LocaleIdentifier) -> (date:String,dayOfWeek:String,time:String,relative:String) {
+        
         
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: identifier.rawValue)
         
+        
+        
+        let dateInDeviceLocalTime = DateInRegion(date,region: .current)
+        
         // Date
-        dateFormatter.dateFormat = "M月d日"
-        let dateString = dateFormatter.string(from: date)
+        let dateString = dateInDeviceLocalTime.toFormat("M月d日")
         
         // Day of the week
-        dateFormatter.dateFormat = "EEEE"
-        let dayString = dateFormatter.string(from: date)
+        let dayString = dateInDeviceLocalTime.weekdayName(.short)
         
         // Time
-        dateFormatter.dateFormat = "HH:mm"
-        let timeString = dateFormatter.string(from: date)
+        let timeString = dateInDeviceLocalTime.toFormat("h:mma")
         
-        return (dateString,dayString,timeString)
+        
+        // Relative
+        let relativeString = dateInDeviceLocalTime.toRelative(locale:Locales.chineseTraditional)
+        
+        
+        return (dateString,dayString,timeString,relativeString)
     }
     
     

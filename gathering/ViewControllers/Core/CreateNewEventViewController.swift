@@ -163,7 +163,7 @@ extension CreateNewEventViewController:UITableViewDelegate,UITableViewDataSource
             return cell
         case .textView(title: let title, text: let text,tag: let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(withTitle: title, placeholder: text,tag: tag)
+            cell.configure(withTitle: title, text: text,tag: tag)
             cell.textView.delegate = self
             return cell
         case .value(title: let title, value: let value):

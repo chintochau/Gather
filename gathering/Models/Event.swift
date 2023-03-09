@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftDate
 
 struct Event:Codable {
     let id: String
@@ -84,9 +85,6 @@ extension Event {
         return Date(timeIntervalSince1970: endDateTimestamp)
     }
     
-    var date:Date {
-        return DateFormatter.formatter.date(from: startDateString) ?? Date()
-    }
     
     var startDateString:String {
         return String.date(from: startDate) ?? "Now"
@@ -116,8 +114,8 @@ extension Event {
                 maleCount += 1
             case genderType.female.rawValue:
                 femaleCount += 1
-            case genderType.nonBinary.rawValue:
-                nonBinaryCount += 1
+//            case genderType.nonBinary.rawValue:
+//                nonBinaryCount += 1
             default:
                 print("case not handled")
             }
@@ -208,35 +206,81 @@ extension Event {
         let startDateString = String.localeDate(from: startDateString, .zhHantTW)
         let endDateString = String.localeDate(from: endDateString, .zhHantTW)
         
-        switch date {
-        case ..<Date.tomorrowAtMidnight():
+        
+        switch startDate {
+        case ...Date.todayAtMidnight():
+            startString = startDateString.relative
+        case ...Date.tomorrowAtMidnight():
             startString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+        case ...Date.tomorrowAtMidnight().adding(days: 1):
             startString = "明天"
         default:
-            startString = startDateString.date ?? ""
+            startString = startDateString.date
         }
         
         switch endDate {
-        case ..<Date.tomorrowAtMidnight():
+        case ...Date.todayAtMidnight():
+            endString = endDateString.relative
+        case ...Date.tomorrowAtMidnight():
             endString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+        case ...Date.tomorrowAtMidnight().adding(days: 1):
             endString = "明天"
         default:
-            endString = endDateString.date ?? ""
+            endString = endDateString.date
         }
         
-        
         if startDateString == endDateString {
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? ""))"
+            // Same Day same time
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time)"
+            
         }else if startDateString.date == endDateString.date {
-            finalDateString = "\(startString)"
+            // same day different time
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time) - \(endDateString.time)"
+            
         }else {
-            finalDateString = "\(startString) - \(endString) "
+            
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) - \(endDateString.dayOfWeek),\(endString)"
         }
         
         return finalDateString
     }
+    
+    
+    public func getDateDetailString () -> String {
+        // MARK: - Date
+        var finalDateString:String = ""
+        var startString:String = ""
+        var endString:String = ""
+        let startDateString = String.localeDate(from: startDateString, .zhHantTW)
+        let endDateString = String.localeDate(from: endDateString, .zhHantTW)
+        
+        
+        switch startDate {
+        default:
+            startString = startDateString.date
+        }
+        
+        switch endDate {
+        default:
+            endString = endDateString.date
+        }
+        
+        if startDateString == endDateString {
+            // Same Day same time
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time)"
+            
+        }else if startDateString.date == endDateString.date {
+            // same day different time
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time) - \(endDateString.time)"
+            
+        }else {
+            
+            finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time)\n - \(endDateString.dayOfWeek),\(endString) \(endDateString.time)"
+        }
+        
+        return finalDateString
+    }
+    
     
     public func getTimeString () -> String{
         // MARK: - Time
@@ -244,49 +288,12 @@ extension Event {
         let endDateString = String.localeDate(from: endDateString, .zhHantTW)
         
         if startDateString.time == endDateString.time {
-            return startDateString.time ?? ""
+            return startDateString.time
         }else {
-            return "\(startDateString.time ?? "") - \(endDateString.time ?? "")"
+            return "\(startDateString.time) - \(endDateString.time)"
         }
     }
     
-    public func getDateAndTimeString () -> String{
-        // MARK: - Date and Time
-        var finalDateAndTimeString:String = ""
-        var startString:String = ""
-        var endString:String = ""
-        let startDateString = String.localeDate(from: startDateString, .zhHantTW)
-        let endDateString = String.localeDate(from: endDateString, .zhHantTW)
-        
-        switch date {
-        case ..<Date.tomorrowAtMidnight():
-            startString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
-            startString = "明天"
-        default:
-            startString = startDateString.date ?? ""
-        }
-        
-        switch endDate {
-        case ..<Date.tomorrowAtMidnight():
-            endString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
-            endString = "明天"
-        default:
-            endString = endDateString.date ?? ""
-        }
-        
-        
-        if startDateString == endDateString {
-            finalDateAndTimeString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")"
-        }else if startDateString.date == endDateString.date {
-            finalDateAndTimeString = "\(startString) \(startDateString.time ?? "") - \(endDateString.time ?? "")"
-        }else {
-            finalDateAndTimeString = "\(startString) \(startDateString.time ?? "") - \(endString) \(endDateString.time ?? "")"
-        }
-        
-        return finalDateAndTimeString
-    }
 }
 
 struct Headcount:Codable {
@@ -355,12 +362,12 @@ extension Event {
         let time = localeDate.time
         
         let dateString:String = {
-            return "\n日期: \(date!) (\(dayOfWeek!))"
+            return "\n日期: \(date) (\(dayOfWeek))"
         }()
         
         let timeString:String = {
             if includeTime {
-                return "\n時間: \(time!)"
+                return "\n時間: \(time)"
                 
             } else {
                 return ""

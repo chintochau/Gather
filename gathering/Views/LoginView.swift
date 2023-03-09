@@ -61,7 +61,7 @@ class LoginView: UIView, UITextFieldDelegate {
     
     let registerButton:UIButton = {
         let view = UIButton(type: .system)
-        view.setTitle("Dont have account yet? Create here", for: .normal)
+        view.setTitle("Dont have account an yet? Create here", for: .normal)
         view.tintColor = .link
         return view
     }()

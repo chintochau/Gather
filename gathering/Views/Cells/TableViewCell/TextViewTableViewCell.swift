@@ -26,6 +26,12 @@ class TextViewTableViewCell: UITableViewCell {
         return view
     }()
     
+    let textCount:UILabel = {
+        let view = UILabel()
+        view.font = .robotoRegularFont(ofSize: 16)
+        return view
+    }()
+    
     let textView:UITextView = {
         let view = UITextView()
         view.textColor = .label
@@ -57,9 +63,13 @@ class TextViewTableViewCell: UITableViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(optionalLabel)
         contentView.addSubview(separatorView)
+        contentView.addSubview(textCount)
         selectionStyle = .none
         
         titleLabel.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 25, left: 30, bottom: 0, right: 0))
+        
+        textCount.anchor(top: titleLabel.topAnchor, leading: nil, bottom: nil, trailing: contentView.trailingAnchor,
+                         padding: .init(top: 0, left: 0, bottom: 0, right: 30))
         
         textView.anchor(top: titleLabel.bottomAnchor, leading: contentView.leadingAnchor, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 30, bottom: 0, right: 30))
         textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
@@ -85,23 +95,20 @@ class TextViewTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with placeholder:String, type:newEventPageType){
-        textView.text = placeholder
+    func configure(with text:String, type:newEventPageType){
+        textView.text = text
         textView.layer.name = type.rawValue
         titleLabel.text = "\(type.rawValue):"
-        
+        textCount.text = "\(text.count)/1000"
         
     }
     
     
-    func configure(withTitle title: String, placeholder:String?,tag:Int = 0,_ isOptional:Bool = false) {
+    func configure(withTitle title: String, text:String?,tag:Int = 0,_ isOptional:Bool = false) {
         titleLabel.text = title
-        textView.text = placeholder
+        textView.text = text
         textView.tag = tag
+        textCount.text = "\(text?.count ?? 0)/1000"
         self.isOptional = isOptional
     }
-}
-
-
-extension TextViewTableViewCell:UITextViewDelegate {
 }

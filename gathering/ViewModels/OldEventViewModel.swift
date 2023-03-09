@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct EventViewModel {
+struct OldEventViewModel {
     let owner:User?
     let event:Event
     let image:UIImage?
@@ -28,7 +28,7 @@ struct EventViewModel {
 }
 
 
-extension EventViewModel {
+extension OldEventViewModel {
     
     init?(with event:Event, image:UIImage?) {
         guard  let startDate = DateFormatter.formatter.date(from: event.startDateString),
@@ -53,7 +53,7 @@ extension EventViewModel {
         let startDateString = String.localeDate(from: event.startDateString, .zhHantTW)
         let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
         
-        switch event.date {
+        switch event.startDate {
         case ..<Date.tomorrowAtMidnight():
             startString = "今天"
         case ..<Date.tomorrowAtMidnight().adding(days: 1):

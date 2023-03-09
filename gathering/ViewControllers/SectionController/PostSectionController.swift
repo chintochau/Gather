@@ -38,7 +38,7 @@ class PostSectionController: ListSectionController {
         let viewModel = viewModel as! PostViewModel
         //        let vc = DemoViewController()
         
-        let vc = EventViewController(viewModel: EventViewModel(with: viewModel.event, image: nil)!)
+        let vc = EventViewController(viewModel: OldEventViewModel(with: viewModel.event, image: nil)!)
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }
     

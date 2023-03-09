@@ -51,8 +51,11 @@ class EnrollViewController: UIViewController {
         let view = GATextField()
         view.configure(name: "Name")
         view.placeholder = "At least 2 characters"
+        view.isUserInteractionEnabled = false
+        view.bottomLine.isHidden = true
         return view
     }()
+    
     private let emailField:GATextField = {
         let view = GATextField()
         view.configure(name: "Email")
@@ -60,6 +63,7 @@ class EnrollViewController: UIViewController {
         view.bottomLine.isHidden = true
         return view
     }()
+    
     private let titleLabel:UILabel = {
         let view = UILabel()
         view.textAlignment = .center
@@ -80,7 +84,13 @@ class EnrollViewController: UIViewController {
         view.textColor = .secondaryLabel
         return view
     }()
-    private let confirmButton = GAButton(title: "Confirm")
+    private let confirmButton:GradientButton = {
+        let view = GradientButton(type: .system)
+        view.setTitleColor(.white, for: .normal)
+        view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+        view.setTitle("確認", for: .normal)
+        return view
+    }()
     
     private let genderButton:UIButton = {
         let view = UIButton()
@@ -93,20 +103,6 @@ class EnrollViewController: UIViewController {
     private let maleButton:UIButton = {
         let view = UIButton()
         view.tag = 0
-        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
-        view.setTitleColor(.label, for: .normal)
-        return view
-    }()
-    private let femaleButton:UIButton = {
-        let view = UIButton()
-        view.tag = 1
-        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
-        view.setTitleColor(.label, for: .normal)
-        return view
-    }()
-    private let nonBinaryButton:UIButton = {
-        let view = UIButton()
-        view.tag = 2
         view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
         view.setTitleColor(.label, for: .normal)
         return view
@@ -206,21 +202,13 @@ class EnrollViewController: UIViewController {
         
         genderButton.anchor(top: genderLabel.topAnchor, leading: genderLabel.trailingAnchor, bottom: genderLabel.bottomAnchor, trailing: containerView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
-        confirmButton.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 20, bottom: 60, right: 20))
+        confirmButton.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 30, bottom: 60, right: 30),size: .init(width: 0, height: 50))
+        confirmButton.layer.cornerRadius = 25
         
         
         nameField.delegate = self
         confirmButton.addTarget(self, action: #selector(didTapConfirm), for: .touchUpInside)
-        genderButton.addTarget(self, action: #selector(didTapGenderButton), for: .touchUpInside)
-        
-        maleButton.addTarget(self, action: #selector(didTapChooseGender(_:)), for: .touchUpInside)
-        femaleButton.addTarget(self, action: #selector(didTapChooseGender(_:)), for: .touchUpInside)
-        nonBinaryButton.addTarget(self, action: #selector(didTapChooseGender(_:)), for: .touchUpInside)
-        
-        genderSelectionView.addArrangedSubview(maleButton)
-        genderSelectionView.addArrangedSubview(femaleButton)
-        genderSelectionView.addArrangedSubview(nonBinaryButton)
-        
+//        genderButton.addTarget(self, action: #selector(didTapGenderButton), for: .touchUpInside)
         
     }
     

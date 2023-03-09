@@ -50,5 +50,5 @@ enum personalityType:String {
 enum genderType:String,CaseIterable {
     case male
     case female
-    case nonBinary
+//    case nonBinary
 }

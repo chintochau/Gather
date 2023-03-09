@@ -28,6 +28,7 @@ class CategoryViewController: CustomModalViewController {
         view.subString = "您想搵到志同道合嘅人一齊活動"
         return view
     }()
+    
     private let secondButton:GradianBorderButton = {
         let view = GradianBorderButton()
         view.titleString = "刊登活動"
@@ -40,7 +41,7 @@ class CategoryViewController: CustomModalViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        [messageLabel,firstButton,secondButton].forEach({view.addSubview($0)})
+        [messageLabel,firstButton].forEach({view.addSubview($0)})
         
         contentView.addSubview(iconImage)
         iconImage.anchor(top: contentView.topAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 30, left: 0, bottom: 0, right: 0),size: .init(width: 0, height: 94))
@@ -53,17 +54,17 @@ class CategoryViewController: CustomModalViewController {
         firstButton.anchor(top: messageLabel.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 40, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
         firstButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-        secondButton.anchor(top: firstButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
-        secondButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
+//        secondButton.anchor(top: firstButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
+//        secondButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//
         
         firstButton.setupTapGesture {[weak self] in
             self?.firstAction?()
         }
         
-        secondButton.setupTapGesture {[weak self] in
-            self?.secondAction?()
-        }
+//        secondButton.setupTapGesture {[weak self] in
+//            self?.secondAction?()
+//        }
     }
     
 

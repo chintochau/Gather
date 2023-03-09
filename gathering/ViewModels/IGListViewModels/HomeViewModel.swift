@@ -53,7 +53,7 @@ class HomeViewModel {
     private func insertViewModels(with events:[Event]) {
         
         var newVM:[HomeCellViewModel] = events.compactMap({
-                EventHomeCellViewModel(event: $0)}                                          
+                EventCellViewModel(event: $0)}                                          
         )
         
         var adArray = [Int]()
@@ -75,7 +75,7 @@ class HomeViewModel {
     }
     
     private func createViewModels(){
-            items = events.map({EventHomeCellViewModel(event: $0)})
+            items = events.map({EventCellViewModel(event: $0)})
         
         for (index,_) in items.enumerated() {
             if index % 4 == 3 {

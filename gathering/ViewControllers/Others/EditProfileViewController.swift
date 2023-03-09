@@ -163,7 +163,7 @@ class EditProfileViewController: UIViewController,UITableViewDelegate,UITableVie
             
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
             
-            cell.configure(withTitle: title, placeholder: text)
+            cell.configure(withTitle: title, text: text)
             cell.textView.delegate = self
             return cell
             

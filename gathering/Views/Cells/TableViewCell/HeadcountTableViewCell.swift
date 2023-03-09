@@ -109,8 +109,10 @@ class HeadcountTableViewCell: UITableViewCell {
     
     var cellHeightAnchor:NSLayoutConstraint!
     
+    var isEditMode:Bool = false
+    
     var tempHeadcount = Headcount()
-    var hideMinimum:Bool = false
+    
     
     var isOptional:Bool = false {
         didSet {

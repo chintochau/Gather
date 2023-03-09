@@ -410,7 +410,7 @@ extension OldEventController {
     @objc private func didTapPreview(){
         view.endEditing(true)
         guard let previewEvent = configurePreviewEvent(),
-              let eventVM = EventViewModel(with: previewEvent, image:  images[0]) else {return}
+              let eventVM = OldEventViewModel(with: previewEvent, image:  images[0]) else {return}
         
         let vc = EventViewController(viewModel: eventVM)
         vc.configureExit()

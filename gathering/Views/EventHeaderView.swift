@@ -37,6 +37,12 @@ class EventHeaderView: UICollectionReusableView {
     }
     
     
-    
+    func setImageWithUrl(urlString:String,completion:@escaping (UIImage) -> Void){
+        imageView.sd_setImage(with: URL(string: urlString)) { image, error, _, _ in
+            if let image = image {
+                completion(image)
+            }
+        }
+    }
         
 }

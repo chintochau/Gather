@@ -59,7 +59,7 @@ struct Tag : Codable{
                 return "成團人數: \(headcountString)"
             }
         case .joined:
-            return "己報名"
+            return "已報名"
         case .interests:
             return "興趣交流"
         }

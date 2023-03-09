@@ -258,7 +258,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     }
     
     func bindViewModel(_ viewModel: Any) {
-        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        guard let vm = viewModel as? EventCellViewModel else {return}
         
         if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))

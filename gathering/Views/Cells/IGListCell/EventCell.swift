@@ -101,7 +101,7 @@ class EventCell: BasicEventCollectionViewCell {
     }
     
     override func bindViewModel(_ viewModel: Any) {
-        guard let vm = viewModel as? EventHomeCellViewModel else { return }
+        guard let vm = viewModel as? EventCellViewModel else { return }
         // Update the cell with the event information
         if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
@@ -159,14 +159,14 @@ class EventCell: BasicEventCollectionViewCell {
 
 class PeopleCell: UICollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
-        guard let event = viewModel as? EventHomeCellViewModel else { return }
+        guard let event = viewModel as? EventCellViewModel else { return }
         // Update the cell with the event information
     }
 }
 
 class PlaceCell: UICollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
-        guard let event = viewModel as? EventHomeCellViewModel else { return }
+        guard let event = viewModel as? EventCellViewModel else { return }
         // Update the cell with the event information
     }
 }

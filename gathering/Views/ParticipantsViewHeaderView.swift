@@ -75,7 +75,7 @@ class ParticipantsViewHeaderView: UIView {
     
     // MARK: - Class members
     
-    var viewModel:EventHomeCellViewModel? {
+    var viewModel:EventCellViewModel? {
         didSet{
             guard let viewModel = viewModel else {return}
             

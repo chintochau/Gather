@@ -55,7 +55,7 @@ class EventViewController: UIViewController {
     
     
     // MARK: - Init
-    init(viewModel vm:EventViewModel){
+    init(viewModel vm:OldEventViewModel){
         event = vm.event
         image = vm.image
         infoViewModels = [

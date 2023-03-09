@@ -63,18 +63,32 @@ class NewPostViewController: UIViewController {
         return view
     }()
     
+    lazy var imagePicker = UIImagePickerController()
+    
     // MARK: - Class members
     private var viewModels = [[InputFieldType]()]
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
-    var completion: ((_ event:Event?) -> Void)?
+    var completion: ((_ event:Event?,_ image:UIImage?) -> Void)?
     
     
     private let bottomOffset:CGFloat = 150
     var newPost = NewPost()
+    var image:UIImage? {
+        didSet {
+            if let image = image {
+                if let cell = tableView.cellForRow(at: .init(row: 0, section: 0)) as? SingleImageTableViewCell {
+                    cell.image = image
+                }
+            }
+        }
+    }
+    private var isImageEdited:Bool = false
+    
     var isEditMode:Bool = false {
         didSet {
             deleteButton.isHidden = !isEditMode
+            
         }
     }
     
@@ -88,6 +102,7 @@ class NewPostViewController: UIViewController {
         configureTableView()
         setupNavBar()
         observeKeyboardChange()
+        imagePicker.delegate = self
         
         view.addSubview(tempButton)
         
@@ -110,20 +125,19 @@ class NewPostViewController: UIViewController {
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
         newPost.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
     }
+    
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
         
         viewModels = [
             [
+                .imagePicker,
                 .titleField(title: "活動名稱" ,placeholder: "例： 滑雪/食日本野/周末聚下..."),
                 .textView(title: "活動簡介:", text: newPost.intro,tag: 0),
                 .datePicker,
-                .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray)
-            ],[
-                .headCount,
-                .participants
-                    
+                .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray),
+                .headCount
             ]
         ]
         
@@ -175,6 +189,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
         tableView.register(HorizontalCollectionView.self, forCellReuseIdentifier: HorizontalCollectionView.identifier)
         tableView.register(LocationPickerTableViewCell.self, forCellReuseIdentifier: LocationPickerTableViewCell.identifier)
+        tableView.register(SingleImageTableViewCell.self, forCellReuseIdentifier: SingleImageTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.contentInset = .init(top: 0, left: 0, bottom: bottomOffset, right: 0)
@@ -209,7 +224,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             return cell
         case .textView(title: let title, text: let text,tag: let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: TextViewTableViewCell.identifier, for: indexPath) as! TextViewTableViewCell
-            cell.configure(withTitle: title, placeholder: text,tag: tag)
+            cell.configure(withTitle: title, text: text,tag: tag)
             cell.isOptional = true
             cell.textView.delegate = self
             cell.backgroundColor = .clear
@@ -227,15 +242,18 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             return cell
         case .datePicker:
             let cell = tableView.dequeueReusableCell(withIdentifier: DatePickerTableViewCell.identifier, for: indexPath) as! DatePickerTableViewCell
-            
             cell.delegate = self
             cell.backgroundColor = .clear
+            cell.isExpanded = self.isEditMode
+            cell.newPost = self.newPost
             return cell
         case .headCount:
             let cell = tableView.dequeueReusableCell(withIdentifier: HeadcountTableViewCell.identifier, for: indexPath) as! HeadcountTableViewCell
             cell.isOptional = true
             cell.delegate = self
             cell.backgroundColor = .clear
+            cell.isEditMode = isEditMode
+            cell.tempHeadcount = newPost.headcount
             return cell
         case .participants:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
@@ -256,10 +274,18 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
         case .horizentalPicker(title: let title,selectedObject: let selectedObject, objects: let objects):
             let cell = tableView.dequeueReusableCell(withIdentifier: LocationPickerTableViewCell.identifier, for: indexPath) as! LocationPickerTableViewCell
             cell.configure(title: title, selectedObject: selectedObject, with: objects)
-            cell.selectInitialCell()
             cell.isOptional = true
             cell.delegate  = self
             cell.backgroundColor = .clear
+            if !isEditMode {
+                cell.selectInitialCell()
+            }
+            return cell
+        case .imagePicker:
+            let cell = tableView.dequeueReusableCell(withIdentifier: SingleImageTableViewCell.identifier, for: indexPath) as! SingleImageTableViewCell
+            if let image = self.image {
+                cell.image = image
+            }
             return cell
         default:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
@@ -273,12 +299,16 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        if indexPath.row == 0 {
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.allowsEditing = true
+            present(imagePicker, animated: true)
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
         if section == 0 {
-            
             return headerView
         }
         return nil
@@ -290,6 +320,8 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     }
     
 }
+
+
 
 extension NewPostViewController {
     // MARK: - Handle Preview/ Post
@@ -321,11 +353,24 @@ extension NewPostViewController {
             AlertManager.shared.showAlert(title: "Oops~", message: "請輸入最少兩個字的標題", from: self)
             return
         }
-        DatabaseManager.shared.createEvent(with: event) { [weak self] finalEvent in
-            self?.navigationController?.popToRootViewController(animated: false)
-            self?.completion?(finalEvent)
-        }
         
+        
+        LoadingIndicator.shared.showLoadingIndicator(on: view)
+        
+        if isImageEdited {
+            publishPostWithImage { [weak self] finalEvent in
+                LoadingIndicator.shared.hideLoadingIndicator()
+                self?.navigationController?.popToRootViewController(animated: false)
+                self?.completion?(finalEvent, self?.image)
+            }
+            
+        }else {
+            DatabaseManager.shared.createEvent(with: event) { [weak self] finalEvent in
+                LoadingIndicator.shared.hideLoadingIndicator()
+                self?.navigationController?.popToRootViewController(animated: false)
+                self?.completion?(finalEvent,nil)
+            }
+        }
     }
     
     @objc private func didTapDeleteEvent(){
@@ -333,12 +378,63 @@ extension NewPostViewController {
         guard let eventRef = newPost.eventRef else {return}
         DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
             // need to modify, should return success instead of an event
-            self?.completion?(nil)
+            self?.completion?(nil, nil)
         }
         
     }
+    
+    
+    
+    private func publishPostWithImage(completion: @escaping (Event) -> Void){
+        
+        var imagesData = [Data?]()
+        
+        for img in [image] {
+            guard let image = img?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
+                  let data = image.jpegData(compressionQuality: 0.5)
+            else {break}
+            
+            imagesData.append(data)
+        }
+        
+        
+        StorageManager.shared.uploadEventImage(id: newPost.id, data: imagesData) {[weak self] urlStrings in
+            
+            guard let event = self?.newPost.toEvent(urlStrings),
+                  let _ = DefaultsManager.shared.getCurrentUser()
+            else {return}
+            
+            
+            DatabaseManager.shared.createEvent(with: event) { finalEvent in
+                completion(finalEvent)
+            }
+        }
+    }
+    
+    
 }
 
+
+
+extension NewPostViewController:UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+    // MARK: - Pick Image
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let editedImage = info[.editedImage] as? UIImage else {
+            dismiss(animated: true)
+            return
+        }
+
+        self.isImageEdited = true
+        self.image = editedImage
+
+        dismiss(animated: true)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true)
+    }
+    
+}
 
 extension NewPostViewController:DatePickerTableViewCellDelegate {
     // MARK: - Handle DatePicker
@@ -381,8 +477,10 @@ extension NewPostViewController:UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         switch textView.tag {
         case 0:
-            // Intro View
             newPost.intro = textView.text
+            if let cell = tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? TextViewTableViewCell {
+                cell.textCount.text = "\(textView.text.count)/1000"
+            }
         case 1:
             // addDetail View
             print("add info not yet implemented")
@@ -392,6 +490,27 @@ extension NewPostViewController:UITextViewDelegate {
         
         tableView.beginUpdates()
         tableView.endUpdates()
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if textView.tag == 0 {
+            
+            if textView.text.count >= 1000 {
+                // Assume textView is a UITextView object
+                let startIndex = 1000
+
+                // Set the selected range of the text view to start at the specified index and extend to the end of the text
+                let endIndex = textView.text.count
+                let range = NSRange(location: startIndex, length: endIndex - startIndex)
+                textView.selectedRange = range
+
+                // Delete the selected text
+                textView.deleteBackward()
+            }
+            
+            return textView.text.count < 1000
+        }
+        return true
     }
 }
 

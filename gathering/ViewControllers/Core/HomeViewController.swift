@@ -160,10 +160,7 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
-        case let vm as EventHomeCellViewModel:
-            print(vm.event.tags)
-            
-            
+        case let _ as EventCellViewModel:
             return EventSectionController()
         default:
             return HomeSectionController()

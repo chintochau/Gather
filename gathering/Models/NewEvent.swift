@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftDate
 
 //struct NewEvent {
 //    var id:String = IdManager.shared.createEventId()
@@ -60,9 +61,8 @@ struct NewPost {
     
     var title:String = ""
     var addInfo:String? = nil
-    var startDate:Date = Date()
-    var endDate:Date = Date()
-    var headCount:Headcount = Headcount()
+    var startDate:Date = Date.tomorrowAtMidnight() + 17.hours
+    var endDate:Date = Date.tomorrowAtMidnight() + 17.hours
     var location:Location = .toBeConfirmed
     var participants:[String:Participant] = {
         guard let user = DefaultsManager.shared.getCurrentUser() else {
@@ -77,13 +77,20 @@ extension NewPost {
     func toEvent (_ urlStrings:[String] = []) -> Event? {
         guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
         
+        var urlStrings = urlStrings
+        
+        if let imageUrlString = self.imageUrlString {
+            if urlStrings == [] {
+                urlStrings = [imageUrlString]
+            }
+        }
         
         
         return Event(id: self.id,
                      emojiTitle: self.emojiTitle,
                      title: self.title,
                      organisers: [user],
-                     imageUrlString: urlStrings,
+                     imageUrlString:urlStrings,
                      price: 0,
                      startDateTimestamp: self.startDate.timeIntervalSince1970,
                      endDateTimestamp: self.endDate.timeIntervalSince1970,
@@ -111,7 +118,6 @@ extension Event {
             addInfo:nil,
             startDate:self.startDate,
             endDate:self.endDate,
-            headCount:self.headcount,
             location:self.location,
             participants:self.participants,
             eventRef: self.referencePath

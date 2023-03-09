@@ -15,6 +15,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
     private let dateLabel:UILabel = {
         let view = UILabel()
         view.font = .robotoRegularFont(ofSize: 16)
+        view.numberOfLines = 2
         return view
     }()
     private let timeLabel:UILabel = {
@@ -36,7 +37,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         view.isScrollEnabled = false
         view.backgroundColor = .secondarySystemBackground
         view.layer.cornerRadius = 5
-        view.contentInset = .init(top: 5, left: 5, bottom: 5, right: 5)
+        view.textContainerInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         return view
     }()
     
@@ -54,24 +55,32 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         view.backgroundColor = .secondarySystemBackground
         return view
     }()
+    private let upperSeparatorView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .secondarySystemBackground
+        return view
+    }()
     
     var location:Location?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [dateLabel,timeLabel,locationLabel,detailTextView,separatorView,mapButton].forEach({addSubview($0)})
+        [upperSeparatorView,dateLabel,timeLabel,locationLabel,detailTextView,separatorView,mapButton].forEach({addSubview($0)})
         
         let padding:CGFloat = 30
         detailTextView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 20, left: padding, bottom: padding, right: padding))
         detailTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
         
+        
         let labelPadding:CGFloat = 10
         
-        dateLabel.anchor(top: detailTextView.bottomAnchor, leading: detailTextView.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor,
+        upperSeparatorView.anchor(top: detailTextView.bottomAnchor, leading: detailTextView.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor, padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0),size: .init(width: 0, height: 3))
+        
+        
+        dateLabel.anchor(top: upperSeparatorView.bottomAnchor, leading: detailTextView.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor,
                          padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
-        timeLabel.anchor(top: dateLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: detailTextView.trailingAnchor,
-                         padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
-        locationLabel.anchor(top: timeLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing:nil,
+        
+        locationLabel.anchor(top: dateLabel.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing:nil,
                              padding: .init(top: labelPadding, left: 0, bottom: labelPadding, right: 0))
         locationLabel.trailingAnchor.constraint(lessThanOrEqualTo: mapButton.leadingAnchor, constant: 0).isActive = true
         
@@ -88,7 +97,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
     
     
     func bindViewModel(_ viewModel: Any) {
-        guard let vm = viewModel as? EventDetails else {return}
+        guard let vm = viewModel as? EventDetailsViewModel else {return}
         
         dateLabel.attributedText = createAttributedText(with: vm.dateString, image: .dateIcon)
         timeLabel.attributedText = createAttributedText(with: vm.timeString, image: .timeIcon)

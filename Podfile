@@ -21,8 +21,8 @@ target 'Gather Pool' do
   pod 'IQKeyboardManagerSwift'
   pod 'RealmSwift', '~>10'
   pod 'IGListKit', '~> 4.0.0'
-  pod 'UIImageColors'
   pod 'SwipeCellKit'
+  pod 'SwiftDate', '~> 5.0'
   
     # Pods for Instagram
 

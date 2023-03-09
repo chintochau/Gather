@@ -121,7 +121,7 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
     
     override func bindViewModel(_ viewModel: Any) {
         super.bindViewModel(viewModel)
-        guard let vm = viewModel as? EventHomeCellViewModel else {return}
+        guard let vm = viewModel as? EventCellViewModel else {return}
         
         
         vm.tag.prefix(2).forEach { tag in

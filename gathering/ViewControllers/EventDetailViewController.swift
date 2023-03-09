@@ -87,14 +87,25 @@ class EventDetailViewController: UIViewController {
     }()
     
     
-    var viewModel:EventHomeCellViewModel? {
+    // MARK: - Configure VM
+    var viewModel:EventCellViewModel? {
         didSet {
-            guard let vm = viewModel else {return}
+            
+            guard let vm = viewModel else {
+                return
+            }
+            
             if let image = vm.image {
                 headerView.image = image
                 headerHeight = view.width
-                
-            }else {
+            } else if let imageUrl = vm.imageUrlString {
+                headerView.setImageWithUrl(urlString: imageUrl) {[weak self] image in
+                    vm.image = image
+                    if let self = self {
+                        self.headerHeight = self.view.width
+                    }
+                }
+            } else {
                 headerHeight = 250
             }
             
@@ -108,7 +119,7 @@ class EventDetailViewController: UIViewController {
             headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: headerHeight)
             
             VMs = [
-                EventDetails(event: vm.event),
+                EventDetailsViewModel(event: vm.event),
                 EventParticipants(participants: vm.participants)
             ]
             
@@ -117,9 +128,9 @@ class EventDetailViewController: UIViewController {
             participantsList.append(contentsOf: vm.participantsExcludFriends)
             
             if vm.isOrganiser {
-                enrollButton.setTitle("輯編活動", for: .normal)
+                enrollButton.setTitle("編輯活動", for: .normal)
             }else {
-                enrollButton.setTitle(vm.isJoined ? "己參加": "我要參加", for: .normal)
+                enrollButton.setTitle(vm.isJoined ? "已參加": "我要參加", for: .normal)
             }
             
             collectionView.reloadData()
@@ -233,7 +244,7 @@ class EventDetailViewController: UIViewController {
     
     
     private func eventDoesNotExist (){
-        AlertManager.shared.showAlert(title: "Oops~",message: "活動不存在或者己取消", buttonText: "Dismiss",cancelText: nil, from: self) {[weak self] in
+        AlertManager.shared.showAlert(title: "Oops~",message: "活動不存在或者已取消", buttonText: "Dismiss",cancelText: nil, from: self) {[weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
     }
@@ -273,7 +284,7 @@ class EventDetailViewController: UIViewController {
     
     @objc private func didTapChat(){
         guard AuthManager.shared.isSignedIn else {
-            AlertManager.shared.showAlert(title: "Oops~", message: "Please login in to send message", from: self)
+            AlertManager.shared.showAlert(title: "Oops~", message: "Please login to send message", from: self)
             return
         }
         
@@ -292,10 +303,12 @@ class EventDetailViewController: UIViewController {
         let vc = NewPostViewController()
         if let editPost = viewModel?.event.toNewPost() {
             vc.newPost = editPost
+            vc.image = viewModel?.image
+            
             vc.isEditMode = true
         }
         
-        vc.completion = {[weak self] event in
+        vc.completion = {[weak self] event, image in
             if let _ = event {
                 // event modified
                 self?.dismiss(animated: true)
@@ -313,7 +326,7 @@ class EventDetailViewController: UIViewController {
     
     private func registerEvent(){
         if !AuthManager.shared.isSignedIn {
-            AlertManager.shared.showAlert(title: "Oops~", message: "Please login in to join events", from: self)
+            AlertManager.shared.showAlert(title: "Oops~", message: "Please login to join events", from: self)
         }
         
         guard let event = viewModel?.event,
@@ -350,8 +363,14 @@ class EventDetailViewController: UIViewController {
                 self?.dismiss(animated: true)
                 return
             }
-            let viewModel = EventHomeCellViewModel(event: event)
-            viewModel.image = self?.viewModel?.image
+            let viewModel = EventCellViewModel(event: event)
+            
+            if let imageUrl = viewModel.imageUrlString, let self = self {
+                
+            }else {
+                viewModel.image = self?.viewModel?.image
+            }
+            
             self?.viewModel = viewModel
             self?.collectionView.reloadData()
             self?.refreshControl.endRefreshing()

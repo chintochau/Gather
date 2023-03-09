@@ -142,6 +142,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     private func openCreateNewPost () {
+        
         if !AuthManager.shared.isSignedIn {
             dismiss(animated: false)
             AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
@@ -152,19 +153,25 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         dismiss(animated: false)
         
         let vc = NewPostViewController()
-        vc.completion = { [weak self] post in
+        
+        vc.completion = { [weak self] post, image in
+            
             guard let post = post else {return}
+            
             self?.dismiss(animated: false)
+            
             let vc = EventDetailViewController()
-            vc.viewModel = .init(event: post)
+            
+            let vm = EventCellViewModel(event: post)
+            
+            if let image = image {
+                vm.image = image
+            }
+            
+            vc.viewModel = vm
             
             if let firstTab = self?.viewControllers?.first as? UINavigationController {
                 firstTab.pushViewController(vc, animated: true)
-            }else {
-                let navVc = UINavigationController(rootViewController: vc)
-                navVc.modalPresentationStyle = .fullScreen
-                self?.present(navVc, animated: true)
-                
             }
             
         }
@@ -183,7 +190,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         let vc = CreateNewEventViewController()
         vc.completion = { [weak self] event, image in
             let vc = EventDetailViewController()
-            let vm = EventHomeCellViewModel(event: event)
+            let vm = EventCellViewModel(event: event)
             vm.image = image
             
             vc.viewModel = vm
@@ -205,7 +212,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     fileprivate func appInitialListener() {
         guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
-        //ChatMessageManager.shared.connectToChatServer(true)
+        ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
         //DummyDataManager.shared.generateDummyEvents()
     }

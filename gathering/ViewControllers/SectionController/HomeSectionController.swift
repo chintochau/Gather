@@ -38,12 +38,12 @@ class HomeSectionController: ListSectionController {
             height = size.height
         case _ as PeopleViewModel:
             let cell = collectionContext?.dequeueReusableCell(of: PeopleCell.self, for: self, at: index) as! PeopleCell
-            cell.bindViewModel(viewModel as! EventHomeCellViewModel)
+            cell.bindViewModel(viewModel as! EventCellViewModel)
             let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
             height = size.height
         case _ as PlaceViewModel:
             let cell = collectionContext?.dequeueReusableCell(of: PlaceCell.self, for: self, at: index) as! PlaceCell
-            cell.bindViewModel(viewModel as! EventHomeCellViewModel)
+            cell.bindViewModel(viewModel as! EventCellViewModel)
             let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
             height = size.height
         default:

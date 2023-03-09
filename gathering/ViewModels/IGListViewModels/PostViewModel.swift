@@ -57,8 +57,8 @@ class PostViewModel: HomeCellViewModel {
                 maleCount += 1
             case genderType.female.rawValue:
                 femaleCount += 1
-            case genderType.nonBinary.rawValue:
-                nonBinaryCount += 1
+//            case genderType.nonBinary.rawValue:
+//                nonBinaryCount += 1
             default:
                 print("case not handled")
             }
@@ -102,7 +102,7 @@ class PostViewModel: HomeCellViewModel {
         let startDateString = String.localeDate(from: event.startDateString, .zhHantTW)
         let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
         
-        switch event.date {
+        switch event.startDate {
         case ..<Date.tomorrowAtMidnight():
             startString = "今天"
         case ..<Date.tomorrowAtMidnight().adding(days: 1):

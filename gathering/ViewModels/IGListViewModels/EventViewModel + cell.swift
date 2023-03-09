@@ -7,9 +7,10 @@
 
 import UIKit
 import IGListKit
+import SwiftDate
 
 
-class EventHomeCellViewModel: HomeCellViewModel {
+class EventCellViewModel: HomeCellViewModel {
     // Basic
     let id: String
     let event: Event
@@ -58,6 +59,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
     
     init(event: Event) {
         self.id = event.id
+        
         self.event = event
         
         var maleCount = 0
@@ -72,8 +74,8 @@ class EventHomeCellViewModel: HomeCellViewModel {
                 maleCount += 1
             case genderType.female.rawValue:
                 femaleCount += 1
-            case genderType.nonBinary.rawValue:
-                nonBinaryCount += 1
+//            case genderType.nonBinary.rawValue:
+//                nonBinaryCount += 1
             default:
                 print("case not handled")
             }
@@ -93,45 +95,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
         
         
         // MARK: - Date
-        var finalDateString:String = ""
-        var startString:String = ""
-        var endString:String = ""
-        let startDateString = String.localeDate(from: event.startDateString, .zhHantTW)
-        let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
-        
-        switch event.date {
-        case ..<Date.tomorrowAtMidnight():
-            startString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
-            startString = "明天"
-        default:
-            startString = startDateString.date ?? ""
-        }
-        
-        switch event.endDate {
-        case ..<Date.tomorrowAtMidnight():
-            endString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
-            endString = "明天"
-        default:
-            endString = endDateString.date ?? ""
-        }
-        
-        
-        if startDateString == endDateString {
-            // Same Day same time
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")"
-        }else if startDateString.date == endDateString.date {
-            // same day different time
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) \(startDateString.time ?? "")-\(endDateString.time ?? "")"
-        }else {
-            
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? ""))-\(endString)(\(endDateString.dayOfWeek ?? ""))"
-        }
-        
-        
-        self.dateString = finalDateString
-        
+        self.dateString = event.getDateString()
         
         // MARK: - Others
         
@@ -150,9 +114,7 @@ class EventHomeCellViewModel: HomeCellViewModel {
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
         
         self.isOrganiser = self.organiser?.username == username
-        
         self.isJoined = event.isJoined
-        
     }
     
     func diffIdentifier() -> NSObjectProtocol {
@@ -160,11 +122,10 @@ class EventHomeCellViewModel: HomeCellViewModel {
     }
     
     func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        guard let other = object as? EventHomeCellViewModel else { return false }
+        guard let other = object as? EventCellViewModel else { return false }
         return event.id == other.event.id
     }
     
-    // Additional properties and methods for the event view model
 }
 
 

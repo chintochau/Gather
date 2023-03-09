@@ -28,7 +28,7 @@ final class AuthManager {
             email: email,
             name: nil,
             profileUrlString: nil,
-            gender: genderType.nonBinary.rawValue,
+            gender: genderType.male.rawValue,
             fcmToken: CustomNotificationManager.fcmToken
         )
         

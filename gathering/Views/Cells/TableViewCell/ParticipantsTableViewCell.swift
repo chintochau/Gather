@@ -181,8 +181,8 @@ class ParticipantsTableViewCell:UITableViewCell {
             userImageView.tintColor = .blueColor
         case genderType.female.rawValue:
             userImageView.tintColor = .redColor
-        case genderType.nonBinary.rawValue:
-            userImageView.tintColor = .mainColor
+//        case genderType.nonBinary.rawValue:
+//            userImageView.tintColor = .mainColor
         default:
             break
         }
@@ -249,7 +249,7 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             case .redColor:
                 gender = genderType.female.rawValue
             default:
-                gender = genderType.nonBinary.rawValue
+                gender = genderType.male.rawValue
             }
             
             // check if key already exist, if yes rename it

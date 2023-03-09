@@ -8,7 +8,7 @@
 import UIKit
 import IGListKit
 
-class EventDetails: ListDiffable {
+class EventDetailsViewModel: ListDiffable {
     var id:String
     var name:String
     var owner:User?
@@ -22,7 +22,7 @@ class EventDetails: ListDiffable {
         self.id = event.id
         self.name = event.title
         self.owner = event.organisers.first
-        self.dateString = event.getDateString()
+        self.dateString = event.getDateDetailString()
         self.timeString = event.getTimeString()
         
         var addressString = event.location.name
@@ -40,7 +40,7 @@ class EventDetails: ListDiffable {
     }
     
     func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        guard let object = object as? EventDetails else {return false}
+        guard let object = object as? EventDetailsViewModel else {return false}
         return id == object.id
     }
 }
