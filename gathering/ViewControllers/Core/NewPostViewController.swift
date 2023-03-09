@@ -253,7 +253,9 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             cell.delegate = self
             cell.backgroundColor = .clear
             cell.isEditMode = isEditMode
-            cell.tempHeadcount = newPost.headcount
+            
+            cell.configureWithHeadCount(headcount: newPost.headcount)
+            
             return cell
         case .participants:
             let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell

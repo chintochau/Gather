@@ -34,10 +34,12 @@ extension UserObject {
 
 extension User {
     func realmObject() -> UserObject {
-        let userObject = UserObject()
-        userObject.username = self.username
-        userObject.name = self.name
-        userObject.profileUrlString = self.profileUrlString
+        let userObject = RealmManager.shared.getObjectCreateIfNotExist(ofType: UserObject.self, forPrimaryKey: username)
+        let realm = try! Realm()
+        try! realm.write {
+            userObject.name = self.name
+            userObject.profileUrlString = self.profileUrlString
+        }
         return userObject
     }
     

@@ -9,12 +9,12 @@ import UIKit
 import RealmSwift
 
 protocol FavouritedTableCollectionViewCellDelegate:AnyObject {
-    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell:FavouritedTableCollectionViewCell, result:Any)
+    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell:FriendsTableCollectionViewCell, result:Any)
 }
 
-class FavouritedTableCollectionViewCell: UICollectionViewCell {
+class FriendsTableCollectionViewCell: UICollectionViewCell {
     
-    static let identifier = "ResultTableCollectionViewCell"
+    static let identifier = "FriendsTableCollectionViewCell"
     
     weak var delegate:FavouritedTableCollectionViewCellDelegate?
     
@@ -36,35 +36,8 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
     
     
     // MARK: - Class members
-    private var viewModels:[SearchResult] = []
-    
     private var relationships:Results<RelationshipObject>
     
-    var favType:String?{
-        didSet{
-            viewModels = []
-            switch favType {
-            case favouriteType.events.rawValue:
-                if let events = UserDefaults.standard.array(forKey: UserDefaultsType.favEvent.rawValue) as? [String] {
-                    events.forEach({
-                        viewModels.append(SearchResult(with: $0,type: .event))
-                    })
-                }
-            case favouriteType.users.rawValue:
-                if let users = UserDefaults.standard.array(forKey: UserDefaultsType.favUser.rawValue) as? [String] {
-                    users.forEach({
-                        viewModels.append(SearchResult(with: $0,type: .user))
-                    })
-                }
-                
-            default :
-                print("Not yet implemented")
-            }
-            
-            tableView.reloadData()
-        }
-        
-    }
     
     
     override init(frame: CGRect) {
@@ -81,17 +54,20 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControl
         
+        tableView.register(FriendTableViewCell.self, forCellReuseIdentifier: FriendTableViewCell.identifier)
+        
     }
     
     @objc private func didPullToRefresh(){
-        let type = favType
-        favType = type
+        tableView.reloadData()
         refreshControl.endRefreshing()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -100,24 +76,36 @@ class FavouritedTableCollectionViewCell: UICollectionViewCell {
     
 }
 
-extension FavouritedTableCollectionViewCell:UITableViewDelegate,UITableViewDataSource {
+extension FriendsTableCollectionViewCell:UITableViewDelegate,UITableViewDataSource, FriendTableViewCellDelegate {
+    
+    func FriendTableViewCellDidTapFollow(_ cell: FriendTableViewCell) {
+        
+        // MARK: - Rewrite using realm listener to update tableview
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {[weak self] in
+            self?.tableView.reloadData()
+        }
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return relationships.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = relationships[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = model.targetUsername
+        let model = relationships.sorted(by: {$0.status > $1.status})[indexPath.row]
+        let cell = FriendTableViewCell(username: model.targetUsername)
+        cell.relationship = model
+        cell.delegate = self
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         searchBar.resignFirstResponder()
+        
+        if let cell = tableView.cellForRow(at: indexPath) as? FriendTableViewCell {
+            cell.updateUserProfile()
+        }
+        
         delegate?.FavouritedTableCollectionViewCellDelegateDidTapResult(self, result: relationships[indexPath.row].targetUsername)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    
-    
 }

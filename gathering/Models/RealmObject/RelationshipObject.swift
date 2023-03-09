@@ -9,11 +9,11 @@ import UIKit
 import RealmSwift
 
 enum relationshipType:Int {
-    case noRelation = 0
-    case pending = 1
-    case received = 2
-    case friend = 3
-    case blocked = 4
+    case noRelation
+    case pending
+    case received
+    case friend
+    case blocked
 }
 
 class RelationshipObject: Object, Codable {

@@ -39,7 +39,8 @@ class FavouritedViewController: UIViewController {
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         let view  = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.register(FavouritedTableCollectionViewCell.self, forCellWithReuseIdentifier: FavouritedTableCollectionViewCell.identifier)
+        view.register(FriendsTableCollectionViewCell.self, forCellWithReuseIdentifier: FriendsTableCollectionViewCell.identifier)
+        view.register(EventsTableCollectionViewCell.self, forCellWithReuseIdentifier: EventsTableCollectionViewCell.identifier)
         view.isPagingEnabled = true
         return view
     }()
@@ -80,10 +81,21 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FavouritedTableCollectionViewCell.identifier, for: indexPath) as! FavouritedTableCollectionViewCell
-        cell.favType = titles[indexPath.row]
-        cell.delegate = self
-        return cell
+        
+        switch indexPath.row {
+        case 0:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FriendsTableCollectionViewCell.identifier, for: indexPath) as! FriendsTableCollectionViewCell
+            cell.delegate = self
+            return cell
+        case 1:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventsTableCollectionViewCell.identifier, for: indexPath) as! EventsTableCollectionViewCell
+            return cell
+        default:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FriendsTableCollectionViewCell.identifier, for: indexPath) as! FriendsTableCollectionViewCell
+            cell.delegate = self
+            return cell
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -97,7 +109,7 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
 }
 
 extension FavouritedViewController:FavouritedTableCollectionViewCellDelegate {
-    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FavouritedTableCollectionViewCell, result: Any) {
+    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FriendsTableCollectionViewCell, result: Any) {
         guard let result = result as? String else {return}
     }
     

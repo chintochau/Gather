@@ -24,9 +24,9 @@ extension SearchResult {
         subtitle = "@\(user.username)"
         type = .user
     }
-    init(with event:Event) {
-        title = event.title
-        subtitle = event.startDateString
+    init(with event:UserEvent) {
+        title = event.name
+        subtitle = event.dateString
         type = .event
     }
     init(with text:String,type:searchResultType) {
