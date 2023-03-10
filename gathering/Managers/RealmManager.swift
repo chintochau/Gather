@@ -19,22 +19,9 @@ struct RealmManager {
         return object
     }
     
-    func getObjectCreateIfNotExist<T: Object>(ofType type: T.Type, forPrimaryKey primaryKey: String) -> T {
-        let realm = try! Realm()
-        if let object = realm.object(ofType: type, forPrimaryKey: primaryKey) {
-            return object
-        } else {
-            let newObject = T()
-            newObject.setValue(primaryKey, forKey: T.primaryKey()!)
-            try! realm.write {
-                realm.add(newObject)
-            }
-            return realm.object(ofType: type, forPrimaryKey: primaryKey)!
-        }
-    }
 
     
-
+    /// What is the purpose of this? forget
     func fetchUserFromFirestore(userId: String,reload:Bool = false, completion: ((UserObject?, Error?) -> Void)? = nil) {
         // Get the default Realm instance
         let realm = try! Realm()

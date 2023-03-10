@@ -34,7 +34,9 @@ extension UserObject {
 
 extension User {
     func realmObject() -> UserObject {
-        let userObject = RealmManager.shared.getObjectCreateIfNotExist(ofType: UserObject.self, forPrimaryKey: username)
+        
+        let userObject = RealmManager.shared.createUserIfNotExist(username: username)
+        
         let realm = try! Realm()
         try! realm.write {
             userObject.name = self.name

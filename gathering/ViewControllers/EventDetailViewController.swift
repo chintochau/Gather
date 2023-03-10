@@ -37,6 +37,7 @@ class EventDetailViewController: UIViewController {
         let view = UIView()
         view.backgroundColor = .systemBackground
         view.clipsToBounds = true
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -158,6 +159,7 @@ class EventDetailViewController: UIViewController {
         ownerView.addSubview(profileImageView)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(didTapShare))
+        
         
         
         collectionView.backgroundColor = .clear

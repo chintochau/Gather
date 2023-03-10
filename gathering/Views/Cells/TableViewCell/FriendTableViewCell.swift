@@ -69,9 +69,14 @@ class FriendTableViewCell:UITableViewCell {
             
             if let status = relationship?.status {
                 switch status {
+                case relationshipType.noRelation.rawValue:
+                    friendButton.setTitle("Friend", for: .normal)
+                    friendButton.backgroundColor = .extraLightGray
+                    
                 case relationshipType.friend.rawValue:
                     friendButton.setTitle("Friend", for: .normal)
                     friendButton.backgroundColor = .mainColor
+                    
                 case relationshipType.blocked.rawValue:
                     friendButton.setTitle("Blocked", for: .normal)
                     friendButton.backgroundColor = .redColor
@@ -131,6 +136,7 @@ class FriendTableViewCell:UITableViewCell {
             
         }else {
             DatabaseManager.shared.findUserWithUsername(with: username) {[weak self] user in
+                
                 if let userObject = user?.realmObject() {
                     self?.userObject = userObject
                 }
@@ -142,6 +148,7 @@ class FriendTableViewCell:UITableViewCell {
     @objc private func didTapFollow(){
         guard var status = relationship?.status, let targetUsername = userObject?.username else {return}
         switch status {
+            
         case relationshipType.noRelation.rawValue:
             status = relationshipType.pending.rawValue
             DatabaseManager.shared.sendFriendRequest(targetUsername: targetUsername)
@@ -176,8 +183,11 @@ class FriendTableViewCell:UITableViewCell {
     }
     
     public func updateUserProfile(){
+        
         DatabaseManager.shared.findUserWithUsername(with: username) {[weak self] user in
+            
             if let userObject = user?.realmObject() {
+                
                 self?.userObject = userObject
             }
         }

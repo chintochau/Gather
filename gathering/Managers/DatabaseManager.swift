@@ -292,8 +292,10 @@ final class DatabaseManager {
             for (key, value) in documentData {
                 
                 if key != startDateReference && key != endDateReference {
-                    if let event = UserEvent(with: value as! [String : Any]) {
-                        events.append(event)
+                    if let value = value as? [String : Any] {
+                        if let event = UserEvent(with: value) {
+                            events.append(event)
+                        }
                     }
                 }
             }
@@ -467,6 +469,64 @@ final class DatabaseManager {
         
         batch.commit()
     }
+    
+    /// handle all relationships
+    public func updateFriendRequests(targetUsername:String, status:Int ){
+        
+        var selfRelationShipStatus:Int = 0
+        var targetRelationShipStatus:Int = 0
+        
+        switch status {
+        case relationshipType.friend.rawValue:
+            selfRelationShipStatus = status
+            targetRelationShipStatus = status
+        case relationshipType.noRelation.rawValue:
+            selfRelationShipStatus = status
+            targetRelationShipStatus = status
+        case relationshipType.pending.rawValue:
+            selfRelationShipStatus = status
+            targetRelationShipStatus = relationshipType.received.rawValue
+        case relationshipType.received.rawValue:
+            selfRelationShipStatus = relationshipType.received.rawValue
+            targetRelationShipStatus = status
+        case relationshipType.blocked.rawValue:
+            selfRelationShipStatus = status
+            targetRelationShipStatus = status
+        default:
+            print("Realtionship Type Not handled")
+        }
+        
+        
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+              let relationshipString = IdManager.shared.generateRelationshipIdFor(targetUsername: targetUsername)
+        else {return}
+        
+        let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)
+        let selfRef = database.collection("users").document(username).collection("relationship").document(targetUsername)
+        
+        
+        let batch  = database.batch()
+        let relationshipObject = RelationshipObject()
+        relationshipObject.id = relationshipString.id
+        
+        // write to target
+        relationshipObject.targetUsername = username
+        relationshipObject.selfUsername = targetUsername
+        relationshipObject.status = targetRelationShipStatus
+        batch.setData(relationshipObject.asDictionary()!, forDocument: targetRef)
+        
+        // write to self
+        relationshipObject.targetUsername = targetUsername
+        relationshipObject.selfUsername = username
+        relationshipObject.status = selfRelationShipStatus
+        batch.setData(relationshipObject.asDictionary()!, forDocument: selfRef)
+        
+        
+        batch.commit()
+    }
+    
+    
+    
     public func cancelFriendRequestAndUnfriend(targetUsername:String){
         
         guard let username = UserDefaults.standard.string(forKey: "username")

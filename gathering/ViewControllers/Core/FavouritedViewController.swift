@@ -20,11 +20,6 @@ class FavouritedViewController: UIViewController {
         return favouriteType.allCases.compactMap({$0.rawValue})
     }()
     
-    private let tableView:UITableView = {
-        let view = UITableView(frame: .zero, style: .plain)
-        view.backgroundColor = .systemBackground
-        return view
-    }()
     
     lazy var segmentedButtonsView:SegmentedButtonsView = {
         let segmentedButtonsView = SegmentedButtonsView()
@@ -42,13 +37,10 @@ class FavouritedViewController: UIViewController {
         view.register(FriendsTableCollectionViewCell.self, forCellWithReuseIdentifier: FriendsTableCollectionViewCell.identifier)
         view.register(EventsTableCollectionViewCell.self, forCellWithReuseIdentifier: EventsTableCollectionViewCell.identifier)
         view.isPagingEnabled = true
+        view.showsHorizontalScrollIndicator = false
         return view
     }()
     
-    private let refreshControl:UIRefreshControl = {
-        let view = UIRefreshControl()
-        return view
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +49,6 @@ class FavouritedViewController: UIViewController {
         view.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
-        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         
         segmentedButtonsView.delegate = self
     }
@@ -65,14 +56,9 @@ class FavouritedViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         segmentedButtonsView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: 44)
-        collectionView.frame = CGRect(x: 0, y: segmentedButtonsView.bottom, width: view.width, height: view.height-44)
+        collectionView.frame = CGRect(x: 0, y: segmentedButtonsView.bottom, width: view.width, height: view.height-44-88)
     }
     
-    @objc private func didPullToRefresh(){
-        favouritedItems = DefaultsManager.shared.getFavouritedEvents()
-        tableView.reloadData()
-        tableView.refreshControl?.endRefreshing()
-    }
 }
 
 extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
@@ -108,9 +94,18 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
     
 }
 
-extension FavouritedViewController:FavouritedTableCollectionViewCellDelegate {
-    func FavouritedTableCollectionViewCellDelegateDidTapResult(_ cell: FriendsTableCollectionViewCell, result: Any) {
-        guard let result = result as? String else {return}
+extension FavouritedViewController:FriendsCollectionViewCellDelegate {
+    func FriendsCollectionViewCellDidSelectFriend(_ cell: FriendsTableCollectionViewCell, result: Any) {
+        guard let username = result as? String else {return}
+        
+        if let userObject = RealmManager.shared.getObject(ofType: UserObject.self, forPrimaryKey: username) {
+            let vc = UserProfileViewController(user: userObject.toUser())
+            
+            navigationController?.pushViewController(vc, animated: true)
+            
+        }
+        
+        
     }
     
     

@@ -38,7 +38,7 @@ class UserProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        RealmManager.shared.fetchUserFromFirestore(userId: user.username)
+//        RealmManager.shared.fetchUserFromFirestore(userId: user.username)
         
         setupCollectionView()
         fetchData()
@@ -46,7 +46,6 @@ class UserProfileViewController: UIViewController {
     
     
     private func fetchData() {
-        
         DatabaseManager.shared.getUserEvents(username: user.username) { [weak self] userEvents in
             guard let userEvents = userEvents else {return}
             self?.userEvents = userEvents
