@@ -219,7 +219,7 @@ extension ParticipantsViewController:UITableViewDelegate,UITableViewDataSource {
     
     // MARK: - Cell
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let vm = models.sorted(by: { $0.status > $1.status
+        let vm = models.sorted(by: { $0.joinStatus.rawValue > $1.joinStatus.rawValue
         })[indexPath.row]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier, for: indexPath) as! UserTableViewCell

@@ -67,7 +67,8 @@ struct DummyDataManager {
                 refundPolicy: "",
                 participants: [user.username:participant],
                 headcount: Headcount(isGenderSpecific: i%3 == 0 ? true : false, min: 0, max: 100, mMin: 0, mMax: 50, fMin: 0, fMax: 50),
-                ownerFcmToken: nil
+                ownerFcmToken: nil,
+                eventStatus: i%3 == 0 ? .grouping : .confirmed
             )
             
             // Convert the event to a dictionary

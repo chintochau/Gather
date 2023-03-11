@@ -13,6 +13,7 @@ target 'Gather Pool' do
   pod 'Firebase/Storage'
   pod 'Firebase/Auth'
   pod 'Firebase/Messaging'
+  pod 'Firebase/Functions'
   pod 'SDWebImage'
   pod 'IGListKit', '~> 4.0.0'
   pod 'EmojiPicker', :git => 'https://github.com/htmlprogrammist/EmojiPicker'

@@ -8,20 +8,6 @@
 import UIKit
 import EmojiPicker
 
-enum InputFieldType {
-    case textField(title:String, placeholder:String,text:String = "")
-    case textView(title:String, text:String?,tag:Int = 0)
-    case value(title:String, value:String)
-    case userField(username:String,name:String?, profileUrl:String?)
-    case textLabel(text:String)
-    case datePicker
-    case headCount
-    case participants
-    case titleField(title:String? = nil,placeholder:String? = nil)
-    case horizentalPicker(title:String,selectedObject:Any,objects:[Any])
-    case imagePicker
-}
-
 
 class CreateNewEventViewController: UIViewController {
     
@@ -62,7 +48,9 @@ class CreateNewEventViewController: UIViewController {
     
     private func initialUser(){
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
-        newEvent.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
+        newEvent.participants = [
+            user.username: Participant(with: user,status: Participant.participantStatus.host)
+        ]
     }
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}

@@ -17,7 +17,6 @@ enum relationshipType:Int {
 }
 
 class RelationshipObject: Object, Codable {
-    
     @Persisted var id = ""
     @Persisted(primaryKey: true) var targetUsername:String = ""
     @Persisted var selfUsername:String = ""
@@ -29,8 +28,4 @@ class RelationshipObject: Object, Codable {
         let realm  = try! Realm()
         return realm.object(ofType: UserObject.self, forPrimaryKey: targetUsername)
     }
-    
-    
-    
-    
 }

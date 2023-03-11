@@ -13,6 +13,8 @@ enum TagType:Int, Codable {
     case interests
     case peoplCount
     case joined
+    case grouping
+    case grouped
 }
 
 struct Tag : Codable{
@@ -54,14 +56,18 @@ struct Tag : Codable{
             return "新移民交流"
         case .peoplCount:
             if genderSpecific ?? false {
-                return "成團人數: \(maleString)\(femaleString)"
+                return "成團人數:\(maleString)\(femaleString)"
             } else {
-                return "成團人數: \(headcountString)"
+                return "成團人數:\(headcountString)"
             }
         case .joined:
             return "已報名"
         case .interests:
             return "興趣交流"
+        case .grouping:
+            return  "組團中..."
+        case .grouped:
+            return "已成團"
         }
     }
     
@@ -77,14 +83,21 @@ struct Tag : Codable{
             return .tiffBlueColor
         case .interests:
             return .darkSecondaryColor
+        case .grouping:
+            return .darkMainColor
+        case .grouped:
+            return .darkSecondaryColor
         }
     }
     
-    func getLabel() -> TagLabel {
+    func getLabel(fontSize:CGFloat = 14) -> TagLabel {
         let tag = TagLabel()
         tag.eventTag = self
+        tag.fontSize = fontSize
         return tag
     }
+    
+    
 }
 
 
@@ -93,7 +106,7 @@ class TagLabel:UILabel {
     
     private let tagLabel:UILabel = {
         let view = UILabel()
-        view.font = .robotoRegularFont(ofSize: 14)
+        view.font = .robotoMedium(ofSize: 14)
         return view
     }()
     
@@ -108,6 +121,13 @@ class TagLabel:UILabel {
             tagLabel.text = eventTag.tagString
             tagLabel.textColor = .white
             backgroundColor = eventTag.color
+        }
+    }
+    var fontSize:CGFloat? {
+        didSet {
+            if let fontSize = fontSize {
+                tagLabel.font = .robotoMedium(ofSize: fontSize)
+            }
         }
     }
     

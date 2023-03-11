@@ -461,7 +461,8 @@ extension OldEventController {
             refundPolicy: "",
             participants: [:],
             headcount: tempEvent.headcount,
-            ownerFcmToken: user.fcmToken
+            ownerFcmToken: user.fcmToken,
+            eventStatus: .grouping
         )
     }
     

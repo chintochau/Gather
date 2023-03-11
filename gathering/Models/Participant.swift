@@ -15,19 +15,22 @@ struct Participant:Codable {
     let gender:String
     var email:String? = nil
     var profileUrlString:String? = nil
-    var status:Int
+    var joinStatus:participantStatus = .going
     var isFriend:Bool? = false
     
-    enum participantStatus:Int {
-        case going = 0
-        case host = 1
-        case waitList = 2
+    enum participantStatus:Int,Codable {
+        case host
+        case going
+        case quit
+        case waitList
+        case pending
+        case rejected
     }
     
 }
 
 extension Participant {
-    init(with user:User,status:Int = 0){
+    init(with user:User,status:participantStatus = .going){
         guard let name = user.name, let gender = user.gender else {
             fatalError("Name / Gender is nil")}
         self.name = name
@@ -35,7 +38,7 @@ extension Participant {
         self.gender = gender
         self.email = user.email
         self.profileUrlString = user.profileUrlString
-        self.status = status
+        self.joinStatus = status
     }
     
 }

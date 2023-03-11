@@ -68,18 +68,6 @@ class EventDetailViewController: UIViewController {
         return view
     }()
     
-    private lazy var enrollButton:GradientButton = {
-        let view = GradientButton(type: .system)
-        view.setTitleColor(.white, for: .normal)
-        view.layer.cornerRadius = 8
-        view.layer.shadowColor = UIColor.lightGray.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 4)
-        view.layer.shadowRadius = 4
-        view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
-        view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
-        return view
-    }()
     
     private lazy var refreshControl:UIRefreshControl = {
         let view = UIRefreshControl()
@@ -87,10 +75,21 @@ class EventDetailViewController: UIViewController {
         return view
     }()
     
+    private let buttonStackView:UIStackView = {
+        let view = UIStackView()
+        view.axis = .horizontal
+        view.spacing = 10
+        view.distribution = .fillEqually
+        return view
+    }()
     
     // MARK: - Configure VM
+
     var viewModel:EventCellViewModel? {
         didSet {
+            buttonStackView.arrangedSubviews.forEach({
+                buttonStackView.removeArrangedSubview($0)
+            })
             
             guard let vm = viewModel else {
                 return
@@ -121,7 +120,7 @@ class EventDetailViewController: UIViewController {
             
             VMs = [
                 EventDetailsViewModel(event: vm.event),
-                EventParticipants(participants: vm.participants)
+                EventParticipants(event: vm.event)
             ]
             
             participantsList = []
@@ -129,9 +128,11 @@ class EventDetailViewController: UIViewController {
             participantsList.append(contentsOf: vm.participantsExcludFriends)
             
             if vm.isOrganiser {
-                enrollButton.setTitle("編輯活動", for: .normal)
-            }else {
-                enrollButton.setTitle(vm.isJoined ? "已參加": "我要參加", for: .normal)
+                configureButtonForOrganiser()
+            } else if vm.isJoined {
+                configureButtonForParticipant()
+            } else {
+                configureButton()
             }
             
             collectionView.reloadData()
@@ -151,7 +152,7 @@ class EventDetailViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(headerView)
         view.addSubview(collectionView)
-        view.addSubview(enrollButton)
+        view.addSubview(buttonStackView)
         view.addSubview(titleLabel)
         view.addSubview(messageButton)
         view.addSubview(ownerView)
@@ -176,8 +177,7 @@ class EventDetailViewController: UIViewController {
         
         
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor)
-        enrollButton.anchor(top: collectionView.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 30, bottom: 40, right: 30),size: .init(width: view.width-60, height: 50))
-        enrollButton.layer.cornerRadius = 25
+
         ownerView.anchor(top: nil, leading: view.leadingAnchor, bottom: headerView.bottomAnchor, trailing: nil,
                          padding: .init(top: 0, left: 30, bottom: 20, right: 30),size: .init(width: 0, height: 50))
         ownerView.layer.cornerRadius = 25
@@ -197,9 +197,128 @@ class EventDetailViewController: UIViewController {
         
         
         
+        buttonStackView.anchor(top: collectionView.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 5, left: 30, bottom: 40, right: 30),size: .init(width: view.width-60, height: 50))
+
+        
         configureCollectionViewLayout()
 
     }
+    
+    
+    // MARK: - Bottom Button
+    fileprivate func configureButtonForOrganiser() {
+        
+        lazy var editButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+            view.setTitle("編輯活動", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(editButton)
+        
+        
+        lazy var formGroupButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
+            view.setTitle("成團", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            return view
+        }()
+        buttonStackView.addArrangedSubview(formGroupButton)
+    }
+    
+    fileprivate func configureButtonForParticipant(){
+        
+        lazy var quitButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+            view.setTitle("退出", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(quitButton)
+        
+        
+        lazy var formGroupButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
+            view.setTitle("邀請朋友", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            return view
+        }()
+        buttonStackView.addArrangedSubview(formGroupButton)
+        
+    }
+    
+    fileprivate func configureButton(){
+        
+        if let canJoin = viewModel?.canJoin, canJoin {
+            lazy var quitButton:GradientButton = {
+                let view = GradientButton(type: .system)
+                view.setTitleColor(.white, for: .normal)
+                view.titleLabel?.font = .robotoMedium(ofSize: 16)
+                view.setGradient(colors: [.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+                view.setTitle("參加", for: .normal)
+                view.gradientLayer?.cornerRadius = 15
+                view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+                return view
+            }()
+            buttonStackView.addArrangedSubview(quitButton)
+            
+            
+            lazy var formGroupButton:GradientButton = {
+                let view = GradientButton(type: .system)
+                view.setTitleColor(.white, for: .normal)
+                view.titleLabel?.font = .robotoMedium(ofSize: 16)
+                view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
+                view.setTitle("邀請朋友", for: .normal)
+                view.gradientLayer?.cornerRadius = 15
+                return view
+            }()
+            buttonStackView.addArrangedSubview(formGroupButton)
+        } else {
+            lazy var quitButton:GradientButton = {
+                let view = GradientButton(type: .system)
+                view.setTitleColor(.white, for: .normal)
+                view.titleLabel?.font = .robotoMedium(ofSize: 16)
+                view.setGradient(colors:[.lightGray,.lightGray] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+                view.setTitle("已滿", for: .normal)
+                view.gradientLayer?.cornerRadius = 15
+                view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+                return view
+            }()
+            buttonStackView.addArrangedSubview(quitButton)
+            
+            if viewModel?.allowWaitList ?? false {
+                lazy var quitButton:GradientButton = {
+                    let view = GradientButton(type: .system)
+                    view.setTitleColor(.white, for: .normal)
+                    view.titleLabel?.font = .robotoMedium(ofSize: 16)
+                    view.setGradient(colors:[.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+                    view.setTitle("加入候補名單", for: .normal)
+                    view.gradientLayer?.cornerRadius = 15
+                    view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+                    return view
+                }()
+                buttonStackView.addArrangedSubview(quitButton)
+                
+            }
+            
+        }
+        
+    }
+    
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -279,7 +398,9 @@ class EventDetailViewController: UIViewController {
                 unregisterEvent()
             }else {
                 // if not joined, tap to join
-                registerEvent()
+                if viewModel?.canJoin ?? false {
+                    registerEvent()
+                }
             }
         }
     }

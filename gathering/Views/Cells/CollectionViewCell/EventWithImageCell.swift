@@ -49,11 +49,13 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         addSubview(tagStackView)
         
         
+        let leftPadding:CGFloat = 13
+        let rightPadding:CGFloat = 13
         
-        let eventImageSize:CGFloat = width/4.3
+        let eventImageSize:CGFloat = width/4.3+5
         let eventImageHeight:CGFloat = eventImageSize*1.3
         eventImageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,
-                              padding: .init(top: 15, left: 20, bottom: 0, right: 0),
+                              padding: .init(top: 15, left: leftPadding, bottom: 0, right: 0),
                               size: .init(width: eventImageSize, height: eventImageHeight))
         
         tagStackView.anchor(top: eventImageView.topAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing:nil,
@@ -74,18 +76,18 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         maleIconImageView.anchor(top: femaleIconImageView.topAnchor, leading: nil, bottom: nil, trailing: nil,
                                  padding: .init(top: 2, left: 0, bottom: 0, right: 5),
                                  size: .init(width: smallIconSize, height: smallIconSize))
-        maleNumber.anchor(top: femaleIconImageView.topAnchor, leading: maleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 6, bottom: 0, right: 20))
+        maleNumber.anchor(top: femaleIconImageView.topAnchor, leading: maleIconImageView.trailingAnchor, bottom: femaleIconImageView.bottomAnchor, trailing: trailingAnchor, padding: .init(top: 0, left: 6, bottom: 0, right: rightPadding))
         
         
         // MARK: - Info Text
         titleLabel.topAnchor.constraint(greaterThanOrEqualTo: femaleIconImageView.bottomAnchor).isActive = true
-        titleLabel.anchor(top: tagStackView.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
+        titleLabel.anchor(top: tagStackView.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: rightPadding))
         dateLabel.anchor(top: titleLabel.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 5, left: 0, bottom: 0, right: 0))
         locationLabel.anchor(top: dateLabel.bottomAnchor, leading: tagStackView.leadingAnchor, bottom: nil, trailing: trailingAnchor,
-                             padding: .init(top: 10, left: 0, bottom: 0, right: 20))
+                             padding: .init(top: 5, left: 0, bottom: 0, right: rightPadding))
         
         separatorView.anchor(top: nil, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,
-                             padding: .init(top: 0, left: 20, bottom: 0, right: 20),size: .init(width: 0, height: 2))
+                             padding: .init(top: 0, left: leftPadding, bottom: 0, right: rightPadding),size: .init(width: 0, height: 2))
         separatorView.topAnchor.constraint(greaterThanOrEqualTo: eventImageView.topAnchor,constant: 14 + eventImageHeight).isActive = true
         separatorView.topAnchor.constraint(greaterThanOrEqualTo: locationLabel.bottomAnchor,constant: 13).isActive = true
         
@@ -93,7 +95,7 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         // MARK: - Profile image
         let profileImageSize:CGFloat = 35
         profileImageview.anchor(top: separatorView.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,
-                                padding: .init(top: 7, left: 20, bottom: 7, right: 0),
+                                padding: .init(top: 7, left: leftPadding, bottom: 7, right: 0),
                                 size: .init(width: profileImageSize, height: profileImageSize))
         profileImageview.layer.cornerRadius = profileImageSize/2
         
@@ -102,7 +104,7 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         profileTitleLabel.centerYAnchor.constraint(equalTo: profileImageview.centerYAnchor).isActive = true
         
         
-        friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
+        friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: rightPadding))
         friendsNumber.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
     }

@@ -9,9 +9,14 @@ import Foundation
 import FirebaseStorage
 
 final class StorageManager {
+    
     static let shared = StorageManager()
     
-    let storage = Storage.storage().reference()
+    let storage:StorageReference =  {
+        let storage = Storage.storage()
+//        storage.useEmulator(withHost: "localhost", port: 9199)
+        return storage.reference()
+    }()
     
     // MARK: - Upload Image
     public func uploadEventImage(id:String,data:[Data?], completion: @escaping ([String]) -> Void){

@@ -261,6 +261,7 @@ class HeadcountTableViewCell: UITableViewCell {
                 // not gender specific
                 
                 self?.cellHeightAnchor.constant = 44
+                
                 self?.expandButton.transform = .identity
                 self?.tempHeadcount.isGenderSpecific = false
                 self?.tempHeadcount.fMin = nil
@@ -275,6 +276,7 @@ class HeadcountTableViewCell: UITableViewCell {
             }else {
                 // gender specific
                 self?.cellHeightAnchor.constant = 70
+                
                 self?.expandButton.transform = .init(rotationAngle: .pi*3/2)
                 self?.tempHeadcount.isGenderSpecific = true
                 self?.tempHeadcount.max = nil

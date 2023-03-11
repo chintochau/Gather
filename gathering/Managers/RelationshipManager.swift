@@ -11,26 +11,21 @@ import FirebaseFirestore
 
 class RelationshipManager {
     static let shared = RelationshipManager()
-    
     var listener:ListenerRegistration?
-    
     func checkFriendList(with participants:[Participant]) -> [Participant] {
-        
         let realm = try! Realm()
-        
         let friendsObjects = realm.objects(RelationshipObject.self)
-        
         var friends = participants.filter { participant in
-            friendsObjects.contains { $0.targetUsername == participant.username }
+            friendsObjects.contains {
+                ($0.targetUsername == participant.username) &&
+                ($0.status == relationshipType.friend.rawValue)
+            }
         }
-        
         friends = friends.compactMap { participant in
             var friend = participant
             friend.isFriend  = true
             return friend
         }
-        
-        
         return friends
     }
     

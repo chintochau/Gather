@@ -42,6 +42,8 @@
 		474D524329B4471A00E64224 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 474D524229B4471A00E64224 /* DeepLinkHandler.swift */; };
 		4750020B29AD22C5004E7A6C /* launchScreen.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 4750020A29AD22C5004E7A6C /* launchScreen.jpeg */; };
 		4750020D29AD27C1004E7A6C /* UIFont+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4750020C29AD27C1004E7A6C /* UIFont+extension.swift */; };
+		47505A3429BAEC8E0052982A /* ToggleButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47505A3329BAEC8E0052982A /* ToggleButtonTableViewCell.swift */; };
+		47505A3629BB90BC0052982A /* FunctionsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47505A3529BB90BC0052982A /* FunctionsManager.swift */; };
 		4752036B29AE7DCF00284EB0 /* UIColor+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */; };
 		4758AD5829B30D3B002F9BE1 /* LocationPickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */; };
 		47595191296DF24300C40741 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47595190296DF24300C40741 /* AppDelegate.swift */; };
@@ -182,6 +184,8 @@
 		474D524229B4471A00E64224 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		4750020A29AD22C5004E7A6C /* launchScreen.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launchScreen.jpeg; sourceTree = "<group>"; };
 		4750020C29AD27C1004E7A6C /* UIFont+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+extension.swift"; sourceTree = "<group>"; };
+		47505A3329BAEC8E0052982A /* ToggleButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleButtonTableViewCell.swift; sourceTree = "<group>"; };
+		47505A3529BB90BC0052982A /* FunctionsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionsManager.swift; sourceTree = "<group>"; };
 		4752036A29AE7DCF00284EB0 /* UIColor+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+extension.swift"; sourceTree = "<group>"; };
 		4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerTableViewCell.swift; sourceTree = "<group>"; };
 		4759518D296DF24300C40741 /* Gather Pool.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gather Pool.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -460,6 +464,7 @@
 				478E6F0729A9377A00270C4F /* HorizontalCollectionView.swift */,
 				4758AD5729B30D3B002F9BE1 /* LocationPickerTableViewCell.swift */,
 				472B6ACF29B9A59500DB295E /* FriendTableViewCell.swift */,
+				47505A3329BAEC8E0052982A /* ToggleButtonTableViewCell.swift */,
 			);
 			path = TableViewCell;
 			sourceTree = "<group>";
@@ -619,6 +624,7 @@
 				478E6F0E29A9CBE300270C4F /* AlertManager.swift */,
 				474D524229B4471A00E64224 /* DeepLinkHandler.swift */,
 				472B6AC929B94C5700DB295E /* LoadingIndicator.swift */,
+				47505A3529BB90BC0052982A /* FunctionsManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -847,10 +853,12 @@
 				47E7DD78298A124B000C1FFC /* LocationSearchViewController.swift in Sources */,
 				47CF718729AB1C74000ABE6F /* Date+extension.swift in Sources */,
 				472997072985AC4400543FF6 /* DefaultsManager.swift in Sources */,
+				47505A3429BAEC8E0052982A /* ToggleButtonTableViewCell.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
 				476F995329A68856007CA9A4 /* NewEvent.swift in Sources */,
 				47CC052F299038EC00E97C1F /* PostCell.swift in Sources */,
 				478EE83D2996C447001BA53E /* FriendsTableCollectionViewCell.swift in Sources */,
+				47505A3629BB90BC0052982A /* FunctionsManager.swift in Sources */,
 				47629670297424FE001BF5B7 /* RegisterViewController.swift in Sources */,
 				474065B02980D67B00504422 /* NewCategoryViewController.swift in Sources */,
 				472B6AD029B9A59500DB295E /* FriendTableViewCell.swift in Sources */,

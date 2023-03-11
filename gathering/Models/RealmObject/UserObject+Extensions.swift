@@ -12,10 +12,7 @@ class UserObject: Object{
     @Persisted(primaryKey: true) var username:String
     @Persisted var name:String?
     @Persisted var profileUrlString:String?
-    
     let conversations = LinkingObjects(fromType: ConversationObject.self, property: "participants")
-    
-    
     
     convenience init(username: String, name: String?, profileUrlString: String?) {
         self.init()
@@ -23,7 +20,6 @@ class UserObject: Object{
         self.name = name
         self.profileUrlString = profileUrlString
     }
-    
 }
 
 extension UserObject {

@@ -45,16 +45,15 @@ class HomeViewModel {
         }
     }
     
-    func insertEvent(event:Event, at index:Int, completion:@escaping () -> Void ) {
-        events.insert(event, at: index)
-        completion()
-    }
     
     private func insertViewModels(with events:[Event]) {
-        
-        var newVM:[HomeCellViewModel] = events.compactMap({
-                EventCellViewModel(event: $0)}                                          
-        )
+        var newVM:[HomeCellViewModel] = events.sorted(by: {$0.startDate < $1.startDate}).compactMap({
+            if $0.endDate < Date() {
+                return nil
+            }else {
+                return EventCellViewModel(event: $0)
+            }
+        })
         
         var adArray = [Int]()
         if events.count > 4 {
@@ -75,7 +74,15 @@ class HomeViewModel {
     }
     
     private func createViewModels(){
-            items = events.map({EventCellViewModel(event: $0)})
+        items = events.sorted(by: {$0.startDate < $1.startDate}).compactMap({
+                if $0.endDate < Date() {
+                    return nil
+                }else {
+                    return EventCellViewModel(event: $0)
+                }
+            })
+        
+        
         
         for (index,_) in items.enumerated() {
             if index % 4 == 3 {
@@ -83,8 +90,6 @@ class HomeViewModel {
                 items.insert(AdViewModel(ad: ad), at: index)
             }
         }
-        
-        
         
     }
     

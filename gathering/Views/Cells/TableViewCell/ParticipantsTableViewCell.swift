@@ -257,10 +257,10 @@ extension ParticipantsTableViewCell:UITextViewDelegate {
             if participants[name] != nil {
                 let replacedName = name + "-" + String(counter)
                 
-                participants[replacedName] = Participant(name: replacedName, gender: gender, status: 0)
+                participants[replacedName] = Participant(name: replacedName, gender: gender, joinStatus: .going)
                 counter += 1
             }else {
-                participants[name] = Participant(name: name, gender: gender, status: 0)
+                participants[name] = Participant(name: name, gender: gender, joinStatus: .going)
             }
             
         }

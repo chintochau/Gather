@@ -12,14 +12,23 @@ import FirebaseMessaging
 final class DatabaseManager {
     static let shared = DatabaseManager()
     
-    let database = Firestore.firestore()
+    let database:Firestore = {
+        let database = Firestore.firestore()
+//        database.useEmulator(withHost: "localhost", port: 8080)
+        
+        return database
+    }()
+    
     
     // MARK: - User Profile
     /// to create user profile when user first login the app
     public func createUserProfile(newUser:User, completion: @escaping (Bool) -> Void) {
         
         let ref = database.collection("users").document(newUser.username)
-        guard let data = newUser.asDictionary() else {return}
+        
+        guard let data = newUser.asDictionary() else {
+            return
+        }
         ref.setData(data) { error in
             completion(error == nil)
         }

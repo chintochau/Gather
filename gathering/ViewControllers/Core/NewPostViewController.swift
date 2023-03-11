@@ -9,6 +9,21 @@ import UIKit
 import EmojiPicker
 
 
+enum InputFieldType {
+    case textField(title:String, placeholder:String,text:String = "")
+    case textView(title:String, text:String?,tag:Int = 0)
+    case value(title:String, value:String)
+    case userField(username:String,name:String?, profileUrl:String?)
+    case textLabel(text:String)
+    case datePicker
+    case headCount
+    case participants
+    case titleField(title:String? = nil,placeholder:String? = nil)
+    case horizentalPicker(title:String,selectedObject:Any,objects:[Any])
+    case imagePicker
+    case toggleButton(title:String, tag:Int)
+}
+
 
 class NewPostViewController: UIViewController {
     
@@ -123,7 +138,11 @@ class NewPostViewController: UIViewController {
     
     private func initialUser(){
         guard let user = DefaultsManager.shared.getCurrentUser() else {return}
-        newPost.participants = [user.username: Participant(with: user,status: Participant.participantStatus.going.rawValue)]
+        newPost.participants = [
+            user.username: Participant(with: user,status: Participant.participantStatus.host)
+        ]
+        
+        print(newPost)
     }
     
     private func configureViewModels(){
@@ -137,7 +156,9 @@ class NewPostViewController: UIViewController {
                 .textView(title: "活動簡介:", text: newPost.intro,tag: 0),
                 .datePicker,
                 .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray),
-                .headCount
+                .headCount,
+                .toggleButton(title: "允許加入候補", tag:2),
+                .toggleButton(title: "自動確認報名", tag:1)
             ]
         ]
         
@@ -178,7 +199,9 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         tableView.backgroundView = nil
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
+        tableView.register(ToggleButtonTableViewCell.self, forCellReuseIdentifier: ToggleButtonTableViewCell.identifier)
         tableView.register(TextFieldTableViewCell.self, forCellReuseIdentifier: TextFieldTableViewCell.identifier)
         tableView.register(TextViewTableViewCell.self, forCellReuseIdentifier: TextViewTableViewCell.identifier)
         tableView.register(TextLabelTableViewCell.self, forCellReuseIdentifier: TextLabelTableViewCell.identifier)
@@ -289,10 +312,14 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
                 cell.image = image
             }
             return cell
-        default:
-            let cell = tableView.dequeueReusableCell(withIdentifier: ParticipantsTableViewCell.identifier, for: indexPath) as! ParticipantsTableViewCell
+        case .toggleButton(title: let title, tag: let tag):
+            let cell = tableView.dequeueReusableCell(withIdentifier: ToggleButtonTableViewCell.identifier, for: indexPath) as! ToggleButtonTableViewCell
+            cell.configure(title: title, isOn: tag == 1 ? newPost.autoApprove : newPost.allowWaitList, tag:tag)
             cell.delegate = self
-            cell.backgroundColor = .clear
+            return cell
+            
+        default:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
             return cell
         }
     }
@@ -589,3 +616,18 @@ extension NewPostViewController: LocationSerchViewControllerDelegate {
     }
 }
 
+extension NewPostViewController:ToggleButtonTableViewCellDelegate {
+    // MARK: - Handle Toggle Button
+    func ToggleButtonTableViewCellDidToggle(_ cell: ToggleButtonTableViewCell, afterValue: Bool, tag: Int) {
+        switch tag {
+        case 1:
+            // Auto approve
+            newPost.autoApprove = afterValue
+        case 2:
+            // Allow Waitlist
+            newPost.allowWaitList = afterValue
+        default:
+            print("Toggle tag not defined")
+        }
+    }
+}

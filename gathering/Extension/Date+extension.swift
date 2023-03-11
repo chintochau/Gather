@@ -151,7 +151,7 @@ extension String {
         
         
         // Relative
-        let relativeString = dateInDeviceLocalTime.toRelative(locale:Locales.chineseTraditional)
+        let relativeString = dateInDeviceLocalTime.toRelative(locale:Locales.chineseTraditional).replacingOccurrences(of: "时", with: "時")
         
         
         return (dateString,dayString,timeString,relativeString)

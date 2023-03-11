@@ -102,13 +102,8 @@ extension FavouritedViewController:FriendsCollectionViewCellDelegate {
             let vc = UserProfileViewController(user: userObject.toUser())
             
             navigationController?.pushViewController(vc, animated: true)
-            
         }
-        
-        
     }
-    
-    
 }
 
 extension FavouritedViewController:SegmentedControlDelegate {

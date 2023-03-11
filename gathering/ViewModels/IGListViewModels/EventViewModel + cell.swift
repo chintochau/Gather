@@ -30,6 +30,8 @@ class EventCellViewModel: HomeCellViewModel {
     var isJoined:Bool = false
     
     let headcount:Headcount
+    let canJoin:Bool
+    let allowWaitList:Bool
     
     let maleString:String
     let femaleString:String
@@ -87,9 +89,9 @@ class EventCellViewModel: HomeCellViewModel {
         
         
         if event.price == 0 {
-            self.price = "Free"
+            self.price = "免費"
         }else {
-            self.price = "CA$: \(event.price)"
+            self.price = "預算： \(event.price)"
         }
         
         
@@ -109,12 +111,14 @@ class EventCellViewModel: HomeCellViewModel {
         self.emojiString = event.emojiTitle
         self.intro = event.introduction
         self.organiser = event.organisers.first
-        
-        
+        self.canJoin = event.canJoinEvent()
+        self.allowWaitList = event.allowWaitList
+
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
         
         self.isOrganiser = self.organiser?.username == username
         self.isJoined = event.isJoined
+        
     }
     
     func diffIdentifier() -> NSObjectProtocol {

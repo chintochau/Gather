@@ -13,7 +13,13 @@ final class AuthManager {
 
     private init (){}
 
-    let auth = Auth.auth()
+    let auth:Auth = {
+        let auth = Auth.auth()
+        
+//        auth.useEmulator(withHost: "localhost", port: 9099)
+        
+        return auth
+    }()
     
     public var isSignedIn: Bool {
         return auth.currentUser != nil

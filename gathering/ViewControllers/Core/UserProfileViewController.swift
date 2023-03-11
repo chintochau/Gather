@@ -37,9 +37,8 @@ class UserProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
 //        RealmManager.shared.fetchUserFromFirestore(userId: user.username)
-        
+        navigationItem.title = "Profile"
         setupCollectionView()
         fetchData()
     }
@@ -67,7 +66,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.addSubview(collectionView)
         collectionView.fillSuperview()
-        collectionView.backgroundColor = .secondarySystemBackground
+        collectionView.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(UserEventCell.self, forCellWithReuseIdentifier: UserEventCell.identifier)

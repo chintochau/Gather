@@ -157,7 +157,7 @@ class EnrollViewController: UIViewController {
         genderSelectionView.removeFromSuperview()
     }
     
-
+    
     fileprivate func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.fillSuperview()
@@ -203,12 +203,12 @@ class EnrollViewController: UIViewController {
         genderButton.anchor(top: genderLabel.topAnchor, leading: genderLabel.trailingAnchor, bottom: genderLabel.bottomAnchor, trailing: containerView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
         confirmButton.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 30, bottom: 60, right: 30),size: .init(width: 0, height: 50))
-        confirmButton.layer.cornerRadius = 25
+        confirmButton.layer.cornerRadius = 15
         
         
         nameField.delegate = self
         confirmButton.addTarget(self, action: #selector(didTapConfirm), for: .touchUpInside)
-//        genderButton.addTarget(self, action: #selector(didTapGenderButton), for: .touchUpInside)
+        //        genderButton.addTarget(self, action: #selector(didTapGenderButton), for: .touchUpInside)
         
     }
     
@@ -216,16 +216,24 @@ class EnrollViewController: UIViewController {
     
     @objc func didTapConfirm(){
         
-        guard let user = DefaultsManager.shared.getCurrentUser() else {
-            print("cannot get user")
-            return
+        LoadingIndicator.shared.showLoadingIndicator(on: view)
+        
+        FunctionsManager.shared.registerEvent(event: event) { [weak self] success,message  in
+            LoadingIndicator.shared.hideLoadingIndicator()
+            
+            if success {
+                self?.completion?()
+                self?.dismiss(animated: true)
+            } else {
+                AlertManager.shared.showAlert(title: "Oops~", message: message, from: self!)
+            }
         }
         
-        DatabaseManager.shared.registerEvent(
-            participant:user, eventID: eventID, event:event) {[weak self] success in
-                         self?.completion?()
-                         self?.dismiss(animated: true)
-        }
+        //        DatabaseManager.shared.registerEvent(
+        //            participant:user, eventID: eventID, event:event) {[weak self] success in
+        //                         self?.completion?()
+        //                         self?.dismiss(animated: true)
+        //        }
     }
     
     @objc func didTapGenderButton(){
@@ -244,7 +252,7 @@ class EnrollViewController: UIViewController {
     }
     
     
-
+    
 }
 
 

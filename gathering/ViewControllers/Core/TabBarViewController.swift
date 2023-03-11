@@ -214,7 +214,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
         ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
-        //DummyDataManager.shared.generateDummyEvents()
+//        DummyDataManager.shared.generateDummyEvents()
     }
     
 }

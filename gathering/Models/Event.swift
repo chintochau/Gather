@@ -8,6 +8,7 @@
 import Foundation
 import SwiftDate
 
+
 struct Event:Codable {
     let id: String
     let emojiTitle:String?
@@ -25,11 +26,34 @@ struct Event:Codable {
     let participants:[String:Participant]
     let headcount:Headcount
     let ownerFcmToken:String?
+    let eventStatus:EventStatus
     
     /// "events/{YearWeek}"
     var referencePath:String? = nil
     /// "{YearMonth}"
     var referencePathForUser:String? = nil
+    
+    
+    var autoApprove:Bool = true
+    var allowWaitList:Bool = true
+}
+
+
+extension Event {
+    // MARK: - Participants related
+    var allParticipants:[Participant] {
+        participants.compactMap{($1)}
+    }
+    
+    var confirmedParticipants:[Participant] {
+        allParticipants.compactMap({
+            ($0.joinStatus == .going || $0.joinStatus == .host)  ? $0 : nil
+        })
+    }
+    
+    var confirmedFriends:[Participant] {
+        RelationshipManager.shared.checkFriendList(with: confirmedParticipants)
+    }
     
 }
 
@@ -38,42 +62,49 @@ extension Event {
     
     var tags:[Tag] {
         var displayTags = [Tag]()
-        for tagType in presetTags {
-            displayTags.append(Tag(type: tagType))
-        }
         
-        if isJoined {
-            displayTags.append(Tag(type: .joined))
-        }
+        // add preset tags
+//        for tagType in presetTags {
+//            displayTags.append(Tag(type: tagType))
+//        }
+        
         
         if headcount.isGenderSpecific {
             let minMale: Int? = headcount.mMin ?? 0 > 0 ? headcount.mMin : nil
             let minFemale: Int? = headcount.fMin ?? 0 > 0 ? headcount.fMin : nil
-            
             if minMale != nil || minFemale != nil {
                 displayTags.append(Tag(type: .peoplCount,minMale: minMale,minFemale: minFemale,genderSpecific: headcount.isGenderSpecific))
-                return displayTags
             }
-            return displayTags
             
         } else {
             let minHeadcount:Int? = headcount.min ?? 0 > 0 ? headcount.min : nil
             
             if minHeadcount != nil {
                 displayTags.append(Tag(type: .peoplCount,minHeadcount: minHeadcount,genderSpecific: headcount.isGenderSpecific))
-                return displayTags
             }
             
-            return displayTags
         }
         
+        if displayTags.isEmpty {
+            switch eventStatus {
+            case .grouping:
+                displayTags.append(Tag(type: .grouping))
+            case .confirmed:
+                displayTags.append(Tag(type: .grouped))
+            default: break
+            }
+        }
         
+        if isJoined {
+            displayTags.append(Tag(type: .joined))
+        }
+        
+        return displayTags
         
     }
     
     var isJoined:Bool {
         guard let username = UserDefaults.standard.string(forKey: "username") else {return false}
-        
         return participants.values.contains(where: {return $0.username == username
         })
     }
@@ -106,37 +137,19 @@ extension Event {
     public func headCountString () -> (total:String,male:String,female:String, isMaleFull:Bool, isFemaleFull:Bool,isFull:Bool) {
         var maleCount = 0
         var femaleCount = 0
-        var nonBinaryCount = 0
         
-        self.participants.forEach { key,value in
-            switch value.gender {
+        self.confirmedParticipants.forEach { participant in
+            switch participant.gender {
             case genderType.male.rawValue:
                 maleCount += 1
             case genderType.female.rawValue:
                 femaleCount += 1
-//            case genderType.nonBinary.rawValue:
-//                nonBinaryCount += 1
             default:
                 print("case not handled")
             }
         }
         
         let headcount = self.headcount
-        
-        
-        
-        let total:String = {
-            switch headcount.max {
-            case nil:
-                return ""
-            case 0:
-                return "hide"
-            case let x where x! > 0:
-                return "/\(x!)"
-            default:
-                fatalError()
-            }
-        }()
 
         let female:String = {
             switch headcount.fMax {
@@ -188,15 +201,52 @@ extension Event {
         }
         
         if headcount.isGenderSpecific {
-            
+            let totalCap:Int = (headcount.mMax ?? 0) + (headcount.fMax ?? 0)
+            let totalCapString:String = totalCap > 0 ? "/\(totalCap)" : ""
+            totalString = "\(maleCount + femaleCount)\(totalCapString)"
         }else {
-            totalString = headcount.max == nil || headcount.max == 0 ? "" : "\(maleCount + femaleCount)\(total) "
+            totalString = "\(maleCount + femaleCount)" + (headcount.max == nil ? "" : "/\(String(headcount.max!))")
         }
         
-        
         return (totalString,maleString,femaleString,isMaleFull,isFemaleFull,isFull)
-        
     }
+    
+    public func canJoinEvent() -> Bool {
+        // Calculate the number of male and female participants
+        var numMales = 0
+        var numFemales = 0
+        for participant in confirmedParticipants {
+            if participant.gender == "male" {
+                numMales += 1
+            } else if participant.gender == "female" {
+                numFemales += 1
+            }
+        }
+
+        guard let gender = UserDefaults.standard.string(forKey: "gender") else {return false}
+                
+        // Check if the new joiner can join based on gender-specific requirements
+        if headcount.isGenderSpecific {
+            if gender == "male" {
+                if let mMax = headcount.mMax, numMales >= mMax {
+                    return false
+                }
+            } else if gender == "female" {
+                if let fMax = headcount.fMax, numFemales >= fMax {
+                    return false
+                }
+            }
+        } else {
+            let totalParticipants = numMales + numFemales
+            if let max = headcount.max, totalParticipants >= max {
+                return false
+            }
+        }
+
+        // If all checks pass, the new joiner can join the event
+        return true
+    }
+
     
     public func getDateString () -> String {
         // MARK: - Date
@@ -327,6 +377,11 @@ enum hobbyType:String,CaseIterable {
 }
 
 
+enum EventStatus:Int,Codable {
+    case grouping
+    case confirmed
+    case activity
+}
 
 
 

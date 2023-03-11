@@ -26,8 +26,9 @@ class EventDetailsViewModel: ListDiffable {
         self.timeString = event.getTimeString()
         
         var addressString = event.location.name
-        if let address = event.location.address {
-            addressString += "\n\(address)"
+        
+        if let address = event.location.address,address.count > 0 {
+            addressString += ",\n\(address)"
         }
         
         self.locationString = addressString
@@ -53,39 +54,29 @@ class EventParticipants :ListDiffable {
     var numberOfFemale:String
     var friends:[Participant]
     var numberOfFriends:String
-    var participants:[Participant]
+    var confirmedParticipants:[Participant]
+    var signedUpParticipants:[Participant]
+    var tag:Tag?
     
-    
-    init (participants: [Participant]) {
-        var maleNumber = 0
-        var femaleNumber = 0
-        for participant in participants {
-            switch participant.gender {
-            case genderType.male.rawValue:
-                maleNumber += 1
-            case genderType.female.rawValue:
-                femaleNumber += 1
-            default:
-                break
-            }
-        }
+   
+    init (event: Event) {
         
+        self.friends = event.confirmedFriends
         
+        self.confirmedParticipants = event.confirmedParticipants
+        self.signedUpParticipants = event.allParticipants
         
-        
-        self.numberOfMale = "\(maleNumber)"
-        self.numberOfFemale = "\(femaleNumber)"
-        self.numberOfParticipants = "\(maleNumber + femaleNumber)"
-        
-        
-        self.friends = RelationshipManager.shared.checkFriendList(with: participants)
-        
+        self.numberOfMale = event.headCountString().male
+        self.numberOfFemale = event.headCountString().female
+        self.numberOfParticipants = event.headCountString().total
         
         self.numberOfFriends = friends.count > 0 ? "你有\(friends.count)個朋友參加左" : "參加者: "
-        
-        self.participants = participants
+        self.tag = event.tags.first
         
     }
+    
+    
+    
     
     func diffIdentifier() -> NSObjectProtocol {
         return id as NSObjectProtocol

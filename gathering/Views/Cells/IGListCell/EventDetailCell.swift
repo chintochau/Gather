@@ -160,17 +160,25 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
 
 class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     
-    private let currentPartLabel:UILabel = {
+    private let confirmedParticipantsLabel:UILabel = {
         let view = UILabel()
         view.font = .robotoRegularFont(ofSize: 16)
         return view
     }()
+    
+    private let signedUpParticipantsLabel:UILabel = {
+        let view = UILabel()
+        view.font = .robotoRegularFont(ofSize: 16)
+        return view
+    }()
+    
     
     private let genderTextLabel:UILabel = {
         let view = UILabel()
         view.font = .robotoRegularFont(ofSize: 16)
         return view
     }()
+    
     
     private let femaleBox:UIView = {
         let view = UIView()
@@ -230,22 +238,30 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         return view
     }()
     
-    
+    private let tagLabel:TagLabel = {
+        let view = TagLabel()
+        view.fontSize = 16
+        return view
+    }()
     
     static let identifier = "EventDetailParticipantsCell"
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [currentPartLabel,genderTextLabel,femaleBox,maleBox,separatorView,friendText].forEach({addSubview($0)})
+        [confirmedParticipantsLabel,signedUpParticipantsLabel,genderTextLabel,femaleBox,maleBox,separatorView,friendText,tagLabel].forEach({addSubview($0)})
         
-        currentPartLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,
-                                padding: .init(top: 10, left: 30, bottom: 20, right: 30))
-        genderTextLabel.anchor(top: currentPartLabel.bottomAnchor, leading: currentPartLabel.leadingAnchor, bottom: nil, trailing: currentPartLabel.trailingAnchor,
-                               padding: .init(top: 20, left: 0, bottom: 0, right: 0))
+        tagLabel.anchor(top: topAnchor, leading: signedUpParticipantsLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        
+        signedUpParticipantsLabel.anchor(top: tagLabel.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 5, left: 30, bottom: 20, right: 30))
+        
+        confirmedParticipantsLabel.anchor(top: signedUpParticipantsLabel.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,
+                                padding: .init(top: 5, left: 30, bottom: 20, right: 30))
+        genderTextLabel.anchor(top: confirmedParticipantsLabel.bottomAnchor, leading: confirmedParticipantsLabel.leadingAnchor, bottom: nil, trailing: confirmedParticipantsLabel.trailingAnchor,
+                               padding: .init(top: 5, left: 0, bottom: 0, right: 0))
         
         let boxWidth:CGFloat = (width-90)/2
         femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 20, right: 0),size: .init(width: boxWidth, height: 50))
-        maleBox.anchor(top: femaleBox.topAnchor, leading: nil, bottom: nil, trailing: currentPartLabel.trailingAnchor,size: .init(width: boxWidth, height: 50))
+        maleBox.anchor(top: femaleBox.topAnchor, leading: nil, bottom: nil, trailing: confirmedParticipantsLabel.trailingAnchor,size: .init(width: boxWidth, height: 50))
         
         separatorView.anchor(top: femaleBox.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: maleBox.trailingAnchor,
                              padding: .init(top: 30, left: 0, bottom: 15, right: 0),size: .init(width: 0, height: 3))
@@ -284,17 +300,27 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventParticipants else {return}
-        let attributedText = NSMutableAttributedString(string: "")
-        let text:NSAttributedString = createAttributedText(with: "目前活動報名人數： ", image: .participantsIcon )
-        let number:NSAttributedString = NSAttributedString(string: vm.numberOfParticipants, attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue])
-        attributedText.append(text)
-        attributedText.append(number)
         
-        currentPartLabel.attributedText = attributedText
-        genderTextLabel.text = "活動參與者性別分佈: "
+//        let attributedText = NSMutableAttributedString(string: "")
+//        let text:NSAttributedString = createAttributedText(with: "已報名人數： ", image: .participantsIcon )
+//        let number:NSAttributedString = NSAttributedString(
+//            string: vm.numberOfParticipants
+////            ,attributes: [.underlineStyle: NSUnderlineStyle.single.rawValue]
+//        )
+//
+//        attributedText.append(text)
+//        attributedText.append(number)
+//
+//        signedUpParticipantsLabel.attributedText = attributedText
+        signedUpParticipantsLabel.text = "報名人數: \(vm.signedUpParticipants.count)"
+        
+        confirmedParticipantsLabel.text = "確認人數: \(vm.numberOfParticipants)"
+        
+        genderTextLabel.text = "確認參與者性別分佈: "
         femaleNumber.text = vm.numberOfFemale
         maleNumber.text = vm.numberOfMale
         friendText.text = vm.numberOfFriends
+        tagLabel.eventTag = vm.tag
     }
     
     
