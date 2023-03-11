@@ -142,7 +142,7 @@ class DatePickerTableViewCell: UITableViewCell {
         
         switchButton.anchor(
             top: startDatePicker.topAnchor, leading: startDatePicker.trailingAnchor, bottom: startDatePicker.bottomAnchor, trailing: contentView.trailingAnchor,
-            padding: .init(top: 0, left: 10, bottom: 0, right: 10))
+            padding: .init(top: 0, left: 10, bottom: 0, right: 20))
 
         cellHeightAnchor = contentView.heightAnchor.constraint(equalToConstant: initialHeight)
         cellHeightAnchor.priority = .defaultHigh

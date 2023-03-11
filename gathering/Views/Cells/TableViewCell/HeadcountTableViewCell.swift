@@ -107,12 +107,10 @@ class HeadcountTableViewCell: UITableViewCell {
         return view
     }()
     
-    var cellHeightAnchor:NSLayoutConstraint!
+    var cellHeightAnchor:NSLayoutConstraint?
     
-    var isEditMode:Bool = false
     
-    var tempHeadcount = Headcount()
-    
+    var headcount:Headcount?
     
     var isOptional:Bool = false {
         didSet {
@@ -160,17 +158,15 @@ class HeadcountTableViewCell: UITableViewCell {
                                padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         femaleMaxField.anchor(top: femaleIcon.topAnchor, leading: femaleMinField.trailingAnchor, bottom: nil, trailing: expandButton.leadingAnchor,padding: .init(top: 0, left: 20, bottom: 0, right: 20))
         
-        expandButton.anchor(top: headcountLabel.topAnchor, leading: nil, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 10))
+        expandButton.anchor(top: headcountLabel.topAnchor, leading: nil, bottom: nil, trailing: contentView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
         expandButton.addTarget(self, action: #selector(didTapExpand), for: .touchUpInside)
         
         
         
     }
     
-    public func configureWithHeadCount(headcount:Headcount){
-        tempHeadcount = headcount
-        
-        let isExpanded:Bool = tempHeadcount.isGenderSpecific
+    public func configureHeadcount(with headcount:Headcount){
+        let isExpanded:Bool = headcount.isGenderSpecific
         
         [maleMinField,
          maleMaxField,
@@ -183,12 +179,10 @@ class HeadcountTableViewCell: UITableViewCell {
         
         [minimumTextField,maxTextField].forEach({$0.isHidden = isExpanded})
         
-        cellHeightAnchor = contentView.heightAnchor.constraint(equalToConstant: isExpanded ? 70 : 44)
-        
-        cellHeightAnchor.priority = .defaultHigh
-        cellHeightAnchor.isActive = true
-        
         expandButton.transform = isExpanded ? .init(rotationAngle: .pi*3/2) : .identity
+        cellHeightAnchor = contentView.heightAnchor.constraint(equalToConstant: isExpanded ? 70 : 44)
+        cellHeightAnchor?.priority = .defaultHigh
+        cellHeightAnchor?.isActive = true
         
         
         // Assign values to text fields
@@ -228,8 +222,7 @@ class HeadcountTableViewCell: UITableViewCell {
             femaleMaxField.text = nil
         }
         
-        
-        
+        self.headcount = headcount
     }
     
     required init?(coder: NSCoder) {
@@ -242,7 +235,11 @@ class HeadcountTableViewCell: UITableViewCell {
     }
     
     @objc private func didTapExpand(){
-        var isExpanded = tempHeadcount.isGenderSpecific
+        
+        guard let headcount = self.headcount else {return}
+        
+        var isExpanded = headcount.isGenderSpecific
+        
         isExpanded.toggle()
         
         [maleMinField,
@@ -251,68 +248,80 @@ class HeadcountTableViewCell: UITableViewCell {
          femaleMaxField,
          maleIcon,
          femaleIcon,
-         minimumTextField,
-         maxTextField,
-         genderLabel
-        ].forEach({$0.isHidden.toggle()})
+         genderLabel].forEach({$0.isHidden = !isExpanded})
+        
+        [minimumTextField,
+         maxTextField].forEach({$0.isHidden = isExpanded})
+        
+        if isExpanded {
+            expandCell()
+        }else {
+            collapseCell()
+        }
+        
+        layoutIfNeeded()
+        delegate?.HeadcountTableViewCellDidTapExpand(self, headcount: self.headcount!)
+    }
+    
+    private func collapseCell(){
+        // not gender specific
+        cellHeightAnchor?.constant = 44
+        UIView.animate(withDuration: 0.3) {[weak self] in
+            self?.expandButton.transform = .identity
+            self?.headcount?.isGenderSpecific = false
+            self?.headcount?.fMin = nil
+            self?.headcount?.fMax = nil
+            self?.headcount?.mMin = nil
+            self?.headcount?.mMax = nil
+            self?.maleMinField.text = nil
+            self?.maleMaxField.text = nil
+            self?.femaleMinField.text = nil
+            self?.femaleMaxField.text = nil
+        }
+        
+    }
+    
+    private func expandCell(){
+        // gender specific
+        cellHeightAnchor?.constant = 70
         
         UIView.animate(withDuration: 0.3) {[weak self] in
-            if !isExpanded {
-                // not gender specific
-                
-                self?.cellHeightAnchor.constant = 44
-                
-                self?.expandButton.transform = .identity
-                self?.tempHeadcount.isGenderSpecific = false
-                self?.tempHeadcount.fMin = nil
-                self?.tempHeadcount.fMax = nil
-                self?.tempHeadcount.mMin = nil
-                self?.tempHeadcount.mMax = nil
-                self?.maleMinField.text = nil
-                self?.maleMaxField.text = nil
-                self?.femaleMinField.text = nil
-                self?.femaleMaxField.text = nil
-                
-            }else {
-                // gender specific
-                self?.cellHeightAnchor.constant = 70
-                
-                self?.expandButton.transform = .init(rotationAngle: .pi*3/2)
-                self?.tempHeadcount.isGenderSpecific = true
-                self?.tempHeadcount.max = nil
-                self?.tempHeadcount.min = nil
-                self?.maxTextField.text = nil
-                self?.minimumTextField.text = nil
-            }
+            self?.expandButton.transform = .init(rotationAngle: .pi*3/2)
+            self?.headcount?.isGenderSpecific = true
+            self?.headcount?.max = nil
+            self?.headcount?.min = nil
+            self?.maxTextField.text = nil
+            self?.minimumTextField.text = nil
         }
-        layoutIfNeeded()
-        delegate?.HeadcountTableViewCellDidTapExpand(self, headcount: tempHeadcount)
+        
     }
 }
 
 extension HeadcountTableViewCell:UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        
         let text:Int? = Int(textField.text ?? "")
         
         switch textField.tag {
         case 0:
-            tempHeadcount.min = text
+            headcount?.min = text
         case 1:
-            tempHeadcount.max = text
+            headcount?.max = text
         case 2:
-            tempHeadcount.mMin = text
+            headcount?.mMin = text
         case 3:
-            tempHeadcount.mMax = text
+            headcount?.mMax = text
         case 4:
-            tempHeadcount.fMin = text
+            headcount?.fMin = text
         case 5:
-            tempHeadcount.fMax = text
+            headcount?.fMax = text
         default:
             print("invalud tag")
         }
         
-        delegate?.HeadcountTableViewCellDidEndEditing(self, headcount: tempHeadcount)
+        guard let headcount = headcount else {return}
+        delegate?.HeadcountTableViewCellDidEndEditing(self, headcount: headcount)
     }
     
 }

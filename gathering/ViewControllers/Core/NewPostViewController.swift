@@ -141,8 +141,6 @@ class NewPostViewController: UIViewController {
         newPost.participants = [
             user.username: Participant(with: user,status: Participant.participantStatus.host)
         ]
-        
-        print(newPost)
     }
     
     private func configureViewModels(){
@@ -157,7 +155,7 @@ class NewPostViewController: UIViewController {
                 .datePicker,
                 .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray),
                 .headCount,
-                .toggleButton(title: "允許加入候補", tag:2),
+                .toggleButton(title: "允許候補名單", tag:2),
                 .toggleButton(title: "自動確認報名", tag:1)
             ]
         ]
@@ -275,9 +273,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             cell.isOptional = true
             cell.delegate = self
             cell.backgroundColor = .clear
-            cell.isEditMode = isEditMode
-            
-            cell.configureWithHeadCount(headcount: newPost.headcount)
+            cell.configureHeadcount(with: newPost.headcount)
             
             return cell
         case .participants:
@@ -483,13 +479,15 @@ extension NewPostViewController:HeadcountTableViewCellDelegate {
     // MARK: - handle Headcount
     func HeadcountTableViewCellDidEndEditing(_ cell: HeadcountTableViewCell, headcount: Headcount) {
         newPost.headcount = headcount
+        
     }
     
     
     func HeadcountTableViewCellDidTapExpand(_ cell: HeadcountTableViewCell, headcount: Headcount) {
-        newPost.headcount = headcount
         tableView.beginUpdates()
         tableView.endUpdates()
+        newPost.headcount = headcount
+        
     }
     
 }
