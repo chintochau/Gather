@@ -103,16 +103,9 @@ class UserCollectionViewCell: SwipeCollectionViewCell,ListBindable {
             usernameLabel.text = "Guest"
         }
         
-        
+        profileImageView.layer.borderWidth = 1
+        profileImageView.layer.borderColor = vm.gender == genderType.male.rawValue ? UIColor.blueColor.cgColor : UIColor.redColor.cgColor
     }
-    
-    func configure(with vm:User,value:String = ""){
-        nameLabel.text = vm.name
-        usernameLabel.text = "@\(vm.username)"
-        profileImageView.sd_setImage(with: URL(string: vm.profileUrlString ?? ""))
-        valuelabel.text = value
-    }
-    
     
     
 }

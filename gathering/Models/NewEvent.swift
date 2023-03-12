@@ -20,8 +20,8 @@ struct NewPost {
     
     var title:String = ""
     var addInfo:String? = nil
-    var startDate:Date = Date.tomorrowAtMidnight() + 17.hours
-    var endDate:Date = Date.tomorrowAtMidnight() + 17.hours
+    var startDate:Date = Date.startOfTomorrowLocalTime() + 17.hours
+    var endDate:Date = Date.startOfTomorrowLocalTime() + 17.hours
     var location:Location = .toBeConfirmed
     var participants:[String:Participant] = {
         guard let user = DefaultsManager.shared.getCurrentUser() else {

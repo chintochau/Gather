@@ -46,7 +46,7 @@ class ChatMainViewController: UIViewController {
         tableView.delegate = self
         tableView.fillSuperview()
         setupNavBar()
-        setUpPanGesture()
+        setUpPanBackGestureAndBackButton()
         observeConversationsFromRealm()
         
 //        ChatMessageManager.shared.ConnectToChatServer()
@@ -84,6 +84,7 @@ class ChatMainViewController: UIViewController {
     
     private func setupNavBar(){
         navigationItem.title = "Chat"
+        navigationController?.navigationBar.tintColor = .label
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(didTapBack))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(didTapNewMessage))
     }

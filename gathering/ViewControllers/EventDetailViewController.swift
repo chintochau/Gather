@@ -64,7 +64,8 @@ class EventDetailViewController: UIViewController {
     private lazy var messageButton:UIButton = {
         let view = UIButton()
         view.backgroundColor = .systemBackground
-        view.setImage(.messageIcon, for: .normal)
+        view.setImage(UIImage(systemName: "text.bubble"), for: .normal)
+        view.tintColor = .label
         return view
     }()
     
@@ -220,14 +221,16 @@ class EventDetailViewController: UIViewController {
         }()
         buttonStackView.addArrangedSubview(editButton)
         
+        let isFormed = (viewModel?.event.eventStatus ?? .grouping) == .confirmed
         
         lazy var formGroupButton:GradientButton = {
             let view = GradientButton(type: .system)
             view.setTitleColor(.white, for: .normal)
             view.titleLabel?.font = .robotoMedium(ofSize: 16)
             view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
-            view.setTitle("成團", for: .normal)
+            view.setTitle(isFormed ? "己成團" : "成團", for: .normal)
             view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapFormEvent), for: .touchUpInside)
             return view
         }()
         buttonStackView.addArrangedSubview(formGroupButton)
@@ -255,6 +258,7 @@ class EventDetailViewController: UIViewController {
             view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
             view.setTitle("邀請朋友", for: .normal)
             view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapInviteFriend), for: .touchUpInside)
             return view
         }()
         buttonStackView.addArrangedSubview(formGroupButton)
@@ -284,6 +288,7 @@ class EventDetailViewController: UIViewController {
                 view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
                 view.setTitle("邀請朋友", for: .normal)
                 view.gradientLayer?.cornerRadius = 15
+                view.addTarget(self, action: #selector(didTapInviteFriend), for: .touchUpInside)
                 return view
             }()
             buttonStackView.addArrangedSubview(formGroupButton)
@@ -363,7 +368,16 @@ class EventDetailViewController: UIViewController {
     
     // MARK: - Private Functions
     
+
     
+    fileprivate func configureCollectionViewLayout() {
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = CGSize(width: view.width, height: 200)
+            layout.itemSize = UICollectionViewFlowLayout.automaticSize
+            
+        }
+    }
+
     private func eventDoesNotExist (){
         AlertManager.shared.showAlert(title: "Oops~",message: "活動不存在或者已取消", buttonText: "Dismiss",cancelText: nil, from: self) {[weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -374,16 +388,6 @@ class EventDetailViewController: UIViewController {
         guard let string = viewModel?.event.toString(includeTime: true) else {return}
         let activityVC = UIActivityViewController(activityItems: [string], applicationActivities: nil)
         present(activityVC, animated: true, completion: nil)
-    }
-    
-    
-    
-    fileprivate func configureCollectionViewLayout() {
-        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.estimatedItemSize = CGSize(width: view.width, height: 200)
-            layout.itemSize = UICollectionViewFlowLayout.automaticSize
-            
-        }
     }
     
     
@@ -405,6 +409,22 @@ class EventDetailViewController: UIViewController {
         }
     }
     
+    @objc private func didTapFormEvent(){
+        
+        guard let eventStatus = viewModel?.event.eventStatus,
+              eventStatus != .confirmed
+        else {return}
+        
+        // confirm this event
+        // send notification to all joiners
+        guard let eventID = viewModel?.event.id,
+              let eventRef = viewModel?.event.referencePath else {return}
+        
+        DatabaseManager.shared.confirmFormEvent(eventID: eventID, eventRef: eventRef) { [weak self] success in
+            self?.refreshPage()
+        }
+    }
+    
     @objc private func didTapChat(){
         guard AuthManager.shared.isSignedIn else {
             AlertManager.shared.showAlert(title: "Oops~", message: "Please login to send message", from: self)
@@ -416,9 +436,17 @@ class EventDetailViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc private func didPullToRefresh(){
-        refreshPage()
+    @objc private func didTapInviteFriend(){
+        let vc = InviteViewController()
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        navVc.modalPresentationStyle = .fullScreen
+        present(navVc, animated: true)
+        
+        
     }
+    
     
     private func editEvent(){
         // MARK: - Edit Event (need modify)
@@ -427,8 +455,8 @@ class EventDetailViewController: UIViewController {
         if let editPost = viewModel?.event.toNewPost() {
             vc.newPost = editPost
             vc.image = viewModel?.image
-            
             vc.isEditMode = true
+            vc.eventStatus = viewModel?.event.eventStatus ?? .grouping
         }
         
         vc.completion = {[weak self] event, image in
@@ -474,6 +502,10 @@ class EventDetailViewController: UIViewController {
         }
     }
     
+    @objc private func didPullToRefresh(){
+        refreshPage()
+    }
+    
     private func refreshPage(){
         guard let event = viewModel?.event,
               let vm = EnrollViewModel(with: event) else {
@@ -497,6 +529,7 @@ class EventDetailViewController: UIViewController {
             self?.viewModel = viewModel
             self?.collectionView.reloadData()
             self?.refreshControl.endRefreshing()
+            
         }
     }
     

@@ -52,7 +52,7 @@ extension Event {
     }
     
     var confirmedFriends:[Participant] {
-        RelationshipManager.shared.checkFriendList(with: confirmedParticipants)
+        RelationshipManager.shared.getFriendsFromParticipants(from: confirmedParticipants)
     }
     
 }
@@ -258,22 +258,22 @@ extension Event {
         
         
         switch startDate {
-        case ...Date.todayAtMidnight():
+        case ..<Date.startOfTodayLocalTime():
             startString = startDateString.relative
-        case ...Date.tomorrowAtMidnight():
+        case ..<Date.startOfTomorrowLocalTime():
             startString = "今天"
-        case ...Date.tomorrowAtMidnight().adding(days: 1):
+        case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             startString = "明天"
         default:
             startString = startDateString.date
         }
         
         switch endDate {
-        case ...Date.todayAtMidnight():
+        case ..<Date.startOfTodayLocalTime():
             endString = endDateString.relative
-        case ...Date.tomorrowAtMidnight():
+        case ..<Date.startOfTomorrowLocalTime():
             endString = "今天"
-        case ...Date.tomorrowAtMidnight().adding(days: 1):
+        case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             endString = "明天"
         default:
             endString = endDateString.date
@@ -381,6 +381,7 @@ enum EventStatus:Int,Codable {
     case grouping
     case confirmed
     case activity
+    case cancelled
 }
 
 

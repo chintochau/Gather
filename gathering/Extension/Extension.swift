@@ -213,7 +213,17 @@ extension UITableViewCell {
 
 extension UIViewController {
     
-    func setUpPanGesture(){
+    func setUpBackButtonOnNavBar(){
+        navigationController?.navigationBar.tintColor = .label
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(handleBackForBackButton))
+    }
+    
+    @objc func handleBackForBackButton (){
+        dismiss(animated: true)
+    }
+    /// setup a panBackGesture
+    func setUpPanBackGestureAndBackButton(){
+        setUpBackButtonOnNavBar()
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         view.addGestureRecognizer(panGesture)
     }

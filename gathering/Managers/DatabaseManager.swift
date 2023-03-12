@@ -20,6 +20,7 @@ final class DatabaseManager {
     }()
     
     
+    
     // MARK: - User Profile
     /// to create user profile when user first login the app
     public func createUserProfile(newUser:User, completion: @escaping (Bool) -> Void) {
@@ -113,8 +114,18 @@ final class DatabaseManager {
     
     // MARK: - Create Event
     
+    
+    // Reference should be start and end of day in UTC time, each document containts events on that day
+    // event reference should be events/{yearDay} example: "events/2023115"
+    let startDateReference:String = "_monthStartTimestamp"
+    let endDateReference:String = "_monthEndTimestamp"
+    
+    
     public func createEvent (with event:Event, completion: @escaping (Event) -> Void) {
         var finalEvent:Event = event
+        
+        let startDateReference:String = startDateReference
+        let endDateReference:String = endDateReference
         
         database.runTransaction {[weak self] transaction, error in
             guard let eventRef = self?.database.collection("events").document(event.endDate.getYearWeek()),
@@ -134,8 +145,8 @@ final class DatabaseManager {
                 "_endTimestamp":event.endDate.lastDayOfWeekTimestamp() - 1
             ], forDocument: eventRef,merge: true)
             transaction.setData([
-                "_monthStartTimestamp": event.endDate.getMonthInDate().timeIntervalSince1970,
-                "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
+                "_monthStartTimestamp": event.endDate.startOfTheSameMonthLocalTime().timeIntervalSince1970,
+                "_monthEndTimestamp": event.endDate.startOfTheNextMonthLocalTime().timeIntervalSince1970 - 1,
                 event.id: userEventData
             ], forDocument: userEventRef,merge: true)
             
@@ -154,7 +165,11 @@ final class DatabaseManager {
     
     // MARK: - Read Event
     
-    public func fetchEvents(numberOfResults: Int,startDate:Date = Date.todayAtMidnight(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+    public func fetchEvents(numberOfResults: Int,startDate:Date = Date.startOfTodayLocalTime(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+        
+        let startDateReference:String = startDateReference
+        let endDateReference:String = endDateReference
+        
         print("start fetching from date: \(startDate)")
         let ref = database.collection("events")
             .order(by: "_endTimestamp", descending: false)
@@ -169,6 +184,11 @@ final class DatabaseManager {
                 completion(nil)
                 return
             }
+            
+            
+            // Get the size of the data
+            let sizeInBytes = documentData.count
+            print("Size of the document in bytes: \(sizeInBytes)")
             
             var events = [Event]()
             let _ = documentData["_startTimestamp"] as? Double ?? 0.0
@@ -272,7 +292,7 @@ final class DatabaseManager {
         return listener
     }
     
-    public func getUserEvents(username:String, startDate:Date = Date.todayAtMidnight(),numberOfResults:Int = 7, completion:@escaping ([UserEvent]?) -> Void){
+    public func getUserEvents(username:String, startDate:Date = Date.startOfTodayLocalTime(),numberOfResults:Int = 7, completion:@escaping ([UserEvent]?) -> Void){
         
         let startDateReference:String = "_monthStartTimestamp"
         let endDateReference:String = "_monthEndTimestamp"
@@ -331,6 +351,14 @@ final class DatabaseManager {
 
     
     // MARK: - UpdateEvents
+    ///confirm form event and send notification to all participants
+    public func confirmFormEvent(eventID:String,eventRef:String, completion:@escaping (Bool) -> Void){
+         let eventRef = database.document(eventRef)
+        
+        eventRef.setData([eventID:["eventStatus": EventStatus.confirmed.rawValue]], merge: true) { error in
+            completion(error == nil)
+        }
+    }
     
     public func registerEvent(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
         
@@ -361,8 +389,8 @@ final class DatabaseManager {
             
             // Update user reference
             transaction.setData([
-                "_monthStartTimestamp": event.endDate.getMonthInDate().timeIntervalSince1970,
-                "_monthEndTimestamp": event.endDate.startOfNextMonth().timeIntervalSince1970 - 1,
+                "_monthStartTimestamp": event.endDate.startOfTheSameMonthLocalTime().timeIntervalSince1970,
+                "_monthEndTimestamp": event.endDate.startOfTheNextMonthLocalTime().timeIntervalSince1970 - 1,
                 event.id: event.toUserEvent().asDictionary()!
             ], forDocument: userEventRef,merge: true)
             

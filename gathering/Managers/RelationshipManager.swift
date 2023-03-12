@@ -12,7 +12,8 @@ import FirebaseFirestore
 class RelationshipManager {
     static let shared = RelationshipManager()
     var listener:ListenerRegistration?
-    func checkFriendList(with participants:[Participant]) -> [Participant] {
+    
+    func getFriendsFromParticipants(from participants:[Participant]) -> [Participant] {
         let realm = try! Realm()
         let friendsObjects = realm.objects(RelationshipObject.self)
         var friends = participants.filter { participant in
@@ -29,6 +30,37 @@ class RelationshipManager {
         return friends
     }
     
+    func getFriendsInUserObjects() -> [UserObject] {
+        
+        let realm = try! Realm()
+        let relationship = realm.objects(RelationshipObject.self)
+        
+        var friendList = [UserObject]()
+        for person in relationship {
+            if person.status == relationshipType.friend.rawValue, let friend = person.targetUser {
+                friendList.append(friend)
+            }
+        }
+        
+        return friendList
+        
+    }
+    
+    func getAllRelationshipInUserObjects() -> [UserObject] {
+        
+        let realm = try! Realm()
+        let relationship = realm.objects(RelationshipObject.self)
+        
+        var friendList = [UserObject]()
+        relationship.forEach({
+            if let friend = $0.targetUser {
+                friendList.append(friend)
+            }
+        })
+        
+        return friendList
+        
+    }
     
     
     func listenToRelationshipData() {

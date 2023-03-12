@@ -43,7 +43,7 @@ class EventCellViewModel: HomeCellViewModel {
     }
     
     var friends:[Participant] {
-        RelationshipManager.shared.checkFriendList(with: participants)
+        RelationshipManager.shared.getFriendsFromParticipants(from: participants)
     }
     
     var participantsExcludFriends:[Participant] {

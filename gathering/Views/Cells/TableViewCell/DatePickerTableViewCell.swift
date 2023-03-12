@@ -15,10 +15,10 @@ struct EventDate {
     
     static let now = DateInRegion(Date(),region: .current)
     
-    static let today = EventDate(name: "今天", startDate: Date.todayAtMidnight(), endDate: Date.tomorrowAtMidnight())
-    static let tomorrow = EventDate(name: "明天", startDate: Date.tomorrowAtMidnight(), endDate: Date.tomorrowAtMidnight().adding(days: 1))
-    static let thisWeek = EventDate(name: "今星期", startDate: Date.startOfThisWeek(), endDate: Date.startOfNextWeek())
-    static let nextWeek = EventDate(name: "下星期", startDate: Date.startOfNextWeek(), endDate: Date.startOfTwoWeeksAfter())
+    static let today = EventDate(name: "今天", startDate: Date.startOfTodayLocalTime(), endDate: Date.startOfTomorrowLocalTime())
+    static let tomorrow = EventDate(name: "明天", startDate: Date.startOfTomorrowLocalTime(), endDate: Date.startOfTomorrowLocalTime().adding(days: 1))
+    static let thisWeek = EventDate(name: "今星期", startDate: Date.startOfThisWeekLocalTime(), endDate: Date.startOfNextWeekLocalTime())
+    static let nextWeek = EventDate(name: "下星期", startDate: Date.startOfNextWeekLocalTime(), endDate: Date.startOfTwoWeeksAfterLocalTime())
     static let friday = EventDate(name: "星期五", startDate: now.dateAt(.nextWeekday(.friday)).date, endDate:now.dateAt(.nextWeekday(.saturday)).date - 1 )
     static let weekend = EventDate(name: "週末", startDate: now.dateAt(.nextWeekday(.saturday)).date, endDate:now.dateAt(.nextWeekday(.sunday)).date.adding(days: 1) - 1 )
     
@@ -77,13 +77,13 @@ class DatePickerTableViewCell: UITableViewCell {
     
     let startDatePicker:UIDatePicker = {
         let view = UIDatePicker()
-        view.minimumDate = Date().firstDayOfWeek()
+        view.minimumDate = Date().startOfWeekLocalTime()
         return view
     }()
     
     let endDatePicker:UIDatePicker = {
         let view = UIDatePicker()
-        view.minimumDate = Date().firstDayOfWeek()
+        view.minimumDate = Date().startOfWeekLocalTime()
         return view
     }()
     

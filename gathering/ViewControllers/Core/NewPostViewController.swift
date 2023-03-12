@@ -107,6 +107,22 @@ class NewPostViewController: UIViewController {
         }
     }
     
+    var eventStatus:EventStatus? {
+        didSet {
+            guard let eventStatus = eventStatus else {return}
+            switch eventStatus {
+            case .grouping:
+                break
+            case .confirmed:
+                deleteButton.setTitle("取消活動", for: .normal)
+            case .activity:
+                break
+            case .cancelled:
+                break
+            }
+        }
+    }
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -226,7 +242,6 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let vm = viewModels[indexPath.section][indexPath.row]
-//        let cell = UITableViewCell()
         
         switch vm {
         case .userField:
@@ -401,11 +416,17 @@ extension NewPostViewController {
     @objc private func didTapDeleteEvent(){
         view.endEditing(true)
         guard let eventRef = newPost.eventRef else {return}
-        DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
-            // need to modify, should return success instead of an event
-            self?.completion?(nil, nil)
-        }
         
+        if let eventStatus = eventStatus, eventStatus == .confirmed {
+            // if event already confirm, cannot delete, only cancelled is allowed
+            print("Not Yet Implemented")
+            
+        }else {
+            DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
+                // need to modify, should return success instead of an event
+                self?.completion?(nil, nil)
+            }
+        }
     }
     
     

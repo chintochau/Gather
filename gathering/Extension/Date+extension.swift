@@ -8,6 +8,79 @@
 import UIKit
 import SwiftDate
 
+extension Date{
+    func startOfDayTimestampUTC() -> TimeInterval {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let startOfDayUTC = calendar.startOfDay(for: self)
+        return startOfDayUTC.timeIntervalSince1970
+    }
+
+    func startOfWeekTimestampUTC() -> TimeInterval {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let startOfWeekUTC = calendar.startOfDay(for: self.addingTimeInterval(TimeInterval(-calendar.component(.weekday, from: date) * 86400)))
+        return startOfWeekUTC.timeIntervalSince1970
+    }
+
+    func startOfMonthTimestampUTC() -> TimeInterval {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let year = calendar.component(.year, from: self)
+        let month = calendar.component(.month, from: self)
+        let startOfMonthUTC = calendar.date(from: DateComponents(year: year, month: month, day: 1))!
+        return startOfMonthUTC.timeIntervalSince1970
+    }
+
+    func monthOfYearUTC() -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar.component(.month, from: self)
+    }
+
+    func dayOfYearUTC() -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar.ordinality(of: .day, in: .year, for: self)!
+    }
+
+    func weekOfYearUTC() -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar.component(.weekOfYear, from: self)
+    }
+
+    func yearMonthStringUTC() -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let year = calendar.component(.year, from: date)
+        let month = String(format: "%02d", calendar.component(.month, from: self))
+        return "\(year)\(month)"
+    }
+
+    func yearDayStringUTC() -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let year = calendar.component(.year, from: date)
+        let dayOfYear = calendar.ordinality(of: .day, in: .year, for: self)!
+        return "\(year)\(dayOfYear)"
+    }
+
+    func yearWeekStringUTC() -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let year = calendar.component(.year, from: date)
+        let weekOfYear = String(format: "%02d", calendar.component(.weekOfYear, from: self))
+        return "\(year)\(weekOfYear)"
+    }
+
+}
+extension TimeInterval {
+    func toDate() -> Date {
+        return Date(timeIntervalSince1970: self)
+    }
+}
+
 extension Date {
     
     
@@ -30,7 +103,7 @@ extension Date {
     
     
     func firstDayOfWeekTimestamp() -> Double {
-        return firstDayOfWeek().timeIntervalSince1970
+        return startOfWeekLocalTime().timeIntervalSince1970
     }
     
     func lastDayOfWeekTimestamp() -> Double {
@@ -39,20 +112,20 @@ extension Date {
         return weekStart.adding(days: 7).timeIntervalSince1970
     }
     
-    func firstDayOfWeek() -> Date{
+    func startOfWeekLocalTime() -> Date{
         let calendar = Calendar.current
         let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self))!
         return weekStart
     }
     
     
-    func getMonthInDate () -> Date {
+    func startOfTheSameMonthLocalTime () -> Date {
         let calendar = Calendar.current // The calendar to use for the conversion
         let components = calendar.dateComponents([.year, .month], from: self) // Extract the year and month components of the date
         return calendar.date(from: components)! // Create a new date using the year and month components
     }
     
-    func startOfNextMonth() -> Date {
+    func startOfTheNextMonthLocalTime() -> Date {
         let calendar = Calendar.current
         let nextMonth = calendar.date(byAdding: .month, value: 1, to: self)!
         let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: nextMonth))!
@@ -60,8 +133,7 @@ extension Date {
     }
     
     
-    
-    static func todayAtMidnight() -> Date {
+    static func startOfTodayLocalTime() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
         let dateString = dateFormatter.string(from: Date())
@@ -70,7 +142,7 @@ extension Date {
         return todayAtMidnight!
     }
     
-    static func tomorrowAtMidnight() -> Date {
+    static func startOfTomorrowLocalTime() -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd 00:00:00"
         let currentDate = Date()
@@ -80,23 +152,26 @@ extension Date {
         return tomorrowAtMidnight!
     }
     
-    static func startOfThisWeek() -> Date {
+    static func startOfThisWeekLocalTime() -> Date {
         let calendar = Calendar.current
         let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: calendar.startOfDay(for: Date())))!
         return startOfWeek
     }
     
-    static func startOfNextWeek() -> Date {
+    static func startOfNextWeekLocalTime() -> Date {
         let calendar = Calendar.current
-        let startOfNextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: startOfThisWeek())!
+        let startOfNextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: startOfThisWeekLocalTime())!
         return startOfNextWeek
     }
     
-    static func startOfTwoWeeksAfter() -> Date {
+    static func startOfTwoWeeksAfterLocalTime() -> Date {
         let calendar = Calendar.current
-        let startOfTwoWeeksAfter = calendar.date(byAdding: .weekOfYear, value: 2, to: startOfThisWeek())!
+        let startOfTwoWeeksAfter = calendar.date(byAdding: .weekOfYear, value: 2, to: startOfThisWeekLocalTime())!
         return startOfTwoWeeksAfter
     }
+    
+    
+    
     
     func adding(days: Int) -> Date {
         return Calendar.current.date(byAdding: .day, value: days, to: self)!

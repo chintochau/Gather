@@ -54,18 +54,18 @@ extension OldEventViewModel {
         let endDateString = String.localeDate(from: event.endDateString, .zhHantTW)
         
         switch event.startDate {
-        case ..<Date.tomorrowAtMidnight():
+        case ..<Date.startOfTomorrowLocalTime():
             startString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+        case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             startString = "明天"
         default:
             startString = startDateString.date ?? ""
         }
         
         switch event.endDate {
-        case ..<Date.tomorrowAtMidnight():
+        case ..<Date.startOfTomorrowLocalTime():
             endString = "今天"
-        case ..<Date.tomorrowAtMidnight().adding(days: 1):
+        case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             endString = "明天"
         default:
             endString = endDateString.date ?? ""

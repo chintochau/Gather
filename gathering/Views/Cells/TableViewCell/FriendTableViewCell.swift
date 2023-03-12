@@ -38,7 +38,7 @@ class FriendTableViewCell:UITableViewCell {
         return view
     }()
     
-    private let friendButton:UIButton = {
+    private lazy var friendButton:UIButton = {
         let view = UIButton(type: .system)
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 10
@@ -70,7 +70,7 @@ class FriendTableViewCell:UITableViewCell {
             if let status = relationship?.status {
                 switch status {
                 case relationshipType.noRelation.rawValue:
-                    friendButton.setTitle("Friend", for: .normal)
+                    friendButton.setTitle("Add Friend", for: .normal)
                     friendButton.backgroundColor = .extraLightGray
                     
                 case relationshipType.friend.rawValue:

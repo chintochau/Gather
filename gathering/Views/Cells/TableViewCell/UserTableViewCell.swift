@@ -32,21 +32,24 @@ class UserTableViewCell: UITableViewCell {
         view.numberOfLines = 1
         return view
     }()
-    private let valuelabel:UILabel = {
+    
+    private lazy var valuelabel:UILabel = {
         let view = UILabel()
         view.textColor = .lightGray
         view.numberOfLines = 1
         return view
-        }()
+    }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    
+    override init(style: UITableViewCell.CellStyle = .default, reuseIdentifier: String? = "UserTableViewCell") {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        selectionStyle = .none
         
         [
             profileImageView,
             nameLabel,
-            usernameLabel,
-            valuelabel
+            usernameLabel
         ].forEach({contentView.addSubview($0)})
         
         let imageSize:CGFloat = 50
@@ -62,6 +65,7 @@ class UserTableViewCell: UITableViewCell {
         nameLabel.anchor(top: nil, leading: profileImageView.trailingAnchor, bottom: contentView.centerYAnchor, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         usernameLabel.anchor(top: contentView.centerYAnchor, leading: nameLabel.leadingAnchor, bottom: nil, trailing: nil)
         
+        
     }
     
     
@@ -73,16 +77,20 @@ class UserTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         [nameLabel,
-        usernameLabel,
-         valuelabel].forEach({$0.text = nil})
+         usernameLabel].forEach({$0.text = nil})
         profileImageView.image = nil
     }
     
-    func configure(with vm:User,value:String = ""){
+    func configure(with vm:User){
         nameLabel.text = vm.name
         usernameLabel.text = "@\(vm.username)"
-        profileImageView.sd_setImage(with: URL(string: vm.profileUrlString ?? ""))
-        valuelabel.text = value
+        if let urlString = vm.profileUrlString {
+            profileImageView.sd_setImage(with: URL(string: urlString))
+        }
+        if let gender = vm.gender {
+            profileImageView.layer.borderWidth = 0.5
+            profileImageView.layer.borderColor = gender == genderType.male.rawValue ? UIColor.blueColor.cgColor : UIColor.redColor.cgColor
+        }
     }
     
     func configure(with vm:Participant){
@@ -99,6 +107,16 @@ class UserTableViewCell: UITableViewCell {
         }
     }
     
+    func configure(with vm:UserObject,isSelected:Bool = false){
+        nameLabel.text = vm.name
+        usernameLabel.text = "@\(vm.username)"
+        if let urlString = vm.profileUrlString {
+            profileImageView.sd_setImage(with: URL(string: urlString))
+        }
+        
+        accessoryView?.isHidden = !isSelected
+    }
     
-
+    
+    
 }
