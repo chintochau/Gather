@@ -63,6 +63,7 @@ extension NewPost {
                      additionalDetail: nil,
                      refundPolicy: "",
                      participants: self.participants,
+                     comments: [],
                      headcount: self.headcount,
                      ownerFcmToken: user.fcmToken,
                      eventStatus: self.eventStatus,

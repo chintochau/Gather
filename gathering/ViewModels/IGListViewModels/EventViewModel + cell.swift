@@ -22,6 +22,7 @@ class EventCellViewModel: HomeCellViewModel {
     let intro:String?
     let tag: [Tag]
     let participants:[Participant]
+    let comments:[Comment]
     let price:String
     let organiser:User?
     var image:UIImage? = nil
@@ -113,7 +114,9 @@ class EventCellViewModel: HomeCellViewModel {
         self.organiser = event.organisers.first
         self.canJoin = event.canJoinEvent()
         self.allowWaitList = event.allowWaitList
-
+        self.comments = event.comments
+        
+        
         guard let username = UserDefaults.standard.string(forKey: "username") else {return}
         
         self.isOrganiser = self.organiser?.username == username

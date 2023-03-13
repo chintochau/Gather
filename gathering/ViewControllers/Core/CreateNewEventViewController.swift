@@ -238,7 +238,7 @@ extension CreateNewEventViewController {
         
         guard var event = newEvent.toEvent() else {return}
         
-        event.referencePath = "events/\(event.endDate.getYearWeek())"
+        event.referencePath = "events/\(event.endDate.yearWeekStringLocalTime())"
         
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))

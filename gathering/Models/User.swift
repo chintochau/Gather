@@ -9,7 +9,7 @@ import Foundation
 
 struct User :Codable{
     let username:String
-    let email:String
+    let email:String?
     let name:String?
     let profileUrlString:String?
     let gender:String?
@@ -22,14 +22,13 @@ struct User :Codable{
 
 extension User {
     init?(with participant:Participant){
-        guard let username = participant.username,
-              let email = participant.email else {return nil}
+        guard let username = participant.username else {return nil}
         
         self.username = username
-        self.email = email
         self.name = participant.name
         self.profileUrlString = participant.profileUrlString
         self.gender = participant.gender
+        self.email = nil
     }
     
 }

@@ -14,9 +14,8 @@ struct DummyDataManager {
     
     
     func generateDummyEvents() {
-        let db = Firestore.firestore()
         
-        for i in 1...30 {
+        for i in 1...20 {
             // Generate a unique ID for the event
             let eventId = UUID().uuidString
             
@@ -39,7 +38,7 @@ struct DummyDataManager {
             }
             
             // Generate a random introduction for the event
-            let introduction = "Join us for the \(hobbyType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! ".repeating(5)
+            let introduction = "Join us for the \(hobbyType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! "
             
             
             
@@ -47,7 +46,7 @@ struct DummyDataManager {
             var participants = [String: Participant]()
             var imageUrlStrings = [String]()
             
-            for j in 1...100 {
+            for j in 1...20 {
                 // Generate a user for the participant
                 let user = User(
                     username: "participant\(j)_event\(i)",
@@ -73,6 +72,16 @@ struct DummyDataManager {
             imageUrlStrings.append("https://picsum.photos/400/300?random=\(i)")
             
             // Generate dummy data for the event
+            var comments = [Comment]()
+            for k in 1...10 {
+                let comment = Comment(
+                    sender: "participant\(k)_event\(i)",
+                    message: "This event sounds amazing! Can't wait to join!",
+                    timestamp: Date().timeIntervalSince1970)
+                comments.append(comment)
+            }
+            
+            // Generate dummy data for the event
             let event = Event(
                 id: eventId,
                 emojiTitle: emoji,
@@ -80,7 +89,7 @@ struct DummyDataManager {
                 organisers: organisers,
                 imageUrlString: imageUrlStrings,
                 price: Double(i),
-                startDateTimestamp: Date(timeIntervalSinceNow: TimeInterval(i * 86400)).timeIntervalSince1970,
+                startDateTimestamp: Date(timeIntervalSinceNow: TimeInterval(i * 86400/10)).timeIntervalSince1970,
                 endDateTimestamp: Date(timeIntervalSinceNow: TimeInterval((i+1) * 86400/10)).timeIntervalSince1970,
                 location: Location(name: "Location \(i)", address: "Address \(i)", latitude: Double(i), longitude: Double(i+1)),
                 presetTags: [],
@@ -88,8 +97,9 @@ struct DummyDataManager {
                 additionalDetail: nil,
                 refundPolicy: "",
                 participants: participants,
+                comments: comments,
                 headcount: Headcount(isGenderSpecific: i%3 == 0 ? true : false, min: 0, max: 100, mMin: 0, mMax: 50, fMin: 0, fMax: 50),
-                ownerFcmToken: UUID().uuidString,
+                ownerFcmToken: "dUeVDWDOEk0yh8z1I4N8X6:APA91bGiNIm7sYjL1u8Q6r0NGpFasVpqkipdQs1b8HxhNeZliZ0fN6y5gQ9zVNXgHYA1OZ1UXv9hqgGeIUe-nRApvD2YSdYo_kvx2LLOa_dh0eqXh57ljEd3orUmDr-WFpwxeBQkCWiW",
                 eventStatus: i%3 == 0 ? .grouping : .confirmed
             )
             

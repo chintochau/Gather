@@ -31,6 +31,17 @@ extension Date{
         let startOfMonthUTC = calendar.date(from: DateComponents(year: year, month: month, day: 1))!
         return startOfMonthUTC.timeIntervalSince1970
     }
+    
+    func startOfNextMonthTimestampUTC() -> TimeInterval {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        var components = calendar.dateComponents([.year, .month], from: self)
+        components.month! += 1
+        components.day = 1
+        let startOfNextMonthUTC = calendar.date(from: components)!
+        return startOfNextMonthUTC.startOfMonthTimestampUTC()
+    }
+
 
     func monthOfYearUTC() -> Int {
         var calendar = Calendar(identifier: .gregorian)
@@ -86,7 +97,7 @@ extension Date {
     
     /// return String in format yyyyMM, i.e. 202312
     /// Used for User event reference
-    func getYearMonth () -> String {
+    func yearMonthStringLocalTime () -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMM"
         return dateFormatter.string(from: self)
@@ -94,7 +105,7 @@ extension Date {
     
     
     /// used for ref: "events/{YearWeek}"
-    func getYearWeek() -> String {
+    func yearWeekStringLocalTime() -> String {
         let calendar = Calendar.current
         let weekOfYear = calendar.component(.weekOfYear, from: self)
         let year = calendar.component(.year, from: self)

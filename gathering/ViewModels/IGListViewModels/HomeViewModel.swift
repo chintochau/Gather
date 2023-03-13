@@ -23,7 +23,7 @@ class HomeViewModel {
                 completion([])
                 self?.createViewModels()
                 return}
-            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
+            self?.startDate = Date(timeIntervalSince1970: newDate.adding(days: 1).startOfDayTimestampUTC())
             self?.events = events.sorted(by: { $0.startDateTimestamp < $1.startDateTimestamp
             })
             
@@ -38,7 +38,7 @@ class HomeViewModel {
             guard let events = events, let newDate = events.last?.endDate else {
                 completion([])
                 return}
-            self?.startDate = Date(timeIntervalSince1970: newDate.lastDayOfWeekTimestamp())
+            self?.startDate = Date(timeIntervalSince1970: newDate.adding(days: 1).startOfDayTimestampUTC())
             self?.insertViewModels(with: events.sorted(by: { $0.startDateTimestamp < $1.startDateTimestamp
             }))
             completion(events)

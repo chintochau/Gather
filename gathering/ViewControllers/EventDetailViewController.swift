@@ -29,6 +29,13 @@ class EventDetailViewController: UIViewController {
         view.register(EventDetailInfoCell.self, forCellWithReuseIdentifier: EventDetailInfoCell.identifier)
         view.register(EventDetailParticipantsCell.self, forCellWithReuseIdentifier: EventDetailParticipantsCell.identifier)
         view.register(UserCollectionViewCell.self, forCellWithReuseIdentifier: UserCollectionViewCell.identifier)
+        view.register(CommentCell.self, forCellWithReuseIdentifier: CommentCell.identifier)
+        view.register(TextViewCollectionViewCell.self, forCellWithReuseIdentifier: TextViewCollectionViewCell.identifier)
+        
+        
+        view.register(EventHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EventHeaderView.identifier)
+        view.register(SectionHeaderRsuableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderRsuableView.identifier)
+        view.keyboardDismissMode = .interactive
         return view
         
     }()
@@ -121,7 +128,7 @@ class EventDetailViewController: UIViewController {
             
             VMs = [
                 EventDetailsViewModel(event: vm.event),
-                EventParticipants(event: vm.event)
+                EventParticipantsViewModel(event: vm.event)
             ]
             
             participantsList = []
@@ -136,6 +143,10 @@ class EventDetailViewController: UIViewController {
                 configureButton()
             }
             
+            comments = vm.comments
+            
+            latestComments = Array(comments.sorted(by: {$0.timestamp > $1.timestamp}).prefix(3))
+            
             collectionView.reloadData()
         }
     }
@@ -143,6 +154,12 @@ class EventDetailViewController: UIViewController {
     var participantsList:[Participant] = []
     var VMs:[ListDiffable] = []
     
+    var comments:[Comment] = []
+    var latestComments:[Comment] = []
+    var commentText:String? = ""
+    private var observer: NSObjectProtocol?
+    private var hideObserver: NSObjectProtocol?
+    private let bottomOffset:CGFloat = 150
     
     deinit {
         print("EventViewController: released")
@@ -159,6 +176,8 @@ class EventDetailViewController: UIViewController {
         view.addSubview(ownerView)
         ownerView.addSubview(nameLabel)
         ownerView.addSubview(profileImageView)
+        
+        observeKeyboardChange()
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .done, target: self, action: #selector(didTapShare))
         
@@ -208,6 +227,27 @@ class EventDetailViewController: UIViewController {
     
     // MARK: - Bottom Button
     fileprivate func configureButtonForOrganiser() {
+        addEditButton()
+        addFormGroupButton()
+        addInviteButton()
+    }
+    
+    fileprivate func configureButtonForParticipant(){
+        addQuitButton()
+        addInviteButton()
+    }
+    
+    fileprivate func configureButton(){
+        if let canJoin = viewModel?.canJoin, canJoin {
+            addJoinButton()
+            addInviteButton()
+        } else {
+            addFullButton()
+            addWaitListButton()
+        }
+    }
+    
+    private func addEditButton(){
         
         lazy var editButton:GradientButton = {
             let view = GradientButton(type: .system)
@@ -221,23 +261,9 @@ class EventDetailViewController: UIViewController {
         }()
         buttonStackView.addArrangedSubview(editButton)
         
-        let isFormed = (viewModel?.event.eventStatus ?? .grouping) == .confirmed
-        
-        lazy var formGroupButton:GradientButton = {
-            let view = GradientButton(type: .system)
-            view.setTitleColor(.white, for: .normal)
-            view.titleLabel?.font = .robotoMedium(ofSize: 16)
-            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
-            view.setTitle(isFormed ? "己成團" : "成團", for: .normal)
-            view.gradientLayer?.cornerRadius = 15
-            view.addTarget(self, action: #selector(didTapFormEvent), for: .touchUpInside)
-            return view
-        }()
-        buttonStackView.addArrangedSubview(formGroupButton)
     }
     
-    fileprivate func configureButtonForParticipant(){
-        
+    private func addQuitButton(){
         lazy var quitButton:GradientButton = {
             let view = GradientButton(type: .system)
             view.setTitleColor(.white, for: .normal)
@@ -251,6 +277,8 @@ class EventDetailViewController: UIViewController {
         buttonStackView.addArrangedSubview(quitButton)
         
         
+    }
+    private func addInviteButton(){
         lazy var formGroupButton:GradientButton = {
             let view = GradientButton(type: .system)
             view.setTitleColor(.white, for: .normal)
@@ -262,68 +290,66 @@ class EventDetailViewController: UIViewController {
             return view
         }()
         buttonStackView.addArrangedSubview(formGroupButton)
-        
     }
     
-    fileprivate func configureButton(){
-        
-        if let canJoin = viewModel?.canJoin, canJoin {
+    private func addFormGroupButton(){
+        let isFormed = (viewModel?.event.eventStatus ?? .grouping) == .confirmed
+        lazy var formGroupButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
+            view.setTitle(isFormed ? "己成團" : "成團", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapFormEvent), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(formGroupButton)
+    }
+    
+    private func addWaitListButton(){
+        if viewModel?.allowWaitList ?? false {
             lazy var quitButton:GradientButton = {
                 let view = GradientButton(type: .system)
                 view.setTitleColor(.white, for: .normal)
                 view.titleLabel?.font = .robotoMedium(ofSize: 16)
-                view.setGradient(colors: [.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
-                view.setTitle("參加", for: .normal)
+                view.setGradient(colors:[.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+                view.setTitle("加入候補名單", for: .normal)
                 view.gradientLayer?.cornerRadius = 15
                 view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
                 return view
             }()
             buttonStackView.addArrangedSubview(quitButton)
-            
-            
-            lazy var formGroupButton:GradientButton = {
-                let view = GradientButton(type: .system)
-                view.setTitleColor(.white, for: .normal)
-                view.titleLabel?.font = .robotoMedium(ofSize: 16)
-                view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: CGPoint(x: 0.5, y: 0.1), endPoint: CGPoint(x: 0.5, y: 0.9))
-                view.setTitle("邀請朋友", for: .normal)
-                view.gradientLayer?.cornerRadius = 15
-                view.addTarget(self, action: #selector(didTapInviteFriend), for: .touchUpInside)
-                return view
-            }()
-            buttonStackView.addArrangedSubview(formGroupButton)
-        } else {
-            lazy var quitButton:GradientButton = {
-                let view = GradientButton(type: .system)
-                view.setTitleColor(.white, for: .normal)
-                view.titleLabel?.font = .robotoMedium(ofSize: 16)
-                view.setGradient(colors:[.lightGray,.lightGray] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
-                view.setTitle("已滿", for: .normal)
-                view.gradientLayer?.cornerRadius = 15
-                view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
-                return view
-            }()
-            buttonStackView.addArrangedSubview(quitButton)
-            
-            if viewModel?.allowWaitList ?? false {
-                lazy var quitButton:GradientButton = {
-                    let view = GradientButton(type: .system)
-                    view.setTitleColor(.white, for: .normal)
-                    view.titleLabel?.font = .robotoMedium(ofSize: 16)
-                    view.setGradient(colors:[.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
-                    view.setTitle("加入候補名單", for: .normal)
-                    view.gradientLayer?.cornerRadius = 15
-                    view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
-                    return view
-                }()
-                buttonStackView.addArrangedSubview(quitButton)
-                
-            }
-            
         }
-        
     }
     
+    private func addJoinButton(){
+        lazy var quitButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+            view.setTitle("參加", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(quitButton)
+    }
+    
+    private func addFullButton(){
+        lazy var quitButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors:[.lightGray,.lightGray] , startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+            view.setTitle("已滿", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapEnrollButton), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(quitButton)
+    }
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -395,7 +421,6 @@ class EventDetailViewController: UIViewController {
         
         if viewModel?.isOrganiser ?? false {
             editEvent()
-            
         }else {
             if viewModel?.isJoined ?? false {
                 // if already joined, tap to unregister
@@ -404,6 +429,8 @@ class EventDetailViewController: UIViewController {
                 // if not joined, tap to join
                 if viewModel?.canJoin ?? false {
                     registerEvent()
+                }else {
+                    print("Full, join wait list")
                 }
             }
         }
@@ -529,7 +556,6 @@ class EventDetailViewController: UIViewController {
             self?.viewModel = viewModel
             self?.collectionView.reloadData()
             self?.refreshControl.endRefreshing()
-            
         }
     }
     
@@ -550,50 +576,107 @@ class EventDetailViewController: UIViewController {
 
 extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return VMs.count + 2
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return VMs.count + participantsList.count
+        
+        switch section {
+        case ..<VMs.count:
+            return 1
+        case VMs.count: //Comments number
+            return latestComments.count+1
+        case VMs.count+1: // Participants number
+            return min(participantsList.count, 5)
+        default:
+            return 0
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch indexPath.row {
-        case 0:
-            let vm = VMs[indexPath.row]
+        switch indexPath.section {
+            
+        case 0: // event detail
+            let vm = VMs[indexPath.section]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventDetailInfoCell.identifier, for: indexPath) as! EventDetailInfoCell
             cell.bindViewModel(vm)
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             return cell
             
-        case 1:
-            let vm = VMs[indexPath.row]
+        case 1: // event participants number
+            let vm = VMs[indexPath.section]
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventDetailParticipantsCell.identifier, for: indexPath) as! EventDetailParticipantsCell
             cell.bindViewModel(vm)
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             return cell
-        case 2...participantsList.count+1:
+            
+        case 2: // event comments
+            switch indexPath.row {
+            case latestComments.count: // the last cell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TextViewCollectionViewCell.identifier, for: indexPath) as! TextViewCollectionViewCell
+                cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+                cell.configure(withTitle: "", text: commentText)
+                cell.textView.delegate = self
+                cell.sendButton.addTarget(self, action: #selector(didTapSend), for: .touchUpInside)
+                return cell
+            default:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CommentCell.identifier, for: indexPath) as! CommentCell
+                cell.bindViewModel(latestComments[indexPath.row])
+                cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+                return cell
+            }
+            
+            
+        default: // Participants List
+            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCollectionViewCell.identifier, for: indexPath) as! UserCollectionViewCell
-            cell.bindViewModel(participantsList[indexPath.row-2])
+            cell.bindViewModel(participantsList[indexPath.row])
             cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
             cell.heightAnchor.constraint(equalToConstant: 60).isActive = true
-            cell.delegate = self
             return cell
-        default:
-            fatalError()
         }
         
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        switch indexPath.row {
-        case 2...participantsList.count+1:
-            didTapUserProfile(participant: participantsList[indexPath.row-2])
+        if indexPath.section ==  VMs.count+1{
+            didTapUserProfile(participant: participantsList[indexPath.row])
+        }
+    }
+
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        switch section {
+        case 0:
+            return .init(width: view.width, height: headerHeight)
+        case VMs.count:
+            return .init(width: view.width, height: 30)
+        case VMs.count+1:
+            return .init(width: view.width, height: 30)
         default:
-            break
+            return .zero
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return .init(width: view.width, height: headerHeight)
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeaderRsuableView.identifier, for: indexPath) as! SectionHeaderRsuableView
+        sectionHeader.delegate = self
+        
+        switch indexPath.section {
+        case VMs.count:
+            sectionHeader.configure(with: .init(title: "留言:  ", buttonText: "全部(\(comments.count))", index: 2))
+            return sectionHeader
+        case VMs.count+1:
+            if let vm = VMs[1] as? EventParticipantsViewModel {
+                sectionHeader.configure(with: .init(title: vm.numberOfFriends, buttonText: "全部(\(participantsList.count))", index: 3))
+            }
+            return sectionHeader
+        default:
+            return sectionHeader
+        }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -621,26 +704,75 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
         
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        
-        
     }
     
 }
 
-extension EventDetailViewController:SwipeCollectionViewCellDelegate {
-    func collectionView(_ collectionView: UICollectionView, editActionsForItemAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
-        guard orientation == .right else { return nil }
-
-        let deleteAction = SwipeAction(style: .destructive, title: "移除") { action, indexPath in
-            // handle action by updating model with deletion
-            print("Delete tapped")
-        }
-
-        // customize the action appearance
-        deleteAction.image = UIImage(named: "delete")
-
-        return [deleteAction]
+extension EventDetailViewController:UITextViewDelegate,SectionHeaderReusableViewDelegate {
+    func SectionHeaderReusableViewDidTapActionButton(_ view: SectionHeaderRsuableView, button: UIButton) {
+        let vc = CollectionListViewController()
+        
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        navVc.modalPresentationStyle = .fullScreen
+        present(navVc, animated: true)
+        
     }
     
     
+    @objc private func didTapSend(){
+        guard let vm = viewModel, let text = commentText else {return}
+        
+        
+        DatabaseManager.shared.postComments(event: vm.event, message: text) { [weak self] success in
+            if success {
+                
+                DatabaseManager.shared.fetchSingleEvent(event: vm.event) { [weak self] event in
+                    guard let event = event else {
+                        
+                        self?.dismiss(animated: true)
+                        return
+                    }
+                    let viewModel = EventCellViewModel(event: event)
+                    
+                    if let imageUrl = viewModel.imageUrlString, let self = self {
+                        
+                    }else {
+                        viewModel.image = self?.viewModel?.image
+                    }
+                    self?.commentText = ""
+                    self?.viewModel = viewModel
+                    self?.collectionView.reloadSections(.init(integer: 2))
+                    
+                }
+            }
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        commentText = textView.text
+        
+        collectionView.performBatchUpdates {
+            
+        }
+        
+    }
+    
+    
+    // MARK: - Keyboard Handling
+    private func observeKeyboardChange(){
+        
+        observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) {[weak self] notification in
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+                self?.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height + self!.bottomOffset, right: 0)
+                }
+            
+        }
+        
+        hideObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self!.bottomOffset, right: 0)
+        }
+    }
 }

@@ -24,6 +24,7 @@ struct Event:Codable {
     let additionalDetail:String?
     let refundPolicy:String
     let participants:[String:Participant]
+    let comments:[Comment]
     let headcount:Headcount
     let ownerFcmToken:String?
     let eventStatus:EventStatus

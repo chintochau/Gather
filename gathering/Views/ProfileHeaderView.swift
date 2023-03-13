@@ -15,7 +15,7 @@ struct ProfileHeaderViewViewModel {
     init(user:User) {
         self.profileUrlString = user.profileUrlString
         self.username = user.username
-        self.email = user.email
+        self.email = user.email ?? ""
     }
 }
 

@@ -460,6 +460,7 @@ extension OldEventController {
             additionalDetail: "",
             refundPolicy: "",
             participants: [:],
+            comments: [],
             headcount: tempEvent.headcount,
             ownerFcmToken: user.fcmToken,
             eventStatus: .grouping

@@ -46,7 +46,7 @@ class EventDetailsViewModel: ListDiffable {
     }
 }
 
-class EventParticipants :ListDiffable {
+class EventParticipantsViewModel :ListDiffable {
     
     var id:String = UUID().uuidString
     var numberOfParticipants:String
@@ -70,7 +70,8 @@ class EventParticipants :ListDiffable {
         self.numberOfFemale = event.headCountString().female
         self.numberOfParticipants = event.headCountString().total
         
-        self.numberOfFriends = friends.count > 0 ? "你有\(friends.count)個朋友參加左" : "參加者: "
+        self.numberOfFriends = friends.count > 0 ? "你有\(friends.count)個朋友參加左: " : "參加者: "
+        
         self.tag = event.tags.first
         
     }
@@ -83,7 +84,7 @@ class EventParticipants :ListDiffable {
     }
     
     func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        guard let object  = object as? EventParticipants else {return false}
+        guard let object  = object as? EventParticipantsViewModel else {return false}
         return id == object.id
     }
 }

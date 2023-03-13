@@ -53,8 +53,8 @@ extension EventSectionController:ListSupplementaryViewSource {
     }
     
     func viewForSupplementaryElement(ofKind elementKind: String, at index: Int) -> UICollectionReusableView {
-        let view = collectionContext?.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, for: self, class: HomeSectionHeaderReusableView.self, at: index) as! HomeSectionHeaderReusableView
-        view.configure(with: SectionHeaderViewModel(title: "Not Configured", buttonText: nil))
+        let view = collectionContext?.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, for: self, class: SectionHeaderRsuableView.self, at: index) as! SectionHeaderRsuableView
+        view.configure(with: SectionHeaderViewModel(title: "Not Configured", buttonText: nil, index: 0))
         return view
     }
     

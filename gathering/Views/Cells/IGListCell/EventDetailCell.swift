@@ -204,14 +204,12 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     private let femaleIconView:UIImageView = {
         let view = UIImageView()
         view.image = .femaleIcon
-//        view.tintColor = .redColor
         view.contentMode  = .scaleAspectFit
         return view
     }()
     private let maleIconView:UIImageView = {
         let view = UIImageView()
         view.image = .maleIcon
-//        view.tintColor = .blueColor
         view.contentMode  = .scaleAspectFit
         return view
     }()
@@ -233,11 +231,6 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         return view
     }()
     
-    private let friendText:UILabel = {
-        let view = UILabel()
-        return view
-    }()
-    
     private let tagLabel:TagLabel = {
         let view = TagLabel()
         view.fontSize = 16
@@ -248,7 +241,7 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [confirmedParticipantsLabel,signedUpParticipantsLabel,genderTextLabel,femaleBox,maleBox,separatorView,friendText,tagLabel].forEach({addSubview($0)})
+        [confirmedParticipantsLabel,signedUpParticipantsLabel,genderTextLabel,femaleBox,maleBox,separatorView,tagLabel].forEach({addSubview($0)})
         
         tagLabel.anchor(top: topAnchor, leading: signedUpParticipantsLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
@@ -263,10 +256,8 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         femaleBox.anchor(top: genderTextLabel.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 20, right: 0),size: .init(width: boxWidth, height: 50))
         maleBox.anchor(top: femaleBox.topAnchor, leading: nil, bottom: nil, trailing: confirmedParticipantsLabel.trailingAnchor,size: .init(width: boxWidth, height: 50))
         
-        separatorView.anchor(top: femaleBox.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: nil, trailing: maleBox.trailingAnchor,
-                             padding: .init(top: 30, left: 0, bottom: 15, right: 0),size: .init(width: 0, height: 3))
-        
-        friendText.anchor(top: separatorView.bottomAnchor, leading: separatorView.leadingAnchor, bottom: bottomAnchor, trailing: separatorView.trailingAnchor,padding: .init(top: 15, left: 0, bottom: 20, right: 0))
+        separatorView.anchor(top: femaleBox.bottomAnchor, leading: genderTextLabel.leadingAnchor, bottom: bottomAnchor, trailing: maleBox.trailingAnchor,
+                             padding: .init(top: 30, left: 0, bottom: 0, right: 0),size: .init(width: 0, height: 3))
         
         
         femaleBox.addSubview(femaleIconView)
@@ -299,7 +290,7 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
     
     
     func bindViewModel(_ viewModel: Any) {
-        guard let vm = viewModel as? EventParticipants else {return}
+        guard let vm = viewModel as? EventParticipantsViewModel else {return}
         
 //        let attributedText = NSMutableAttributedString(string: "")
 //        let text:NSAttributedString = createAttributedText(with: "已報名人數： ", image: .participantsIcon )
@@ -319,7 +310,6 @@ class EventDetailParticipantsCell : UICollectionViewCell, ListBindable {
         genderTextLabel.text = "確認參與者性別分佈: "
         femaleNumber.text = vm.numberOfFemale
         maleNumber.text = vm.numberOfMale
-        friendText.text = vm.numberOfFriends
         tagLabel.eventTag = vm.tag
     }
     

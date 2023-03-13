@@ -117,8 +117,10 @@ final class DatabaseManager {
     
     // Reference should be start and end of day in UTC time, each document containts events on that day
     // event reference should be events/{yearDay} example: "events/2023115"
-    let startDateReference:String = "_monthStartTimestamp"
-    let endDateReference:String = "_monthEndTimestamp"
+    let startDateReference:String = "_dayStartTimestamp"
+    let endDateReference:String = "_dayEndTimestamp"
+    let monthStartDateReference:String = "_monthStartTimestamp"
+    let monthEndDateReference:String = "_monthEndTimestamp"
     
     
     public func createEvent (with event:Event, completion: @escaping (Event) -> Void) {
@@ -126,27 +128,39 @@ final class DatabaseManager {
         
         let startDateReference:String = startDateReference
         let endDateReference:String = endDateReference
+        let monthStartDateReference:String = monthStartDateReference
+        let monthEndDateReference:String = monthEndDateReference
+        
+        // events/202310 (year day)
+        let eventReferncePath = event.endDate.yearDayStringUTC()
+        // 202310 (year month)
+        let userEventReferencePath = event.endDate.yearMonthStringUTC()
         
         database.runTransaction {[weak self] transaction, error in
-            guard let eventRef = self?.database.collection("events").document(event.endDate.getYearWeek()),
+            
+            guard let eventRef = self?.database.collection("events").document(eventReferncePath),
                   let user = DefaultsManager.shared.getCurrentUser(),
-                  let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(event.startDate.getYearMonth())
+                  let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(userEventReferencePath)
             else {return}
             
+            // generate referencePath for event
             finalEvent.referencePath = eventRef.path
-            finalEvent.referencePathForUser = event.endDate.getYearMonth()
+            finalEvent.referencePathForUser = userEventReferencePath
             
             guard let eventData = finalEvent.asDictionary(),
                   let userEventData = finalEvent.toUserEvent().asDictionary() else {return}
             
+            // collection: events/
             transaction.setData([
                 event.id : eventData,
-                "_startTimestamp":event.endDate.firstDayOfWeekTimestamp(),
-                "_endTimestamp":event.endDate.lastDayOfWeekTimestamp() - 1
+                startDateReference:event.endDate.startOfDayTimestampUTC(),
+                endDateReference:event.endDate.adding(days: 1).startOfDayTimestampUTC() - 1
             ], forDocument: eventRef,merge: true)
+            
+            // collection: users/{username}/events/
             transaction.setData([
-                "_monthStartTimestamp": event.endDate.startOfTheSameMonthLocalTime().timeIntervalSince1970,
-                "_monthEndTimestamp": event.endDate.startOfTheNextMonthLocalTime().timeIntervalSince1970 - 1,
+                monthStartDateReference: event.endDate.startOfMonthTimestampUTC(),
+                monthEndDateReference: event.endDate.startOfNextMonthTimestampUTC() - 1,
                 event.id: userEventData
             ], forDocument: userEventRef,merge: true)
             
@@ -165,15 +179,15 @@ final class DatabaseManager {
     
     // MARK: - Read Event
     
-    public func fetchEvents(numberOfResults: Int,startDate:Date = Date.startOfTodayLocalTime(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
+    public func fetchEvents(numberOfResults: Int,startDate:Date = Date().startOfDayTimestampUTC().toDate(), exclude excludeEvents: [Event] = [], completion: @escaping ([Event]?) -> Void) {
         
         let startDateReference:String = startDateReference
         let endDateReference:String = endDateReference
         
         print("start fetching from date: \(startDate)")
         let ref = database.collection("events")
-            .order(by: "_endTimestamp", descending: false)
-            .whereField("_endTimestamp", isGreaterThan: startDate.timeIntervalSince1970)
+            .order(by: endDateReference, descending: false)
+            .whereField(endDateReference, isGreaterThan: startDate.timeIntervalSince1970)
             .limit(to: 1)
         
         
@@ -191,11 +205,11 @@ final class DatabaseManager {
             print("Size of the document in bytes: \(sizeInBytes)")
             
             var events = [Event]()
-            let _ = documentData["_startTimestamp"] as? Double ?? 0.0
-            let endTimestamp = documentData["_endTimestamp"] as? Double ?? 0.0
+            let _ = documentData[startDateReference] as? Double ?? 0.0
+            let endTimestamp = documentData[endDateReference] as? Double ?? 0.0
             
             for (key, value) in documentData {
-                if key != "_startTimestamp" && key != "_endTimestamp" {
+                if key != startDateReference && key != endDateReference {
                     if let event = Event(with: value as! [String : Any]) {
                         events.append(event)
                     }
@@ -294,15 +308,15 @@ final class DatabaseManager {
     
     public func getUserEvents(username:String, startDate:Date = Date.startOfTodayLocalTime(),numberOfResults:Int = 7, completion:@escaping ([UserEvent]?) -> Void){
         
-        let startDateReference:String = "_monthStartTimestamp"
-        let endDateReference:String = "_monthEndTimestamp"
+        let monthStartDateReference:String = monthStartDateReference
+        let monthEndDateReference:String = monthEndDateReference
         
         
         print("start fetching userEvnets from date: \(startDate)")
         
         let ref = database.collection("users/\(username)/events")
-            .order(by: endDateReference, descending: false)
-            .whereField(endDateReference, isGreaterThan: startDate.timeIntervalSince1970)
+            .order(by: monthEndDateReference, descending: false)
+            .whereField(monthEndDateReference, isGreaterThan: startDate.timeIntervalSince1970)
             .limit(to: 1)
 
         
@@ -315,12 +329,12 @@ final class DatabaseManager {
             }
             
             var events = [UserEvent]()
-            let _ = documentData[startDateReference] as? Double ?? 0.0
-            let endTimestamp = documentData[endDateReference] as? Double ?? 0.0
+            let _ = documentData[monthStartDateReference] as? Double ?? 0.0
+            let endTimestamp = documentData[monthEndDateReference] as? Double ?? 0.0
             
             for (key, value) in documentData {
                 
-                if key != startDateReference && key != endDateReference {
+                if key != monthStartDateReference && key != monthEndDateReference {
                     if let value = value as? [String : Any] {
                         if let event = UserEvent(with: value) {
                             events.append(event)
@@ -361,6 +375,8 @@ final class DatabaseManager {
     }
     
     public func registerEvent(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
+        let monthStartDateReference:String = monthStartDateReference
+        let monthEndDateReference:String = monthEndDateReference
         
         guard let participant = Participant(with: participant).asDictionary(),
               let username = UserDefaults.standard.string(forKey: "username"),
@@ -376,7 +392,7 @@ final class DatabaseManager {
             
             guard let eventRef = self?.database.document(referencePath),
                   let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)/"),
-                  let notificationRef = self?.database.document("notifications/\(event.organisers.first?.username ?? "admin")/\(Date().getYearWeek())/\(Date().getYearWeek())")
+                  let notificationRef = self?.database.document("notifications/\(event.organisers.first?.username ?? "admin")/\(Date().yearWeekStringLocalTime())/\(Date().yearWeekStringLocalTime())")
             else {return}
             
             // Update event reference
@@ -389,8 +405,8 @@ final class DatabaseManager {
             
             // Update user reference
             transaction.setData([
-                "_monthStartTimestamp": event.endDate.startOfTheSameMonthLocalTime().timeIntervalSince1970,
-                "_monthEndTimestamp": event.endDate.startOfTheNextMonthLocalTime().timeIntervalSince1970 - 1,
+                monthStartDateReference: event.endDate.startOfTheSameMonthLocalTime().timeIntervalSince1970,
+                monthEndDateReference: event.endDate.startOfTheNextMonthLocalTime().timeIntervalSince1970 - 1,
                 event.id: event.toUserEvent().asDictionary()!
             ], forDocument: userEventRef,merge: true)
             
@@ -598,6 +614,29 @@ final class DatabaseManager {
         
         batch.commit()
         
+    }
+    
+    
+    // MARK: - Comments
+    public func postComments(event:Event, message:String,completion:@escaping (Bool) -> Void){
+
+        
+        guard let referencePath = event.referencePath,
+              let user = DefaultsManager.shared.getCurrentUser()
+        else {return}
+        
+        let comment = Comment(sender: user.name ?? user.username, message: message, timestamp: Date().timeIntervalSince1970)
+        let ref = database.document(referencePath)
+        
+        if let commentData = comment.asDictionary() {
+            ref.setData([
+                event.id: [
+                    "comments":FieldValue.arrayUnion([commentData])
+                ]
+            ],merge: true) { error in
+                completion(error == nil)
+            }
+        }
     }
     
 }

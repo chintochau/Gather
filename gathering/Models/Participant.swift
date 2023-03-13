@@ -13,10 +13,9 @@ struct Participant:Codable {
     let name:String
     var username:String? = nil
     let gender:String
-    var email:String? = nil
     var profileUrlString:String? = nil
     var joinStatus:participantStatus = .going
-    var isFriend:Bool? = false
+    var isFriend:Bool? = nil
     
     enum participantStatus:Int,Codable {
         case host
@@ -36,7 +35,6 @@ extension Participant {
         self.name = name
         self.username = user.username
         self.gender = gender
-        self.email = user.email
         self.profileUrlString = user.profileUrlString
         self.joinStatus = status
     }
