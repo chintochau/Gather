@@ -66,7 +66,9 @@ class TextViewCollectionViewCell: UICollectionViewCell {
         textCount.anchor(top: textView.topAnchor, leading: nil, bottom: nil, trailing: textView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
         
         textView.anchor(top: titleLabel.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 30, bottom: 0, right: 30))
-        textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+        let heightConstrant = textView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60)
+        heightConstrant.priority = .defaultHigh
+        heightConstrant.isActive = true
         
         sendButton.anchor(top: nil, leading: nil, bottom: textView.bottomAnchor, trailing: textView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: .init(width: 50, height: 50))
         

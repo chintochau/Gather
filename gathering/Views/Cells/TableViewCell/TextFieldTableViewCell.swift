@@ -51,14 +51,6 @@ class TextFieldTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with placeholder:String,type:newEventPageType){
-        textField.placeholder = placeholder
-        textField.layer.name = type.rawValue
-        titleLabel.text = "\(type.rawValue):"
-        if type == .priceField{
-            textField.keyboardType = .decimalPad
-        }
-    }
     
     func configure(withTitle title: String, placeholder:String, text:String = "") {
         titleLabel.text = title

@@ -77,7 +77,7 @@ struct DummyDataManager {
                 let comment = Comment(
                     sender: "participant\(k)_event\(i)",
                     message: "This event sounds amazing! Can't wait to join!",
-                    timestamp: Date().timeIntervalSince1970)
+                    timestamp: Date(timeIntervalSinceNow: -TimeInterval(i * 86400/10)).timeIntervalSince1970)
                 comments.append(comment)
             }
             

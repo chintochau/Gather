@@ -24,6 +24,9 @@ target 'Gather Pool' do
   pod 'IGListKit', '~> 4.0.0'
   pod 'SwipeCellKit'
   pod 'SwiftDate', '~> 5.0'
+  pod 'ImageSlideshow', '~> 1.9.0'
+  pod "ImageSlideshow/SDWebImage"
+  pod 'DKImagePickerController'
   
     # Pods for Instagram
 

@@ -46,13 +46,6 @@ class HomeViewController: UIViewController{
         fetchInitialDataAndRefresh()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-//        let appearance = UINavigationBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        
-    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -160,7 +153,7 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
         switch object {
-        case let _ as EventCellViewModel:
+        case _ as EventCellViewModel:
             return EventSectionController()
         default:
             return HomeSectionController()
@@ -217,6 +210,11 @@ extension HomeViewController:UIScrollViewDelegate  {
     // MARK: - NavBar
     
     fileprivate func configureNavBar() {
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = .systemBackground
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         
         headerView.addSubview(titleLabel)
         navigationItem.titleView = headerView

@@ -602,6 +602,56 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.24):
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
+  - CropViewController (2.6.1)
+  - DKCamera (1.6.7)
+  - DKImagePickerController (4.3.4):
+    - DKImagePickerController/Camera (= 4.3.4)
+    - DKImagePickerController/Core (= 4.3.4)
+    - DKImagePickerController/ImageDataManager (= 4.3.4)
+    - DKImagePickerController/InlineCamera (= 4.3.4)
+    - DKImagePickerController/PhotoEditor (= 4.3.4)
+    - DKImagePickerController/PhotoGallery (= 4.3.4)
+    - DKImagePickerController/Resource (= 4.3.4)
+  - DKImagePickerController/Camera (4.3.4):
+    - DKCamera
+    - DKImagePickerController/Core
+  - DKImagePickerController/Core (4.3.4):
+    - DKImagePickerController/ImageDataManager
+    - DKImagePickerController/Resource
+  - DKImagePickerController/ImageDataManager (4.3.4)
+  - DKImagePickerController/InlineCamera (4.3.4):
+    - DKCamera
+    - DKImagePickerController/Core
+  - DKImagePickerController/PhotoEditor (4.3.4):
+    - CropViewController (~> 2.5)
+    - DKImagePickerController/Core
+  - DKImagePickerController/PhotoGallery (4.3.4):
+    - DKImagePickerController/Core
+    - DKPhotoGallery
+  - DKImagePickerController/Resource (4.3.4)
+  - DKPhotoGallery (0.0.17):
+    - DKPhotoGallery/Core (= 0.0.17)
+    - DKPhotoGallery/Model (= 0.0.17)
+    - DKPhotoGallery/Preview (= 0.0.17)
+    - DKPhotoGallery/Resource (= 0.0.17)
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Preview
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Resource
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.17):
+    - SDWebImage
+    - SwiftyGif
   - EmojiPicker (3.0.9)
   - Firebase/Auth (10.3.0):
     - Firebase/CoreOnly
@@ -798,6 +848,12 @@ PODS:
   - IGListDiffKit (4.0.0)
   - IGListKit (4.0.0):
     - IGListDiffKit (= 4.0.0)
+  - ImageSlideshow (1.9.2):
+    - ImageSlideshow/Core (= 1.9.2)
+  - ImageSlideshow/Core (1.9.2)
+  - ImageSlideshow/SDWebImage (1.9.2):
+    - ImageSlideshow/Core
+    - SDWebImage (>= 3.7)
   - IQKeyboardManagerSwift (6.5.11)
   - leveldb-library (1.22.1)
   - Libuv-gRPC (0.0.10):
@@ -822,9 +878,11 @@ PODS:
     - SDWebImage/Core (= 5.14.3)
   - SDWebImage/Core (5.14.3)
   - SwiftDate (5.1.0)
+  - SwiftyGif (5.4.4)
   - SwipeCellKit (2.7.1)
 
 DEPENDENCIES:
+  - DKImagePickerController
   - EmojiPicker (from `https://github.com/htmlprogrammist/EmojiPicker`)
   - Firebase/Auth
   - Firebase/Core
@@ -834,6 +892,8 @@ DEPENDENCIES:
   - Firebase/Storage
   - Hero
   - IGListKit (~> 4.0.0)
+  - ImageSlideshow (~> 1.9.0)
+  - ImageSlideshow/SDWebImage
   - IQKeyboardManagerSwift
   - PubNubSwift (~> 6.0.3)
   - RealmSwift (~> 10)
@@ -845,6 +905,10 @@ SPEC REPOS:
   trunk:
     - abseil
     - BoringSSL-GRPC
+    - CropViewController
+    - DKCamera
+    - DKImagePickerController
+    - DKPhotoGallery
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -869,6 +933,7 @@ SPEC REPOS:
     - Hero
     - IGListDiffKit
     - IGListKit
+    - ImageSlideshow
     - IQKeyboardManagerSwift
     - leveldb-library
     - Libuv-gRPC
@@ -879,6 +944,7 @@ SPEC REPOS:
     - RealmSwift
     - SDWebImage
     - SwiftDate
+    - SwiftyGif
     - SwipeCellKit
 
 EXTERNAL SOURCES:
@@ -893,6 +959,10 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
+  CropViewController: 58fb440f30dac788b129d2a1f24cffdcb102669c
+  DKCamera: a902b66921fca14b7a75266feb8c7568aa7caa71
+  DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
+  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   EmojiPicker: 67fa5a3cf1b32885248388087cc5ebeebc7de647
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
   FirebaseAnalytics: 036232b6a1e2918e5f67572417be1173576245f3
@@ -918,6 +988,7 @@ SPEC CHECKSUMS:
   Hero: c69009dbc9e2f0472e081adc644dba05fcedae72
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
   IGListKit: fd5a5d21935298f5849fa49d426843cff97b77c7
+  ImageSlideshow: be305b54eaf2b2cfc7a7141c7c734605d44dc07d
   IQKeyboardManagerSwift: c7955c0bdbf7b2eb29bb7daaa44e3d90f55a9a85
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   Libuv-gRPC: 55e51798e14ef436ad9bc45d12d43b77b49df378
@@ -928,8 +999,9 @@ SPEC CHECKSUMS:
   RealmSwift: 513d4dcbf5bfc4d573454088b592685fc48dd716
   SDWebImage: 9c36e66c8ce4620b41a7407698dda44211a96764
   SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
+  SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
 
-PODFILE CHECKSUM: 315868980ed0c6989cd226426acf1dfe2fe58be6
+PODFILE CHECKSUM: 7f78b2f6efe97a67acc27d63b11a34bb53187271
 
 COCOAPODS: 1.11.3

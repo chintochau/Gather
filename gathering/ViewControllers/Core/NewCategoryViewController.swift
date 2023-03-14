@@ -111,16 +111,24 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             switch vm {
             case .post:
                 let vc = NewPostViewController()
-                vc.completion = { [weak self] post, image in
+                vc.completion = { [weak self] post, images in
                     guard let post = post else {return}
-                    let vc = EventViewController(viewModel: OldEventViewModel(with: post, image: image)!)
+                    let vc = EventDetailViewController()
+                    let vm = EventCellViewModel(event: post)
+                    
+                    print("images need configure")
+                    
+                    vc.viewModel = vm
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)
             case .formEvent:
                 let vc = CreateNewEventViewController()
                 vc.completion = { [weak self] event, image in
-                    let vc = EventViewController(viewModel: OldEventViewModel(with: event, image: image)!)
+                    let vc = EventDetailViewController()
+                    let vm = EventCellViewModel(event: event)
+                    vm.image = image
+                    vc.viewModel = vm
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
                 navigationController?.pushViewController(vc, animated: true)

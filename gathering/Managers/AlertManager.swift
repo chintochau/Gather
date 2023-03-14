@@ -36,4 +36,33 @@ struct AlertManager {
         
     }
     
+    func showActionSheet(withTitle title: String?, message: String?, firstButtonTitle: String, firstButtonAction: (() -> Void)? = nil, secondButtonTitle: String, secondButtonAction: (() -> Void)? = nil) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        
+        // Add the first button
+        let firstButton = UIAlertAction(title: firstButtonTitle, style: .default) { _ in
+            // Call the first button closure if it exists
+            firstButtonAction?()
+        }
+        alertController.addAction(firstButton)
+        
+        // Add the second button
+        let secondButton = UIAlertAction(title: secondButtonTitle, style: .default) { _ in
+            // Call the second button closure if it exists
+            secondButtonAction?()
+        }
+        alertController.addAction(secondButton)
+        
+        // Add a cancel button
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelButton)
+        
+        // Find the topmost window to present the alert
+        if let topWindow = UIApplication.shared.windows.last {
+            topWindow.rootViewController?.present(alertController, animated: true, completion: nil)
+        }
+    }
+
+
+    
 }

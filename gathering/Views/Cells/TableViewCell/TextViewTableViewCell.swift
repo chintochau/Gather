@@ -95,14 +95,6 @@ class TextViewTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with text:String, type:newEventPageType){
-        textView.text = text
-        textView.layer.name = type.rawValue
-        titleLabel.text = "\(type.rawValue):"
-        textCount.text = "\(text.count)/1000"
-        
-    }
-    
     
     func configure(withTitle title: String, text:String?,tag:Int = 0,_ isOptional:Bool = false) {
         titleLabel.text = title

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import IGListDiffKit
 
 protocol EventOwnerCollectionViewCellDelegate:AnyObject {
     func EventOwnerCollectionViewCellDidTapMessage(_ cell:EventOwnerCollectionViewCell, username:String?)
@@ -24,23 +25,22 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         view.contentMode = .scaleAspectFit
         view.backgroundColor = .secondarySystemBackground
         view.image = .personIcon
-        view.layer.borderColor = UIColor.mainColor.withAlphaComponent(0.5).cgColor
         view.tintColor = .lightGray
-        view.layer.borderWidth = 1
         return view
     }()
     
     private let nameLabel:UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 22)
+        view.font = .robotoRegularFont(ofSize: 16)
         return view
     }()
     
     
     private let messageButton:UIButton = {
         let view = UIButton()
-        view.setImage(UIImage(systemName: "message"), for: .normal)
-        view.tintColor = .label
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        view.setImage(UIImage(systemName: "text.bubble",withConfiguration: config), for: .normal)
+        view.tintColor = .darkMainColor
         return view
     }()
     
@@ -51,26 +51,27 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         didSet {
             if user?.username == UserDefaults.standard.string(forKey: "username") {
                 messageButton.isHidden = true
-                }
-            
-            
+            }
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         [imageView,nameLabel,messageButton].forEach({addSubview($0)})
-        let iconSize:CGFloat = 35
-        imageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 0, left: 0, bottom: 0, right: 0),size: CGSize(width: iconSize, height: iconSize))
-        imageView.layer.cornerRadius = iconSize/2
         
-        nameLabel.anchor(top: imageView.topAnchor, leading: imageView.trailingAnchor, bottom: bottomAnchor, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
+        let cellHeight:CGFloat = 45
+        let padding:CGFloat = 3
+        let imageSize:CGFloat = cellHeight - 2*padding
         
-        messageButton.anchor(top: imageView.topAnchor, leading: nil, bottom: imageView.bottomAnchor, trailing: trailingAnchor)
-        messageButton.addTarget(self, action: #selector(didTapMessage), for: .touchUpInside)
+        heightAnchor.constraint(equalToConstant: cellHeight).isActive = true
+        imageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: padding, left: 30, bottom: 0, right: 0),size: .init(width: imageSize, height: imageSize))
+        imageView.layer.cornerRadius = imageSize/2
         
+        nameLabel.anchor(top: nil, leading: imageView.trailingAnchor, bottom: nil, trailing: messageButton.leadingAnchor,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
+        nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
-        messageButton.isHidden = !AuthManager.shared.isSignedIn
+        messageButton.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 30))
+        messageButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         
         
@@ -80,13 +81,14 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with owner:User?) {
+    func configure(with user:User?) {
         
-        nameLabel.text = owner?.name
-        if let urlString = owner?.profileUrlString {
+        guard let user = user else {return}
+        nameLabel.text = user.name
+        if let urlString = user.profileUrlString {
             imageView.sd_setImage(with: URL(string: urlString))
         }
-        user = owner
+        self.user = user
         
     }
     
@@ -99,5 +101,26 @@ class EventOwnerCollectionViewCell: UICollectionViewCell {
         delegate?.EventOwnerCollectionViewCellDidTapMessage(self, username: user?.username)
     }
     
+    
+}
+
+class OwnerViewModel:ListDiffable {
+    var user:User
+    var id:String {
+        user.username
+    }
+    
+    init(user: User) {
+        self.user = user
+    }
+    
+    func diffIdentifier() -> NSObjectProtocol {
+        return id as NSObjectProtocol
+    }
+    
+    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let object  = object as? EventParticipantsViewModel else {return false}
+        return id == object.id
+    }
     
 }

@@ -37,8 +37,8 @@ class PostSectionController: ListSectionController {
     override func didSelectItem(at index: Int) {
         let viewModel = viewModel as! PostViewModel
         //        let vc = DemoViewController()
-        
-        let vc = EventViewController(viewModel: OldEventViewModel(with: viewModel.event, image: nil)!)
+        let vc = EventDetailViewController()
+//        vc.viewModel = viewModel
         viewController?.navigationController?.pushViewController(vc, animated: true)
     }
     

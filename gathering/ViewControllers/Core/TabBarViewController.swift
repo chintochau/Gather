@@ -154,7 +154,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         let vc = NewPostViewController()
         
-        vc.completion = { [weak self] post, image in
+        vc.completion = { [weak self] post, images in
             
             guard let post = post else {return}
             
@@ -164,14 +164,21 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
             
             let vm = EventCellViewModel(event: post)
             
-            if let image = image {
-                vm.image = image
+            if !images.isEmpty {
+                print("images need modify")
             }
             
             vc.viewModel = vm
             
+            let navVC = UINavigationController(rootViewController: vc)
+            navVC.modalPresentationStyle = .fullScreen
+            navVC.hero.isEnabled = true
+            navVC.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+            navVC.navigationBar.tintColor = .label
+            
             if let firstTab = self?.viewControllers?.first as? UINavigationController {
-                firstTab.pushViewController(vc, animated: true)
+                
+                firstTab.present(navVC, animated: true)
             }
             
         }
@@ -200,6 +207,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
             }else {
                 let navVc = UINavigationController(rootViewController: vc)
                 navVc.modalPresentationStyle = .fullScreen
+                navVc.navigationBar.tintColor = .label
                 self?.present(navVc, animated: true)
                 
             }

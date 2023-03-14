@@ -81,11 +81,19 @@ final class EventDeeplinkHandler: DeeplinkHandlerProtocol {
         
         let eventViewController = EventDetailViewController()
         eventViewController.configureWithID(eventID: eventId, eventReferencePath: ref)
+        let navVc = UINavigationController(rootViewController: eventViewController)
+        navVc.hero.isEnabled = true
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        navVc.modalPresentationStyle = .fullScreen
+        
+        
         
         if let mainTabBarVC = rootViewController as? TabBarViewController {
             mainTabBarVC.selectedIndex = 0
             if let homeNavVC = mainTabBarVC.viewControllers?.first as? UINavigationController {
-                homeNavVC.pushViewController(eventViewController, animated: true)
+                homeNavVC.present(navVc, animated: true)
+                
+                
             }
         }
         

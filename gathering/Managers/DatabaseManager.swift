@@ -443,7 +443,13 @@ final class DatabaseManager {
         let ref = database.document(eventRef)
         
         ref.setData([eventID:FieldValue.delete()], merge: true) { error in
-            completion(error == nil)
+            guard error == nil else {return}
+            
+            StorageManager.shared.deleteImages(id: eventID) { Bool in
+                completion(error == nil)
+            }
+            
+            
         }
     }
     

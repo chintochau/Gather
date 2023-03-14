@@ -7,6 +7,7 @@
 
 import UIKit
 import EmojiPicker
+import DKImagePickerController
 
 
 enum InputFieldType {
@@ -84,20 +85,21 @@ class NewPostViewController: UIViewController {
     private var viewModels = [[InputFieldType]()]
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
-    var completion: ((_ event:Event?,_ image:UIImage?) -> Void)?
+    var completion: ((_ event:Event?,_ images:[UIImage]) -> Void)?
     
     
     private let bottomOffset:CGFloat = 150
     var newPost = NewPost()
-    var image:UIImage? {
+    
+    var images:[UIImage] = [] {
         didSet {
-            if let image = image {
-                if let cell = tableView.cellForRow(at: .init(row: 0, section: 0)) as? SingleImageTableViewCell {
-                    cell.image = image
-                }
+            if let cell = tableView.cellForRow(at: .init(row: 0, section: 0)) as? ImagesTableViewCell {
+                cell.images = images
+                tableView.reloadData()
             }
         }
     }
+    
     private var isImageEdited:Bool = false
     
     var isEditMode:Bool = false {
@@ -133,7 +135,6 @@ class NewPostViewController: UIViewController {
         configureTableView()
         setupNavBar()
         observeKeyboardChange()
-        imagePicker.delegate = self
         
         view.addSubview(tempButton)
         
@@ -226,7 +227,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
         tableView.register(TitleWithImageTableViewCell.self, forCellReuseIdentifier: TitleWithImageTableViewCell.identifier)
         tableView.register(HorizontalCollectionView.self, forCellReuseIdentifier: HorizontalCollectionView.identifier)
         tableView.register(LocationPickerTableViewCell.self, forCellReuseIdentifier: LocationPickerTableViewCell.identifier)
-        tableView.register(SingleImageTableViewCell.self, forCellReuseIdentifier: SingleImageTableViewCell.identifier)
+        tableView.register(ImagesTableViewCell.self, forCellReuseIdentifier: ImagesTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.contentInset = .init(top: 0, left: 0, bottom: bottomOffset, right: 0)
@@ -318,10 +319,9 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
             }
             return cell
         case .imagePicker:
-            let cell = tableView.dequeueReusableCell(withIdentifier: SingleImageTableViewCell.identifier, for: indexPath) as! SingleImageTableViewCell
-            if let image = self.image {
-                cell.image = image
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: ImagesTableViewCell.identifier, for: indexPath) as! ImagesTableViewCell
+            cell.configureImageViews(with: view.width)
+            cell.images = self.images
             return cell
         case .toggleButton(title: let title, tag: let tag):
             let cell = tableView.dequeueReusableCell(withIdentifier: ToggleButtonTableViewCell.identifier, for: indexPath) as! ToggleButtonTableViewCell
@@ -339,13 +339,19 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        
+        
         if indexPath.row == 0 {
-            imagePicker.sourceType = .photoLibrary
-            imagePicker.allowsEditing = true
-            present(imagePicker, animated: true)
+//            imagePicker.sourceType = .photoLibrary
+//            imagePicker.allowsEditing = true
+//
+//            present(imagePicker, animated: true)
+            
+            presentImagePicker()
         }
         
     }
+    
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0 {
@@ -401,14 +407,16 @@ extension NewPostViewController {
             publishPostWithImage { [weak self] finalEvent in
                 LoadingIndicator.shared.hideLoadingIndicator()
                 self?.navigationController?.popToRootViewController(animated: false)
-                self?.completion?(finalEvent, self?.image)
+                self?.dismiss(animated: false)
+                self?.completion?(finalEvent, self?.images ?? [])
             }
             
         }else {
             DatabaseManager.shared.createEvent(with: event) { [weak self] finalEvent in
                 LoadingIndicator.shared.hideLoadingIndicator()
                 self?.navigationController?.popToRootViewController(animated: false)
-                self?.completion?(finalEvent,nil)
+                self?.dismiss(animated: false)
+                self?.completion?(finalEvent,[])
             }
         }
     }
@@ -424,7 +432,8 @@ extension NewPostViewController {
         }else {
             DatabaseManager.shared.deleteEvent(eventID:newPost.id, eventRef: eventRef) { [weak self] _ in
                 // need to modify, should return success instead of an event
-                self?.completion?(nil, nil)
+                self?.dismiss(animated: false)
+                self?.completion?(nil, [])
             }
         }
     }
@@ -432,24 +441,33 @@ extension NewPostViewController {
     
     
     private func publishPostWithImage(completion: @escaping (Event) -> Void){
-        
-        var imagesData = [Data?]()
-        
-        for img in [image] {
-            guard let image = img?.sd_resizedImage(with: CGSize(width: 1024, height: 1024), scaleMode: .aspectFill),
-                  let data = image.jpegData(compressionQuality: 0.5)
-            else {break}
+        let imagesData:[Data?] = images.compactMap { img in
             
-            imagesData.append(data)
+            let aspectRatio = img.size.width / img.size.height
+                   
+                   // Calculate the new size based on the aspect ratio and maximum size of 1024 on the short edge
+                   let newSize: CGSize
+                   if aspectRatio >= 1.0 {
+                       newSize = CGSize(width: 1024, height: 1024 / aspectRatio)
+                   } else {
+                       newSize = CGSize(width: 1024 * aspectRatio, height: 1024)
+                   }
+                   
+            
+            guard let image = img.sd_resizedImage(with: newSize, scaleMode: .aspectFill),
+                  let data = image.jpegData(compressionQuality: 0.3)
+            else { return nil }
+            return data
+            
+            
+            
         }
-        
         
         StorageManager.shared.uploadEventImage(id: newPost.id, data: imagesData) {[weak self] urlStrings in
             
             guard let event = self?.newPost.toEvent(urlStrings),
                   let _ = DefaultsManager.shared.getCurrentUser()
             else {return}
-            
             
             DatabaseManager.shared.createEvent(with: event) { finalEvent in
                 completion(finalEvent)
@@ -461,24 +479,42 @@ extension NewPostViewController {
 }
 
 
-
-extension NewPostViewController:UIImagePickerControllerDelegate,UINavigationControllerDelegate {
+extension NewPostViewController {
     // MARK: - Pick Image
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let editedImage = info[.editedImage] as? UIImage else {
-            dismiss(animated: true)
-            return
+    
+    func presentImagePicker() {
+        
+        let pickerController = DKImagePickerController()
+        pickerController.maxSelectableCount = 4
+        pickerController.view.backgroundColor = .systemBackground
+        pickerController.sourceType = .photo
+        pickerController.showsCancelButton = true
+        
+        let group = DispatchGroup()
+        pickerController.didSelectAssets = { (assets: [DKAsset]) in
+            var images = [UIImage]()
+            for asset in assets {
+                group.enter()
+                asset.fetchOriginalImage() { image, info in
+                    if let image = image {
+                        images.append(image)
+                    }
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                if !images.isEmpty {
+                    self.isImageEdited = true
+                    self.images = images
+                }
+            }
+            
+            // Do something with the selected images
         }
-
-        self.isImageEdited = true
-        self.image = editedImage
-
-        dismiss(animated: true)
+        present(pickerController, animated: true, completion: nil)
     }
-
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true)
-    }
+    
     
 }
 

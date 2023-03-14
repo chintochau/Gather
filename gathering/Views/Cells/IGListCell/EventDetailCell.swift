@@ -68,7 +68,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         [upperSeparatorView,dateLabel,timeLabel,locationLabel,detailTextView,separatorView,mapButton].forEach({addSubview($0)})
         
         let padding:CGFloat = 30
-        detailTextView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 20, left: padding, bottom: padding, right: padding))
+        detailTextView.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: padding, bottom: padding, right: padding))
         detailTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 100).isActive = true
         
         

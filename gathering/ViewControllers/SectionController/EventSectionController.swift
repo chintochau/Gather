@@ -42,7 +42,13 @@ class EventSectionController: ListSectionController {
         let cell = collectionContext?.cellForItem(at: index, sectionController: self) as! BasicEventCollectionViewCell
         viewModel.image = cell.eventImageView.image
         vc.viewModel = viewModel
-        viewController?.navigationController?.pushViewController(vc, animated: true)
+        
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.hero.isEnabled = true
+        navVc.navigationBar.tintColor = .label
+        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
+        navVc.modalPresentationStyle = .fullScreen
+        viewController?.present(navVc, animated: true)
     }
     
 }
