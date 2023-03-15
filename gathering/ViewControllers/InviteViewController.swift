@@ -12,6 +12,8 @@ class InviteViewController: UIViewController {
     private let friends:[UserObject] = RelationshipManager.shared.getFriendsInUserObjects()
     private var filteredList = [UserObject]()
     private var selectedFriends:[String] = []
+    var joinedFriends:[String] = []
+    var event:UserEvent?
     
     private let tableView:UITableView = {
         let view = UITableView()
@@ -25,6 +27,9 @@ class InviteViewController: UIViewController {
         view.placeholder = "搜尋朋友"
         return view
     }()
+    
+    /// return how many friends are invited
+    var completion: ((Int) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +53,25 @@ class InviteViewController: UIViewController {
     // MARK: - private func
     
     @objc private func didTapInvite(){
-        self.dismiss(animated: true)
+        AlertManager.shared.showAlert(title: "",message: "邀請\(selectedFriends.count)個朋友參加?", buttonText: "確定", from: self) {[weak self] in
+            guard let user = DefaultsManager.shared.getCurrentUser(),
+            let event = self?.event else {return}
+            
+            self?.selectedFriends.forEach({
+                CustomNotificationManager.shared.sendNotificationToUser(
+                    username: $0,
+                    notification: .init(
+                        id: IdManager.shared.createInviteId(targetUsername: $0, eventId: event.id) ,
+                        type: .eventInvite,
+                        sentUser: user.toSentUser(),
+                        event: event))
+            })
+            self?.dismiss(animated: false)
+            self?.completion?(self?.selectedFriends.count ?? 0)
+            
+        } cancelCompletion: {
+            print("cancelled")
+        }
     }
 
 }
@@ -62,7 +85,12 @@ extension InviteViewController:UITableViewDelegate,UITableViewDataSource {
         let cell = UserTableViewCell()
         cell.configure(with: filteredList[indexPath.row])
         
-        if selectedFriends.contains(filteredList[indexPath.row].username) {
+        let cellUsername = filteredList[indexPath.row].username
+        
+        if joinedFriends.contains(cellUsername) {
+            cell.isUserInteractionEnabled = false
+            cell.valuelabel.text = "已參加"
+        } else if selectedFriends.contains(cellUsername) {
             cell.accessoryType = .checkmark
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
         } else {
@@ -79,7 +107,6 @@ extension InviteViewController:UITableViewDelegate,UITableViewDataSource {
             selectedFriends.append(selectedUser)
             print(selectedFriends)
         }
-        
         
         navigationItem.rightBarButtonItem?.isEnabled = !selectedFriends.isEmpty
         tableView.reloadData()

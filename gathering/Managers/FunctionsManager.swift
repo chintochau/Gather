@@ -56,5 +56,48 @@ struct FunctionsManager {
         
     }
     
-}
 
+    public func sendMassMessage(message:ChatRoomMessage){
+        guard let messageData = message.asDictionary() else {return}
+        
+        functions.httpsCallable("sendEventChatroomMessage").call(messageData) { (result, error) in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            
+            if let error = error {
+                print("Error adding event to Firestore:", error)
+            } else if let result = (result?.data as? [String: Any]) {
+                if let errorMessage = result["error"] as? String {
+                    print("Error adding event to Firestore:", errorMessage)
+                } else {
+                    print("MessagesSent:", result["result"] ?? "")
+                }
+            }
+        }
+        
+    }
+    
+
+    
+    /// thie function is used only when testing localhost functions
+    public func addDemoEventToFirestore(event:Event){
+        
+        guard let eventData = event.asDictionary() else {return}
+        
+        functions.httpsCallable("addDemoEventToFirestore").call(["event": eventData]) { result, error in
+            if let error = error {
+                print("Error adding event to Firestore:", error)
+            } else if let result = (result?.data as? [String: Any]) {
+                if let errorMessage = result["error"] as? String {
+                    print("Error adding event to Firestore:", errorMessage)
+                } else {
+                    print("Event added to Firestore:", result["result"] ?? "")
+                }
+            }
+        }
+    }
+    
+    
+}

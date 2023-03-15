@@ -33,7 +33,7 @@ class CommentCell: UICollectionViewCell,ListBindable {
     }()
     
     
-    var comment:Comment?
+    private var comment:Comment?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

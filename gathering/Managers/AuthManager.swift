@@ -74,6 +74,7 @@ final class AuthManager {
                 
                 DefaultsManager.shared.updateUserProfile(with: user)
                 ChatMessageManager.shared.connectToChatServer(true)
+                DatabaseManager.shared.updateFcmTokenToServer()
                 completion(user)
             }
         }

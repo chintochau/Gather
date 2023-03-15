@@ -177,10 +177,6 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
     }
-    
-    
-    
-    
 }
 
 
@@ -223,7 +219,12 @@ extension HomeViewController:UIScrollViewDelegate  {
         headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 50)
         
         
-        navigationItem.rightBarButtonItem = .init(image: UIImage(systemName: "message"), style: .done, target: self, action: #selector(didTapChat))
+        navigationItem.rightBarButtonItems = [
+            .init(image: UIImage(systemName: "message"), style: .done, target: self, action: #selector(didTapChat)),
+            .init(image: UIImage(systemName: "bell"), style: .done, target: self, action: #selector(didTapNotification))
+        ]
+        
+        
     }
     
     
@@ -236,5 +237,8 @@ extension HomeViewController:UIScrollViewDelegate  {
         present(navVc, animated: true)
     }
     
-    
+    @objc private func didTapNotification(){
+        let vc = NotificationsViewController()
+        presentModallyWithHero(vc)
+    }
 }

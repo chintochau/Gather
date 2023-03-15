@@ -28,6 +28,7 @@ final class DatabaseManager {
         let ref = database.collection("users").document(newUser.username)
         
         guard let data = newUser.asDictionary() else {
+            completion(false)
             return
         }
         ref.setData(data) { error in
@@ -366,15 +367,32 @@ final class DatabaseManager {
     
     // MARK: - UpdateEvents
     ///confirm form event and send notification to all participants
-    public func confirmFormEvent(eventID:String,eventRef:String, completion:@escaping (Bool) -> Void){
-         let eventRef = database.document(eventRef)
+    public func confirmFormEvent(eventName:String, eventID:String,eventReferencePath:String, completion:@escaping (Bool) -> Void){
+        
+        guard let username = UserDefaults.standard.string(forKey: "username"),
+        let name = UserDefaults.standard.string(forKey: "name") else {
+            completion(false)
+            return}
+        
+         let eventRef = database.document(eventReferencePath)
         
         eventRef.setData([eventID:["eventStatus": EventStatus.confirmed.rawValue]], merge: true) { error in
+            
+            let message = ChatRoomMessage(
+                eventName: eventName,
+                eventId: eventID,
+                senderUsername: username,
+                senderName: name,
+                message: "\(eventName)成團了！",
+                referencePath: eventReferencePath)
+            
+            FunctionsManager.shared.sendMassMessage(message: message)
+            
             completion(error == nil)
         }
     }
     
-    public func registerEvent(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
+    public func registerEventFromClient(participant: User,eventID:String,event:Event,completion:@escaping (Bool) -> Void){
         let monthStartDateReference:String = monthStartDateReference
         let monthEndDateReference:String = monthEndDateReference
         
@@ -389,8 +407,8 @@ final class DatabaseManager {
         
         database.runTransaction {[weak self] transaction, error in
             
-            
-            guard let eventRef = self?.database.document(referencePath),
+            guard let user = DefaultsManager.shared.getCurrentUser(),
+                let eventRef = self?.database.document(referencePath),
                   let userEventRef = self?.database.document("users/\(username)/events/\(referencePathForUser)/"),
                   let notificationRef = self?.database.document("notifications/\(event.organisers.first?.username ?? "admin")/\(Date().yearWeekStringLocalTime())/\(Date().yearWeekStringLocalTime())")
             else {return}
@@ -411,10 +429,9 @@ final class DatabaseManager {
             ], forDocument: userEventRef,merge: true)
             
             if username != event.organisers.first?.username {
-                let notification = Notification(
+                let notification = GANotification(
                     type: .eventJoin,
-                    sender: username,
-                    friendRequest: nil,
+                    sentUser: user.toSentUser(),
                     event: event.toUserEvent())
                 if let notificationData = notification.asDictionary() {
                     transaction.setData([
@@ -501,13 +518,15 @@ final class DatabaseManager {
     
     public func sendFriendRequest(targetUsername:String){
         
-        guard let username = UserDefaults.standard.string(forKey: "username"),
+        guard let user = DefaultsManager.shared.getCurrentUser(),
               let relationshipString = IdManager.shared.generateRelationshipIdFor(targetUsername: targetUsername)
         else {return}
         
+        let username = user.username
+        
         let targetRef = database.collection("users").document(targetUsername).collection("relationship").document(username)
         let selfRef = database.collection("users").document(username).collection("relationship").document(targetUsername)
-        
+        let targetNotificationRef = database.collection("notifications/\(targetUsername)/notifications").document(Date().yearMonthStringUTC())
         
         let batch  = database.batch()
         let relationshipObject = RelationshipObject()
@@ -525,6 +544,15 @@ final class DatabaseManager {
         relationshipObject.status = relationshipType.pending.rawValue
         batch.setData(relationshipObject.asDictionary()!, forDocument: selfRef)
         
+        // wrtie to target notificaion
+        let notification = GANotification(id: IdManager.shared.createFriendRequestID(targetUsername: targetUsername) ,type: .friendRequest, sentUser: user.toSentUser(), event: nil)
+        if let notificationData = notification.asDictionary() {
+            batch.setData([
+                GANotification.startDateString: Date().startOfMonthTimestampUTC(),
+                GANotification.endDateString: Date().startOfNextMonthTimestampUTC()-1,
+                notification.id: notificationData
+            ], forDocument: targetNotificationRef,merge: true)
+        }
         
         batch.commit()
     }
@@ -643,6 +671,45 @@ final class DatabaseManager {
                 completion(error == nil)
             }
         }
+    }
+
+    
+    // MARK: - FcmToken
+    public func updateFcmTokenToServer(){
+        
+        database.runTransaction({ [weak self] (transaction, errorPointer) -> Any? in
+            
+            guard let db = self?.database,
+            let user = DefaultsManager.shared.getCurrentUser(),
+                let fcmToken = CustomNotificationManager.fcmToken else {return}
+            
+            let thisMonthDateString = Date().yearMonthStringUTC()
+            let nextMonthDateString = Date().startOfNextMonthTimestampUTC().toDate().yearMonthStringUTC()
+            
+            let docRef1 = db.document("notifications/\(user.username)/notifications/\(thisMonthDateString)")
+            let docRef2 = db.document("notifications/\(user.username)/notifications/\(nextMonthDateString)")
+            let docRef3 = db.document("users/\(user.username)")
+            
+            
+            transaction.setData([
+                "fcmToken": fcmToken
+            ], forDocument: docRef1, merge: true)
+            transaction.setData([
+                "fcmToken": fcmToken
+            ], forDocument: docRef2, merge: true)
+            transaction.setData(["fcmToken": fcmToken], forDocument: docRef3, merge: true)
+            
+            return nil
+            
+        }) { (object, error) in
+            if let error = error {
+                print("Transaction failed: \(error.localizedDescription)")
+            } else {
+                print("Transaction successful!")
+            }
+        }
+        
+        
     }
     
 }

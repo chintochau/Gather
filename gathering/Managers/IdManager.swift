@@ -14,7 +14,7 @@ final class IdManager  {
         let id = UUID().uuidString.prefix(8)
         let dateString = Int(Date().timeIntervalSince1970)/5000
         let randomNumber = Int.random(in: 1...1000)
-        return "\(id)_\(dateString)"
+        return "\(dateString)_\(id)"
     }
     
     // MARK: - Channel ID
@@ -34,6 +34,19 @@ final class IdManager  {
         let sortedUsername = [username, targetUsername].sorted()
         
         return (sortedUsername[0] + "_" + sortedUsername[1], sortedUsername[0],sortedUsername[1])
+        
+    }
+    
+    // MARK: - EventInviteId
+    public func createInviteId(targetUsername:String, eventId:String) -> String{
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return UUID().uuidString}
+        return "\(user.username)_\(targetUsername)_\(eventId)"
+    }
+    
+    public func createFriendRequestID(targetUsername:String) -> String {
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return UUID().uuidString}
+        
+        return "\(user.username)_\(targetUsername)"
         
     }
     

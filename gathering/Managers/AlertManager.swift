@@ -18,23 +18,25 @@ struct AlertManager {
         viewController.present(alert, animated: true, completion: nil)
     }
     
-    func showAlert(title: String, message: String = "", buttonText: String, cancelText: String? = "取消",from viewController: UIViewController, completion: @escaping () -> Void) {
-            
+    func showAlert(title: String, message: String = "", buttonText: String, cancelText: String? = "取消", from viewController: UIViewController, buttonCompletion: @escaping () -> Void, cancelCompletion: (() -> Void)? = nil) {
+        
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            
+        
         if let cancelText = cancelText {
-            let cancelAction = UIAlertAction(title: cancelText, style: .cancel, handler: nil)
+            let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
+                cancelCompletion?()
+            }
             alertController.addAction(cancelAction)
         }
-            
+        
         let buttonAction = UIAlertAction(title: buttonText, style: .default) { _ in
-            completion()
+            buttonCompletion()
         }
         alertController.addAction(buttonAction)
         
         viewController.present(alertController, animated: true, completion: nil)
-        
     }
+
     
     func showActionSheet(withTitle title: String?, message: String?, firstButtonTitle: String, firstButtonAction: (() -> Void)? = nil, secondButtonTitle: String, secondButtonAction: (() -> Void)? = nil) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)

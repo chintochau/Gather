@@ -63,7 +63,6 @@ class SectionHeaderRsuableView: UICollectionReusableView {
         super.prepareForReuse()
         titleLabel.text = nil
         button.setTitle(nil, for: .normal)
-        button.layer.name = nil
     }
     
     @objc private func didTapShowAll(){

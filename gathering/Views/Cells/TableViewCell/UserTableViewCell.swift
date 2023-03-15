@@ -33,10 +33,11 @@ class UserTableViewCell: UITableViewCell {
         return view
     }()
     
-    private lazy var valuelabel:UILabel = {
+    lazy var valuelabel:UILabel = {
         let view = UILabel()
-        view.textColor = .lightGray
+        view.textColor = .extraLightGray
         view.numberOfLines = 1
+        view.font = .robotoRegularFont(ofSize: 14)
         return view
     }()
     
@@ -49,7 +50,8 @@ class UserTableViewCell: UITableViewCell {
         [
             profileImageView,
             nameLabel,
-            usernameLabel
+            usernameLabel,
+            valuelabel
         ].forEach({contentView.addSubview($0)})
         
         let imageSize:CGFloat = 50
@@ -65,6 +67,8 @@ class UserTableViewCell: UITableViewCell {
         nameLabel.anchor(top: nil, leading: profileImageView.trailingAnchor, bottom: contentView.centerYAnchor, trailing: nil,padding: .init(top: 0, left: 10, bottom: 0, right: 0))
         usernameLabel.anchor(top: contentView.centerYAnchor, leading: nameLabel.leadingAnchor, bottom: nil, trailing: nil)
         
+        valuelabel.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20))
+        valuelabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
     }
     

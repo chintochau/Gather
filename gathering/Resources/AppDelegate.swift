@@ -81,12 +81,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Get the window instance
             guard let window = UIApplication.shared.windows.first else { return }
             
-            let vc = EventDetailViewController()
-            vc.configureWithID(eventID: eventId, eventReferencePath: eventReference)
+//            let vc = EventDetailViewController()
+//            vc.configureWithID(eventID: eventId, eventReferencePath: eventReference)
             if let mainTabBarVC = window.rootViewController as? TabBarViewController {
                 mainTabBarVC.selectedIndex = 0
                 if let homeNavVC = mainTabBarVC.viewControllers?.first as? UINavigationController {
-                    homeNavVC.pushViewController(vc, animated: true)
+                    homeNavVC.presentEventDetailViewController(eventID: eventId, eventRef: eventReference)
                 }
             }
         }

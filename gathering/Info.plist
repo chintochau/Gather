@@ -34,6 +34,19 @@
 		<false/>
 		<key>UISceneConfigurations</key>
 		<dict>
+			<key>UIWindowSceneSessionRoleExternalDisplayNonInteractive</key>
+			<array>
+				<dict>
+					<key>UISceneClassName</key>
+					<string></string>
+					<key>UISceneDelegateClassName</key>
+					<string></string>
+					<key>UISceneConfigurationName</key>
+					<string></string>
+					<key>UISceneStoryboardFile</key>
+					<string></string>
+				</dict>
+			</array>
 			<key>UIWindowSceneSessionRoleApplication</key>
 			<array>
 				<dict>
@@ -47,5 +60,9 @@
 	</dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>&quot;Allowing camera access enables you to capture photos and videos for uploading to your profile or event posts. You can also upload images from your photo library to personalize your profile or event images.&quot;</string>
+	<key>Privacy - Camera Usage Description (zh-HK)</key>
+	<string>&quot;允許相機訪問可讓您拍攝照片和視頻，並將其上傳到您的個人檔案或活動帖子。您還可以從照片庫中上傳圖像以個性化您的個人檔案或活動圖像。&quot;</string>
 </dict>
 </plist>

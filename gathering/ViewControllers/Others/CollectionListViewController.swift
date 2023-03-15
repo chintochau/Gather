@@ -10,11 +10,18 @@ class CollectionListViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var users: [User] = []
-    private var filteredUsers: [User] = []
+    let collectionView:UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = .init(width: 0, height: 50)
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return view
+    }()
     
-    private let searchBar = UISearchBar()
-    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    
+    private var textViewBottomConstraint: NSLayoutConstraint!
+    
+    var items:[Any] = []
     
     // MARK: - Lifecycle Methods
     
@@ -22,94 +29,67 @@ class CollectionListViewController: UIViewController {
         super.viewDidLoad()
         setUpPanBackGestureAndBackButton()
         setupViews()
-        setupConstraints()
         loadData()
+        
+        
+        
     }
+    
     
     // MARK: - Private Methods
     
     private func setupViews() {
         view.backgroundColor = .systemBackground
         
-        searchBar.delegate = self
-        searchBar.placeholder = "Search users"
-        
-        
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(CommentCell.self, forCellWithReuseIdentifier: CommentCell.identifier)
+        collectionView.register(UserCollectionViewCell.self, forCellWithReuseIdentifier: UserCollectionViewCell.identifier)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.alwaysBounceVertical = true
         
-        view.addSubview(searchBar)
         view.addSubview(collectionView)
+        collectionView.fillSuperview()
     }
     
-    private func setupConstraints() {
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-    }
     
     private func loadData() {
         // Load user data here, and assign to both users and filteredUsers arrays
     }
     
-    private func filterContentForSearchText(_ searchText: String) {
-        filteredUsers = users.filter { user in
-            return user.username.lowercased().contains(searchText.lowercased())
-        }
-        collectionView.reloadData()
-    }
-}
-
-// MARK: - UISearchBarDelegate
-
-extension CollectionListViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filterContentForSearchText(searchText)
-    }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        filterContentForSearchText("")
-        searchBar.resignFirstResponder()
-    }
 }
 
 // MARK: - UICollectionViewDataSource
 
 extension CollectionListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filteredUsers.count
+        return items.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-        cell.backgroundColor = .gray
-        
-        let user = filteredUsers[indexPath.item]
-        let label = UILabel(frame: cell.contentView.bounds)
-        label.text = user.name
-        label.textAlignment = .center
-        label.textColor = .white
-        cell.contentView.addSubview(label)
-        
-        return cell
+        if let items = items as? [Comment] {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CommentCell.identifier, for: indexPath) as! CommentCell
+            cell.bindViewModel(items[indexPath.row])
+            cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+            return cell
+            
+        }else if let items = items as? [Participant] {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCollectionViewCell.identifier, for: indexPath) as! UserCollectionViewCell
+            cell.bindViewModel(items[indexPath.row])
+            cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+            return cell
+            
+        }else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
+            return cell
+        }
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension CollectionListViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.bounds.width / 2 - 10, height: 100)
-    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 10
@@ -120,3 +100,5 @@ extension CollectionListViewController: UICollectionViewDelegateFlowLayout {
     }
     
 }
+
+

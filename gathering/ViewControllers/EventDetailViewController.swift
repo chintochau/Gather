@@ -70,12 +70,16 @@ class EventDetailViewController: UIViewController {
             
             guard let owner = vm.organiser else {return}
             
-            if vm.isOrganiser {
-                configureButtonForOrganiser()
-            } else if vm.isJoined {
-                configureButtonForParticipant()
-            } else {
-                configureButton()
+            if AuthManager.shared.isSignedIn {
+                if vm.isOrganiser {
+                    configureButtonForOrganiser()
+                } else if vm.isJoined {
+                    configureButtonForParticipant()
+                } else {
+                    configureButton()
+                }
+            }else {
+                configureLoginButton()
             }
             
             if let urlStrings = viewModel?.event.imageUrlString, !urlStrings.isEmpty {
@@ -91,7 +95,12 @@ class EventDetailViewController: UIViewController {
             ]
             
             participantsList = []
-            participantsList.append(contentsOf: vm.friends)
+            vm.friends.forEach({
+                participantsList.append($0)
+                joinedFriends.append($0.username ?? "")
+            })
+            
+//            participantsList.append(contentsOf: vm.friends)
             participantsList.append(contentsOf: vm.participantsExcludFriends)
             
             comments = vm.comments
@@ -117,6 +126,8 @@ class EventDetailViewController: UIViewController {
     var comments:[Comment] = []
     var latestComments:[Comment] = []
     var commentText:String? = ""
+    private var joinedFriends:[String] = []
+    
     private var observer: NSObjectProtocol?
     private var hideObserver: NSObjectProtocol?
     private let bottomOffset:CGFloat = 150
@@ -169,7 +180,7 @@ class EventDetailViewController: UIViewController {
     
     fileprivate func setupGradientLayer(){
         let topGradientLayer = CAGradientLayer()
-        topGradientLayer.colors = [UIColor.systemBackground.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
+        topGradientLayer.colors = [UIColor.black.withAlphaComponent(0.5).cgColor, UIColor.clear.cgColor]
         topGradientLayer.locations = [0.3,1]
         view.layer.addSublayer(topGradientLayer)
         topGradientLayer.frame = CGRect(x: 0, y: 0, width: view.width, height: 88)
@@ -177,7 +188,7 @@ class EventDetailViewController: UIViewController {
         
         
         let bottomGradientLayer = CAGradientLayer()
-        bottomGradientLayer.colors = [UIColor.clear.cgColor, UIColor.systemBackground.cgColor]
+        bottomGradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
         bottomGradientLayer.locations = [0.3,1]
         view.layer.addSublayer(bottomGradientLayer)
         bottomGradientLayer.frame = CGRect(x: 0, y: view.height-60, width: view.width, height: 60)
@@ -235,18 +246,16 @@ class EventDetailViewController: UIViewController {
     }
 
     private func eventDoesNotExist (){
-        AlertManager.shared.showAlert(title: "Oops~",message: "活動不存在或者已取消", buttonText: "Dismiss",cancelText: nil, from: self) {[weak self] in
-            self?.navigationController?.popViewController(animated: true)
+        AlertManager.shared.showAlert(title: "Oops~", message: "活動不存取或取消", buttonText: "返回", cancelText: nil, from: self) {[weak self] in
+            self?.dismiss(animated: true)
         }
+
     }
     
     @objc private func didTapShare(){
-        
-        
-        
         guard let shareString = viewModel?.event.toString(includeTime: true) else {return}
         
-        
+        // MARK: - Diable share photos for now
         
 //        if let urlString = viewModel?.event.imageUrlString.first,
 //           let url = URL(string: urlString){
@@ -296,9 +305,11 @@ class EventDetailViewController: UIViewController {
         // confirm this event
         // send notification to all joiners
         guard let eventID = viewModel?.event.id,
-              let eventRef = viewModel?.event.referencePath else {return}
+              let eventRef = viewModel?.event.referencePath,
+              let eventName = viewModel?.event.title
+        else {return}
         
-        DatabaseManager.shared.confirmFormEvent(eventID: eventID, eventRef: eventRef) { [weak self] success in
+        DatabaseManager.shared.confirmFormEvent(eventName: eventName,eventID: eventID, eventReferencePath: eventRef) { [weak self] success in
             self?.refreshPage()
         }
     }
@@ -315,12 +326,17 @@ class EventDetailViewController: UIViewController {
     }
     
     @objc private func didTapInviteFriend(){
+        
+        guard let event = viewModel?.event else {return}
         let vc = InviteViewController()
-        let navVc = UINavigationController(rootViewController: vc)
-        navVc.hero.isEnabled = true
-        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
-        navVc.modalPresentationStyle = .fullScreen
-        present(navVc, animated: true)
+        vc.event = event.toUserEvent()
+        
+        vc.joinedFriends = joinedFriends
+        
+        vc.completion = { numberOfFriends in
+            AlertManager.shared.showAlert(title: "", message: "已邀請\(numberOfFriends)個朋友", from: self)
+        }
+        presentModallyWithHero(vc)
         
         
     }
@@ -356,7 +372,7 @@ class EventDetailViewController: UIViewController {
     
     private func registerEvent(){
         if !AuthManager.shared.isSignedIn {
-            AlertManager.shared.showAlert(title: "Oops~", message: "Please login to join events", from: self)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後可參加活動", from: self)
         }
         
         guard let event = viewModel?.event,
@@ -399,7 +415,8 @@ class EventDetailViewController: UIViewController {
             }
             let viewModel = EventCellViewModel(event: event)
             
-            if let imageUrl = viewModel.imageUrlString, let self = self {
+            if let imageUrl = viewModel.imageUrlString,
+               let self = self {
                 
             }else {
                 viewModel.image = self?.viewModel?.image
@@ -436,7 +453,7 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
         
         switch section {
         case 0:
-            if let viewModel = viewModel {
+            if let _ = viewModel {
                 return 3
             }
             return 0
@@ -569,22 +586,28 @@ extension EventDetailViewController: UICollectionViewDelegate,UICollectionViewDa
 }
 
 extension EventDetailViewController:UITextViewDelegate,SectionHeaderReusableViewDelegate {
+    // MARK: - Header Action
     func SectionHeaderReusableViewDidTapActionButton(_ view: SectionHeaderRsuableView, button: UIButton) {
+        
         let vc = CollectionListViewController()
         
-        let navVc = UINavigationController(rootViewController: vc)
-        navVc.hero.isEnabled = true
-        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
-        navVc.modalPresentationStyle = .fullScreen
-        present(navVc, animated: true)
+        switch(button.tag) {
+        case 2: // comment
+            vc.navigationItem.title = "留言"
+            vc.items = comments.sorted(by: {$0.timestamp > $1.timestamp})
+        case 3: // participants list
+            vc.navigationItem.title = "參加者"
+            vc.items = participantsList
+        default:
+            break
+        }
         
+        presentModallyWithHero(vc)
     }
     
     
     @objc private func didTapSend(){
         guard let vm = viewModel, let text = commentText else {return}
-        
-        
         DatabaseManager.shared.postComments(event: vm.event, message: text) { [weak self] success in
             if success {
                 
@@ -651,6 +674,25 @@ extension EventDetailViewController {
             addFullButton()
             addWaitListButton()
         }
+    }
+    
+    fileprivate func configureLoginButton() {
+        lazy var editButton:GradientButton = {
+            let view = GradientButton(type: .system)
+            view.setTitleColor(.white, for: .normal)
+            view.titleLabel?.font = .robotoMedium(ofSize: 16)
+            view.setGradient(colors: [.lightMainColor,.darkMainColor], startPoint: .init(x: 0.5, y: 0.1), endPoint: .init(x: 0.5, y: 0.9))
+            view.setTitle("登入以參加活動", for: .normal)
+            view.gradientLayer?.cornerRadius = 15
+            view.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
+            return view
+        }()
+        buttonStackView.addArrangedSubview(editButton)
+        
+    }
+    
+    @objc private func didTapLoginButton(){
+        print("Show Login Page")
     }
     
     private func addEditButton(){
@@ -761,7 +803,6 @@ extension EventDetailViewController {
 
 extension EventDetailViewController:ImageSlideShowCollectionViewCellDelegate {
     func ImageSlideShowCollectionViewCellDidTapImage(_ cell: ImageSlideShowCollectionViewCell) {
-        
         cell.slideshow.presentFullScreenController(from: self)
     }
     

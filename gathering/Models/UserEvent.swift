@@ -21,7 +21,7 @@ struct UserEvent:Codable {
         
         let dateString = String.localeDate(from: date, .zhHantTW)
         
-        return dateString.date ?? "NOW"
+        return dateString.date
     }
 }
 
