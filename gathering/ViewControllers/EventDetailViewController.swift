@@ -613,7 +613,6 @@ extension EventDetailViewController:UITextViewDelegate,SectionHeaderReusableView
                 
                 DatabaseManager.shared.fetchSingleEvent(event: vm.event) { [weak self] event in
                     guard let event = event else {
-                        
                         self?.dismiss(animated: true)
                         return
                     }

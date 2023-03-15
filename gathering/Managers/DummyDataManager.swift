@@ -112,7 +112,32 @@ struct DummyDataManager {
         }
     }
 
-
+    
+    let database = Firestore.firestore()
+    
+    func createNotificationForEachUsers(){
+        
+        let ref = database.collection("users")
+        ref.getDocuments { snapshot, error in
+            guard let documents = snapshot?.documents else {return}
+            documents.forEach({
+                guard let user = User(with: $0.data()) else {return}
+                
+                let ref = database.document("notifications/\(user.username)/notifications/\(Date().yearMonthStringUTC())")
+                
+                ref.setData([
+                    GANotification.startDateString: Date().startOfMonthTimestampUTC(),
+                    GANotification.endDateString: Date().startOfNextMonthTimestampUTC()-1,
+                    "fcmToken" : user.fcmToken ?? ""
+                ], merge: true)
+                
+                
+            })
+        }
+        
+        
+    }
+    
     
 }
 

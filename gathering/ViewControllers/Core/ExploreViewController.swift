@@ -19,6 +19,22 @@ class ExploreViewController: UIViewController {
         return view
     }()
     
+    
+    lazy var segmentedButtonsView:SegmentedButtonsView = {
+        let segmentedButtonsView = SegmentedButtonsView()
+        segmentedButtonsView.setLablesTitles(titles: ["Users"])
+        return segmentedButtonsView
+    }()
+    
+    
+    private let titleLabel : UILabel = {
+        let view = UILabel()
+        view.text = "NearBy"
+        view.font = .righteousFont(ofSize: 24)
+        view.textColor = .label
+        return view
+    }()
+    
     private let mapView:MKMapView = {
         let view = MKMapView()
         let region = MKCoordinateRegion(center: Location.torontoCoordinate, span: Location.span)
@@ -26,37 +42,48 @@ class ExploreViewController: UIViewController {
         return view
     }()
     
-    private let filterBarCollectionView:UICollectionView = {
-        let layout  = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 0)
-        layout.estimatedItemSize = CGSize(width: 50, height: 30)
-        layout.itemSize = UICollectionViewFlowLayout.automaticSize
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.showsHorizontalScrollIndicator = false
-        return view
-    }()
     
-    private let filterArray = ["User","Event"]
-    
-    private var selectedIndex:IndexPath = .init(row: 0, section: 0)
+    private var collectionView:UICollectionView!
     
     private let locationManager = CLLocationManager()
+    private var users:[User] = []
     
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        configureCollectionView()
+        fetchUsersDate()
+        view.addSubview(collectionView)
+        collectionView.fillSuperview()
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
-        
-//        configureMap()
-//        requestLocationAuth()
+        //        configureMap()
+        //        requestLocationAuth()
         configureSearchBar()
-        configureFilterCollectionView()
-//        definesPresentationContext = true
+        //        definesPresentationContext = true
     }
     
+    private func fetchUsersDate(){
+        DatabaseManager.shared.searchForUsers(with: "") { users in
+            self.users = users
+            self.collectionView.reloadData()
+        }
+    }
+    
+    private func configureCollectionView(){
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: (view.width - 30)/2, height: (view.width - 30)/2)
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        layout.sectionInset = .init(top: 10, left: 10, bottom: 10, right: 10)
+        let view = UICollectionView(frame: .zero,collectionViewLayout: layout)
+        view.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        view.register(UserMediumCollectionViewCell.self, forCellWithReuseIdentifier: UserMediumCollectionViewCell.identifier)
+        self.collectionView = view
+    }
     
     
     
@@ -67,15 +94,6 @@ class ExploreViewController: UIViewController {
     
     
     
-    private func configureFilterCollectionView(){
-        view.addSubview(filterBarCollectionView)
-        filterBarCollectionView.delegate = self
-        filterBarCollectionView.dataSource = self
-        filterBarCollectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor,size: CGSize(width: view.width, height: 44))
-        filterBarCollectionView.register(FilterButtonCollectionViewCell.self
-                                      , forCellWithReuseIdentifier: FilterButtonCollectionViewCell.identifier)
-
-    }
     
 }
 
@@ -83,26 +101,18 @@ extension ExploreViewController:UICollectionViewDelegate,UICollectionViewDataSou
     
     // MARK: - Filter Tab
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filterArray.count
+        return users.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let filterText = filterArray[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterButtonCollectionViewCell.identifier, for: indexPath) as! FilterButtonCollectionViewCell
-        cell.configure(with: filterText)
-        collectionView.selectItem(at: selectedIndex, animated: false, scrollPosition: [])
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserMediumCollectionViewCell.identifier, for: indexPath) as! UserMediumCollectionViewCell
+        cell.user = users[indexPath.row]
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.cellForItem(at: indexPath)?.isSelected = true
-        selectedIndex = indexPath
     }
     
 }
@@ -120,11 +130,11 @@ extension ExploreViewController : GeneralSearchResultViewControllerDelegate{
     // MARK: - Search Bar
     
     private func configureSearchBar(){
-        navigationItem.searchController = searchController
-        navigationItem.title = "Search"
-        searchController.searchResultsUpdater = searchController.searchResultsController as? GeneralSearchResultViewController
-        let resultVC = searchController.searchResultsController as! GeneralSearchResultViewController
-        resultVC.delegate = self
+        let headerView = UIView()
+        headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 44)
+        headerView.addSubview(titleLabel)
+        titleLabel.sizeToFit()
+        titleLabel.frame = CGRect(x: 0, y: 0, width: titleLabel.width, height: 44)
         
     }
 }
@@ -141,11 +151,11 @@ extension ExploreViewController:CLLocationManagerDelegate {
     }
     
     func centreOnUserLoction() {
-      if let location = locationManager.location?.coordinate {
-        let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-        let region = MKCoordinateRegion.init(center: location, span: span)
-        mapView.setRegion(region, animated: true)
-     }
+        if let location = locationManager.location?.coordinate {
+            let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+            let region = MKCoordinateRegion.init(center: location, span: span)
+            mapView.setRegion(region, animated: true)
+        }
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

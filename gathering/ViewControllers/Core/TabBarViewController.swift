@@ -18,11 +18,10 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         self.delegate = self
         
-        //        self.tabBar.isTranslucent = false
         self.tabBar.tintColor = .mainColor
         self.tabBar.unselectedItemTintColor = .gray.withAlphaComponent(0.5)
-        self.tabBar.backgroundColor = .streamWhiteSnow
-        self.tabBar.barTintColor = .streamWhiteSnow
+        self.tabBar.isTranslucent = true// Set the background color with alpha
+        self.tabBar.backgroundColor = .systemBackground.withAlphaComponent(0.5)
         
         //Define VC
         let home = HomeViewController()
@@ -223,6 +222,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
 //        DummyDataManager.shared.generateDummyEvents()
+//        DummyDataManager.shared.createNotificationForEachUsers()
     }
     
 }

@@ -76,7 +76,6 @@ struct FunctionsManager {
                 }
             }
         }
-        
     }
     
 

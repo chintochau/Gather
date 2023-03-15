@@ -137,11 +137,13 @@ final class DatabaseManager {
         // 202310 (year month)
         let userEventReferencePath = event.endDate.yearMonthStringUTC()
         
+        
         database.runTransaction {[weak self] transaction, error in
             
             guard let eventRef = self?.database.collection("events").document(eventReferncePath),
                   let user = DefaultsManager.shared.getCurrentUser(),
-                  let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(userEventReferencePath)
+                  let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(userEventReferencePath),
+                  let chatroomRef = self?.database.collection("eventChatrooms").document(event.id)
             else {return}
             
             // generate referencePath for event
@@ -164,6 +166,11 @@ final class DatabaseManager {
                 monthEndDateReference: event.endDate.startOfNextMonthTimestampUTC() - 1,
                 event.id: userEventData
             ], forDocument: userEventRef,merge: true)
+            
+            
+            transaction.setData([
+                "participants": [user.username: user.fcmToken]
+            ], forDocument: chatroomRef, merge: true)
             
             return nil
             
@@ -652,6 +659,7 @@ final class DatabaseManager {
     
     
     // MARK: - Comments
+    /// Post comment, also notify the owner
     public func postComments(event:Event, message:String,completion:@escaping (Bool) -> Void){
 
         
@@ -662,13 +670,22 @@ final class DatabaseManager {
         let comment = Comment(sender: user.name ?? user.username, message: message, timestamp: Date().timeIntervalSince1970)
         let ref = database.document(referencePath)
         
+        
         if let commentData = comment.asDictionary() {
             ref.setData([
                 event.id: [
                     "comments":FieldValue.arrayUnion([commentData])
                 ]
             ],merge: true) { error in
+                guard error == nil else {
+                    completion(error == nil)
+                    return
+                }
+                
+                FunctionsManager.shared.sendMassMessage(
+                    message: .init(eventName: event.title, eventId: event.id, senderUsername: user.username, senderName: "\(user.name ?? user.username)留言", message: message, referencePath: referencePath))
                 completion(error == nil)
+                
             }
         }
     }

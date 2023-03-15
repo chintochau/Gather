@@ -91,6 +91,7 @@
 		478E6F0F29A9CBE300270C4F /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478E6F0E29A9CBE300270C4F /* AlertManager.swift */; };
 		478EE83D2996C447001BA53E /* FriendsTableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478EE83C2996C447001BA53E /* FriendsTableCollectionViewCell.swift */; };
 		478EE83F2996E610001BA53E /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478EE83E2996E610001BA53E /* SearchResult.swift */; };
+		47918DA629C23544001F8EE9 /* UserMediumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47918DA529C23544001F8EE9 /* UserMediumCollectionViewCell.swift */; };
 		4796DC10299574E7005802E2 /* FilterButtonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */; };
 		4796DC122995A66F005802E2 /* GeneralSearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */; };
 		479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */; };
@@ -245,6 +246,7 @@
 		478E6F0E29A9CBE300270C4F /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		478EE83C2996C447001BA53E /* FriendsTableCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsTableCollectionViewCell.swift; sourceTree = "<group>"; };
 		478EE83E2996E610001BA53E /* SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResult.swift; sourceTree = "<group>"; };
+		47918DA529C23544001F8EE9 /* UserMediumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMediumCollectionViewCell.swift; sourceTree = "<group>"; };
 		4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonCollectionViewCell.swift; sourceTree = "<group>"; };
 		4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSearchResultViewController.swift; sourceTree = "<group>"; };
 		479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
@@ -468,6 +470,7 @@
 				4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */,
 				478EE83C2996C447001BA53E /* FriendsTableCollectionViewCell.swift */,
 				4770E37029AF1DB600138FFF /* UserCollectionViewCell.swift */,
+				47918DA529C23544001F8EE9 /* UserMediumCollectionViewCell.swift */,
 				472B6AC029B82A3800DB295E /* UserEventCell.swift */,
 				472B6ACD29B9A0A700DB295E /* EventsTableCollectionViewCell.swift */,
 				477A02EC29BEC3D40017DA72 /* TextViewCollectionViewCell.swift */,
@@ -895,6 +898,7 @@
 				477A02EF29BEE2EC0017DA72 /* CollectionListViewController.swift in Sources */,
 				472997072985AC4400543FF6 /* DefaultsManager.swift in Sources */,
 				47505A3429BAEC8E0052982A /* ToggleButtonTableViewCell.swift in Sources */,
+				47918DA629C23544001F8EE9 /* UserMediumCollectionViewCell.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
 				476F995329A68856007CA9A4 /* NewEvent.swift in Sources */,
 				47CC052F299038EC00E97C1F /* PostCell.swift in Sources */,

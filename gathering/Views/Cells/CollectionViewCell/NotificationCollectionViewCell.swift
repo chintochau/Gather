@@ -40,8 +40,8 @@ class NotificationCollectionViewCell: UICollectionViewCell, ListBindable {
             addSubview($0)
         })
         
-        titleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 5, left: 20, bottom: 0, right: 20))
-        dateLabel.anchor(top: titleLabel.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 5, right: 20))
+        titleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 10, left: 20, bottom: 10, right: 20))
+        dateLabel.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 5, right: 20))
     }
     
     required init?(coder: NSCoder) {
