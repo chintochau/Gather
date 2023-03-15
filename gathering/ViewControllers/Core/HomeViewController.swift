@@ -43,6 +43,8 @@ class HomeViewController: UIViewController{
         super.viewDidLoad()
         configureNavBar()
         configureCollectionView()
+        
+        
         fetchInitialDataAndRefresh()
     }
     
@@ -168,7 +170,6 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
         print("items: \(viewModel.items.count), current: \(index)")
-        
         
         if index == viewModel.items.count - 1 {
             fetchMoreData()

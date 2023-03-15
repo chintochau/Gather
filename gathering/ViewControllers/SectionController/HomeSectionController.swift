@@ -70,8 +70,11 @@ class HomeSectionController: ListSectionController {
             let cell = collectionContext?.dequeueReusableCell(of: PlaceCell.self, for: self, at: index) as! PlaceCell
             cell.bindViewModel(placeViewModel)
             return cell
+        case let skeletonViewModel as SkeletonViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: SkeletonCollectionViewCell.self, for: self, at: index) as! SkeletonCollectionViewCell
+            return cell
         default:
-            fatalError("Unsupported view model type")
+            fatalError()
         }
     }
     

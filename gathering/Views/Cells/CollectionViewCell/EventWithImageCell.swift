@@ -41,6 +41,8 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        
         backgroundColor = .systemBackground
         addSubview(separatorView)
         addSubview(genderSeparatorView)
@@ -107,6 +109,8 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
         friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: rightPadding))
         friendsNumber.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
+        
+        
     }
     
     required init?(coder: NSCoder) {
@@ -120,17 +124,13 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
     }
     
     
-    
     override func bindViewModel(_ viewModel: Any) {
         super.bindViewModel(viewModel)
+        
         guard let vm = viewModel as? EventCellViewModel else {return}
-        
-        
         vm.tag.prefix(2).forEach { tag in
             tagStackView.addArrangedSubview(tag.getLabel())
         }
-        
-
     }
     
 }

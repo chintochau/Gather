@@ -12,6 +12,25 @@ protocol HomeCellViewModel: ListDiffable {
     var id: String { get }
 }
 
+class SkeletonViewModel: HomeCellViewModel {
+    let id: String
+    
+    init() {
+        self.id = UUID().uuidString
+    }
+    
+    func diffIdentifier() -> NSObjectProtocol {
+        return id as NSObjectProtocol
+    }
+    
+    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let other = object as? SkeletonViewModel else { return false }
+        return id == other.id
+    }
+    
+    // Additional properties and methods for the ad view model
+}
+
 class AdViewModel: HomeCellViewModel {
     let id: String
     let ad: Ad

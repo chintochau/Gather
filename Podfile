@@ -27,6 +27,7 @@ target 'Gather Pool' do
   pod 'ImageSlideshow', '~> 1.9.0'
   pod "ImageSlideshow/SDWebImage"
   pod 'DKImagePickerController'
+  pod 'SkeletonView'
   
     # Pods for Instagram
 
