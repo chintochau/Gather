@@ -17,7 +17,6 @@ struct EnrollViewModel {
     let startDate:Date
     let endDate:Date
     let location:String
-    let price:String
     let eventID:String
     let gender:String
     let event:Event
@@ -33,7 +32,6 @@ struct EnrollViewModel {
         self.eventTitle = event.title
         self.dateString = event.startDateString
         self.location = event.location.name
-        self.price = event.priceString
         self.eventID = event.id
         self.startDate = event.startDate
         self.endDate = event.endDate

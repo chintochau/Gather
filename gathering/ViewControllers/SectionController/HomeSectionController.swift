@@ -12,7 +12,7 @@ import IGListKit
 class HomeSectionController: ListSectionController {
     
     var viewModel: HomeCellViewModel!
-    
+     
     override init() {
         super.init()
         inset = .init(top: 2, left: 0, bottom: 2, right: 0)

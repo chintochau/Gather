@@ -15,14 +15,11 @@ struct Event:Codable {
     let title:String
     let organisers:[User]
     let imageUrlString:[String]
-    let price: Double
     let startDateTimestamp:Double
     let endDateTimestamp:Double
     let location:Location
     let presetTags:[TagType]
     let introduction:String?
-    let additionalDetail:String?
-    let refundPolicy:String
     let participants:[String:Participant]
     let comments:[Comment]
     let headcount:Headcount
@@ -126,9 +123,6 @@ extension Event {
         return String.date(from: endDate) ?? "Now"
     }
     
-    var priceString:String {
-        return String(price)
-    }
     
 }
 
@@ -363,18 +357,9 @@ struct Headcount:Codable {
 }
 
 
-enum hobbyType:String,CaseIterable {
-    case outdoor = "Outdoor Activity"
-    case sports = "Sports"
-    case travel = "Travel"
-    case arts = "Traditional Arts"
-    case creative = "Creative Hobbies"
-    case crafting = "Crafting"
-    case food = "Food & Cooking"
-    case games = "Games"
-    case spiritual = "Spiritual & Self Improve"
-    case videoGames = "Video Games"
-    case animals = "Pets"
+enum EventType:String,CaseIterable {
+    case outdoor = "戶外"
+    case indoor = "室內"
 }
 
 

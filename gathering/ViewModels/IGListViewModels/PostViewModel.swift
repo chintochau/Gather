@@ -19,8 +19,7 @@ class PostViewModel: HomeCellViewModel {
     let location:String
     let intro:String?
     let tag: [Tag]
-    let participants:[Participant]
-    let price:String
+    let participants:[Participant] 
     let organiser:User?
     
     var isOrganiser:Bool = false
@@ -86,14 +85,7 @@ class PostViewModel: HomeCellViewModel {
         }
         
         self.headcountString = headCountString
-        
-        
-        if event.price == 0 {
-            self.price = "Free"
-        }else {
-            self.price = "CA$: \(event.price)"
-        }
-        
+         
         
         // MARK: - Date
         var finalDateString:String = ""
@@ -108,7 +100,7 @@ class PostViewModel: HomeCellViewModel {
         case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             startString = "明天"
         default:
-            startString = startDateString.date ?? ""
+            startString = startDateString.date
         }
         
         switch event.endDate {
@@ -117,14 +109,14 @@ class PostViewModel: HomeCellViewModel {
         case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
             endString = "明天"
         default:
-            endString = endDateString.date ?? ""
+            endString = endDateString.date
         }
         
         
         if startDateString.date == endDateString.date {
-            finalDateString = "\(startString) (\(startDateString.dayOfWeek ?? ""))"
+            finalDateString = "\(startString) (\(startDateString.dayOfWeek ))"
         } else {
-            finalDateString = "\(startString)(\(startDateString.dayOfWeek ?? "")) - \(endString)(\(endDateString.dayOfWeek ?? ""))"
+            finalDateString = "\(startString)(\(startDateString.dayOfWeek )) - \(endString)(\(endDateString.dayOfWeek ))"
         }
         
         

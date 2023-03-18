@@ -23,7 +23,6 @@ class EventCellViewModel: HomeCellViewModel {
     let tag: [Tag]
     let participants:[Participant]
     let comments:[Comment]
-    let price:String
     let organiser:User?
     var image:UIImage? = nil
     
@@ -87,14 +86,7 @@ class EventCellViewModel: HomeCellViewModel {
         self.totalString = event.headCountString().total
         self.maleString = event.headCountString().male
         self.femaleString = event.headCountString().female
-        
-        
-        if event.price == 0 {
-            self.price = "免費"
-        }else {
-            self.price = "預算： \(event.price)"
-        }
-        
+         
         
         
         // MARK: - Date

@@ -11,13 +11,19 @@ import Foundation
 struct UserEvent:Codable {
     let id:String
     let name:String
-    let dateTimeStamp:Double
+    let imageUrlString:String?
+    let startDateTimestamp:Double
+    let endDateTimeStamp:Double
+    let emojiString:String
+    let organiser:String?
     let location:Location
+    let eventStatus:EventStatus
+    let description:String?
     var referencePath:String? = nil
     
     
     var dateString:String {
-        let date = Date(timeIntervalSince1970: dateTimeStamp)
+        let date = Date(timeIntervalSince1970: startDateTimestamp)
         
         let dateString = String.localeDate(from: date, .zhHantTW)
         
@@ -44,8 +50,14 @@ extension Event {
         UserEvent(
             id: self.id,
             name: self.title,
-            dateTimeStamp: self.startDateTimestamp,
+            imageUrlString:self.imageUrlString.first,
+            startDateTimestamp:self.startDateTimestamp,
+            endDateTimeStamp: self.endDateTimestamp,
+            emojiString:self.emojiTitle ?? "😃",
+            organiser: self.organisers.first?.name,
             location: self.location,
+            eventStatus: self.eventStatus,
+            description: self.introduction,
             referencePath:self.referencePath
         )
         

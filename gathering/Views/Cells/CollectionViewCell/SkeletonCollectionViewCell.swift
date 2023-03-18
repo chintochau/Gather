@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SkeletonView
+
 import IGListKit
 
 class SkeletonCollectionViewCell: UICollectionViewCell, ListBindable {
@@ -15,25 +15,21 @@ class SkeletonCollectionViewCell: UICollectionViewCell, ListBindable {
     
     private let eventImageView:UIImageView = {
         let view = UIImageView()
-        view.backgroundColor = .secondarySystemBackground
-        view.isSkeletonable = true
+        view.backgroundColor = .secondarySystemBackground 
         return view
     }()
     
     private let titleLabel:UILabel = {
         let view = UILabel()
-        view.isSkeletonable = true
         return view
     }()
     
     private let dateLabel:UILabel = {
         let view = UILabel()
-        view.isSkeletonable = true
         return view
     }()
     private let locationLabel:UILabel = {
         let view = UILabel()
-        view.isSkeletonable = true
         return view
     }()
     
@@ -58,8 +54,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell, ListBindable {
         dateLabel.anchor(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 30))
         
         locationLabel.anchor(top: dateLabel.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 10, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 30))
-        
-        [eventImageView, titleLabel,dateLabel,locationLabel].forEach({$0.showAnimatedGradientSkeleton()})
+         
     }
     
     required init?(coder: NSCoder) {
@@ -70,7 +65,6 @@ class SkeletonCollectionViewCell: UICollectionViewCell, ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? SkeletonViewModel else {return}
         
-        [eventImageView, titleLabel,dateLabel].forEach({$0.showAnimatedGradientSkeleton()})
         
     }
     

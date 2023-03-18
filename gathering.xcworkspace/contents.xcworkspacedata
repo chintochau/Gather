@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/jasonchau/Documents/Development/iOS/gathering/gathering/Resources/APIKeys.xcconfig">
+   </FileRef>
+   <FileRef
       location = "group:gathering.xcodeproj">
    </FileRef>
    <FileRef

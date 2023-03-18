@@ -15,6 +15,14 @@ class HomeViewController: UIViewController{
     private let refreshControl = UIRefreshControl()
     
     
+    private let searchController:UISearchController = {
+        let view = UISearchController(searchResultsController: HomeSearchResultTableViewController())
+        view.searchBar.placeholder = "搜尋活動"
+        view.hidesBottomBarWhenPushed = true
+        view.obscuresBackgroundDuringPresentation = true
+        return view
+    }()
+    
     private let titleLabel : UILabel = {
         let view = UILabel()
         view.text = "GaTher"
@@ -25,6 +33,12 @@ class HomeViewController: UIViewController{
     
     private let headerView :UIView = {
         let view = UIView()
+        return view
+    }()
+    
+    private let menuBar:MenuBar = {
+        let view = MenuBar()
+        view.items.append(contentsOf: EventType.allCases.map({$0.rawValue}))
         return view
     }()
     
@@ -43,9 +57,9 @@ class HomeViewController: UIViewController{
         super.viewDidLoad()
         configureNavBar()
         configureCollectionView()
-        
-        
         fetchInitialDataAndRefresh()
+        navigationItem.hidesSearchBarWhenScrolling = false
+        configureMenuBar()
     }
     
     
@@ -105,14 +119,14 @@ class HomeViewController: UIViewController{
         
         view.addSubview(collectionView)
         collectionView.alwaysBounceVertical = true
-        collectionView.contentInset = .init(top: 0, left: 0, bottom: 20, right: 0)
+        collectionView.contentInset = .init(top:38, left: 0, bottom: 20, right: 0)
         collectionView.backgroundColor = .secondarySystemBackground
         
         view.addSubview(collectionView)
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
         view.backgroundColor = .streamWhiteSnow
-        collectionView.fillSuperview()
+        collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor)
         self.collectionView = collectionView
         adapter.collectionView = collectionView
         adapter.dataSource = self
@@ -169,8 +183,6 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
     
     
     func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        print("items: \(viewModel.items.count), current: \(index)")
-        
         if index == viewModel.items.count - 1 {
             fetchMoreData()
         }
@@ -184,23 +196,23 @@ extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
 extension HomeViewController:UIScrollViewDelegate  {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let magicalSafeAreaTop:CGFloat = 88
-        let offset = scrollView.contentOffset.y + magicalSafeAreaTop
-        let translation = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
-        let cap = max(-44,-offset)
-        let realOffset = max(cap,cap + translation.y)
-        let alpha:CGFloat = 1 + realOffset/magicalSafeAreaTop*2
-        navigationController?.navigationBar.transform = .init(
-            translationX: 0,
-            y: min(0,realOffset))
-        titleLabel.alpha = alpha
-        navigationController?.navigationBar.tintColor = .label.withAlphaComponent(alpha)
+//        let magicalSafeAreaTop:CGFloat = 88
+//        let offset = scrollView.contentOffset.y + magicalSafeAreaTop
+//        let translation = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
+//        let cap = max(-44,-offset)
+//        let realOffset = max(cap,cap + translation.y)
+//        let alpha:CGFloat = 1 + realOffset/magicalSafeAreaTop*2
+//        navigationController?.navigationBar.transform = .init(
+//            translationX: 0,
+//            y: min(0,realOffset))
+//        titleLabel.alpha = alpha
+//        navigationController?.navigationBar.tintColor = .label.withAlphaComponent(alpha)
     }
     
     private func resetNavBarPosition(){
-        titleLabel.alpha = 1
-        navigationController?.navigationBar.tintColor = .label
-        navigationController?.navigationBar.transform = .init(translationX: 0, y: 0)
+//        titleLabel.alpha = 1
+//        navigationController?.navigationBar.tintColor = .label
+//        navigationController?.navigationBar.transform = .init(translationX: 0, y: 0)
         
     }
     
@@ -209,25 +221,45 @@ extension HomeViewController:UIScrollViewDelegate  {
     fileprivate func configureNavBar() {
         
         let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = .systemBackground
+        appearance.configureWithTransparentBackground()
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.hidesBarsOnSwipe = true
+//        navigationItem.searchController = searchController
+//        navigationItem.searchController?.searchResultsUpdater = searchController.searchResultsController as! HomeSearchResultTableViewController
+        let resultVC = searchController.searchResultsController as! HomeSearchResultTableViewController
+        resultVC.delegate = self
         
         
         headerView.addSubview(titleLabel)
         navigationItem.titleView = headerView
         titleLabel.sizeToFit()
-        titleLabel.frame = CGRect(x: 0, y: 0, width: titleLabel.width, height: 50)
-        headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 50)
+        titleLabel.frame = CGRect(x: 0, y: 0, width: titleLabel.width, height: 44)
+        headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 44)
         
         
         navigationItem.rightBarButtonItems = [
-            .init(image: UIImage(systemName: "message"), style: .done, target: self, action: #selector(didTapChat)),
-            .init(image: UIImage(systemName: "bell"), style: .done, target: self, action: #selector(didTapNotification))
+            .init(image: UIImage(systemName: "plus"), style: .done, target: self, action: #selector(didTapAdd)),
+            .init(image: UIImage(systemName: "bell"), style: .done, target: self, action: #selector(didTapNotification)),UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(didTapSearch))
         ]
+        
+
+        
         
         
     }
     
+    @objc private func didTapSearch() {
+        present(searchController, animated: true, completion: nil)
+        searchController.searchResultsUpdater = searchController.searchResultsController as! HomeSearchResultTableViewController
+    }
+
+    
+    @objc private func didTapNotification(){
+        let vc = NotificationsViewController()
+        vc.setUpPanBackGestureAndBackButton()
+        presentModallyWithHero(vc)
+    }
     
     @objc private func didTapChat(){
         let vc = ChatMainViewController()
@@ -238,8 +270,58 @@ extension HomeViewController:UIScrollViewDelegate  {
         present(navVc, animated: true)
     }
     
-    @objc private func didTapNotification(){
-        let vc = NotificationsViewController()
-        presentModallyWithHero(vc)
+    @objc private func didTapAdd(){
+        tabBarController?.showCategoryViewController()
     }
+    
+    
+    // MARK: - Swipe Bar
+    
+    fileprivate func configureMenuBar() {
+        let swipeView = menuBar
+        let navBarBackgroundView = UIView()
+        view.addSubview(navBarBackgroundView)
+        view.addSubview(swipeView)
+//        navBarBackgroundView.backgroundColor = .systemBackground.withAlphaComponent(0.1)
+        let blurEffect = UIBlurEffect(style: .regular)
+        let visualEffectView = UIVisualEffectView(effect: blurEffect)
+        navBarBackgroundView.addSubview(visualEffectView)
+        visualEffectView.fillSuperview()
+        
+        navBarBackgroundView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: swipeView.bottomAnchor, trailing: view.trailingAnchor)
+        swipeView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor,size: .init(width: 0, height: 38))
+        
+        setupHorizontalBarView()
+    }
+    private func setupHorizontalBarView(){
+        let horizontalBar = UIView()
+        horizontalBar.backgroundColor = .mainColor
+        
+        
+    }
+    
+    
+}
+
+extension HomeViewController:HomeSearchResultTableViewControllerDelegate {
+    func HomeSearchResultTableViewControllerDidChooseResult(_ view: HomeSearchResultTableViewController, result: HomeSearchResultType,searchText:String) {
+        
+        switch result {
+        case .organiseEvent:
+            
+            showNewPostViewController(eventName: searchText)
+            
+        case .searchEvent:
+            let vc = SearchResultViewController(searchText: searchText)
+            
+            vc.setUpPanBackGestureAndBackButton()
+            presentModallyWithHero(vc)
+        case .groupUp:
+            print("Group Up")
+        case .searchPeople:
+            print("Search people")
+        }
+    }
+    
+    
 }

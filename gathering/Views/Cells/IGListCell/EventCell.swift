@@ -145,9 +145,7 @@ class EventCell: BasicEventCollectionViewCell {
             
             totalNumber.text = vm.totalString
         }
-        
-        priceLabel.text = vm.price
-        
+         
     }
     
     

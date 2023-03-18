@@ -14,14 +14,7 @@ class HomeViewModel {
     var header = [Header]()
     var startDate:Date = Double.todayAtMidnightTimestamp() // Start with today at midnight
     
-    var items:[HomeCellViewModel] = [
-        SkeletonViewModel(),
-        SkeletonViewModel(),
-        SkeletonViewModel(),
-        SkeletonViewModel(),
-        SkeletonViewModel(),
-        SkeletonViewModel()
-        ]
+    var items:[HomeCellViewModel] = []
     
     
     func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {

@@ -97,12 +97,6 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let navigationController = self.navigationController, navigationController.viewControllers.count > 1 {

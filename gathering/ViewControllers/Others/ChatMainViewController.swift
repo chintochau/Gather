@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Hero
 import PubNub
 import RealmSwift
 
@@ -46,10 +45,7 @@ class ChatMainViewController: UIViewController {
         tableView.delegate = self
         tableView.fillSuperview()
         setupNavBar()
-        setUpPanBackGestureAndBackButton()
         observeConversationsFromRealm()
-        
-//        ChatMessageManager.shared.ConnectToChatServer()
         
         signinMessage.isHidden = AuthManager.shared.isSignedIn
         signinMessage.sizeToFit()
@@ -85,17 +81,16 @@ class ChatMainViewController: UIViewController {
     private func setupNavBar(){
         navigationItem.title = "Chat"
         navigationController?.navigationBar.tintColor = .label
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .done, target: self, action: #selector(didTapBack))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(didTapNewMessage))
     }
     
     @objc private func didTapNewMessage(){
-        print("Tapped new message")
+        let vc = FavouritedViewController()
+        vc.setUpPanBackGestureAndBackButton()
+        presentModallyWithHero(vc)
+        
     }
     
-    @objc private func didTapBack (){
-        dismiss(animated: true)
-    }
     
 }
 
@@ -109,7 +104,9 @@ extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate{
         
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = ChatMessageViewController(targetUsername: model.targetname)
-        navigationController?.pushViewController(vc, animated: true)
+        vc.setUpPanBackGestureAndBackButton()
+        presentModallyWithHero(vc)
+        
     }
     
     

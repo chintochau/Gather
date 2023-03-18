@@ -292,8 +292,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         }
         
         maleNumber.text = vm.maleString
-        femaleNumber.text = vm.femaleString
-        priceLabel.text = vm.price
+        femaleNumber.text = vm.femaleString 
         
         if vm.event.headCountString().isMaleFull {
             maleNumber.textColor = .darkGray

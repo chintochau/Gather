@@ -38,7 +38,7 @@ struct DummyDataManager {
             }
             
             // Generate a random introduction for the event
-            let introduction = "Join us for the \(hobbyType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! "
+            let introduction = "Join us for the \(EventType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! "
             
             
             
@@ -88,14 +88,11 @@ struct DummyDataManager {
                 title: "Event \(i)",
                 organisers: organisers,
                 imageUrlString: imageUrlStrings,
-                price: Double(i),
                 startDateTimestamp: Date(timeIntervalSinceNow: TimeInterval(i * 86400/10)).timeIntervalSince1970,
                 endDateTimestamp: Date(timeIntervalSinceNow: TimeInterval((i+1) * 86400/10)).timeIntervalSince1970,
                 location: Location(name: "Location \(i)", address: "Address \(i)", latitude: Double(i), longitude: Double(i+1)),
                 presetTags: [],
                 introduction: introduction,
-                additionalDetail: nil,
-                refundPolicy: "",
                 participants: participants,
                 comments: comments,
                 headcount: Headcount(isGenderSpecific: i%3 == 0 ? true : false, min: 0, max: 100, mMin: 0, mMax: 50, fMin: 0, fMax: 50),

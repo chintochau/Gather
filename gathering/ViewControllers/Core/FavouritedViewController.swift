@@ -44,19 +44,22 @@ class FavouritedViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        [segmentedButtonsView,collectionView].forEach({view.addSubview($0)})
-        navigationItem.title = "Favourites"
+        [collectionView].forEach({view.addSubview($0)})
+        
         view.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
         
         segmentedButtonsView.delegate = self
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        segmentedButtonsView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.width, height: 44)
-        collectionView.frame = CGRect(x: 0, y: segmentedButtonsView.bottom, width: view.width, height: view.height-44-88)
+        let navView = UIView()
+        navView.addSubview(segmentedButtonsView)
+        navigationItem.titleView = navView
+        segmentedButtonsView.frame = CGRect(x: 0, y: 0, width: view.width, height: 35)
+        print(navView.frame)
+        print(segmentedButtonsView.frame)
+        print(navigationController?.navigationBar.frame)
+        
+//        collectionView.frame = CGRect(x: 0, y: navigationItem.titleView?.bottom ?? 0, width: view.width, height: view.height-44-88)
     }
     
 }

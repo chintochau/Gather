@@ -82,8 +82,7 @@ class ParticipantsViewHeaderView: UIView {
             headCountLabel.text = viewModel.totalString
             maleCountLabel.text = viewModel.maleString
             femaleCountLabel.text = viewModel.femaleString
-            
-            priceValueLabel.text = viewModel.price
+             
             
             print(viewModel)
             print("isOrganiser: \(viewModel.isOrganiser)")

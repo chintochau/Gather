@@ -38,7 +38,7 @@ class CategoryViewController: CustomModalViewController {
     
     var firstAction: (() -> Void)?
     var secondAction: (() -> Void)?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         [messageLabel,firstButton].forEach({view.addSubview($0)})
@@ -54,19 +54,94 @@ class CategoryViewController: CustomModalViewController {
         firstButton.anchor(top: messageLabel.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 40, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
         firstButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
-//        secondButton.anchor(top: firstButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
-//        secondButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//
+        //        secondButton.anchor(top: firstButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,padding: .init(top: 20, left: 0, bottom: 0, right: 0),size: .init(width: 254, height: 80))
+        //        secondButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        //
         
         firstButton.setupTapGesture {[weak self] in
             self?.firstAction?()
         }
         
-//        secondButton.setupTapGesture {[weak self] in
-//            self?.secondAction?()
-//        }
+        //        secondButton.setupTapGesture {[weak self] in
+        //            self?.secondAction?()
+        //        }
     }
     
+    
+    
+}
 
 
+extension UIViewController {
+    
+    func showCategoryViewController(){
+        
+        let vc = CategoryViewController()
+        vc.modalPresentationStyle = .overCurrentContext
+        vc.modalTransitionStyle = .crossDissolve
+        
+        vc.firstAction = {[weak self] in
+            self?.dismiss(animated: false)
+            self?.showNewPostViewController()
+        }
+        
+        present(vc, animated: true)
+        
+    }
+    
+    
+    
+    func showNewPostViewController (eventName:String = "") {
+        
+        if !AuthManager.shared.isSignedIn {
+            dismiss(animated: false)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
+            return
+        }
+        
+        
+        let vc = NewPostViewController()
+        vc.newPost.title = eventName
+        
+        vc.completion = { [weak self] post, images in
+            guard let post = post else {return}
+            
+            self?.dismiss(animated: false)
+            
+            let vc = EventDetailViewController()
+            
+            let vm = EventCellViewModel(event: post)
+            
+            if !images.isEmpty {
+                print("images need modify")
+            }
+            
+            vc.viewModel = vm
+            self?.presentModallyWithHero(vc)
+        }
+        
+        present(vc, animated: true)
+    }
+    
+    
+    func showCreateNewevent () {
+        if !AuthManager.shared.isSignedIn {
+            dismiss(animated: false)
+            AlertManager.shared.showAlert(title: "Oops~", message: "登入後便可建立活動", from: self)
+            return
+        }
+        dismiss(animated: false)
+        let vc = CreateNewEventViewController()
+        vc.completion = { [weak self] event, image in
+            let vc = EventDetailViewController()
+            let vm = EventCellViewModel(event: event)
+            vm.image = image
+            
+            vc.viewModel = vm
+            
+        }
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+    }
+    
 }

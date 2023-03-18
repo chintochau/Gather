@@ -27,12 +27,8 @@ class CollectionListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpPanBackGestureAndBackButton()
         setupViews()
         loadData()
-        
-        
-        
     }
     
     

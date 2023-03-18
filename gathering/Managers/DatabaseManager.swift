@@ -127,6 +127,8 @@ final class DatabaseManager {
     public func createEvent (with event:Event, completion: @escaping (Event) -> Void) {
         var finalEvent:Event = event
         
+        print(event)
+        
         let startDateReference:String = startDateReference
         let endDateReference:String = endDateReference
         let monthStartDateReference:String = monthStartDateReference
@@ -143,7 +145,8 @@ final class DatabaseManager {
             guard let eventRef = self?.database.collection("events").document(eventReferncePath),
                   let user = DefaultsManager.shared.getCurrentUser(),
                   let userEventRef = self?.database.collection("users").document(user.username).collection("events").document(userEventReferencePath),
-                  let chatroomRef = self?.database.collection("eventChatrooms").document(event.id)
+                  let chatroomRef = self?.database.collection("eventChatrooms").document(event.id),
+                  let searchRef = self?.database.collection("searchReference").document(event.id)
             else {return}
             
             // generate referencePath for event
@@ -171,6 +174,9 @@ final class DatabaseManager {
             transaction.setData([
                 "participants": [user.username: user.fcmToken]
             ], forDocument: chatroomRef, merge: true)
+            
+            
+            transaction.setData(userEventData, forDocument: searchRef,merge: true)
             
             return nil
             
@@ -370,18 +376,21 @@ final class DatabaseManager {
     }
     
     
-
+    
     
     // MARK: - UpdateEvents
     ///confirm form event and send notification to all participants
     public func confirmFormEvent(eventName:String, eventID:String,eventReferencePath:String, completion:@escaping (Bool) -> Void){
         
         guard let username = UserDefaults.standard.string(forKey: "username"),
-        let name = UserDefaults.standard.string(forKey: "name") else {
+              let name = UserDefaults.standard.string(forKey: "name") else {
             completion(false)
             return}
         
-         let eventRef = database.document(eventReferencePath)
+        let eventRef = database.document(eventReferencePath)
+        let searchRef = database.document("searchReference/\(eventID)")
+        
+        searchRef.setData(["eventStatus":EventStatus.confirmed.rawValue], merge: true)
         
         eventRef.setData([eventID:["eventStatus": EventStatus.confirmed.rawValue]], merge: true) { error in
             
@@ -465,6 +474,9 @@ final class DatabaseManager {
     public func deleteEvent(eventID:String, eventRef:String, completion:@escaping (Bool) -> Void){
         
         let ref = database.document(eventRef)
+        let searchRef = database.document("searchReference/\(eventID)")
+        
+        searchRef.delete()
         
         ref.setData([eventID:FieldValue.delete()], merge: true) { error in
             guard error == nil else {return}

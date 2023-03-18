@@ -157,9 +157,7 @@ final class PostCell: BasicEventCollectionViewCell{
              maleIconImageView,femaleIconImageView
             ].forEach({$0.isHidden = true})
             totalNumber.text = vm.totalString
-        }
-        
-        priceLabel.text = vm.price
+        } 
         
     }
     
