@@ -65,6 +65,21 @@ struct AlertManager {
         }
     }
 
+    func reportPost(eventID: String, referencePath: String) {
+        let alertController = UIAlertController(title: "Report post?", message: "Are you sure you want to report this post?", preferredStyle: .actionSheet)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let reportAction = UIAlertAction(title: "Report", style: .destructive) { _ in
+            // Handle the user reporting the post
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(reportAction)
+        
+        if let viewController = UIApplication.shared.windows.first?.rootViewController {
+            viewController.present(alertController, animated: true, completion: nil)
+        }
+    }
 
     
 }

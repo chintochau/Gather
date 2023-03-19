@@ -193,6 +193,9 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     }()
     
     
+    private var postID:String?
+    private var referencePath:String?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -222,6 +225,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         
         
         likeButton.addTarget(self, action: #selector(didTapLike), for: .touchUpInside)
+        moreButton.addTarget(self, action: #selector(didTapReport), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -268,6 +272,10 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventCellViewModel else {return}
         
+        postID = vm.id
+        referencePath = vm.event.referencePath
+        
+        
         if let profileImage = vm.organiser?.profileUrlString {
             profileImageview.sd_setImage(with: URL(string: profileImage))
         }
@@ -313,12 +321,16 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         }
         
         
+        
     }
     
     @objc private func didTapLike (){
         print("LIKE")
     }
     
-    
+    @objc private func didTapReport(){
+        guard let postID = postID, let referencePath = referencePath else {return}
+        AlertManager.shared.reportPost(eventID: postID, referencePath: referencePath)
+    }
     
 }
