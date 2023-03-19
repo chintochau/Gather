@@ -105,8 +105,10 @@ final class EventWithImageCell: BasicEventCollectionViewCell {
                                  padding: .init(top: 0, left: 5, bottom: 0, right: 0))
         profileTitleLabel.centerYAnchor.constraint(equalTo: profileImageview.centerYAnchor).isActive = true
         
+        moreButton.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: rightPadding))
+        moreButton.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
-        friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: rightPadding))
+        friendsNumber.anchor(top: nil, leading: nil, bottom: nil, trailing: moreButton.leadingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
         friendsNumber.centerYAnchor.constraint(equalTo: profileTitleLabel.centerYAnchor).isActive = true
         
         

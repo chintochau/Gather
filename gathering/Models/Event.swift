@@ -243,7 +243,7 @@ extension Event {
     }
 
     
-    public func getDateString () -> String {
+    public func getDateStringForCell () -> String {
         // MARK: - Date
         var finalDateString:String = ""
         var startString:String = ""
@@ -358,6 +358,8 @@ struct Headcount:Codable {
 
 
 enum EventType:String,CaseIterable {
+    case grouped = "已成團"
+    case grouping = "組團中"
     case outdoor = "戶外"
     case indoor = "室內"
 }

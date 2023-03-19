@@ -47,7 +47,10 @@ class UserProfileViewController: UIViewController {
     private func fetchData() {
         DatabaseManager.shared.getUserEvents(username: user.username) { [weak self] userEvents in
             guard let userEvents = userEvents else {return}
-            self?.userEvents = userEvents
+            
+            let sortedEvents = userEvents.compactMap({$0.endDateTimeStamp > Date().timeIntervalSince1970 ? $0 : nil}).sorted(by: {$0.startDateTimestamp > $1.startDateTimestamp})
+            
+            self?.userEvents = sortedEvents
         }
     }
 }
@@ -58,7 +61,7 @@ extension UserProfileViewController:UICollectionViewDelegate,UICollectionViewDat
     // MARK: - configure CollectionView
     private func setupCollectionView(){
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.estimatedItemSize = .init(width: view.width, height: 50)
         layout.headerReferenceSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = .init(top: 0, left: 0, bottom: 1, right: 0)
         layout.minimumLineSpacing = 5
@@ -145,11 +148,10 @@ extension UserProfileViewController:ProfileHeaderReusableViewDelegate {
     func ProfileHeaderReusableViewDelegatedidTapMessage(_ header: UICollectionReusableView, user: User) {
         let vc = ChatMessageViewController(targetUsername: user.username)
         vc.setupNavBar()
-        let navVc = UINavigationController(rootViewController: vc)
-        navVc.modalPresentationStyle = .fullScreen
-        navVc.hero.isEnabled = true
-        navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
-        present(navVc, animated: true)
+        
+        vc.setUpPanBackGestureAndBackButton()
+        presentModallyWithHero(vc)
+        
         
     }
     

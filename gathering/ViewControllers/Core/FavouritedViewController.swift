@@ -8,8 +8,8 @@
 import UIKit
 
 enum favouriteType:String, CaseIterable {
-    case users = "Friends"
-    case events = "Events"
+    case events = "已參加活動"
+    case users = "你的好友"
 }
 
 class FavouritedViewController: UIViewController {
@@ -38,6 +38,7 @@ class FavouritedViewController: UIViewController {
         view.register(EventsTableCollectionViewCell.self, forCellWithReuseIdentifier: EventsTableCollectionViewCell.identifier)
         view.isPagingEnabled = true
         view.showsHorizontalScrollIndicator = false
+        view.contentInsetAdjustmentBehavior = .never
         return view
     }()
     
@@ -55,11 +56,8 @@ class FavouritedViewController: UIViewController {
         navView.addSubview(segmentedButtonsView)
         navigationItem.titleView = navView
         segmentedButtonsView.frame = CGRect(x: 0, y: 0, width: view.width, height: 35)
-        print(navView.frame)
-        print(segmentedButtonsView.frame)
-        print(navigationController?.navigationBar.frame)
+        collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
-//        collectionView.frame = CGRect(x: 0, y: navigationItem.titleView?.bottom ?? 0, width: view.width, height: view.height-44-88)
     }
     
 }
@@ -72,12 +70,13 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         switch indexPath.row {
-        case 0:
+        case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FriendsTableCollectionViewCell.identifier, for: indexPath) as! FriendsTableCollectionViewCell
             cell.delegate = self
             return cell
-        case 1:
+        case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventsTableCollectionViewCell.identifier, for: indexPath) as! EventsTableCollectionViewCell
+            cell.viewController = self
             return cell
         default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FriendsTableCollectionViewCell.identifier, for: indexPath) as! FriendsTableCollectionViewCell

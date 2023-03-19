@@ -23,6 +23,14 @@ extension UIFont {
         return UIFont(name: "RobotoMono-Medium", size: size)!
     }
     
+    static func helvetica(ofSize size:CGFloat) -> UIFont {
+        return UIFont(name: "Helvetica", size: size)!
+    }
+    static func helveticaBold(ofSize size:CGFloat) -> UIFont {
+        return UIFont(name: "Helvetica-Bold", size: size)!
+    }
+    
+    
     
     
 }

@@ -8,6 +8,8 @@
 import Foundation
 
 class HomeViewModel {
+    static let shared = HomeViewModel()
+    
     var events = [Event]()
     var users = [User]()
     var ad = [Ad]()
@@ -16,6 +18,43 @@ class HomeViewModel {
     
     var items:[HomeCellViewModel] = []
     
+    
+    func getItemsFor(eventType:EventType) -> [HomeCellViewModel]{
+        switch eventType {
+        case .outdoor:
+            break
+        case .indoor:
+            break
+        case .grouped:
+           return  items.compactMap({
+                switch $0 {
+                case let vm as EventCellViewModel:
+                    if vm.eventStatus == .confirmed {
+                        return $0
+                    }else {
+                        return nil
+                    }
+                default:
+                    return $0
+                }
+            })
+        case .grouping:
+           return  items.compactMap({
+                switch $0 {
+                case let vm as EventCellViewModel:
+                    if vm.eventStatus == .grouping {
+                        return $0
+                    }else {
+                        return nil
+                    }
+                default:
+                    return $0
+                }
+            })
+        }
+        
+        return []
+    }
     
     func fetchInitialData(perPage: Int,completion:@escaping ([Event]) -> Void) {
         DatabaseManager.shared.fetchEvents(numberOfResults: perPage) { [weak self] events in

@@ -432,7 +432,8 @@ class EventDetailViewController: UIViewController {
     private func didTapUserProfile(participant:Participant){
         guard let user = User(with: participant) else {return}
         let vc = UserProfileViewController(user: user)
-        present(vc, animated: true)
+        vc.setUpPanBackGestureAndBackButton()
+        presentModallyWithHero(vc)
     }
     
     

@@ -19,21 +19,25 @@ class EventsTableCollectionViewCell: UICollectionViewCell {
     
     weak var delegate:EventsTableCollectionViewCellDelegate?
     
+    var viewController:UIViewController?
+    
+    private lazy var refresheControl:UIRefreshControl = {
+        let view = UIRefreshControl()
+        view.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        return view
+    }()
+    
     // MARK: - Components
     
     let refreshControl = UIRefreshControl()
     
-    let tableView:UITableView = {
-        let view = UITableView()
-        view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        return view
-    }()
+    var collectionView:UICollectionView?
     
-    private let searchBar:UISearchBar = {
-        let view = UISearchBar()
-        view.placeholder = "Search"
-        return view
-    }()
+    var userEvents:[UserEvent] = [] {
+        didSet {
+            collectionView?.reloadData()
+        }
+    }
     
     
     // MARK: - Class members
@@ -50,39 +54,60 @@ class EventsTableCollectionViewCell: UICollectionViewCell {
             default :
                 print("Not yet implemented")
             }
-            
-            tableView.reloadData()
+            collectionView?.reloadData()
         }
         
     }
     
     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [searchBar,tableView].forEach({addSubview($0)})
         
-        searchBar.frame = CGRect(x: 0, y: top, width: width, height: 56)
-        tableView.frame = CGRect(x: 0, y: searchBar.bottom, width: width, height: height-searchBar.height)
-        tableView.dataSource = self
-        tableView.delegate = self
+        
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = .init(width: width, height: 50)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
+        
+        [collectionView].forEach({addSubview($0)})
+        collectionView.refreshControl = refreshControl
+        collectionView.fillSuperview()
+        collectionView.dataSource = self
+        collectionView.delegate = self
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
-        tableView.refreshControl = refreshControl
+        collectionView.refreshControl = refreshControl
+        collectionView.register(UserEventCell.self, forCellWithReuseIdentifier: UserEventCell.identifier)
+        self.collectionView = collectionView
         
-        tableView.register(FriendTableViewCell.self, forCellReuseIdentifier: FriendTableViewCell.identifier)
-        
+        fetchData {
+            
+        }
     }
     
+    
+    fileprivate func fetchData(completion:@escaping() -> Void) {
+        guard let username = DefaultsManager.shared.getCurrentUser()?.username else {return}
+        DatabaseManager.shared.getUserEvents(username: username) { [weak self] userEvents in
+            let outputEvents = userEvents?.compactMap({ userevent in
+                return userevent.endDateTimeStamp > Date().timeIntervalSince1970 ? userevent : nil
+            })
+            self?.userEvents = outputEvents?.sorted(by: {$0.startDateTimestamp > $1.startDateTimestamp}) ?? []
+            completion()
+        }
+    }
+    
+    
     @objc private func didPullToRefresh(){
-        let type = favType
-        favType = type
-        refreshControl.endRefreshing()
+        fetchData {[weak self] in
+            self?.refreshControl.endRefreshing()
+        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -91,22 +116,24 @@ class EventsTableCollectionViewCell: UICollectionViewCell {
     
 }
 
-extension EventsTableCollectionViewCell:UITableViewDelegate,UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+extension EventsTableCollectionViewCell:UICollectionViewDelegate,UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return userEvents.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell(style: .default, reuseIdentifier: "cell")
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let vm = userEvents[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserEventCell.identifier, for: indexPath) as! UserEventCell
+        cell.userEvent = vm
+        cell.widthAnchor.constraint(equalToConstant: width).isActive = true
+        return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        searchBar.resignFirstResponder()
-        
-        tableView.deselectRow(at: indexPath, animated: true)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let vm = userEvents[indexPath.row]
+        if let referencePath = vm.referencePath {
+            viewController?.presentEventDetailViewController(eventID: vm.id, eventRef: referencePath)
+        }
     }
-    
-    
     
 }
-

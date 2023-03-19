@@ -16,9 +16,9 @@ protocol HomeSearchResultTableViewControllerDelegate:AnyObject {
 struct HomeSearchResult {
     static let defaultOptions:[HomeSearchResult] = [
         .init(homeResultType: .searchEvent, action: "搜尋活動:", text: "", description: "搜尋並參與其他人的活動。"),
-        .init(homeResultType: .organiseEvent, action: "建立活動:", text: "", description: "作為主辦人，舉辦活動讓其他人參加。"),
         .init(homeResultType: .groupUp, action: "快速組團:", text: "", description: "設定目標人數，達到後便可成團"),
-        .init(homeResultType: .searchPeople, action: "搜尋", text: "愛好者", description: "尋找有相同喜好的人 (Coming soon)"),
+        .init(homeResultType: .organiseEvent, action: "(Coming Soon) 建立活動:", text: "", description: "作為主辦人，舉辦活動讓其他人參加 "),
+        .init(homeResultType: .searchPeople, action: "(Coming soon) 搜尋", text: "愛好者", description: "尋找有相同喜好的人 "),
     ]
     
     let homeResultType:HomeSearchResultType
@@ -58,7 +58,10 @@ class HomeSearchResultTableViewController: UIViewController {
         view.addSubview(tableView)
         tableView.alwaysBounceVertical = false
         tableView.frame = view.bounds
+        tableView.backgroundColor = .systemBackground
+        tableView.contentInsetAdjustmentBehavior = .never
         tableView.delegate = self
+        
         tableView.dataSource = self
         tableView.register(HomeSearchResultTableViewCell.self, forCellReuseIdentifier: HomeSearchResultTableViewCell.identifier)
         
@@ -84,6 +87,7 @@ extension HomeSearchResultTableViewController:UITableViewDelegate,UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
         let result = results[indexPath.row]
         delegate?.HomeSearchResultTableViewControllerDidChooseResult(self, result: result.homeResultType, searchText: searchText)
     }

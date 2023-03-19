@@ -245,3 +245,53 @@ extension String {
     
     
 }
+
+extension String {
+    static func getDateStringForCell(startDate:Date, endDate:Date) -> String {
+        
+            // MARK: - Date
+            var finalDateString:String = ""
+            var startString:String = ""
+            var endString:String = ""
+            let startDateString = String.localeDate(from: startDate, .zhHantTW)
+            let endDateString = String.localeDate(from: endDate, .zhHantTW)
+            
+            
+            switch startDate {
+            case ..<Date.startOfTodayLocalTime():
+                startString = startDateString.relative
+            case ..<Date.startOfTomorrowLocalTime():
+                startString = "今天"
+            case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
+                startString = "明天"
+            default:
+                startString = startDateString.date
+            }
+            
+            switch endDate {
+            case ..<Date.startOfTodayLocalTime():
+                endString = endDateString.relative
+            case ..<Date.startOfTomorrowLocalTime():
+                endString = "今天"
+            case ..<Date.startOfTomorrowLocalTime().adding(days: 1):
+                endString = "明天"
+            default:
+                endString = endDateString.date
+            }
+            
+            if startDateString == endDateString {
+                // Same Day same time
+                finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time)"
+                
+            }else if startDateString.date == endDateString.date {
+                // same day different time
+                finalDateString = "\(startDateString.dayOfWeek),\(startString) \(startDateString.time) - \(endDateString.time)"
+                
+            }else {
+                
+                finalDateString = "\(startDateString.dayOfWeek),\(startString) - \(endDateString.dayOfWeek),\(endString)"
+            }
+            
+            return finalDateString
+    }
+}

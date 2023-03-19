@@ -127,7 +127,6 @@ final class DatabaseManager {
     public func createEvent (with event:Event, completion: @escaping (Event) -> Void) {
         var finalEvent:Event = event
         
-        print(event)
         
         let startDateReference:String = startDateReference
         let endDateReference:String = endDateReference
@@ -342,7 +341,9 @@ final class DatabaseManager {
                 return
             }
             
+            
             var events = [UserEvent]()
+            
             let _ = documentData[monthStartDateReference] as? Double ?? 0.0
             let endTimestamp = documentData[monthEndDateReference] as? Double ?? 0.0
             

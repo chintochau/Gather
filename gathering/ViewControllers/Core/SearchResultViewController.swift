@@ -45,7 +45,7 @@ class SearchResultViewController: UIViewController {
     
     private func configureCollectionView(){
         let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = .init(width: 50, height: 50)
+        layout.estimatedItemSize = .init(width: view.width, height: 50)
         layout.sectionInset = .init(top: 0, left: 0, bottom: 1, right: 0)
         layout.minimumLineSpacing = 5
         layout.minimumInteritemSpacing = 5
@@ -84,5 +84,14 @@ extension SearchResultViewController: UICollectionViewDataSource,UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return events.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let vm = events[indexPath.row]
+        if let referencePath = vm.referencePath {
+            presentEventDetailViewController(eventID: vm.id, eventRef: referencePath)
+            
+        }
     }
 }

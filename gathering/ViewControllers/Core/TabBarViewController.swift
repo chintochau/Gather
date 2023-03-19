@@ -23,7 +23,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.tabBar.backgroundColor = .systemBackground.withAlphaComponent(0.5)
         
         //Define VC
-        let home = HomeViewController()
+        let home = NewHomeViewController()
         let favourite = FavouritedViewController()
         let notification = NotificationsViewController()
         let messages = ChatMainViewController()

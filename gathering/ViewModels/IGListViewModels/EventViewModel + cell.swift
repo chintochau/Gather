@@ -26,6 +26,8 @@ class EventCellViewModel: HomeCellViewModel {
     let organiser:User?
     var image:UIImage? = nil
     
+    let eventStatus:EventStatus
+    
     var isOrganiser:Bool = false
     var isJoined:Bool = false
     
@@ -87,10 +89,11 @@ class EventCellViewModel: HomeCellViewModel {
         self.maleString = event.headCountString().male
         self.femaleString = event.headCountString().female
          
+        self.eventStatus = event.eventStatus
         
         
         // MARK: - Date
-        self.dateString = event.getDateString()
+        self.dateString = event.getDateStringForCell()
         
         // MARK: - Others
         

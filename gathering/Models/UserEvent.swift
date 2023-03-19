@@ -31,17 +31,44 @@ struct UserEvent:Codable {
     }
 }
 
-extension UserEvent {
-    public func toViewModel() -> UserEventViewModel {
-        
-        return UserEventViewModel(title: "活動: \(self.name)", location: "地點: \(self.location.name)", date: "日期: \(self.dateString)")
-    }
-}
 
 struct UserEventViewModel {
     let title:String
     let location:String
     let date:String
+    let urlString:String?
+    let eventTag:Tag
+    let emojiString:String
+}
+
+
+extension UserEvent {
+    public func toViewModel() -> UserEventViewModel {
+        
+        var tagType:TagType = .grouped
+        
+        switch self.eventStatus {
+        case .grouping:
+            tagType = .grouping
+        case .confirmed:
+            tagType = .grouped
+        case .activity:
+            break
+        case .cancelled:
+            break
+        }
+        
+        
+        return UserEventViewModel(
+            title: self.name,
+            location: self.location.name,
+            date: String.getDateStringForCell(startDate: self.startDateTimestamp.toDate(), endDate: self.endDateTimeStamp.toDate()),
+            urlString: self.imageUrlString,
+            eventTag: Tag(type: tagType),
+            emojiString: self.emojiString
+        )
+        
+    }
 }
 
 extension Event {

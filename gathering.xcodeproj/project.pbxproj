@@ -84,6 +84,8 @@
 		477FC1AB2970C51F00D7C45A /* InfoCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */; };
 		477FE39C297255830074B7AA /* GATextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 477FE39B297255830074B7AA /* GATextField.swift */; };
 		47835AAC299C9D6500E3764C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 47835AAB299C9D6400E3764C /* GoogleService-Info.plist */; };
+		4787DF6929C67E0600B514FB /* NewHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4787DF6829C67E0600B514FB /* NewHomeViewController.swift */; };
+		4787DF6B29C6A81100B514FB /* HomeSectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4787DF6A29C6A81100B514FB /* HomeSectionCollectionViewCell.swift */; };
 		478B0C322971C36F000CECAB /* EventExtraInfoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */; };
 		478B0C342971C4C2000CECAB /* EventExtraInfoCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */; };
 		478E6F0829A9377A00270C4F /* HorizontalCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 478E6F0729A9377A00270C4F /* HorizontalCollectionView.swift */; };
@@ -244,6 +246,8 @@
 		477FC1AA2970C51F00D7C45A /* InfoCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCardViewModel.swift; sourceTree = "<group>"; };
 		477FE39B297255830074B7AA /* GATextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GATextField.swift; sourceTree = "<group>"; };
 		47835AAB299C9D6400E3764C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		4787DF6829C67E0600B514FB /* NewHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHomeViewController.swift; sourceTree = "<group>"; };
+		4787DF6A29C6A81100B514FB /* HomeSectionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionCollectionViewCell.swift; sourceTree = "<group>"; };
 		478B0C312971C36F000CECAB /* EventExtraInfoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExtraInfoCard.swift; sourceTree = "<group>"; };
 		478B0C332971C4C2000CECAB /* EventExtraInfoCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventExtraInfoCardViewModel.swift; sourceTree = "<group>"; };
 		478E6F0729A9377A00270C4F /* HorizontalCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalCollectionView.swift; sourceTree = "<group>"; };
@@ -438,6 +442,7 @@
 				47BCF58329A3DBA700F82FB4 /* AdCollectionViewCell.swift */,
 				474639D829AD70A6003E82B5 /* EventDetailCell.swift */,
 				477A02EA29BE7F8E0017DA72 /* CommentCell.swift */,
+				4787DF6A29C6A81100B514FB /* HomeSectionCollectionViewCell.swift */,
 			);
 			path = IGListCell;
 			sourceTree = "<group>";
@@ -520,6 +525,7 @@
 				47FD6EE1296F2C23001AF255 /* TabBarViewController.swift */,
 				47FD6EEC296F2FD0001AF255 /* FavouritedViewController.swift */,
 				47FD6EDE296F2B12001AF255 /* HomeViewController.swift */,
+				4787DF6829C67E0600B514FB /* NewHomeViewController.swift */,
 				47FD6EE5296F2EC7001AF255 /* ProfileViewController.swift */,
 				47FD6EE3296F2C5C001AF255 /* ExploreViewController.swift */,
 				474065AF2980D67B00504422 /* NewCategoryViewController.swift */,
@@ -840,6 +846,7 @@
 				477FC1A72970C21B00D7C45A /* EventInfoCard.swift in Sources */,
 				47FC52AC29996B5900B0C25D /* Policy.swift in Sources */,
 				478E6F0C29A9803B00270C4F /* FilterBarCollectionView.swift in Sources */,
+				4787DF6B29C6A81100B514FB /* HomeSectionCollectionViewCell.swift in Sources */,
 				470D319829B13B5C004998E0 /* CategoryViewController.swift in Sources */,
 				470D58A8299FDF800034293D /* ChatMessageManager.swift in Sources */,
 				473B8E8D29989C6000992C15 /* Constant.swift in Sources */,
@@ -893,6 +900,7 @@
 				47918DB629C4BA49001F8EE9 /* HomeSearchResultTableViewController.swift in Sources */,
 				476F995929A71B95007CA9A4 /* DummyDataManager.swift in Sources */,
 				4762966E29742416001BF5B7 /* LoginView.swift in Sources */,
+				4787DF6929C67E0600B514FB /* NewHomeViewController.swift in Sources */,
 				477A02FA29C159690017DA72 /* NotificationsViewController.swift in Sources */,
 				4728D87529A1830400E2F431 /* MessageObject.swift in Sources */,
 				47FD6EE2296F2C23001AF255 /* TabBarViewController.swift in Sources */,

@@ -26,6 +26,13 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
         return view
     }()
     
+    let moreButton:UIButton = {
+        let view = UIButton(type: .system)
+        view.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        view.tintColor = .label
+        return view
+    }()
+    
     let profileTitleLabel:UILabel = {
         let label = UILabel()
         label.numberOfLines = 1
@@ -208,7 +215,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
             profileTitleLabel,
             dateLabel,
             locationLabel,
-            friendsNumber
+            friendsNumber,
+            moreButton
         ].forEach({addSubview($0)})
         
         

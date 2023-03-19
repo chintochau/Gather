@@ -21,16 +21,6 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
     // MARK: - components
     
     
-    let segmentedControl: UISegmentedControl = {
-        let segmentedItems = [
-            "Upcoming events",
-            "Past events"
-        ]
-        let view = UISegmentedControl(items: segmentedItems)
-        view.selectedSegmentIndex = 0
-        return view
-    }()
-    
     let usernameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
@@ -61,13 +51,25 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
         let view = UIButton()
         view.setTitle("Follow", for: .normal)
         view.setTitleColor(.link, for: .normal)
+        view.layer.cornerRadius  = 5
+        view.clipsToBounds = true
         return view
     }()
     
     private let messageButton:UIButton = {
         let view = UIButton()
         view.setTitle("Message", for: .normal)
-        view.setTitleColor(.link, for: .normal)
+        view.setTitleColor(.white, for: .normal)
+        view.backgroundColor = .lightGray
+        view.layer.cornerRadius  = 5
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    private let messageLabel:UILabel = {
+        let view = UILabel()
+        view.font = .helveticaBold(ofSize: 20)
+        view.text = "已參加活動: "
         return view
     }()
     
@@ -100,18 +102,29 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
             switch friendStatus {
             case relationshipType.friend.rawValue:
                 followButton.setTitle("Friend", for: .normal)
+                followButton.setTitleColor(.white, for: .normal)
+                followButton.backgroundColor = .mainColor
                 
             case relationshipType.pending.rawValue:
                 followButton.setTitle("Requested", for: .normal)
+                followButton.backgroundColor = .lightGray
                 
             case relationshipType.blocked.rawValue:
                 print("Blocked, Should not happen")
                 
+                
+                
             case relationshipType.received.rawValue:
                 followButton.setTitle("Accept", for: .normal)
+                followButton.setTitleColor(.white, for: .normal)
+                followButton.backgroundColor = .link
+                
                 
             case relationshipType.noRelation.rawValue:
                 followButton.setTitle("Add", for: .normal)
+                followButton.setTitleColor(.white, for: .normal)
+                followButton.backgroundColor = .link
+                
                 
             default:
                 print("Not yet implemented")
@@ -128,9 +141,9 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
             nameLabel,
             usernameLabel,
             profileImageView,
-            segmentedControl,
             followButton,
-            messageButton
+            messageButton,
+            messageLabel
         ].forEach({addSubview($0)})
         
         let imageSize:CGFloat = 80
@@ -158,15 +171,20 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
             trailing: nil)
         usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.centerXAnchor).isActive = true
         
-        followButton.anchor(top: usernameLabel.bottomAnchor, leading: nil, bottom: nil, trailing: nil,size: CGSize(width: 0, height: 20))
-        followButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+        
+        messageLabel.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 5, left: 20, bottom: 5, right: 20))
+        
+        let buttonSize:CGFloat = (width-60)/2
+        
+        followButton.anchor(top: nil, leading: leadingAnchor, bottom: messageLabel.topAnchor, trailing: nil,padding: .init(top: 0, left: 20, bottom: 10, right: 0),size: CGSize(width: buttonSize, height: 30))
         followButton.addTarget(self, action: #selector(didTapFollow), for: .touchUpInside)
-        messageButton.anchor(top: followButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil,size: CGSize(width: 0, height: 20))
-        messageButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        
+        
+        messageButton.anchor(top: followButton.topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 20),size: CGSize(width: buttonSize, height: 30))
         messageButton.addTarget(self, action: #selector(didTapMessage), for: .touchUpInside)
         
-        segmentedControl.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 20, bottom: 10, right: 20))
-        
+    
         [messageButton,followButton].forEach({
             $0.isHidden = !AuthManager.shared.isSignedIn
         })
@@ -219,3 +237,18 @@ class UserProfileHeaderReusableView: UICollectionReusableView {
     }
     
 }
+
+
+#if DEBUG
+import SwiftUI
+
+@available(iOS 13, *)
+struct USErPreview: PreviewProvider {
+    
+    static var previews: some View {
+        // view controller using programmatic UI
+        UserProfileViewController(user: .init(username: "jjchauu", email: nil, name: "Jason Chau", profileUrlString: nil, gender: nil)).toPreview()
+    }
+}
+#endif
+

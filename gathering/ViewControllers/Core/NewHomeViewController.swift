@@ -1,5 +1,5 @@
 //
-//  HomeViewController.swift
+//  NewHomeViewController.swift
 //  gathering
 //
 //  Created by Jason Chau on 2023-01-11.
@@ -9,7 +9,7 @@ import UIKit
 import Hero
 import IGListKit
 
-class HomeViewController: UIViewController{
+class NewHomeViewController: UIViewController{
     // MARK: - Components
     private var collectionView:UICollectionView?
     private let refreshControl = UIRefreshControl()
@@ -20,7 +20,6 @@ class HomeViewController: UIViewController{
         view.searchBar.placeholder = "搜尋活動"
         view.hidesBottomBarWhenPushed = true
         view.obscuresBackgroundDuringPresentation = true
-        view.showsSearchResultsController = true
         return view
     }()
     
@@ -46,7 +45,7 @@ class HomeViewController: UIViewController{
     
     
     // MARK: - Class members
-    private var viewModel = HomeViewModel()
+    let viewModel = HomeViewModel.shared
     var currentCell:BasicEventCollectionViewCell?
     private let adapter = ListAdapter(updater: ListAdapterUpdater(), viewController: nil)
     let eventsPerPage = 7
@@ -72,57 +71,23 @@ class HomeViewController: UIViewController{
     
     private func configureCollectionView(){
         
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
-            // item
-            let eventItem = NSCollectionLayoutItem(
-                layoutSize:
-                    NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(10))
-            )
-            // group
-            let eventGroup = NSCollectionLayoutGroup.horizontal(
-                layoutSize:
-                    NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1),
-                        heightDimension: .estimated(30)),
-                subitem: eventItem,
-                count: 1
-            )
-            eventGroup.edgeSpacing = .init(leading: .fixed(0), top: .fixed(5), trailing: .fixed(0), bottom: .fixed(5))
-            //Header
-            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1),
-                    heightDimension: .estimated(44)
-                ),
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top
-            )
-            sectionHeader.contentInsets = .init(top: 0, leading: 15, bottom: 0, trailing: 15)
-            let section = NSCollectionLayoutSection(group: eventGroup)
-            // MARK: - add header to first section if needed
-            let headerItemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(100))
-            let headerItem = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerItemSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
-            section.boundarySupplementaryItems = index == 0 ? [] : []
-            section.orthogonalScrollingBehavior = .groupPagingCentered
-            return section
-        }))
-        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout:layout)
         view.addSubview(collectionView)
-        collectionView.alwaysBounceVertical = true
-        collectionView.contentInset = .init(top:38, left: 0, bottom: 20, right: 0)
+        collectionView.alwaysBounceVertical = false
+        collectionView.alwaysBounceHorizontal = false
+        collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = .secondarySystemBackground
-        refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
-        collectionView.refreshControl = refreshControl
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.isPagingEnabled = true
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(HomeSectionCollectionViewCell.self, forCellWithReuseIdentifier: HomeSectionCollectionViewCell.identifier)
         self.collectionView = collectionView
-        adapter.collectionView = collectionView
-        adapter.dataSource = self
-        adapter.delegate = self
-        adapter.viewController = self
-        adapter.scrollViewDelegate = self
-
     }
     
     
@@ -135,53 +100,57 @@ class HomeViewController: UIViewController{
     // MARK: - Fetch Data
     private func fetchInitialDataAndRefresh(completion: (() -> (Void))? = nil ){
         viewModel.fetchInitialData(perPage: eventsPerPage) { [weak self] events in
-            self?.adapter.reloadData()
-            completion?()
+            self?.collectionView?.reloadData()
         }
     }
     
     private func fetchMoreData(completion: (() -> (Void))? = nil ){
-        viewModel.fetchMoreData(perPage: eventsPerPage) {[weak self] events in
-            guard let self = self else { return }
-            self.adapter.performUpdates(animated: true)
-            completion?()
-        }
+//        viewModel.fetchMoreData(perPage: eventsPerPage) {[weak self] events in
+//            guard let self = self else { return }
+//            self.adapter.performUpdates(animated: true)
+//            completion?()
+//        }
     }
     
 }
- // MARK: - List Adapter
-extension HomeViewController: ListAdapterDataSource,ListAdapterDelegate {
-    
-    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-        return viewModel.items
+
+extension NewHomeViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
     
-    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-        switch object {
-        case _ as EventCellViewModel:
-            return EventSectionController()
-        default:
-            return HomeSectionController()
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let index = targetContentOffset.pointee.x/view.frame.width
+        menuBar.collectionView.selectItem(at: .init(row: Int(index), section: 0), animated: false, scrollPosition: [])
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return menuBar.items.count
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeSectionCollectionViewCell.identifier, for: indexPath) as! HomeSectionCollectionViewCell
+        cell.cellIndex = indexPath.row
+        cell.viewController = self
+        
+        if indexPath.row == 0 {
+            cell.category = nil
+        } else {
+            cell.category = EventType.allCases[indexPath.row-1]
+            cell.loadMoreDataFor(eventType: EventType.allCases[indexPath.row-1])
         }
+        
+        
+        return cell
     }
     
-    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-        return nil
-    }
-    
-    
-    func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        if index == viewModel.items.count - 1 {
-            fetchMoreData()
-        }
-    }
-    
-    func listAdapter(_ listAdapter: ListAdapter, didEndDisplaying object: Any, at index: Int) {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return .init(width: view.width, height: view.height)
     }
 }
 
-
-extension HomeViewController:UIScrollViewDelegate  {
+extension NewHomeViewController:UIScrollViewDelegate  {
     
     // MARK: - NavBar
     
@@ -215,8 +184,14 @@ extension HomeViewController:UIScrollViewDelegate  {
     }
     
     @objc private func didTapSearch() {
+        
+        
         present(searchController, animated: true, completion: nil)
         searchController.searchResultsUpdater = searchController.searchResultsController as? HomeSearchResultTableViewController
+    }
+    
+    func scrollToMenuIndex(menuIndex:Int){
+        collectionView?.scrollToItem(at: .init(row: menuIndex, section: 0), at: [], animated: true)
     }
 
     
@@ -244,6 +219,7 @@ extension HomeViewController:UIScrollViewDelegate  {
     
     fileprivate func configureMenuBar() {
         let swipeView = menuBar
+        menuBar.homeController = self
         let navBarBackgroundView = UIView()
         view.addSubview(navBarBackgroundView)
         view.addSubview(swipeView)
@@ -267,21 +243,19 @@ extension HomeViewController:UIScrollViewDelegate  {
     
 }
 
-extension HomeViewController:HomeSearchResultTableViewControllerDelegate {
+extension NewHomeViewController:HomeSearchResultTableViewControllerDelegate {
     func HomeSearchResultTableViewControllerDidChooseResult(_ view: HomeSearchResultTableViewController, result: HomeSearchResultType,searchText:String) {
         
         switch result {
         case .organiseEvent:
-            
-            showNewPostViewController(eventName: searchText)
-            
+            print("Organise Event")
         case .searchEvent:
+            searchController.searchBar.resignFirstResponder()
             let vc = SearchResultViewController(searchText: searchText)
-            
             vc.setUpPanBackGestureAndBackButton()
             presentModallyWithHero(vc)
         case .groupUp:
-            print("Group Up")
+            showNewPostViewController(eventName: searchText)
         case .searchPeople:
             print("Search people")
         }
