@@ -7,10 +7,17 @@
 
 import UIKit
 
+protocol MenuBarDelegate: AnyObject{
+    func MenuBarDidTapItem(_ menu:MenuBar, menuIndex:Int)
+    
+}
+
 class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
     
 
     var homeController:NewHomeViewController?
+    weak var delegate:MenuBarDelegate?
+    
     
     lazy var collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -34,7 +41,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
     var rightindicatorAnchor:NSLayoutConstraint!
     
     
-    var items:[String] = ["全部"] {
+    var items:[String] = [] {
         didSet{
             collectionView.reloadData()
         }
@@ -77,8 +84,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
         collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
         
         homeController?.scrollToMenuIndex(menuIndex: indexPath.row)
-        
-        let frame = collectionView.cellForItem(at: indexPath)?.frame
+        delegate?.MenuBarDidTapItem(self, menuIndex:indexPath.row)
         
         
     }

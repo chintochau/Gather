@@ -17,6 +17,7 @@ enum UserDefaultsType:String,CaseIterable {
     case favEvent = "favouriteEvents"
     case favUser = "favouriteUsers"
     case chatToken = "chatToken"
+    case region = "region"
 }
 
 

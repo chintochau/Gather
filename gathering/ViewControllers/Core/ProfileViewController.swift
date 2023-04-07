@@ -16,7 +16,7 @@ class ProfileViewController: UIViewController {
     private let tableView:UITableView = {
         let view = UITableView(frame: .zero, style: .grouped)
         view.backgroundColor = .systemBackground
-        
+        view.contentInset = .init(top: 0, left: 0, bottom: 30, right: 0)
         view.register(ValueTableViewCell.self, forCellReuseIdentifier: ValueTableViewCell.identifier)
         return view
     }()
@@ -30,6 +30,18 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
+        
+        
+        
+        // Add app version label
+        let appVersionLabel = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 30))
+        appVersionLabel.textAlignment = .center
+        appVersionLabel.textColor = .gray
+        appVersionLabel.font = .systemFont(ofSize: 14)
+        appVersionLabel.text = "Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")"
+        tableView.tableFooterView = appVersionLabel
+        
+        
         
         if UserDefaults.standard.string(forKey: "username") == nil && AuthManager.shared.isSignedIn{
             AuthManager.shared.signOut { success in
@@ -56,16 +68,6 @@ class ProfileViewController: UIViewController {
         guard let user = DefaultsManager.shared.getCurrentUser() else {
             AuthManager.shared.signOut()
             return
-            let alert = UIAlertController(title: "Oopsss~", message: "cannot retrive user data, sign out now", preferredStyle: .alert)
-            let action = UIAlertAction(title: "Log out", style: .destructive) { action in
-                AuthManager.shared.signOut { success in
-                    print("signed out")
-                }
-            }
-            alert.addAction(action)
-            present(alert, animated: true)
-            viewWillAppear(true)
-            return
         }
         
         headerViewModel = .init(user:user)
@@ -74,15 +76,20 @@ class ProfileViewController: UIViewController {
             // events
             [],
             // setting
-            [.value(title: "Location", value: "多倫多"),
-             .value(title: "Language", value: "中文")],
+            [.value(title: "地區", value: UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) ?? "Toronto"),
+             .value(title: "語言", value: "中文")],
             // support
-            [.value(title: "Suggestions", value: "")],
+            [.value(title: "建議", value: "")],
             // about
-            [.value(title: "Privacy", value: ""),
-             .value(title: "Terms of service", value: ""),
-             .value(title: "Cookie Policy", value: "")]
+            [.value(title: "隱私政策", value: ""),
+             .value(title: "服務條款", value: ""),
+             .value(title: "Cookie 政策", value: "")],
+            // profile
+            [.value(title: "編輯個人檔案", value: ""),
+             .value(title: "刪除帳號", value: "")
+            ]
         ]
+        tableView.reloadData()
         
     }
     
@@ -96,7 +103,7 @@ class ProfileViewController: UIViewController {
         
     }
     private func configureLoginView() {
-        navigationItem.title = "Login"
+        navigationItem.title = "登入"
         navigationItem.rightBarButtonItem = nil
         view.addSubview(loginView)
         loginView.delegate = self
@@ -113,17 +120,28 @@ class ProfileViewController: UIViewController {
         }
     }
     private func layoutProfileView(){
-        navigationItem.title = "Profile"
+        navigationItem.title = "個人檔案"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "編輯", style: .plain, target: self, action: #selector(didTapEditProfile))
         self.loginView.removeFromSuperview()
     }
     
-    @objc private func didTapEditProfile(){
-        let vc = EditProfileViewController()
+    @objc private func didTapEditProfile(fullScreen:Bool = false){
+        
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+        
+        let vc = EditProfileViewController(user: user)
+        
+        
         vc.completion = { [weak self] in
             self?.configureViewModels()
             self?.tableView.reloadData()
         }
         let navVc = UINavigationController(rootViewController: vc)
+        
+        if fullScreen {
+            
+            navVc.modalPresentationStyle = .fullScreen
+        }
         present(navVc, animated: true)
     }
     
@@ -138,12 +156,16 @@ class ProfileViewController: UIViewController {
     
     // MARK: - Tap Register
     @objc private func didTapRegister(){
+        
+        loginView.endEditing(true)
+        
         let vc = RegisterViewController()
         vc.completion = {[weak self] in
             self?.configureViewModels()
             self?.configureProfileView()
-            self?.didTapEditProfile()
+            self?.didTapEditProfile(fullScreen: true)
         }
+        
         present(UINavigationController(rootViewController: vc),animated: true)
     }
     
@@ -180,16 +202,59 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             case 0:
                 break
             case 1:
-                break
+                switch cell.index {
+                case 0:
+                    let vc = LocationPickerViewController()
+                    vc.completion = {
+                        self.configureViewModels()
+                    }
+                    present(vc, animated: true)
+                case 1:
+                    break
+                default:
+                    break
+                }
             case 2:
-                break
+                if let url = URL(string: "https://docs.google.com/forms/d/1w_Wj_iPpnmJ7lbSuUKisMJbPvkGAZnpeTzQ21Msv8W4/edit?pli=1") {
+                    UIApplication.shared.open(url)
+                }
             case 3:
                 switch cell.index {
                 case 0:
                     self.didTapPrivacy()
                 case 1:
                     self.didTapTerms()
-                case 2: break
+                case 2:
+                    self.didTapCookie()
+                default:
+                    break
+                }
+            case 4:
+                switch cell.index {
+                case 0:
+                    didTapEditProfile()
+                case 1:
+                    AlertManager.shared.showTextInputAlert(title: "", message: "您確定要永久刪除帳戶嗎？此操作無法撤消，並且所有資料將會被刪除。如果確定，請輸入您的密碼，並點擊'確認'以繼續。否則，請點擊'取消'返回您的帳戶設定。", placeholder: "密碼", buttonMessage: "確定刪除" , isDestructive: true) { [weak self] password, isConfirmTapped in
+
+                        if isConfirmTapped {
+                            guard let view = self?.view, let password = password, let self = self else {return}
+                            
+                            LoadingIndicator.shared.showLoadingIndicator(on: view)
+                            
+                            AuthManager.shared.deleteAccount(password: password) { success in
+                                LoadingIndicator.shared.hideLoadingIndicator()
+                                if success {
+                                    AuthManager.shared.signOut { success in
+                                        AlertManager.shared.showAlert(title: "", message: "帳號已刪除", from: self) { success in
+                                            self.viewWillAppear(true)
+                                        }
+                                    }
+                                }else {
+                                    AlertManager.shared.showAlert(title: "", message: "請輸入正確密碼",from: self)
+                                }
+                            }
+                        }
+                    }
                 default:
                     break
                 }
@@ -212,7 +277,7 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             return headerView
         case 1:
             let view = SectionHeaderView()
-            view.configure(with: "設定")
+            view.configure(with: "一般設定")
             return view
         case 2:
             let view = SectionHeaderView()
@@ -222,6 +287,11 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             let view = SectionHeaderView()
             view.configure(with: "關於")
             return view
+        case 4:
+            let view = SectionHeaderView()
+            view.configure(with: "個人檔案")
+            return view
+            
         default: return nil
         }
         
@@ -250,7 +320,6 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
             trailing: footerView.trailingAnchor,
             padding: .init(top: 20, left: 20, bottom: 20, right: 20))
         logoutButton.addTarget(self, action: #selector(didTapLogOut), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(didTapEditProfile) )
         return footerView
     }
     
@@ -260,13 +329,19 @@ extension ProfileViewController:UITableViewDelegate,UITableViewDataSource {
 extension ProfileViewController:LoginViewDelegate {
     
     func didTapPrivacy() {
-        let vc = PolicyViewController(title: "Privacy Policy", policyString: Policy.privacyPolicy)
+        let vc = PolicyViewController(title: "隱私政策", policyString: Policy.privacyPolicy)
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
     }
     
     func didTapTerms() {
-        let vc = PolicyViewController(title: "Terms", policyString: Policy.terms)
+        let vc = PolicyViewController(title: "服務條款", policyString: Policy.terms)
+        let navVc = UINavigationController(rootViewController: vc)
+        present(navVc, animated: true)
+        
+    }
+    func didTapCookie() {
+        let vc = PolicyViewController(title: "Cookie 政策", policyString: Policy.cookiePolicy)
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
         
@@ -278,19 +353,20 @@ extension ProfileViewController:LoginViewDelegate {
     func didTapLogin(_ view: LoginView, email: String, password: String) {
         
         AuthManager.shared.logIn(email: email, password: password) { [weak self] user in
-
+            
             view.indicator.stopAnimating()
             view.loginButton.isHidden = false
             
+            guard let self = self else {return}
+            
             guard user != nil else {
-                print("Failed to retrive user data")
+                AlertManager.shared.showAlert(title: "", message: "登入失敗，請檢查您的電郵及密碼是否正確。", from: self)
+                
                 return
             }
-            
-            
-            self?.configureViewModels()
-            self?.loginView.removeFromSuperview()
-            self?.configureProfileView()
+            self.configureViewModels()
+            self.loginView.removeFromSuperview()
+            self.configureProfileView()
             
             CustomNotificationManager.shared.requestForNotification()
             

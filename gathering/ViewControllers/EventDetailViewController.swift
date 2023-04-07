@@ -255,7 +255,7 @@ class EventDetailViewController: UIViewController {
     @objc private func didTapShare(){
         guard let shareString = viewModel?.event.toString(includeTime: true) else {return}
         
-        // MARK: - Diable share photos for now
+        // MARK: - Disable share photos for now
         
 //        if let urlString = viewModel?.event.imageUrlString.first,
 //           let url = URL(string: urlString){
@@ -602,7 +602,7 @@ extension EventDetailViewController:UITextViewDelegate,SectionHeaderReusableView
         default:
             break
         }
-        
+        vc.setUpPanBackGestureAndBackButton()
         presentModallyWithHero(vc)
     }
     

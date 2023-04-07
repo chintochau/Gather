@@ -13,14 +13,15 @@ class TextLabelTableViewCell: UITableViewCell {
     
     let label:UILabel = {
         let view = UILabel()
-        view.font = .systemFont(ofSize: 20)
-        view.textColor = .secondaryLabel
+        view.font = .systemFont(ofSize: 14)
+        view.numberOfLines = 0
         return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(label)
+        label.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,padding: .init(top: 10, left: 30, bottom: 10, right: 20))
         selectionStyle = .none
     }
     
@@ -28,11 +29,6 @@ class TextLabelTableViewCell: UITableViewCell {
         fatalError()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        label.sizeToFit()
-        label.frame = .init(x: 20, y: contentView.bottom-label.height, width: label.width, height: label.height)
-    }
     
     override func prepareForReuse() {
         super.prepareForReuse()

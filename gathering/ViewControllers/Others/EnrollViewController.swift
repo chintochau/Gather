@@ -10,33 +10,30 @@ import UIKit
 
 
 struct EnrollViewModel {
-    let name:String?
-    let email:String
+    let currentUser:User
+    let contacts:Contacts
     let eventTitle:String
     let dateString:String
     let startDate:Date
     let endDate:Date
     let location:String
     let eventID:String
-    let gender:String
     let event:Event
     
     init?(with event:Event) {
-        guard let email = UserDefaults.standard.string(forKey: "email") else {return nil}
-        let name = UserDefaults.standard.string(forKey: "name") ?? ""
-        let gender = UserDefaults.standard.string(forKey: "gender") ?? "male"
+        guard let user = DefaultsManager.shared.getCurrentUser() else {return nil}
+        self.currentUser = user
         self.event = event
-        self.gender = gender
-        self.name = name
-        self.email = email
         self.eventTitle = event.title
-        self.dateString = event.startDateString
+        self.dateString = event.getDateDetailString()
         self.location = event.location.name
         self.eventID = event.id
         self.startDate = event.startDate
         self.endDate = event.endDate
+        self.contacts = user.contacts ?? .init(instagram: nil, telegram: nil, phone: nil)
     }
 }
+
 
 
 class EnrollViewController: UIViewController {
@@ -47,20 +44,19 @@ class EnrollViewController: UIViewController {
     
     private let nameField:GATextField = {
         let view = GATextField()
-        view.configure(name: "Name")
-        view.placeholder = "At least 2 characters"
+        view.configure(name: "暱稱: ")
         view.isUserInteractionEnabled = false
         view.bottomLine.isHidden = true
         return view
     }()
     
-    private let emailField:GATextField = {
-        let view = GATextField()
-        view.configure(name: "Email")
-        view.isUserInteractionEnabled = false
-        view.bottomLine.isHidden = true
+    private let contactLabel:UILabel = {
+        let view = UILabel()
+        view.text = "選擇留下的聯絡方法："
+        view.font = .systemFont(ofSize: 16)
         return view
     }()
+    
     
     private let titleLabel:UILabel = {
         let view = UILabel()
@@ -90,47 +86,25 @@ class EnrollViewController: UIViewController {
         return view
     }()
     
-    private let genderButton:UIButton = {
-        let view = UIButton()
-        view.setTitleColor(.label, for: .normal)
-        return view
-    }()
-    
-    private let genderSelectionView = GenderSelectionView()
-    
-    private let maleButton:UIButton = {
-        let view = UIButton()
-        view.tag = 0
-        view.setTitle(genderType.allCases[view.tag].rawValue, for: .normal)
-        view.setTitleColor(.label, for: .normal)
-        return view
-    }()
-    private let genderLabel:UILabel = {
-        let view = UILabel()
-        view.text = "Gender :"
-        view.font = .systemFont(ofSize: 18, weight: .bold)
-        view.textColor = .secondaryLabel
-        return view
-        
-    }()
     
     private let eventID:String
     private let event:Event
+    private var contacts:Contacts
+    private var observer: NSObjectProtocol?
+    private var hideObserver: NSObjectProtocol?
+    private let bottomOffset:CGFloat = 150
     var completion: (() -> Void)?
     
     // MARK: - Init
     
     init(vm:EnrollViewModel){
-        nameField.text = vm.name
-        emailField.text = vm.email
-        
+        nameField.text = vm.currentUser.name ?? vm.currentUser.username
         titleLabel.text = vm.eventTitle
         dateLabel.text = vm.dateString
         locationLabel.text = vm.location
         eventID = vm.eventID
-        genderButton.setTitle(vm.gender, for: .normal)
         event = vm.event
-        
+        contacts = vm.contacts
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -142,45 +116,99 @@ class EnrollViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .blackBackground
+        scrollView.keyboardDismissMode = .interactive
         setupScrollView()
         anchorSubviews()
+        setupContactsButton()
+        observeKeyboardChange()
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapView))
-        tapGesture.numberOfTapsRequired = 1
         view.addGestureRecognizer(tapGesture)
     }
     
     
     @objc private func didTapView(){
         view.endEditing(true)
-        genderSelectionView.removeFromSuperview()
+    }
+    
+    private let igButton = ContactButton()
+    private let tgButton = ContactButton()
+    private let phoneButton = ContactButton()
+    private let emptyButton : UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 15
+        view.layer.borderColor = UIColor.darkMainColor.cgColor
+        view.layer.borderWidth = 1
+        view.clipsToBounds = true
+        let label = UILabel()
+        label.text = "不留聯絡方法"
+        view.addSubview(label)
+        label.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 10, left: 20, bottom: 10, right: 20))
+        return view
+    }()
+    
+    
+    @objc func contactViewTapped(_ sender: UITapGestureRecognizer) {
+        // Unhighlight all views
+        
+        view.endEditing(true)
+        
+        [igButton,tgButton,phoneButton].forEach({$0.isSelected = false})
+        emptyButton.layer.borderColor = UIColor.opaqueSeparator.cgColor
+        
+        if let senderView = sender.view as? ContactButton {
+            senderView.isSelected = true
+        }else {
+            sender.view?.layer.borderColor = UIColor.darkMainColor.cgColor
+        }
+    }
+
+    
+    // MARK: - Keyboard Handling
+    private func observeKeyboardChange(){
+        
+        observer = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: .main) {[weak self] notification in
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+                self?.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height + self!.bottomOffset, right: 0)
+                }
+            
+        }
+        
+        hideObserver = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] _ in
+            self?.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self!.bottomOffset, right: 0)
+        }
     }
     
     
     fileprivate func setupScrollView() {
         view.addSubview(scrollView)
-        scrollView.fillSuperview()
         scrollView.addSubview(containerView)
+        scrollView.alwaysBounceVertical = true
+        
+        let guide = view.safeAreaLayoutGuide
+        scrollView.anchor(
+            top: guide.topAnchor,
+            leading: guide.leadingAnchor,
+            bottom: guide.bottomAnchor,
+            trailing: guide.trailingAnchor)
+        
         containerView.anchor(
-            top: scrollView.contentLayoutGuide.topAnchor,
-            leading: scrollView.contentLayoutGuide.leadingAnchor,
-            bottom: scrollView.contentLayoutGuide.bottomAnchor,
-            trailing: scrollView.contentLayoutGuide.trailingAnchor)
-        containerView.anchor(
-            top: nil,
-            leading: scrollView.frameLayoutGuide.leadingAnchor,
-            bottom: nil,
-            trailing: scrollView.frameLayoutGuide.trailingAnchor)
+            top: scrollView.topAnchor,
+            leading: scrollView.leadingAnchor,
+            bottom: scrollView.bottomAnchor,
+            trailing: scrollView.trailingAnchor)
+        containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        
+        
+        scrollView.contentInset = .init(top: 0, left: 0, bottom: bottomOffset, right: 0)
     }
     
     fileprivate func anchorSubviews() {
         [titleLabel,
          nameField,
-         emailField,
          locationLabel,
          titleLabel,
          dateLabel,
-         genderButton,
-         genderLabel
         ].forEach({containerView.addSubview($0)})
         
         view.addSubview(confirmButton)
@@ -191,14 +219,9 @@ class EnrollViewController: UIViewController {
         
         locationLabel.anchor(top: dateLabel.bottomAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: containerView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
-        nameField.anchor(top: locationLabel.bottomAnchor, leading: containerView.leadingAnchor, bottom: emailField.topAnchor, trailing: containerView.trailingAnchor, padding: .init(top: 50, left: 20, bottom: 30, right: 20))
+        nameField.anchor(top: locationLabel.bottomAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: containerView.trailingAnchor, padding: .init(top: 50, left: 20, bottom: 30, right: 20))
         nameField.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        emailField.anchor(top: nameField.bottomAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: containerView.trailingAnchor, padding: .init(top: 30, left: 20, bottom: 0, right: 20))
-        
-        genderLabel.anchor(top: emailField.bottomAnchor, leading: containerView.leadingAnchor, bottom: containerView.bottomAnchor, trailing: genderButton.leadingAnchor,padding: .init(top: 20, left: 30, bottom: 0, right: 0))
-        
-        genderButton.anchor(top: genderLabel.topAnchor, leading: genderLabel.trailingAnchor, bottom: genderLabel.bottomAnchor, trailing: containerView.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
         confirmButton.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 30, bottom: 60, right: 30),size: .init(width: 0, height: 50))
         confirmButton.layer.cornerRadius = 15
@@ -210,6 +233,35 @@ class EnrollViewController: UIViewController {
         
     }
     
+    private func setupContactsButton(){
+        
+        igButton.configure(title: "Instagram:", text: contacts.instagram)
+        tgButton.configure(title: "Telegram:", text: contacts.telegram)
+        phoneButton.configure(title: "電話", text: contacts.phone)
+        
+        let tapGesture1 = UITapGestureRecognizer(target: self, action: #selector(contactViewTapped(_:)))
+        let tapGesture2 = UITapGestureRecognizer(target: self, action: #selector(contactViewTapped(_:)))
+        let tapGesture3 = UITapGestureRecognizer(target: self, action: #selector(contactViewTapped(_:)))
+        let tapGesture4 = UITapGestureRecognizer(target: self, action: #selector(contactViewTapped(_:)))
+        
+        igButton.addGestureRecognizer(tapGesture1)
+        tgButton.addGestureRecognizer(tapGesture2)
+        phoneButton.addGestureRecognizer(tapGesture3)
+        emptyButton.addGestureRecognizer(tapGesture4)
+        
+        [contactLabel,igButton,tgButton,phoneButton,emptyButton].forEach({
+            containerView.addSubview($0)
+            
+        })
+        contactLabel.anchor(top: nameField.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 10, left: 30, bottom: 0, right: 30))
+        
+        let padding:CGFloat = 30
+        emptyButton.anchor(top: contactLabel.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 10, left: 30, bottom: 0, right: 30))
+        igButton.anchor(top: emptyButton.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 10, left: padding, bottom: 0, right: padding))
+        tgButton.anchor(top: igButton.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 10, left: padding, bottom: 0, right: padding))
+        phoneButton.anchor(top: tgButton.bottomAnchor, leading: view.leadingAnchor, bottom: containerView.bottomAnchor, trailing: view.trailingAnchor, padding: .init(top: 10, left: padding, bottom: 0, right: padding))
+        
+    }
     // MARK: - Register Event
     
     @objc func didTapConfirm(){
@@ -226,28 +278,8 @@ class EnrollViewController: UIViewController {
                 AlertManager.shared.showAlert(title: "Oops~", message: message, from: self!)
             }
         }
-        
-        //        DatabaseManager.shared.registerEvent(
-        //            participant:user, eventID: eventID, event:event) {[weak self] success in
-        //                         self?.completion?()
-        //                         self?.dismiss(animated: true)
-        //        }
     }
     
-    @objc func didTapGenderButton(){
-        view.addSubview(genderSelectionView)
-        genderSelectionView.frame = CGRect(x: genderButton.left + (genderButton.width-100)/2, y: genderButton.top+20, width: 100, height: 0)
-        UIView.animate(withDuration: 0.2, delay: 0) {
-            self.genderSelectionView.frame = CGRect(x: self.genderButton.left + (self.genderButton.width-100)/2, y: self.genderButton.bottom+5, width: 100, height: 120)
-        }
-    }
-    
-    @objc func didTapChooseGender(_ sender:UIButton) {
-        genderSelectionView.removeFromSuperview()
-        let text = genderType.allCases[sender.tag].rawValue
-        genderButton.setTitle(text, for: .normal)
-        UserDefaults.standard.set(text, forKey: "gender")
-    }
     
     
     
@@ -263,4 +295,6 @@ extension EnrollViewController:UITextFieldDelegate {
         
     }
 }
+
+
 

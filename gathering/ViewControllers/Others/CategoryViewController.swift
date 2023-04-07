@@ -103,6 +103,7 @@ extension UIViewController {
         let vc = NewPostViewController()
         vc.newPost.title = eventName
         
+        
         vc.completion = { [weak self] post, images in
             guard let post = post else {return}
             
@@ -120,7 +121,10 @@ extension UIViewController {
             self?.presentModallyWithHero(vc)
         }
         
-        present(vc, animated: true)
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.modalPresentationStyle = .fullScreen
+        navVc.navigationBar.tintColor = .label
+        present(navVc, animated: true)
     }
     
     

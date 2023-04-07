@@ -19,9 +19,9 @@ class HomeSectionCollectionViewCell: UICollectionViewCell, ListAdapterDataSource
         }
     }
     var cellIndex:Int = 0
-    var category:EventType? {
+    var category:HomeCategoryType? {
         didSet {
-            adapter.performUpdates(animated: true)
+                adapter.performUpdates(animated: true)
         }
     }
     private let viewModel = HomeViewModel.shared
@@ -46,6 +46,32 @@ class HomeSectionCollectionViewCell: UICollectionViewCell, ListAdapterDataSource
         }
     }
     
+    
+    
+    
+    public func loadMoreDataFor(eventType:HomeCategoryType){
+        
+        switch eventType {
+        case .organisation:
+            fetchOrganisations()
+        case .mentor:
+            self.viewModel.fetchMentors {
+                self.adapter.performUpdates(animated: true)
+            }
+        default:
+            if viewModel.getItemsFor(categoryType: eventType).count < 7 {
+                fetchMoreData()
+            }
+        }
+    }
+    
+    
+    private func fetchOrganisations(){
+        self.viewModel.fetchOrganisations {
+            self.adapter.performUpdates(animated: true)
+        }
+    }
+    
     private func fetchMoreData(completion: (() -> (Void))? = nil ){
         viewModel.fetchMoreData(perPage: 7) {[weak self] events in
             guard let self = self else { return }
@@ -60,12 +86,7 @@ class HomeSectionCollectionViewCell: UICollectionViewCell, ListAdapterDataSource
         }
     }
     
-    public func loadMoreDataFor(eventType:EventType){
-        if viewModel.getItemsFor(eventType: eventType).count < 7 {
-            fetchMoreData()
-        }
-        
-    }
+    
      
     fileprivate func setupCollectionView() {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { index, _ -> NSCollectionLayoutSection? in
@@ -121,8 +142,11 @@ class HomeSectionCollectionViewCell: UICollectionViewCell, ListAdapterDataSource
         switch category {
         case .none:
             return viewModel.items
-        case .some(let wrapped):
-            return viewModel.getItemsFor(eventType: wrapped)
+        case .organisation:
+            return viewModel.organisations
+        case .some(let type):
+            return viewModel.getItemsFor(categoryType: type)
+            
         }
     }
     
@@ -141,7 +165,7 @@ class HomeSectionCollectionViewCell: UICollectionViewCell, ListAdapterDataSource
     
     
     func listAdapter(_ listAdapter: ListAdapter, willDisplay object: Any, at index: Int) {
-        if index == viewModel.items.count - 1 {
+        if index == viewModel.items.count - 1, viewModel.items.count > 6 {
             fetchMoreData()
         }
     }

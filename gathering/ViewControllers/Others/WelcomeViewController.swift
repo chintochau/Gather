@@ -21,7 +21,7 @@ class WelcomeViewController: UIViewController {
         let label = UILabel()
         label.textColor = .white
         label.font = .righteousFont(ofSize: 24)
-        label.text = "GaTher"
+        label.text = "One&All"
         return label
     }()
     

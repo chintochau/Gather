@@ -20,11 +20,17 @@ struct GANotification: Codable {
 struct SentUser:Codable {
     let name:String?
     let username:String
+    let urlString:String?
+    
+    
+    func toUser() -> User {
+        return User(username: self.username, email: nil, name: self.name, profileUrlString: self.urlString, gender: nil)
+    }
 }
 
 extension User {
     func toSentUser() -> SentUser {
-        return SentUser(name: self.name , username: self.username)
+        return SentUser(name: self.name , username: self.username,urlString: self.profileUrlString)
     }
 }
 

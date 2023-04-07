@@ -46,6 +46,21 @@ class HomeSectionController: ListSectionController {
             cell.bindViewModel(viewModel as! EventCellViewModel)
             let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
             height = size.height
+        case _ as HomeMessageViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: HomeMessageCollectionViewCell.self, for: self, at: index) as! HomeMessageCollectionViewCell
+            cell.bindViewModel(viewModel as! HomeMessageViewModel)
+            let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
+            height = size.height
+        case let vm as OrganisationViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: OrganisationCell.self, for: self, at: index) as! OrganisationCell
+            cell.bindViewModel(vm)
+            let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
+            height = size.height
+        case let vm as MentorViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: MentorCell.self, for: self, at: index ) as! MentorCell
+            cell.bindViewModel(vm)
+            let size = cell.systemLayoutSizeFitting(CGSize(width: width, height: 0))
+            height = size.height
         default:
             fatalError("Unsupported view model type")
         }
@@ -70,8 +85,20 @@ class HomeSectionController: ListSectionController {
             let cell = collectionContext?.dequeueReusableCell(of: PlaceCell.self, for: self, at: index) as! PlaceCell
             cell.bindViewModel(placeViewModel)
             return cell
-        case let skeletonViewModel as SkeletonViewModel:
+        case _ as SkeletonViewModel:
             let cell = collectionContext?.dequeueReusableCell(of: SkeletonCollectionViewCell.self, for: self, at: index) as! SkeletonCollectionViewCell
+            return cell
+        case let homeMessageViewModel as HomeMessageViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: HomeMessageCollectionViewCell.self, for: self, at: index) as! HomeMessageCollectionViewCell
+            cell.bindViewModel(homeMessageViewModel)
+            return cell
+        case let vm as OrganisationViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: OrganisationCell.self, for: self, at: index) as! OrganisationCell
+            cell.bindViewModel(vm)
+            return cell
+        case let vm as MentorViewModel:
+            let cell = collectionContext?.dequeueReusableCell(of: MentorCell.self, for: self, at: index ) as! MentorCell
+            cell.bindViewModel(vm)
             return cell
         default:
             fatalError()
@@ -79,7 +106,13 @@ class HomeSectionController: ListSectionController {
     }
     
     override func didSelectItem(at index: Int) {
-        let viewModel = viewModel
+        
+        if let viewModel = viewModel as? HomeMessageViewModel, let url = viewModel.urlString {
+            if let url = URL(string: url) {
+                UIApplication.shared.open(url)
+            }
+        }
+        
         // Handle cell selection based on the type of view model
     }
 }

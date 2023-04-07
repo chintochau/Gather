@@ -32,4 +32,26 @@ struct SearchManager {
             }
         }
     }
+    
+    
+    
+    func searchForUserss(words:String, completion:@escaping ([User]) -> Void) {
+        
+        let index = client.index(withName: "Users")
+        
+        let query = Query(words)
+        
+        index.search(query: query) { result in
+            if case .success(let response) = result {
+                let users: [User] = response.hits.compactMap { hit in
+                    guard let data = hit.asDictionary(),
+                    let user = User(with: data) else {
+                        return nil
+                    }
+                    return user
+                }
+                completion(users)
+            }
+        }
+    }
 }

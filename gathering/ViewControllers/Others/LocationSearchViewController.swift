@@ -17,14 +17,23 @@ class LocationSearchViewController: UIViewController {
     
     private let searchController:UISearchController = {
         let view = UISearchController(searchResultsController: LocationSearchResultTableVC())
-        view.searchBar.placeholder = "Search location/area/district/country..."
+        view.searchBar.placeholder = "搜尋地點..."
         view.obscuresBackgroundDuringPresentation = false
         return view
     }()
     
     private let mapView:MKMapView = {
         let view = MKMapView()
-        let region = MKCoordinateRegion(center: Location.torontoCoordinate, span: Location.span)
+        var coordinate:CLLocationCoordinate2D = Location.torontoCoordinate
+        if let location = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+            switch location {
+//            case LocationSwitch.hongkong.rawValue:
+//                coordinate = Location.hongkongCoordinate
+            default:
+                break
+            }
+        }
+        let region = MKCoordinateRegion(center: coordinate, span: Location.span)
         view.setRegion(region, animated: true)
         return view
     }()
@@ -45,7 +54,7 @@ class LocationSearchViewController: UIViewController {
     }
     
     private func configureNavBar() {
-        navigationItem.title = "Search location"
+        navigationItem.title = "地點"
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didTapClose))
         navigationItem.searchController = searchController
         searchController.searchResultsUpdater = searchController.searchResultsController as? LocationSearchResultTableVC

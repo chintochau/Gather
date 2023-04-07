@@ -44,7 +44,7 @@ extension DeeplinkCoordinator: DeeplinkCoordinatorProtocol {
 final class EventDeeplinkHandler: DeeplinkHandlerProtocol {
     
     static func generateEventDeepLink (with event:Event) -> String {
-        
+         
         guard let ref = event.referencePath else {
             fatalError()
         }

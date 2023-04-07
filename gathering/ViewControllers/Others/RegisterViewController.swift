@@ -11,27 +11,44 @@ class RegisterViewController: UIViewController {
     
     var completion: (() -> Void)?
     
+    
+    private let scrollView:UIScrollView = {
+        let view = UIScrollView()
+        view.keyboardDismissMode = .interactive
+        view.alwaysBounceVertical = true
+        return view
+    }()
+    
+    private let contentView:UIView = {
+        let view = UIView()
+        
+        return view
+        
+    }()
+    
+    
     private let titleLabel:UILabel = {
         let view = UILabel()
-        view.text = "Create new account"
+        view.text = "創建新帳戶"
         view.font = .systemFont(ofSize: 30, weight: .bold)
         return view
     }()
     
-    private let usernameField:GATextField = {
+    private let usernameField: GATextField = {
         let view = GATextField()
-        view.configure(name: "Username")
+        view.configure(name: "用戶名")
         view.autocorrectionType = .no
         view.autocapitalizationType = .none
         view.text = K.username
-        view.placeholder = "Enter your username"
-        view.keyboardType = .alphabet
+        view.placeholder = "輸入您的用戶名"
+        view.keyboardType = .asciiCapable
+        view.textContentType = .username
         return view
     }()
     
     private let emailField:GATextField = {
         let view = GATextField()
-        view.configure(name: "Email")
+        view.configure(name: "電郵地址")
         view.autocorrectionType = .no
         view.autocapitalizationType = .none
         view.text = K.email
@@ -42,20 +59,22 @@ class RegisterViewController: UIViewController {
     
     private let passwordField:GATextField = {
         let view = GATextField()
-        view.configure(name: "Password")
+        view.configure(name: "密碼")
         view.autocorrectionType = .no
         view.autocapitalizationType = .none
         view.text = K.password
-        view.placeholder = "Enter your password"
+        view.placeholder = "輸入您的密碼"
         view.isSecureTextEntry = true
         return view
     }()
     
     private let confirmPasswordField:GATextField = {
         let view = GATextField()
-        view.configure(name: "Confirm Password")
+        view.configure(name: "確認密碼")
+        view.autocorrectionType = .no
+        view.autocapitalizationType = .none
         view.text = K.password
-        view.placeholder = "Repeat password"
+        view.placeholder = "重複輸入密碼"
         view.isSecureTextEntry = true
         return view
     }()
@@ -70,7 +89,7 @@ class RegisterViewController: UIViewController {
     }()
     private let signUpButton:UIButton = {
         let view = UIButton(type: .system)
-        view.setTitle("Sign Up", for: .normal)
+        view.setTitle("註冊", for: .normal)
         view.backgroundColor = .mainColor
         view.layer.cornerRadius = 15
         view.tintColor = .white
@@ -80,14 +99,14 @@ class RegisterViewController: UIViewController {
     
     private let termsButton:UIButton = {
         let view = UIButton(type: .system)
-        view.setTitle("Terms", for: .normal)
+        view.setTitle("服務條款", for: .normal)
         view.tintColor = .link
         return view
     }()
     
     private let privacyButton:UIButton = {
         let view = UIButton(type: .system)
-        view.setTitle("Privacy Policy", for: .normal)
+        view.setTitle("隱私政策", for: .normal)
         view.tintColor = .link
         return view
     }()
@@ -101,11 +120,15 @@ class RegisterViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Register"
+        title = "註冊"
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector( didTapClose))
         
         view.backgroundColor = .systemBackground
+        
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
         [titleLabel,
          usernameField,
          emailField,
@@ -116,46 +139,90 @@ class RegisterViewController: UIViewController {
          privacyButton,
          indicator,
          agreeText
-        ].forEach{(view.addSubview($0))}
+        ].forEach({
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+            
+        })
+        
+        
+        setupConstrants()
+        addTapCancelGesture()
+        
+        
+        
         signUpButton.addTarget(self, action: #selector(didTapSignUp), for: .touchUpInside)
         
-        addTapCancelGesture()
+        termsButton.addTarget(self, action: #selector(didTapTerms), for: .touchUpInside)
+        
+        privacyButton.addTarget(self, action: #selector(didTapPrivacy), for: .touchUpInside)
+        
         
         usernameField.delegate = self
     }
     
     
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    private func setupConstrants(){
         
-        let padding:CGFloat = 20
-        let space:CGFloat = 35
-        let fieldWidth:CGFloat = view.width-2*padding
         
-        titleLabel.frame = CGRect(x: padding, y: view.safeAreaInsets.top+10, width: view.width - 2*space, height: 30)
+        scrollView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor)
+        contentView.fillSuperview()
+        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
         
-        usernameField.frame = CGRect(x: padding, y: titleLabel.bottom+50, width: fieldWidth, height: 50)
-        emailField.frame = CGRect(x: padding, y: usernameField.bottom+space, width: fieldWidth, height: 50)
-        passwordField.frame = CGRect(x: padding, y: emailField.bottom+space, width: fieldWidth, height: 50)
-        confirmPasswordField.frame = CGRect(x: padding, y: passwordField.bottom+space, width: fieldWidth, height: 50)
-        termsButton.sizeToFit()
         
-        let buttonHeight:CGFloat = 50
-        termsButton.frame = CGRect(x: padding, y: view.height-buttonHeight-60-55, width: fieldWidth, height: termsButton.height)
-        privacyButton.frame = CGRect(x: padding, y: view.height-buttonHeight-60-35, width: fieldWidth, height: termsButton.height)
-        
-        termsButton.addTarget(self, action: #selector(didTapTerms), for: .touchUpInside)
-        privacyButton.addTarget(self, action: #selector(didTapPrivacy), for: .touchUpInside)
-        
-        agreeText.sizeToFit()
-        agreeText.frame = CGRect(x: padding, y: view.height-buttonHeight-60-10, width: fieldWidth, height: agreeText.height)
-        
-        signUpButton.frame = CGRect(x: padding, y: view.height-buttonHeight-30, width: fieldWidth, height: buttonHeight)
-        indicator.frame = CGRect(x: signUpButton.left, y: signUpButton.top, width: signUpButton.width, height: signUpButton.height)
-        
+        NSLayoutConstraint.activate([
+            
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            usernameField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
+            usernameField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            usernameField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            usernameField.heightAnchor.constraint(equalToConstant: 50),
+            
+            emailField.topAnchor.constraint(equalTo: usernameField.bottomAnchor, constant: 35),
+            emailField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            emailField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            emailField.heightAnchor.constraint(equalToConstant: 50),
+            
+            passwordField.topAnchor.constraint(equalTo: emailField.bottomAnchor, constant: 35),
+            passwordField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            passwordField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            passwordField.heightAnchor.constraint(equalToConstant: 50),
+            
+            confirmPasswordField.topAnchor.constraint(equalTo: passwordField.bottomAnchor, constant: 35),
+            confirmPasswordField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            confirmPasswordField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            confirmPasswordField.heightAnchor.constraint(equalToConstant: 50),
+            
+            termsButton.topAnchor.constraint(equalTo: confirmPasswordField.bottomAnchor, constant: 15),
+            termsButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            termsButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            privacyButton.topAnchor.constraint(equalTo: termsButton.bottomAnchor, constant: 0),
+            privacyButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            privacyButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            
+            agreeText.topAnchor.constraint(equalTo: privacyButton.bottomAnchor, constant: 20),
+            agreeText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
+            agreeText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
+            
+            signUpButton.topAnchor.constraint(equalTo: agreeText.bottomAnchor, constant:10),
+            signUpButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30),
+            signUpButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30),
+            signUpButton.heightAnchor.constraint(equalToConstant: 50),
+            signUpButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
+            
+            indicator.topAnchor.constraint(equalTo: signUpButton.topAnchor),
+            indicator.leadingAnchor.constraint(equalTo: signUpButton.leadingAnchor),
+            indicator.trailingAnchor.constraint(equalTo: signUpButton.trailingAnchor),
+            indicator.bottomAnchor.constraint(equalTo: signUpButton.bottomAnchor)
+            
+        ])
         
     }
+    
     
     private func addTapCancelGesture(){
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapCancel))
@@ -166,13 +233,13 @@ class RegisterViewController: UIViewController {
     
     
     @objc private func didTapPrivacy() {
-        let vc = PolicyViewController(title: "Privacy Policy", policyString: Policy.privacyPolicy)
+        let vc = PolicyViewController(title: "隱私政策", policyString: Policy.privacyPolicy)
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
     }
     
     @objc private func didTapTerms() {
-        let vc = PolicyViewController(title: "Terms", policyString: Policy.terms)
+        let vc = PolicyViewController(title: "服務條款", policyString: Policy.terms)
         let navVc = UINavigationController(rootViewController: vc)
         present(navVc, animated: true)
         
@@ -188,12 +255,20 @@ class RegisterViewController: UIViewController {
     
     @objc private func didTapSignUp(){
         guard let email = emailField.text, !email.isEmpty,
+              email.isValidEmail(),
               let password = passwordField.text, !password.isEmpty,
-              let username = usernameField.text, !username.isEmpty,
-              let confirmPassword = confirmPasswordField.text, confirmPassword == password
+              password.count >= 8,
+              let confirmPassword = confirmPasswordField.text, confirmPassword == password,
+              let username = usernameField.text, !username.isEmpty, username.count>=5
         else {
+            // Show an alert indicating invalid input
+            let alert = UIAlertController(title: "輸入無效", message: "請輸入有效的電子郵件，至少8個字的密碼，並確保密碼匹配。", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "確定", style: .default))
+            present(alert, animated: true)
+            
             return
         }
+        
         indicator.startAnimating()
         indicator.isHidden = false
         signUpButton.isHidden = true
@@ -201,8 +276,8 @@ class RegisterViewController: UIViewController {
         AuthManager.shared.signUp(username: username, email: email, password: password) {[weak self] user in
             guard let user  = user else {
                 
-                let alert = UIAlertController(title: "Oops~", message: "Account already exist, please try login", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
+                let alert = UIAlertController(title: "帳戶已存在", message: "此電郵地址已被註冊。請使用不同的電郵地址或登入現有帳戶。", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "確定", style: .cancel))
                 self?.present(alert, animated: true)
                 
                 self?.indicator.isHidden = true
@@ -216,7 +291,6 @@ class RegisterViewController: UIViewController {
             CustomNotificationManager.shared.requestForNotification()
         }
     }
-    
 }
 
 
@@ -232,11 +306,11 @@ extension RegisterViewController:UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        
         if let text = textField.text {
-            textField.text = text.lowercased()
+            let filteredText = text.filter({ $0.isLetter || $0.isNumber }).lowercased()
+            textField.text = filteredText
         }
-        
     }
+
     
 }

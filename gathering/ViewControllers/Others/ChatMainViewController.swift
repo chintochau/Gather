@@ -8,6 +8,7 @@
 import UIKit
 import PubNub
 import RealmSwift
+import SwipeCellKit
 
 class ChatMainViewController: UIViewController {
     
@@ -21,8 +22,15 @@ class ChatMainViewController: UIViewController {
     
     private let signinMessage:UILabel = {
         let view = UILabel()
-        view.text = "Login to send Message"
+        view.text = "登入以傳送訊息給好友"
         view.textColor = .label
+        return view
+    }()
+    
+    private let loginButton:UIButton = {
+        let view = UIButton()
+        
+        
         return view
     }()
     
@@ -44,13 +52,21 @@ class ChatMainViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.fillSuperview()
-        setupNavBar()
         observeConversationsFromRealm()
         
         signinMessage.isHidden = AuthManager.shared.isSignedIn
         signinMessage.sizeToFit()
         signinMessage.center = view.center
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setupNavBar()
+        
+    }
+    
+    
     
     deinit {
         notificationToken?.invalidate()
@@ -75,35 +91,59 @@ class ChatMainViewController: UIViewController {
                 print("Error observing Realm changes: \(error.localizedDescription)")
             }
         })
-        conversations = results
+        
+        conversations = results.sorted(byKeyPath: "lastUpdated", ascending: false)
     }
     
     private func setupNavBar(){
-        navigationItem.title = "Chat"
+        navigationItem.title = "訊息"
         navigationController?.navigationBar.tintColor = .label
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(didTapNewMessage))
+        
+        if AuthManager.shared.isSignedIn {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .done, target: self, action: #selector(didTapNewMessage))
+            
+        }else {
+            navigationItem.rightBarButtonItem = nil
+        }
     }
     
     @objc private func didTapNewMessage(){
-        let vc = FavouritedViewController()
+        let vc = ChatListViewController()
         vc.setUpPanBackGestureAndBackButton()
+        vc.completion = { [weak self] targetUsername in
+            let vc = ChatMessageViewController(targetUsername: targetUsername)
+            vc.setUpPanBackGestureAndBackButton()
+            self?.presentModallyWithHero(vc)
+        }
         presentModallyWithHero(vc)
         
     }
     
     
+    private func deleteChat(with targetUsername:String){
+        let realm = try! Realm()
+        
+        let channelId = IdManager.shared.generateChannelIDFor(targetUsername: targetUsername)
+        
+        if let object = RealmManager.shared.getObject(ofType: ConversationObject.self, forPrimaryKey: channelId) {
+            try! realm.write {
+                realm.delete(object)
+            }
+        }
+    }
 }
 
-extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate{
+extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate,SwipeTableViewCellDelegate {
+    
     
     
     // MARK: - Delegate + DataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        guard let model = conversations?[indexPath.row] else {return}
+        let model = conversations?[indexPath.row]
         
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = ChatMessageViewController(targetUsername: model.targetname)
+        let vc = ChatMessageViewController(targetUsername: model?.targetname ?? "")
         vc.setUpPanBackGestureAndBackButton()
         presentModallyWithHero(vc)
         
@@ -118,8 +158,45 @@ extension ChatMainViewController:UITableViewDataSource,UITableViewDelegate{
         let model = conversations?[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: ChatConversationTableViewCell.identifier, for: indexPath) as! ChatConversationTableViewCell
         cell.conversation = model
+        cell.delegate = self
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "刪除") { [weak self] action, indexPath in
+            
+            guard let self = self else {return}
+            let conversation = self.conversations?[indexPath.row]
+            AlertManager.shared.showAlert(title: "刪除", message: "確定要刪除此聊天嗎？刪除後將無法恢復。",buttonText: "刪除", buttonStyle: .destructive, from: self) {
+                self.deleteChat(with: conversation?.targetname ?? "")
+            }
+        }
+
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete")
+
+        return [deleteAction]
+    }
+    
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> SwipeCellKit.SwipeOptions {
+        return .init()
+    }
+    
+    func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) {
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didEndEditingRowAt indexPath: IndexPath?, for orientation: SwipeCellKit.SwipeActionsOrientation) {
+        
+    }
+    
+    func visibleRect(for tableView: UITableView) -> CGRect? {
+        nil
+    }
+    
     
     
 }

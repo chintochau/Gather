@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import SwipeCellKit
+import SwiftDate
 
-class ChatConversationTableViewCell: UITableViewCell {
+class ChatConversationTableViewCell: SwipeTableViewCell {
     static let identifier = "ChatConversationTableViewCell"
     
     // MARK: - Components
@@ -22,13 +24,21 @@ class ChatConversationTableViewCell: UITableViewCell {
     
     private let channelName:UILabel = {
         let view = UILabel()
+        view.font = .helveticaBold(ofSize: 18)
         return view
     }()
     
     private let lastMessage:UILabel = {
         let view = UILabel()
         view.textColor = .secondaryLabel
-        view.text = "Last message testing..."
+        view.font = .systemFont(ofSize: 14)
+        return view
+    }()
+    
+    private let dateLabel:UILabel = {
+        let view = UILabel()
+        view.font = .systemFont(ofSize: 12)
+        view.textColor = .secondaryLabel
         return view
     }()
     
@@ -36,14 +46,27 @@ class ChatConversationTableViewCell: UITableViewCell {
     var conversation:ConversationObject?{
         didSet{
             guard let users = conversation?.participants,
-                  let username = UserDefaults.standard.string(forKey: "username") else {return}
-            
+                  let username = UserDefaults.standard.string(forKey: "username")
+            else {return}
             for user in users {
                 if user.username != username {
                     channelName.text = user.name ?? user.username
-                    channelImageView.sd_setImage(with: URL(string: user.profileUrlString ?? ""))
-                    let lastMessageText = (conversation?.messages.last?.sender?.username ?? "") + ": " + (conversation?.messages.last?.text ?? "")
-                    lastMessage.text = lastMessageText
+                    if let imageUrl = user.profileUrlString {
+                        channelImageView.sd_setImage(with: URL(string: imageUrl))
+                    }
+                    
+                    if let latestMessage = conversation?.messages.last {
+                        var lastMessageText = ""
+                        
+                        if !(latestMessage.sender?.username == username) {
+                            lastMessageText = "\(user.name ?? user.username): \(latestMessage.text)"
+                        }else {
+                            lastMessageText = "你: \(latestMessage.text)"
+                        }
+                        lastMessage.text = lastMessageText
+                        dateLabel.text = conversation?.lastUpdated?.toRelative(style:RelativeFormatter.twitterStyle())
+                        
+                    }
                     return
                 }
             }
@@ -53,7 +76,7 @@ class ChatConversationTableViewCell: UITableViewCell {
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        [channelImageView,channelName,lastMessage].forEach({
+        [channelImageView,channelName,lastMessage,dateLabel].forEach({
             contentView.addSubview($0)
         })
         
@@ -65,6 +88,8 @@ class ChatConversationTableViewCell: UITableViewCell {
         
         lastMessage.anchor(top: channelName.bottomAnchor, leading: channelName.leadingAnchor, bottom: nil, trailing: nil)
         
+        dateLabel.anchor(top: channelName.topAnchor, leading: nil, bottom: channelName.bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 5))
+        
     }
     
     required init?(coder: NSCoder) {
@@ -74,8 +99,9 @@ class ChatConversationTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         channelName.text = nil
-        channelImageView.image = nil
+        channelImageView.image = .personIcon
         lastMessage.text = nil
+        dateLabel.text = nil
     }
     
 }

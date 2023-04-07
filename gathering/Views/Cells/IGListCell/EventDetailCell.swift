@@ -140,7 +140,7 @@ class EventDetailInfoCell : UICollectionViewCell, ListBindable {
         var locationName = name.replacingOccurrences(of: " ", with: "+")
         
         if let address = location?.address {
-            locationName += address.replacingOccurrences(of: " ", with: "+")
+            locationName += "+\(address)".replacingOccurrences(of: " ", with: "+")
         }
         
         let encodedString = locationName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!

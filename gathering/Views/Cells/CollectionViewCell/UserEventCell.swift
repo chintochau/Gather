@@ -46,13 +46,6 @@ class UserEventCell: UICollectionViewCell {
         return view
     }()
     
-    private let tagStackView:UIStackView = {
-        let view = UIStackView()
-        view.distribution = .fillProportionally
-        view.axis = .horizontal
-        return view
-        
-    }()
     
     private let emojiLabel:UILabel = {
         let view = UILabel()
@@ -78,8 +71,6 @@ class UserEventCell: UICollectionViewCell {
                 gradientLayer.isHidden = false
             }
             
-            tagStackView.addArrangedSubview(model.eventTag.getLabel())
-          
             
         }
     }
@@ -89,7 +80,7 @@ class UserEventCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        [titleLabel,dateLabel,locationLabel,eventImageView,tagStackView].forEach({addSubview($0)})
+        [titleLabel,dateLabel,locationLabel,eventImageView].forEach({addSubview($0)})
         
         backgroundColor = .systemBackground
         
@@ -97,10 +88,7 @@ class UserEventCell: UICollectionViewCell {
         
         eventImageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil,padding: .init(top: 5, left: 20, bottom: 5, right: 5), size: .init(width: imageSize, height: imageSize*1.2))
         
-        tagStackView.anchor(top: eventImageView.topAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 5, bottom: 0, right: 0))
-        
-        
-        titleLabel.anchor(top: tagStackView.bottomAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        titleLabel.anchor(top: eventImageView.topAnchor, leading: dateLabel.leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 0, bottom: 0, right: 0))
         
         
         dateLabel.anchor(top: titleLabel.bottomAnchor, leading: eventImageView.trailingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 10, left: 5, bottom: 0, right: 0))
@@ -127,25 +115,7 @@ class UserEventCell: UICollectionViewCell {
         eventImageView.image = nil
         emojiLabel.text = nil
         
-        tagStackView.subviews.forEach({
-            tagStackView.removeArrangedSubview($0)
-        })
         
     }
     
 }
-
-
-#if DEBUG
-import SwiftUI
-
-@available(iOS 13, *)
-struct ResultPreview: PreviewProvider {
-    
-    static var previews: some View {
-        // view controller using programmatic UI
-        SearchResultViewController(searchText: "000").toPreview()
-    }
-}
-#endif
-

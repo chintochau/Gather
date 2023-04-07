@@ -17,17 +17,26 @@ class NewHomeViewController: UIViewController{
     
     private let searchController:UISearchController = {
         let view = UISearchController(searchResultsController: HomeSearchResultTableViewController())
-        view.searchBar.placeholder = "搜尋活動"
+        view.searchBar.placeholder = "搜尋活動/興趣"
         view.hidesBottomBarWhenPushed = true
         view.obscuresBackgroundDuringPresentation = true
+        view.showsSearchResultsController = true
         return view
     }()
     
     private let titleLabel : UILabel = {
         let view = UILabel()
-        view.text = "GaTher"
-        view.font = .righteousFont(ofSize: 24)
+        view.text = "One&All"
+        view.font = .helveticaBold(ofSize: 24)
         view.textColor = .label
+        return view
+    }()
+    
+    private lazy var locationButton:UIButton = {
+        let view = UIButton()
+        view.titleLabel?.font = .systemFont(ofSize: 16)
+        view.setTitleColor(.label, for: .normal)
+        view.addTarget(self, action: #selector(presentLocationSelection), for: .touchUpInside)
         return view
     }()
     
@@ -38,7 +47,9 @@ class NewHomeViewController: UIViewController{
     
     private let menuBar:MenuBar = {
         let view = MenuBar()
-        view.items.append(contentsOf: EventType.allCases.map({$0.rawValue}))
+        var array = ["全部活動"]
+        array.append(contentsOf: HomeCategoryType.allCases.map({$0.rawValue}))
+        view.items = array
         return view
     }()
     
@@ -55,15 +66,25 @@ class NewHomeViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        if let userRegion = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+            locationButton.setTitle(userRegion, for: .normal)
+        }else {
+            presentLocationSelection()
+        }
+        
+        
         configureNavBar()
         configureCollectionView()
         fetchInitialDataAndRefresh()
         navigationItem.hidesSearchBarWhenScrolling = false
         configureMenuBar()
         self.extendedLayoutIncludesOpaqueBars = true
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didPullToRefresh), name: Notification.Name("userStateRefreshed"), object: nil)
     }
-    
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
@@ -134,12 +155,20 @@ extension NewHomeViewController: UICollectionViewDataSource, UICollectionViewDel
         cell.cellIndex = indexPath.row
         cell.viewController = self
         
-        if indexPath.row == 0 {
+        switch indexPath.row {
+        case 0:
             cell.category = nil
-        } else {
-            cell.category = EventType.allCases[indexPath.row-1]
-            cell.loadMoreDataFor(eventType: EventType.allCases[indexPath.row-1])
+        default:
+            cell.category = HomeCategoryType.allCases[indexPath.row-1]
+            cell.loadMoreDataFor(eventType: HomeCategoryType.allCases[indexPath.row-1])
         }
+        
+//        if indexPath.row == 0 {
+//            cell.category = nil
+//        } else {
+//            cell.category = EventType.allCases[indexPath.row-1]
+//            cell.loadMoreDataFor(eventType: EventType.allCases[indexPath.row-1])
+//        }
         
         
         return cell
@@ -169,18 +198,18 @@ extension NewHomeViewController:UIScrollViewDelegate  {
         
         
         headerView.addSubview(titleLabel)
+        headerView.addSubview(locationButton)
         navigationItem.titleView = headerView
         titleLabel.sizeToFit()
         titleLabel.frame = CGRect(x: 0, y: 0, width: titleLabel.width, height: 44)
         headerView.frame = CGRect(x: 0, y: 0, width: view.width, height: 44)
-        
+        locationButton.sizeToFit()
+        locationButton.frame = CGRect(x: titleLabel.right+10, y: 0, width: titleLabel.width, height: 44)
         
         
         if let resultVC = searchController.searchResultsController as? HomeSearchResultTableViewController {
-            
             resultVC.delegate = self
         }
-        
     }
     
     @objc private func didTapSearch() {
@@ -196,7 +225,7 @@ extension NewHomeViewController:UIScrollViewDelegate  {
 
     
     @objc private func didTapNotification(){
-        let vc = NotificationsViewController()
+        let vc = NotificationsViewController.shared
         vc.setUpPanBackGestureAndBackButton()
         presentModallyWithHero(vc)
     }
@@ -211,7 +240,34 @@ extension NewHomeViewController:UIScrollViewDelegate  {
     }
     
     @objc private func didTapAdd(){
-        tabBarController?.showCategoryViewController()
+//        tabBarController?.showCategoryViewController()
+        showNewPostViewController()
+    }
+    
+    @objc private func presentLocationSelection(){
+        return
+        
+        // MARK: - select location
+        
+        let vc = LocationPickerViewController()
+        
+        if let _ = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+            
+        }else {
+            vc.modalPresentationStyle = .fullScreen
+        }
+        
+        vc.completion = {
+            if let location = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+                self.locationButton.setTitle(location, for: .normal)
+                self.didPullToRefresh()
+            }
+            
+        }
+        
+        
+        present(vc, animated: true)
+        
     }
     
     
@@ -245,19 +301,24 @@ extension NewHomeViewController:UIScrollViewDelegate  {
 
 extension NewHomeViewController:HomeSearchResultTableViewControllerDelegate {
     func HomeSearchResultTableViewControllerDidChooseResult(_ view: HomeSearchResultTableViewController, result: HomeSearchResultType,searchText:String) {
+        // MARK: - Handle Search
         
         switch result {
         case .organiseEvent:
             print("Organise Event")
         case .searchEvent:
             searchController.searchBar.resignFirstResponder()
-            let vc = SearchResultViewController(searchText: searchText)
+            let vc = SearchResultViewController(searchType: .events,searchText: searchText)
             vc.setUpPanBackGestureAndBackButton()
             presentModallyWithHero(vc)
         case .groupUp:
             showNewPostViewController(eventName: searchText)
         case .searchPeople:
-            print("Search people")
+            searchController.searchBar.resignFirstResponder()
+            let vc = SearchResultViewController(searchType:.users,searchText: searchText)
+            vc.setUpPanBackGestureAndBackButton()
+            presentModallyWithHero(vc)
+            
         }
     }
     

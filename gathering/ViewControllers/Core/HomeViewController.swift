@@ -26,8 +26,8 @@ class HomeViewController: UIViewController{
     
     private let titleLabel : UILabel = {
         let view = UILabel()
-        view.text = "GaTher"
-        view.font = .righteousFont(ofSize: 24)
+        view.text = "One&All"
+        view.font = .helveticaBold(ofSize: 24)
         view.textColor = .label
         return view
     }()
@@ -39,7 +39,7 @@ class HomeViewController: UIViewController{
     
     private let menuBar:MenuBar = {
         let view = MenuBar()
-        view.items.append(contentsOf: EventType.allCases.map({$0.rawValue}))
+        view.items.append(contentsOf: HomeCategoryType.allCases.map({$0.rawValue}))
         return view
     }()
     
@@ -276,7 +276,7 @@ extension HomeViewController:HomeSearchResultTableViewControllerDelegate {
             showNewPostViewController(eventName: searchText)
             
         case .searchEvent:
-            let vc = SearchResultViewController(searchText: searchText)
+            let vc = SearchResultViewController(searchType: .events, searchText: searchText)
             
             vc.setUpPanBackGestureAndBackButton()
             presentModallyWithHero(vc)

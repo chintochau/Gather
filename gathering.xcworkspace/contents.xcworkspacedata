@@ -5,7 +5,7 @@
       location = "group:/Users/jasonchau/Documents/Development/iOS/gathering/gathering/Resources/APIKeys.xcconfig">
    </FileRef>
    <FileRef
-      location = "group:gathering.xcodeproj">
+      location = "group:/Users/jasonchau/Documents/Development/iOS/gathering/One&amp;All.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

@@ -13,6 +13,18 @@ class NotificationCollectionViewCell: UICollectionViewCell, ListBindable {
     
     static let identifier = "NotificationCollectionViewCell"
     
+    
+    private let profileImageView:UIImageView = {
+        
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.image = .personIcon
+        view.tintColor = .lightGray
+        return view
+        
+    }()
+    
     private let titleLabel:UILabel  = {
         let view = UILabel()
         view.font = .systemFont(ofSize: 16)
@@ -34,13 +46,17 @@ class NotificationCollectionViewCell: UICollectionViewCell, ListBindable {
         return view
     }()
     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        [dateLabel,titleLabel,subtitleLabel].forEach({
+        [dateLabel,titleLabel,subtitleLabel,profileImageView].forEach({
             addSubview($0)
         })
         
-        titleLabel.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 10, left: 20, bottom: 10, right: 20))
+        profileImageView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: nil, padding: .init(top: 10, left: 20, bottom: 10, right: 0), size: .init(width: 40, height: 40))
+        profileImageView.layer.cornerRadius = 20
+        
+        titleLabel.anchor(top: topAnchor, leading: profileImageView.trailingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 10, left: 10, bottom: 10, right: 20))
         dateLabel.anchor(top: nil, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,padding: .init(top: 0, left: 0, bottom: 5, right: 20))
     }
     
@@ -58,6 +74,9 @@ class NotificationCollectionViewCell: UICollectionViewCell, ListBindable {
         let event = vm.event
         let eventName = event?.name ?? "活動"
         
+        if let imageUrl = user?.urlString {
+            profileImageView.sd_setImage(with: .init(string: imageUrl))
+        }
         
         switch vm.type {
         case .friendRequest:
@@ -75,5 +94,11 @@ class NotificationCollectionViewCell: UICollectionViewCell, ListBindable {
         dateLabel.text = vm.createdAt.toDate().toRelative(style: RelativeFormatter.twitterStyle())
         
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        profileImageView.image = .personIcon
+    }
+    
     
 }

@@ -24,15 +24,15 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         //Define VC
         let home = NewHomeViewController()
-        let favourite = FavouritedViewController()
-        let notification = NotificationsViewController()
+        let myEvents = MyEventsViewController()
+        let myFriends = MyFriendsViewController()
         let messages = ChatMainViewController()
         let profile = ProfileViewController()
         
 
         let nav1 = UINavigationController(rootViewController: home)
-        let nav2 = UINavigationController(rootViewController: favourite)
-        let nav3 = UINavigationController(rootViewController: notification)
+        let nav2 = UINavigationController(rootViewController: myEvents)
+        let nav3 = UINavigationController(rootViewController: myFriends)
         let nav4 = UINavigationController(rootViewController: messages)
         let nav5 = UINavigationController(rootViewController: profile)
         
@@ -40,14 +40,14 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         
         nav1.tabBarItem = UITabBarItem(title: "發現", image: UIImage(systemName: "globe"), tag: 1)
         nav2.tabBarItem = UITabBarItem(title: "活動", image: UIImage(systemName: "calendar" ), tag: 2)
-        nav3.tabBarItem = UITabBarItem(title: "通知", image: UIImage(systemName: "bell" ), tag: 3)
+        nav3.tabBarItem = UITabBarItem(title: "連繫", image: UIImage(systemName: "person.2.square.stack" ), tag: 3)
         nav4.tabBarItem = UITabBarItem(title: "訊息", image: UIImage(systemName: "bubble.left" ), tag: 4)
         nav5.tabBarItem = UITabBarItem(title: "個人", image: UIImage(systemName: "person.circle" ), tag: 5)
         
         if #available(iOS 14.0, *) {
             home.navigationItem.backButtonDisplayMode = .minimal
-            favourite.navigationItem.backButtonDisplayMode = .minimal
-            notification.navigationItem.backButtonDisplayMode = .minimal
+            myEvents.navigationItem.backButtonDisplayMode = .minimal
+            myFriends.navigationItem.backButtonDisplayMode = .minimal
             messages.navigationItem.backButtonDisplayMode = .minimal
             profile.navigationItem.backButtonDisplayMode = .minimal
         } else {
@@ -71,7 +71,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         self.setViewControllers([
             nav1,
             nav2,
-//            nav3,
+            nav3,
             nav4,
             nav5
         ], animated: false)
@@ -216,6 +216,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
 //        DummyDataManager.shared.generateDummyEvents()
 //        DummyDataManager.shared.createNotificationForEachUsers()
+//        DummyDataManager.shared.createDemoUsers()
     }
     
 }

@@ -31,6 +31,29 @@ class SkeletonViewModel: HomeCellViewModel {
     // Additional properties and methods for the ad view model
 }
 
+class HomeMessageViewModel: HomeCellViewModel {
+    var id: String
+    let message:String
+    let urlString:String?
+    
+    init(message:String, urlString:String? = nil) {
+        self.id = UUID().uuidString
+        self.message = message
+        self.urlString = urlString
+    }
+    
+    func diffIdentifier() -> NSObjectProtocol {
+        return id as NSObjectProtocol
+    }
+    
+    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
+        guard let other = object as? HomeMessageViewModel else {return false}
+        return id == other.id
+        
+    }
+}
+
+
 class AdViewModel: HomeCellViewModel {
     let id: String
     let ad: Ad

@@ -54,6 +54,8 @@ final class AuthManager {
                         return
                     }
                     ChatMessageManager.shared.connectToChatServer(true)
+                    RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
+                    NotificationCenter.default.post(name: Notification.Name("userStateRefreshed"), object: nil)
                     completion(newUser)
                 }
             }
@@ -74,7 +76,9 @@ final class AuthManager {
                 
                 DefaultsManager.shared.updateUserProfile(with: user)
                 ChatMessageManager.shared.connectToChatServer(true)
+                RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
                 DatabaseManager.shared.updateFcmTokenToServer()
+                NotificationCenter.default.post(name: Notification.Name("userStateRefreshed"), object: nil)
                 completion(user)
             }
         }
@@ -86,11 +90,51 @@ final class AuthManager {
             ChatMessageManager.shared.disconnectFromChatServer()
             RealmManager.shared.clearRealmDatabase()
             DefaultsManager.shared.resetUserProfile()
+            NotificationCenter.default.post(name: Notification.Name("userStateRefreshed"), object: nil)
             completion?(true)
         }catch{
             print(error)
             completion?(false)
         }
     }
+    
+    public func deleteAccount(password: String, completion: @escaping ((Bool) -> Void)) {
+        if let user = auth.currentUser {
+            // Reauthenticate user to verify password
+            let credential = EmailAuthProvider.credential(withEmail: user.email!, password: password)
+            
+            user.reauthenticate(with: credential) { result, error in
+                if let error = error {
+                    print("Error reauthenticating user: \(error)")
+                    completion(false)
+                } else {
+                    
+                    DatabaseManager.shared.deleteUserProfile(userEmail: user.email!) { success in
+                        if success {
+                            
+                            user.delete { error in
+                                if let error = error {
+                                    print("Error deleting user account: \(error)")
+                                    completion(false)
+                                } else {
+                                    
+                                    NotificationCenter.default.post(name: Notification.Name("userStateRefreshed"), object: nil)
 
+                                    RealmManager.shared.clearRealmDatabase()
+                                    DefaultsManager.shared.resetUserProfile()
+                                    completion(true)
+                                }
+                            }
+                            
+                        } else {
+                            completion(false)
+                        }
+                    }
+                }
+            }
+        } else {
+            completion(false)
+        }
+    }
+    
 }

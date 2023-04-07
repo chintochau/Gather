@@ -13,11 +13,19 @@ struct User :Codable{
     let name:String?
     let profileUrlString:String?
     let gender:String?
+    var birthday:Date?
     var rating:Double? = nil
-    var age:Int? = nil
     var fcmToken:String? = nil
     var chatToken:String? = nil
-    var happy:String? = nil
+    var interests:[String]? = []
+    var contacts:Contacts? = nil
+    var immigrantStatus: ImmigrantStatus? = nil
+}
+
+enum ImmigrantStatus:Codable {
+    case bornInCanada
+    case PR(year: Date)
+    case other(year: Date)
 }
 
 extension User {
@@ -32,6 +40,14 @@ extension User {
     }
     
 }
+
+
+struct Contacts:Codable {
+    let instagram:String?
+    let telegram:String?
+    let phone:String?
+}
+
 
 struct TempProfile {
     var name:String = ""
@@ -49,5 +65,5 @@ enum personalityType:String {
 enum genderType:String,CaseIterable {
     case male
     case female
-//    case nonBinary
 }
+

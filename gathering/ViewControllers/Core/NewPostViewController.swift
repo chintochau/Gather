@@ -39,27 +39,7 @@ class NewPostViewController: UIViewController {
     private var emojiButton:UIButton?
     
     private let headerView:UIView = {
-        let headerImageView:UIImageView = {
-            let view = UIImageView()
-            view.image  = UIImage(named: "eventHeader")
-            view.contentMode = .scaleAspectFit
-            return view
-        }()
-        
-        let titleLabel:UILabel = {
-            let view = UILabel()
-            view.text = "組團"
-            view.font = .robotoSemiBoldFont(ofSize: 24)
-            return view
-        }()
-        
-        
         let view = UIView()
-        view.addSubview(headerImageView)
-        headerImageView.frame = CGRect(x: 0, y: 0, width: 390, height: 130)
-        view.addSubview(titleLabel)
-        titleLabel.frame = CGRect(x: 30, y: 130, width: 100, height: 60)
-        
         return view
     }()
     
@@ -88,7 +68,7 @@ class NewPostViewController: UIViewController {
     var completion: ((_ event:Event?,_ images:[UIImage]) -> Void)?
     
     
-    private let bottomOffset:CGFloat = 150
+    private let bottomOffset:CGFloat = 200
     var newPost = NewPost()
     
     var images:[UIImage] = [] {
@@ -136,6 +116,7 @@ class NewPostViewController: UIViewController {
         setupNavBar()
         observeKeyboardChange()
         
+        
         view.addSubview(tempButton)
         
         tempButton.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 30, right: 60))
@@ -163,6 +144,18 @@ class NewPostViewController: UIViewController {
     private func configureViewModels(){
         guard let _ = DefaultsManager.shared.getCurrentUser() else {return}
         
+        var locationArray:[Location] = Location.torontoLocationArray
+        
+        if let currentlocation = Location.getCurrentLocation() {
+//            if currentlocation == .hongkong {
+//                locationArray = Location.hongkongLocationArray
+//
+//            }
+            
+            
+        }
+        
+        
         
         viewModels = [
             [
@@ -170,7 +163,7 @@ class NewPostViewController: UIViewController {
                 .titleField(title: "活動名稱" ,placeholder: "例： 滑雪/食日本野/周末聚下..."),
                 .textView(title: "活動簡介:", text: newPost.intro,tag: 0),
                 .datePicker,
-                .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: Location.filterArray),
+                .horizentalPicker(title: "地點:", selectedObject: newPost.location, objects: locationArray),
                 .headCount,
                 .toggleButton(title: "允許候補名單", tag:2),
                 .toggleButton(title: "自動確認報名", tag:1)
@@ -182,10 +175,17 @@ class NewPostViewController: UIViewController {
     
     // MARK: - Nav Bar
     private func setupNavBar(){
-        navigationItem.title = "組團"
+        navigationItem.title = "快速組團"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(didTapClose))
         let postButton = UIBarButtonItem(image: UIImage(systemName: "paperplane"), style: .done, target: self, action: #selector(didTapPost))
         let previewButton = UIBarButtonItem(image: UIImage(systemName: "doc.text.magnifyingglass"), style: .done, target: self, action:#selector(didTapPreview))
         navigationItem.rightBarButtonItems = [postButton,previewButton]
+    }
+    
+    @objc private func didTapClose(){
+        
+        self.dismiss(animated: true)
+        
     }
     
     // MARK: - Keyboard Handling
@@ -211,7 +211,7 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
         view.addSubview(tableView)
         tableView.backgroundColor = .clear
         tableView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 65, right: 0))
-        tableView.keyboardDismissMode = .onDrag
+        tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
         tableView.backgroundView = nil
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -355,15 +355,22 @@ extension NewPostViewController:UITableViewDelegate,UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0 {
+            
+            let titleLabel:UILabel = {
+                let view = UILabel()
+                view.text = "您可以設置活動標題和其他細節，吸引有相似興趣的人加入您的活動，讓您在新社會中找到志同道合的朋友。"
+                view.numberOfLines = 0
+                view.font = .helvetica(ofSize: 14)
+                return view
+            }()
+            headerView.addSubview(titleLabel)
+            titleLabel.anchor(top: headerView.topAnchor, leading: headerView.leadingAnchor, bottom: headerView.bottomAnchor, trailing: headerView.trailingAnchor, padding: .init(top: 10, left: 30, bottom: 10, right: 30))
+            
             return headerView
         }
         return nil
     }
     
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 180 : 30
-    }
     
 }
 
@@ -383,6 +390,8 @@ extension NewPostViewController {
             AlertManager.shared.showAlert(title: "Oops~", message: "請輸入最少兩個字的標題", from: self)
             return
         }
+        
+        
         
         let vc = PreviewViewController()
         vc.configure(with: PreviewViewModel(event: event))

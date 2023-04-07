@@ -1,30 +1,36 @@
 //
-//  TicketViewController.swift
-//  gathering
+//  MyFriendsViewController.swift
+//  Gather Pool
 //
-//  Created by Jason Chau on 2023-01-11.
+//  Created by Jason Chau on 2023-03-23.
 //
 
 import UIKit
 
-enum favouriteType:String, CaseIterable {
-    case events = "已參加活動"
-    case users = "你的好友"
-}
 
-class FavouritedViewController: UIViewController {
+class MyFriendsViewController: UIViewController {
     
     var favouritedItems = DefaultsManager.shared.getFavouritedEvents()
     
     private var titles:[String] = {
-        return favouriteType.allCases.compactMap({$0.rawValue})
+        return [favouriteType.allCases.last?.rawValue ?? ""]
     }()
     
     
-    lazy var segmentedButtonsView:SegmentedButtonsView = {
-        let segmentedButtonsView = SegmentedButtonsView()
-        segmentedButtonsView.setLablesTitles(titles: titles)
-        return segmentedButtonsView
+    
+    lazy var segmentedButtonsView:MenuBar = {
+        let view = MenuBar()
+        var array = titles
+        view.items = array
+        return view
+    }()
+    
+    
+    private let signinMessage:UILabel = {
+        let view = UILabel()
+        view.text = "登入以添加朋友"
+        view.textColor = .label
+        return view
     }()
     
     private let collectionView:UICollectionView = {
@@ -42,39 +48,56 @@ class FavouritedViewController: UIViewController {
         return view
     }()
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        [collectionView].forEach({view.addSubview($0)})
+        [collectionView,signinMessage].forEach({view.addSubview($0)})
         
         view.backgroundColor = .systemBackground
         collectionView.delegate = self
         collectionView.dataSource = self
-        
         segmentedButtonsView.delegate = self
+        
+        //        segmentedButtonsView.delegate = self
         let navView = UIView()
         navView.addSubview(segmentedButtonsView)
         navigationItem.titleView = navView
         segmentedButtonsView.frame = CGRect(x: 0, y: 0, width: view.width, height: 35)
         collectionView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,padding: .init(top: 0, left: 0, bottom: 0, right: 0))
         
+        
+        
+        signinMessage.sizeToFit()
+        signinMessage.frame = CGRect(x: 0, y: 0, width: signinMessage.width, height: signinMessage.height)
+        signinMessage.center = view.center
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        signinMessage.isHidden = AuthManager.shared.isSignedIn
+        
     }
     
 }
 
-extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension MyFriendsViewController: UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,MenuBarDelegate {
+    func MenuBarDidTapItem(_ menu: MenuBar, menuIndex: Int) {
+        collectionView.scrollToItem(at: .init(row: menuIndex, section: 0), at: [], animated: true)
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return titles.count
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         switch indexPath.row {
-        case 1:
+        case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FriendsTableCollectionViewCell.identifier, for: indexPath) as! FriendsTableCollectionViewCell
             cell.delegate = self
             return cell
-        case 0:
+        case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventsTableCollectionViewCell.identifier, for: indexPath) as! EventsTableCollectionViewCell
             cell.viewController = self
             return cell
@@ -89,14 +112,18 @@ extension FavouritedViewController: UICollectionViewDelegate,UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return collectionView.frame.size
     }
-
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        segmentedButtonsView.collectionViewDidScroll(for: scrollView.contentOffset.x / CGFloat(titles.count))
+        //        segmentedButtonsView.collectionViewDidScroll(for: scrollView.contentOffset.x / CGFloat(titles.count))
+    }
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let index = targetContentOffset.pointee.x/view.frame.width
+        segmentedButtonsView.collectionView.selectItem(at: .init(row: Int(index), section: 0), animated: false, scrollPosition: [])
     }
     
 }
 
-extension FavouritedViewController:FriendsCollectionViewCellDelegate {
+extension MyFriendsViewController:FriendsCollectionViewCellDelegate {
     func FriendsCollectionViewCellDidSelectFriend(_ cell: FriendsTableCollectionViewCell, result: Any) {
         guard let username = result as? String else {return}
         
@@ -108,7 +135,7 @@ extension FavouritedViewController:FriendsCollectionViewCellDelegate {
     }
 }
 
-extension FavouritedViewController:SegmentedControlDelegate {
+extension MyFriendsViewController:SegmentedControlDelegate {
     
     func didIndexChanged(at index: Int) {
         if index == 0 {

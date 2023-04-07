@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '13.0'
 
-target 'Gather Pool' do
+target 'One&All' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
@@ -28,6 +28,8 @@ target 'Gather Pool' do
   pod "ImageSlideshow/SDWebImage"
   pod 'DKImagePickerController'
   pod 'AlgoliaSearchClient', '~> 8.0'
+  pod 'SwipeCellKit'
+  pod 'TagListView'
 
   
     # Pods for Instagram

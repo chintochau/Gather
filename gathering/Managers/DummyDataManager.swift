@@ -11,7 +11,36 @@ import FirebaseFirestore
 
 struct DummyDataManager {
     static let shared = DummyDataManager()
-    
+
+    func createDemoUsers() {
+        let db = Firestore.firestore()
+        let usersRef = db.collection("users")
+        
+        let commonNames = ["Jack", "Emily", "Harry", "Olivia", "Charlie", "Sophie", "Thomas", "Amelia", "James", "Emma", "William", "Ava", "George", "Mia", "Benjamin", "Isabella", "Jacob", "Charlotte", "Ethan", "Grace"]
+        let interests = ["旅遊", "美食", "運動", "電影", "閱讀", "音樂", "科技", "藝術", "手作", "時尚"]
+        
+        for i in 1...20 {
+            let randomName = commonNames.randomElement()!
+            let username = "user\(i)"
+            let numInterests = Int.random(in: 1...3)
+            let randomInterests = (0..<numInterests).map { _ in interests.randomElement()! }
+            
+            let user = User(
+                username: username, email: nil, name: randomName, profileUrlString: "https://picsum.photos/400/300?random=\(i)", gender: nil, birthday: nil, rating: nil, fcmToken: nil, chatToken: nil, interests: randomInterests, contacts: nil
+            )
+            
+            guard let userDict = user.asDictionary() else {return}
+            
+            usersRef.document(username).setData(userDict) { error in
+                if let error = error {
+                    print("Error adding document: \(error.localizedDescription)")
+                } else {
+                    print("Document added with ID: \(username)")
+                }
+            }
+        }
+    }
+
     
     func generateDummyEvents() {
         
@@ -38,7 +67,7 @@ struct DummyDataManager {
             }
             
             // Generate a random introduction for the event
-            let introduction = "Join us for the \(EventType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! "
+            let introduction = "Join us for the \(HomeCategoryType.allCases.randomElement()!.rawValue) event of the year! This is a great opportunity to meet new people, have fun, and enjoy some amazing activities. Our expert organizers have put together a fantastic lineup of events that will keep you engaged and entertained all day long. Whether you're a seasoned pro or a beginner, there's something for everyone at this event. So come on out and join us for a day of fun and excitement! "
             
             
             

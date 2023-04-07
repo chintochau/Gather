@@ -15,6 +15,7 @@ struct Participant:Codable {
     let gender:String
     var profileUrlString:String? = nil
     var joinStatus:participantStatus = .going
+    var contact:String? = nil
     var isFriend:Bool? = nil
     
     enum participantStatus:Int,Codable {

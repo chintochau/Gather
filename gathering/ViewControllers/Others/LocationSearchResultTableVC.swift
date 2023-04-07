@@ -146,7 +146,21 @@ extension LocationSearchResultTableVC:UISearchResultsUpdating {
         
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = searchBarText
-        request.region = .init(center: Location.torontoCoordinate, span: Location.span)
+        
+        
+        
+        var coordinate:CLLocationCoordinate2D = Location.torontoCoordinate
+        if let location = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+            switch location {
+//            case LocationSwitch.hongkong.rawValue:
+//                coordinate = Location.hongkongCoordinate
+            default:
+                break
+            }
+        }
+        
+        
+        request.region = .init(center: coordinate, span: Location.span)
         let search = MKLocalSearch(request: request)
         
         task = .init(block: { [weak self] in

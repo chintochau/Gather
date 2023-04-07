@@ -31,6 +31,7 @@ class EventSectionController: ListSectionController {
         let vm = viewModel as! EventCellViewModel
         let cell = collectionContext?.dequeueReusableCell(of: EventWithImageCell.self, for: self, at: index) as! EventWithImageCell
         cell.bindViewModel(vm)
+        cell.viewController = viewController
         return cell
         
     }

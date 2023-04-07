@@ -52,7 +52,7 @@ final class StorageManager {
         }
     }
     
-    public func deleteImages(id:String, completion:@escaping (Bool) -> Void) {
+    public func deleteEventImages(id:String, completion:@escaping (Bool) -> Void) {
         
         let storageRef = Storage.storage().reference().child("events/\(id)")
 
@@ -84,8 +84,14 @@ final class StorageManager {
                 }
             }
         }
+    }
+    
+    public func deleteUserProfileImage(id:String, completion:@escaping (Bool) -> Void) {
         
-        
+        let ref = storage.child("users/\(id)/profileImage.jpg")
+        ref.delete { error in
+            completion(true)
+        }
         
     }
     

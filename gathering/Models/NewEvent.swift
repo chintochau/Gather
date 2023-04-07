@@ -64,6 +64,7 @@ extension NewPost {
                      headcount: self.headcount,
                      ownerFcmToken: user.fcmToken,
                      eventStatus: self.eventStatus,
+                     referencePath: self.endDate.yearDayStringUTC(),
                      autoApprove: self.autoApprove,
                      allowWaitList: self.allowWaitList
         )

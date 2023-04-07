@@ -145,7 +145,8 @@ extension NewCategoryViewController:UICollectionViewDelegate,UICollectionViewDat
             }
             
         }else {
-            let vc = EditProfileViewController()
+            guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+            let vc = EditProfileViewController(user: user)
             let navVC = UINavigationController(rootViewController: vc)
             present(navVC, animated: true)
         }

@@ -8,6 +8,10 @@
 import UIKit
 import IGListKit
 
+enum SearchType {
+    case events
+    case users
+}
 
 class SearchResultViewController: UIViewController {
     
@@ -21,10 +25,13 @@ class SearchResultViewController: UIViewController {
         return view
     }()
     
-    var events:[UserEvent] = []
+    var searchType:SearchType
+    var results:[Any] = []
     
-    init(searchText:String) {
+    
+    init(searchType: SearchType, searchText:String) {
         self.searchText = searchText
+        self.searchType = searchType
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -35,6 +42,9 @@ class SearchResultViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
         view.backgroundColor = .systemBackground
         title = searchText
         configureCollectionView()
@@ -46,7 +56,7 @@ class SearchResultViewController: UIViewController {
     private func configureCollectionView(){
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = .init(width: view.width, height: 50)
-        layout.sectionInset = .init(top: 0, left: 0, bottom: 1, right: 0)
+        layout.sectionInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 5
         layout.minimumInteritemSpacing = 5
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -56,42 +66,82 @@ class SearchResultViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.register(UserEventCell.self, forCellWithReuseIdentifier: UserEventCell.identifier)
         collectionView.register(UserProfileHeaderReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: UserProfileHeaderReusableView.identifier)
+        collectionView.register(UserMediumCollectionViewCell.self, forCellWithReuseIdentifier: UserMediumCollectionViewCell.identifier)
         
         self.collectionView = collectionView
     }
     
     
     public func performSearch() {
-        SearchManager.shared.searchForEvents(words: searchText) {[weak self] userEvents in
-            DispatchQueue.main.async {
-                print(userEvents)
-                self?.events = userEvents
-                self?.collectionView?.reloadData()
-                self?.loadingIndicator.stopAnimating()
+        
+        switch searchType{
+            
+        case .events:
+            
+            SearchManager.shared.searchForEvents(words: searchText) {[weak self] userEvents in
+                DispatchQueue.main.async {
+                    self?.results = userEvents
+                    self?.collectionView?.reloadData()
+                    self?.loadingIndicator.stopAnimating()
+                }
             }
+        case .users:
+            
+            SearchManager.shared.searchForUserss(words: searchText, completion: {[weak self] users in
+                
+                DispatchQueue.main.async {
+                    self?.results = users
+                    self?.collectionView?.reloadData()
+                    self?.loadingIndicator.stopAnimating()
+                }
+            })
         }
     }
 }
 
 extension SearchResultViewController: UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let vm = events[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserEventCell.identifier, for: indexPath) as! UserEventCell
-        cell.userEvent = vm
-        cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
-        return cell
+        switch results[indexPath.row] {
+        case let vm as UserEvent:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserEventCell.identifier, for: indexPath) as! UserEventCell
+            cell.userEvent = vm
+            cell.widthAnchor.constraint(equalToConstant: view.width).isActive = true
+            return cell
+            
+        case let vm as User:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier:UserMediumCollectionViewCell.identifier, for: indexPath ) as! UserMediumCollectionViewCell
+            let constraint = cell.widthAnchor.constraint(equalToConstant: (view.width-15)/2)
+            constraint.priority = .defaultHigh
+            constraint.isActive = true
+            cell.user = vm
+            return cell
+        default:
+            fatalError()
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return events.count
+        return results.count
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        let vm = events[indexPath.row]
-        if let referencePath = vm.referencePath {
-            presentEventDetailViewController(eventID: vm.id, eventRef: referencePath)
+        switch results[indexPath.row] {
+        case let vm as UserEvent:
+            if let referencePath = vm.referencePath {
+                presentEventDetailViewController(eventID: vm.id, eventRef: referencePath)
+                
+            }
+        case let vm as User:
+            let vc = UserProfileViewController(user: vm)
+            vc.enableSwipeBackNavigation()
+            navigationController?.pushViewController(vc, animated: true)
             
+            
+        default:
+            break
         }
+        
     }
 }

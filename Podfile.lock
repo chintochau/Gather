@@ -883,6 +883,7 @@ PODS:
   - SwiftDate (5.1.0)
   - SwiftyGif (5.4.4)
   - SwipeCellKit (2.7.1)
+  - TagListView (1.4.1)
 
 DEPENDENCIES:
   - AlgoliaSearchClient (~> 8.0)
@@ -904,6 +905,7 @@ DEPENDENCIES:
   - SDWebImage
   - SwiftDate (~> 5.0)
   - SwipeCellKit
+  - TagListView
 
 SPEC REPOS:
   trunk:
@@ -952,6 +954,7 @@ SPEC REPOS:
     - SwiftDate
     - SwiftyGif
     - SwipeCellKit
+    - TagListView
 
 EXTERNAL SOURCES:
   EmojiPicker:
@@ -1009,7 +1012,8 @@ SPEC CHECKSUMS:
   SwiftDate: 6329e58969a2de31cea7f1ee1143b247693196e7
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   SwipeCellKit: 3972254a826da74609926daf59b08d6c72e619ea
+  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: 388dda8760fbef946267d140890dc70489b50220
+PODFILE CHECKSUM: 8227866f62ddfe368ddc93df3f4df53598c19b99
 
 COCOAPODS: 1.11.3

@@ -76,6 +76,8 @@ class EventsTableCollectionViewCell: UICollectionViewCell {
         collectionView.fillSuperview()
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.keyboardDismissMode = .interactive
+        collectionView.alwaysBounceVertical = true
         refreshControl.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
         collectionView.register(UserEventCell.self, forCellWithReuseIdentifier: UserEventCell.identifier)

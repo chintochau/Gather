@@ -163,6 +163,7 @@ struct ChatMessageManager {
             if let conversation = getConversationWithMessage(sender: senderUsername, channelid: message.channelId) {
                 try! realm.write({
                     conversation.messages.append(message)
+                    conversation.lastUpdated = message.sentDate
                 })
                 triggerInAppNotification(message: message)
             }

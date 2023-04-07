@@ -34,7 +34,7 @@ extension Location {
     static let vaughan = Location(name: "Vaughan", address: "ON, Canada", latitude: 43.8369, longitude: -79.4982)
     static let richmondHill = Location(name: "Richmond Hill", address: "ON, Canada", latitude: 43.8828, longitude: -79.4403)
     
-    static let filterArray:[Location] = [
+    static let torontoLocationArray:[Location] = [
         .toBeConfirmed,
         .northYork,
         .downtownToronto,
@@ -43,9 +43,16 @@ extension Location {
         .richmondHill
     ]
     
+    static let hongkongLocationArray:[Location] = [
+        .toBeConfirmed
+    ]
+    
     static let torontoCoordinate = CLLocationCoordinate2D(
         latitude: 43.780918,
         longitude: -79.421371)
+    static let hongkongCoordinate = CLLocationCoordinate2D(
+        latitude: 22.302711,
+        longitude: 114.177216)
     static let span = MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
     
     init(with mapItem:MKMapItem){
@@ -59,7 +66,27 @@ extension Location {
         
     }
     
+    static func getCurrentLocation() -> LocationSwitch? {
+        if let region = UserDefaults.standard.string(forKey: UserDefaultsType.region.rawValue) {
+            switch region {
+            case LocationSwitch.toronto.rawValue:
+                return .toronto
+//            case LocationSwitch.hongkong.rawValue:
+//                return .hongkong
+            default:
+                return nil
+                
+            }
+        }
+        return nil
+    }
 }
+
+enum LocationSwitch:String, CaseIterable {
+//    case hongkong = "🇭🇰香港"
+    case toronto = "🇨🇦多倫多"
+}
+
 
 extension MKMapItem {
     func formattedLocation() -> (locationName: String, address: String) {

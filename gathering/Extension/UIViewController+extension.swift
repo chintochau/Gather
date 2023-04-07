@@ -16,6 +16,7 @@ extension UIViewController {
         navVc.hero.isEnabled = true
         navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         navVc.modalPresentationStyle = .fullScreen
+        navVc.navigationBar.tintColor = .label
         present(navVc, animated: true)
     }
     
@@ -27,6 +28,7 @@ extension UIViewController {
         navVc.hero.isEnabled = true
         navVc.hero.modalAnimationType = .autoReverse(presenting: .push(direction: .left))
         navVc.modalPresentationStyle = .fullScreen
+        navVc.navigationBar.tintColor = .label
         
         
         
@@ -71,6 +73,20 @@ extension UIViewController {
             }
         default:
             break
+        }
+    }
+    
+    
+    func enableSwipeBackNavigation() {
+        // Add custom gesture recognizer for swipe back navigation
+        let swipeBackGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipeBackGesture(_:)))
+        swipeBackGesture.edges = .left
+        view.addGestureRecognizer(swipeBackGesture)
+    }
+    
+    @objc func handleSwipeBackGesture(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        if gestureRecognizer.state == .recognized {
+            navigationController?.popViewController(animated: true)
         }
     }
     

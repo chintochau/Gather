@@ -13,10 +13,10 @@ class ConversationObject: Object {
     @Persisted var channelUrlString:String?
     @Persisted var participants = List<UserObject>()
     @Persisted var messages = List<MessageObject>()
+    @Persisted var lastUpdated:Date? = nil
     
     var targetname:String {
         let username = UserDefaults.standard.string(forKey: "username")!
-        
         for user in participants {
             if user.username != username {
                 return user.username

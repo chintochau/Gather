@@ -13,14 +13,14 @@ extension UIFont {
     }
     
     static func robotoRegularFont(ofSize size:CGFloat) -> UIFont {
-        return UIFont(name: "RobotoMono-Regular", size: size)!
+        return UIFont(name: "Helvetica", size: size)!
     }
     static func robotoSemiBoldFont(ofSize size:CGFloat) -> UIFont {
-        return UIFont(name: "RobotoMono-SemiBold", size: size)!
+        return UIFont(name: "Helvetica-Bold", size: size)!
     }
     
     static func robotoMedium(ofSize size:CGFloat) -> UIFont {
-        return UIFont(name: "RobotoMono-Medium", size: size)!
+        return UIFont(name: "Helvetica", size: size)!
     }
     
     static func helvetica(ofSize size:CGFloat) -> UIFont {

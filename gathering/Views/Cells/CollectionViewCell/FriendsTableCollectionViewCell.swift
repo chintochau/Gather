@@ -25,6 +25,9 @@ class FriendsTableCollectionViewCell: UICollectionViewCell {
     let tableView:UITableView = {
         let view = UITableView()
         view.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        view.keyboardDismissMode = .interactive
+        view.alwaysBounceVertical = true
+        
         return view
     }()
     
@@ -77,6 +80,7 @@ class FriendsTableCollectionViewCell: UICollectionViewCell {
         
         
     }
+    
     deinit {
         notificationToken?.invalidate()
     }

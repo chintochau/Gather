@@ -26,6 +26,14 @@ class UserMediumCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    private let interestsLabel:UILabel = {
+        let view = UILabel()
+        view.font = .systemFont(ofSize: 16)
+        view.textAlignment = .center
+        return view
+        
+    }()
+    
     var user:User? {
         didSet{
             guard  let user =  user else {return}
@@ -34,6 +42,20 @@ class UserMediumCollectionViewCell: UICollectionViewCell {
                 profileImage.contentMode = .scaleAspectFill
             }
             nameLabel.text = user.name ?? user.username
+            if let interests = user.interests {
+                
+                for index in 0..<interests.count {
+                    
+                    if index == 0{
+                        interestsLabel.text = interests[index]
+                    }else {
+                        interestsLabel.text! += "·\(interests[index])"
+                        
+                    }
+                    
+                }
+                
+            }
             
         }
     }
@@ -43,7 +65,7 @@ class UserMediumCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        [profileImage,nameLabel].forEach({addSubview($0)})
+        [profileImage,nameLabel,interestsLabel].forEach({addSubview($0)})
         backgroundColor = .secondarySystemBackground
         
         let imageSize:CGFloat = 80
@@ -52,7 +74,10 @@ class UserMediumCollectionViewCell: UICollectionViewCell {
         profileImage.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         profileImage.layer.cornerRadius = imageSize/2
         
-        nameLabel.anchor(top: profileImage.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 5, left: 5, bottom: 0, right: 5))
+        nameLabel.anchor(top: profileImage.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor,padding: .init(top: 5, left: 5, bottom: 20, right: 5))
+        
+        interestsLabel.anchor(top: nameLabel.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 5, left: 0, bottom: 30, right: 0))
+        
         
         self.layer.cornerRadius = 10
     }

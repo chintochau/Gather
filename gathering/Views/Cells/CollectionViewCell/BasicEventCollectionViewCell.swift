@@ -195,6 +195,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     
     private var postID:String?
     private var referencePath:String?
+    private var username:String?
+    var viewController:UIViewController?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -272,6 +274,7 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     func bindViewModel(_ viewModel: Any) {
         guard let vm = viewModel as? EventCellViewModel else {return}
         
+        username = vm.organiser?.username ?? ""
         postID = vm.id
         referencePath = vm.event.referencePath
         
@@ -329,8 +332,8 @@ class BasicEventCollectionViewCell: UICollectionViewCell,ListBindable {
     }
     
     @objc private func didTapReport(){
-        guard let postID = postID, let referencePath = referencePath else {return}
-        AlertManager.shared.reportPost(eventID: postID, referencePath: referencePath)
+        guard let postID = postID, let referencePath = referencePath, let username  = username, let vc = viewController else {return}
+        AlertManager.shared.reportPost(username: username,eventID: postID, referencePath: referencePath, viewController: vc)
     }
     
 }

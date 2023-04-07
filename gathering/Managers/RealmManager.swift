@@ -103,4 +103,22 @@ struct RealmManager {
     }
     
     
+    
+    public func blockUser(targetUsername:String){
+        let realm = try! Realm()
+        if let blocklist =  realm.objects(BlockedUsers.self).first {
+            
+            if !blocklist.blockedUserList.contains(targetUsername) {
+                try! realm.write {
+                    blocklist.blockedUserList.append(targetUsername)
+                }
+            }
+        } else {
+            let blocklist = BlockedUsers()
+            blocklist.blockedUserList.append(targetUsername)
+            try! realm.write{
+                realm.add(blocklist)
+            }
+        }
+    }
 }

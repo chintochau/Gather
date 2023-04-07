@@ -10,12 +10,12 @@ import UIKit
 struct ProfileHeaderViewViewModel {
     let profileUrlString:String?
     let username:String
-    let email:String
+    let name:String?
     
     init(user:User) {
         self.profileUrlString = user.profileUrlString
-        self.username = user.username
-        self.email = user.email ?? ""
+        self.username = "@\(user.username)"
+        self.name = user.name
     }
 }
 
@@ -34,27 +34,37 @@ class ProfileHeaderView: UIView {
         
     }()
     
+    let editIconImageView: UIImageView = {
+        let view = UIImageView(image: UIImage(systemName: "pencil.circle.fill"))
+        view.backgroundColor = .systemBackground.withAlphaComponent(0.5)
+        view.tintColor = .label
+        view.contentMode = .scaleAspectFit
+        view.isHidden = true
+        return view
+    }()
+    
+    private let nameLabel:UILabel = {
+        let view = UILabel()
+        view.textAlignment = .center
+        view.font = .helveticaBold(ofSize: 24)
+        return view
+        
+    }()
     private let usernameLabel:UILabel = {
         let view = UILabel()
         view.textAlignment = .center
-        view.font = .systemFont(ofSize: 30,weight: .bold)
+        view.font = .helvetica(ofSize: 16)
         return view
         
     }()
-    private let emailLabel:UILabel = {
-        let view = UILabel()
-        view.textAlignment = .center
-        return view
-        
-    }()
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         [
             imageView,
-            emailLabel,
-            usernameLabel
+            nameLabel,
+            usernameLabel,
+            editIconImageView
         ].forEach({addSubview($0)})
         
     }
@@ -68,8 +78,18 @@ class ProfileHeaderView: UIView {
         let imageSize = width/4
         imageView.frame = CGRect(x: (width-imageSize)/2, y: 20, width: imageSize, height: imageSize)
         imageView.layer.cornerRadius = imageSize/2
-        usernameLabel.frame = CGRect(x: 40, y: imageView.bottom+10, width: width-80, height: 30)
-        emailLabel.frame = CGRect(x: 40, y: usernameLabel.bottom, width: width-80, height: 30)
+        
+        let editIconSize: CGFloat = 24
+        editIconImageView.frame = CGRect(
+            x: imageView.frame.maxX - editIconSize,
+            y: imageView.frame.maxY - editIconSize,
+            width: editIconSize,
+            height: editIconSize
+        )
+        
+        
+        nameLabel.frame = CGRect(x: 40, y: imageView.bottom+10, width: width-80, height: 30)
+        usernameLabel.frame = CGRect(x: 40, y: nameLabel.bottom, width: width-80, height: 30)
     }
     
     func configure(with vm:ProfileHeaderViewViewModel) {
@@ -77,7 +97,12 @@ class ProfileHeaderView: UIView {
         imageView.sd_setImage(with: URL(string: urlString))}
         
         usernameLabel.text = vm.username
-        emailLabel.text = vm.email
+        nameLabel.text = vm.name
+        
+    }
+    
+    func showEditButton(){
+        editIconImageView.isHidden = false
     }
     
 }
