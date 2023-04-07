@@ -1,4 +1,6 @@
+
 # One & All Event Organizer App
+<img src="https://user-images.githubusercontent.com/28828270/230684330-e8370f37-e4db-49e2-aa01-8f0d0d3588dd.png" width="200" height="200">
 
 ## Project Description
 
