@@ -21,12 +21,12 @@ One & All is a social networking app designed to help new immigrants from Hong K
 - Database: Firestore
 - Chat: PubNub for now, going to change to Firebase Realtime Database
 - On-device storage: Realm
-- Getting Started
+## Getting Started
 
-## Clone the repository
-Install dependencies by running pod install
-Open the OneAndAll.xcworkspace file in Xcode
-Build and run the project
+Clone the repository
+- Install dependencies by running pod install
+- Open the OneAndAll.xcworkspace file in Xcode
+- Build and run the project
 ## Contribution Guidelines
 
 Contributions to One & All are welcome. Please submit a pull request or open an issue for bug fixes, feature requests, or other improvements.
