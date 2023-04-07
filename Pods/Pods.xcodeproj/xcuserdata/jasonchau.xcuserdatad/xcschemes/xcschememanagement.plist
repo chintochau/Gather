@@ -189,7 +189,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-Gather Pool.xcscheme</key>
+		<key>Pods-One&amp;All.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -230,6 +230,11 @@
 			<false/>
 		</dict>
 		<key>SwipeCellKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>TagListView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
