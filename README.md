@@ -6,6 +6,9 @@
 
 One & All is a social networking app designed to help new immigrants from Hong Kong connect with each other and build relationships through real-life events. Users can easily create posts with their event ideas and set a minimum number of joiners to turn their idea into an actual event. The app also offers gender-specific events for users looking for a real-life dating experience.
 
+## Development Process
+https://jasonchau.co/developing-oneall-a-community-building-app-for-hong-kong-immigrants-in-canada/
+
 ## Features
 
 - User authentication and profile creation
@@ -17,8 +20,8 @@ One & All is a social networking app designed to help new immigrants from Hong K
 
 - Backend: Firebase, Node.js
 - Frontend: UIKit, Swift
-- Design Pattern: MVVM
-- Data Source: Diffable Data Source
+- Design Pattern: MVVM, Singleton
+- Data Source: IGlistkit, similar to Diffable Data Source
 - Notification: Firebase Cloud Messaging
 - Database: Firestore
 - Chat: PubNub, in transition to Firebase Realtime Database
