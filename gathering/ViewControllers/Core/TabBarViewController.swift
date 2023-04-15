@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Foundation
 
 class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
@@ -29,7 +28,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         let messages = ChatMainViewController()
         let profile = ProfileViewController()
         
-
+        
         let nav1 = UINavigationController(rootViewController: home)
         let nav2 = UINavigationController(rootViewController: myEvents)
         let nav3 = UINavigationController(rootViewController: myFriends)
@@ -107,7 +106,7 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
     
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-
+        
         // Check if the second tab (index 1) is clicked
         
         if let viewController = viewController as? UINavigationController {
@@ -214,9 +213,11 @@ class TabBarViewController: UITabBarController, UITabBarControllerDelegate {
         guard let _ = UserDefaults.standard.string(forKey: "username") else {return}
         ChatMessageManager.shared.connectToChatServer(true)
         RelationshipManager.shared.observeFirebaseRelationshipsChangesIntoRealm()
-//        DummyDataManager.shared.generateDummyEvents()
-//        DummyDataManager.shared.createNotificationForEachUsers()
-//        DummyDataManager.shared.createDemoUsers()
+        //        DummyDataManager.shared.generateDummyEvents()
+        //        DummyDataManager.shared.createNotificationForEachUsers()
+        //        DummyDataManager.shared.createDemoUsers()
+        //        DatabaseManager.shared.addMentor()
+//        DatabaseManager.shared.addOrganisation()
     }
     
 }

@@ -60,6 +60,10 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
         self.conversation = ChatMessageManager.shared.getInitialConversationWithUsername(targetUsername: targetUsername)!
         self.messages = conversation.messages.sorted(byKeyPath: "sentDate")
         
+        RealtimeDatabaseManager.shared.getOrCreatePrivateChannel(targetUsername: targetUsername) { channelId in
+            print("ChatMessageViewCon\(channelId)")
+        }
+        
         super.init(nibName: nil, bundle: nil)
         
         navigationItem.title = targetUsername
@@ -175,7 +179,19 @@ class ChatMessageViewController: UIViewController, UIGestureRecognizerDelegate {
     // MARK: - Handle Send Message
     @objc private func didTapSend(){
         
+        
         if let text = textView.text {
+            
+            guard let user = DefaultsManager.shared.getCurrentUser() else {return}
+            
+            let message = MessageObject()
+            message.text = "text message"
+            message.sender = user.realmObject()
+            message.channelId = IdManager.shared.generateChannelIDFor(targetUsername: targetUsername)
+            
+            RealtimeDatabaseManager.shared.sendMessage(message)
+            
+            
             ChatMessageManager.shared.sendMessageToUser(targetUsername: targetUsername, text: text)
             textView.text = nil
         }

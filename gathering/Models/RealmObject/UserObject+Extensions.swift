@@ -20,6 +20,23 @@ class UserObject: Object{
         self.name = name
         self.profileUrlString = profileUrlString
     }
+    
+    
+    func toDictionary() -> [String: Any] {
+        var dict: [String: Any] = [:]
+        dict["username"] = self.username
+        dict["name"] = self.name ?? ""
+        dict["profileUrlString"] = self.profileUrlString ?? ""
+        return dict
+    }
+    
+    func fromDictionary(_ dict: [String: Any]) {
+        self.username = dict["username"] as? String ?? ""
+        self.name = dict["name"] as? String
+        self.profileUrlString = dict["profileUrlString"] as? String
+    }
+    
+    
 }
 
 extension UserObject {

@@ -11,24 +11,19 @@ import FirebaseMessaging
 
 final class DatabaseManager {
     static let shared = DatabaseManager()
-    
-    
-    
+
     var database:Firestore = {
         let database = Firestore.firestore()
 //        database.useEmulator(withHost: "localhost", port: 8080)
-        
         return database
     }()
     
     var eventString:String = ""
-    
-    
+
     private init() {
         reset()
     }
-    
-    
+
     func reset() {
         database = Firestore.firestore()
         eventString = generateEventString()
@@ -762,48 +757,81 @@ final class DatabaseManager {
     
     
     // MARK: - Organisations
+    public func addOrganisation() {
+        
+        let organisation = Organisation(id: "csfo",
+                                         name: "家和 CSFO",
+                                         description: "提供專業諮詢，安頓，殘疾和特殊需求服務給需要的個人和家庭",
+                                         profileImageUrl: "https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/305296438_488887379909653_5186213217469100737_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=qu0es53b9noAX80EOHw&_nc_ht=scontent-ord5-2.xx&oh=00_AfAJEm6IjodscnVEEV1croqW2FP3owmZ5_Qb2MxVAi6feg&oe=6431EF12",
+                                         type: .ngo,
+                                         location: .toronto,
+                                         contact: .init(
+                                           email: "info@csfo.ca",
+                                           phone: "(416) 123-4567",
+                                           website: "www.csfo.ca"))
+        
+        let ref = database.collection("organisations").document(organisation.id)
+        
+        guard let orgData = organisation.asDictionary() else {return}
+        
+        ref.setData(orgData)
+        
+    }
+    
+    
     public func fetchOrganisations(completion:@escaping ([Organisation]) -> Void){
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            let organisations:[Organisation] = [
-                
-                .init(id: "csfo",
-                      name: "家加 CSFO",
-                      description: "提供專業諮詢，安頓，殘疾和特殊需求服務給需要的個人和家庭",
-                      profileImageUrl: "https://scontent-ord5-2.xx.fbcdn.net/v/t39.30808-6/305296438_488887379909653_5186213217469100737_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=qu0es53b9noAX80EOHw&_nc_ht=scontent-ord5-2.xx&oh=00_AfAJEm6IjodscnVEEV1croqW2FP3owmZ5_Qb2MxVAi6feg&oe=6431EF12",
-                      type: .ngo,
-                      location: .toronto,
-                      contact: .init(
-                        email: "info@csfo.ca",
-                        phone: "(416) 123-4567",
-                        website: "www.csfo.ca")),
-//                .init(id: "1", name: "香港加人聯誼會", description: " 為香港移民提供社交活動和文化交流的平台", profileImageUrl: "https://picsum.photos/400/300?random=14", type: .communityCentre, location: .toronto, contact: .init(email: " info@hk-association.ca", phone: "(604) 123-4567", website: "www.hk-association.ca")),
-//                .init(id: "2", name: "加拿大香港專業人士會", description: "促進加拿大香港專業人士之間的聯繫和合作", profileImageUrl: "https://picsum.photos/400/300?random=15", type: .professionalAssociation, location: .toronto, contact: .init(email: "info@hk-professionals.ca", phone: "(416) 234-5678", website: "www.hk-professionals.ca")),
-//                .init(id: "3", name: " 加拿大香港青年會", description: "為年輕香港移民提供職業發展和社交機會", profileImageUrl: "https://picsum.photos/400/300?random=16", type: .youthOrganization, location: .toronto, contact: .init(email: "", phone: "", website: ""))
-            ]
+        
+        
+        let ref = database.collection("organisations")
+        
+        ref.getDocuments { snapshot, error in
+            guard error == nil, let organisations = snapshot?.documents.compactMap({ Organisation(with: $0.data())}) else {
+                completion([])
+                return
+            }
+            
             completion(organisations)
         }
+        
     }
     
     // MARK: - Mentors
+    
+    public func addMentor() {
+        let newMentor = Mentor(
+            username: "cchan",
+            profileUrlString: "https://static.wixstatic.com/media/0fa5f0_273e8bbefcca4d199edef7f4c0e9cb57~mv2.jpg/v1/crop/x_0,y_253,w_4000,h_4000/fill/w_400,h_400,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Calvin-5%20CROPPED.jpg",
+            name: "Calvin Chan",
+            email: "calvinrealestateagent@gmail.com",
+            phone: "(416) 567-8198",
+            expertise: "按揭及房地產",
+            yearsOfExperience: 4,
+            areaOfExpertise: "按揭及房地產",
+            bio: "你好, 我係 Calvin, 我已經嚟咗加拿大好耐. 喺過去20年我已經幫助咗好多本地同香港人過嚟加拿大買樓借錢, 我相信我哋嘅免費講座內容一定幫到你。",
+            languagesSpoken: ["Chinese" , "English"],
+            availability: "周末和晚上",
+            location: .toronto)
+        
+        
+        guard let mentorData = newMentor.asDictionary() else {
+            return
+        }
+        
+        let ref = database.collection("mentors").document(newMentor.username)
+        
+        ref.setData(mentorData)
+        
+    }
+    
     public func fetchMentors(completion:@escaping ([Mentor]) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now()+1) {
-            let mentors:[Mentor] = [
-                .init(
-                    username: "cchan",
-                    profileUrlString: "https://static.wixstatic.com/media/0fa5f0_273e8bbefcca4d199edef7f4c0e9cb57~mv2.jpg/v1/crop/x_0,y_253,w_4000,h_4000/fill/w_400,h_400,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Calvin-5%20CROPPED.jpg",
-                    name: "Calvin Chan",
-                    email: "calvinrealestateagent@gmail.com",
-                    phone: "(416) 567-8198",
-                    expertise: "按揭及房地產",
-                    yearsOfExperience: 4,
-                    areaOfExpertise: "按揭及房地產",
-                    bio: "你好, 我係 Calvin, 我已經嚟咗加拿大好耐. 喺過去20年我已經幫助咗好多本地同香港人過嚟加拿大買樓借錢, 我相信我哋嘅免費講座內容一定幫到你。",
-                    languagesSpoken: ["Chinese" , "English"],
-                    availability: "周末和晚上",
-                    location: .toronto),
-//                .init(username: "Alice Wong", profileUrlString: "https://picsum.photos/400/300?random=1", name: "Alice Wong", email: "", phone: " ", expertise: "稅務和財務規劃", yearsOfExperience: 5, areaOfExpertise: "稅務和財務規劃", bio: "你好，我係 Alice，喺加拿大做咗會計師六年，好樂意幫助新移民解決稅務問題同埋提供財務建議。", languagesSpoken: [], availability: "", location: .northYork),
-//                .init(username: "henry", profileUrlString: "https://picsum.photos/400/300?random=2", name: "Henry Hung", email: "", phone: " ", expertise: "移民法和家庭法", yearsOfExperience: 5, areaOfExpertise: "移民法和家庭法", bio: "你好，我係 Henry，我喺加拿大當律師已經有十年經驗。我專門處理移民法和家庭法，希望可以為香港移民提供法律援助。", languagesSpoken: [], availability: "", location: .toronto)
-            ]
+        let ref = database.collection("mentors")
+        
+        ref.getDocuments { snapshot, error in
+            guard error == nil, let mentors = snapshot?.documents.compactMap({ Mentor(with: $0.data())}) else {
+                completion([])
+                return
+            }
+            
             completion(mentors)
         }
     }
@@ -815,8 +843,8 @@ final class DatabaseManager {
         database.runTransaction({ [weak self] (transaction, errorPointer) -> Any? in
             
             guard let db = self?.database,
-            let user = DefaultsManager.shared.getCurrentUser(),
-                let fcmToken = CustomNotificationManager.fcmToken else {return}
+                  let user = DefaultsManager.shared.getCurrentUser(),
+                  let fcmToken = CustomNotificationManager.fcmToken else {return}
             
             let thisMonthDateString = Date().yearMonthStringUTC()
             let nextMonthDateString = Date().startOfNextMonthTimestampUTC().toDate().yearMonthStringUTC()

@@ -23,7 +23,6 @@ class EventCell: BasicEventCollectionViewCell {
         let view = UIStackView()
         view.axis = .vertical
         view.distribution = .equalCentering
-        // Add padding around the items
         view.layoutMargins = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         view.isLayoutMarginsRelativeArrangement = true
         return view

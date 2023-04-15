@@ -103,6 +103,7 @@
 		47918DB429C4007F001F8EE9 /* SearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47918DB329C4007F001F8EE9 /* SearchManager.swift */; };
 		47918DB629C4BA49001F8EE9 /* HomeSearchResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47918DB529C4BA49001F8EE9 /* HomeSearchResultTableViewController.swift */; };
 		47918DB829C4F967001F8EE9 /* SearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47918DB729C4F967001F8EE9 /* SearchResultViewController.swift */; };
+		4796AE3B29E995E30027274F /* RealTimeDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796AE3A29E995E30027274F /* RealTimeDatabaseManager.swift */; };
 		4796DC10299574E7005802E2 /* FilterButtonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */; };
 		4796DC122995A66F005802E2 /* GeneralSearchResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */; };
 		479C3B8D29A12501000D55BA /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */; };
@@ -277,6 +278,7 @@
 		47918DB329C4007F001F8EE9 /* SearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchManager.swift; sourceTree = "<group>"; };
 		47918DB529C4BA49001F8EE9 /* HomeSearchResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSearchResultTableViewController.swift; sourceTree = "<group>"; };
 		47918DB729C4F967001F8EE9 /* SearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultViewController.swift; sourceTree = "<group>"; };
+		4796AE3A29E995E30027274F /* RealTimeDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeDatabaseManager.swift; sourceTree = "<group>"; };
 		4796DC0F299574E7005802E2 /* FilterButtonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterButtonCollectionViewCell.swift; sourceTree = "<group>"; };
 		4796DC112995A66F005802E2 /* GeneralSearchResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSearchResultViewController.swift; sourceTree = "<group>"; };
 		479C3B8C29A12501000D55BA /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
@@ -720,6 +722,7 @@
 				472B6AC929B94C5700DB295E /* LoadingIndicator.swift */,
 				47505A3529BB90BC0052982A /* FunctionsManager.swift */,
 				47918DB329C4007F001F8EE9 /* SearchManager.swift */,
+				4796AE3A29E995E30027274F /* RealTimeDatabaseManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -969,6 +972,7 @@
 				47505A3429BAEC8E0052982A /* ToggleButtonTableViewCell.swift in Sources */,
 				47918DA629C23544001F8EE9 /* UserMediumCollectionViewCell.swift in Sources */,
 				4763D9D929819E550062C12C /* ValueTableViewCell.swift in Sources */,
+				4796AE3B29E995E30027274F /* RealTimeDatabaseManager.swift in Sources */,
 				476F995329A68856007CA9A4 /* NewEvent.swift in Sources */,
 				47CC052F299038EC00E97C1F /* PostCell.swift in Sources */,
 				478EE83D2996C447001BA53E /* FriendsTableCollectionViewCell.swift in Sources */,
@@ -1174,7 +1178,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jason.gathering;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1209,7 +1213,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jason.gathering;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1304,7 +1308,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jason.gathering;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
