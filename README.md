@@ -1,6 +1,6 @@
 
 # One & All Event Organizer App
-<img src="https://user-images.githubusercontent.com/28828270/230684330-e8370f37-e4db-49e2-aa01-8f0d0d3588dd.png" width="200" height="200">
+<img src="https://user-images.githubusercontent.com/28828270/232227359-bfb28a0b-9385-488e-a6fd-50cbaa0c4bd2.png" width="200" height="200">
 
 ## Project Description
 
@@ -21,7 +21,7 @@ One & All is a social networking app designed to help new immigrants from Hong K
 - Data Source: Diffable Data Source
 - Notification: Firebase Cloud Messaging
 - Database: Firestore
-- Chat: PubNub for now, going to change to Firebase Realtime Database
+- Chat: PubNub, in transition to Firebase Realtime Database
 - On-device storage: Realm
 ## Getting Started
 
